@@ -1081,4 +1081,36 @@ public class PNG8 implements Disposable {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Given a FileHandle to read from and a FileHandle to write to, duplicates the input FileHandle and changes its
+     * palette (in full and in order) to exactly match {@code palette}. This is only likely to work if the input file
+     * was written with the same palette order, such as by specifying an {@code exactPalette} in
+     * {@link #writePrecisely(FileHandle, Pixmap, int[], boolean, int)} where that exactPalette has similar colors at
+     * each palette index to {@code palette}.
+     * @param input FileHandle to read from that should have a similar palette (and very similar order) to {@code palette}
+     * @param output FileHandle that should be writable and empty
+     */
+    public static void hueShiftPalette(FileHandle input, FileHandle output)
+    {
+        try {
+            InputStream inputStream = input.read();
+            LinkedHashMap<String, byte[]> chunks = readChunks(inputStream);
+            byte[] pal = chunks.get("PLTE");
+            if(pal == null)
+            {
+                output.write(inputStream, false);
+                return;
+            }
+            for (int p = 0; p < pal.length - 2;) {
+                int rgba = PaletteReducer.hueShift((pal[p] << 24 & 0xFF000000)  | (pal[p+1] << 16 & 0x00FF0000)  | (pal[p+2] << 8 & 0x0000FF00) | 0xFF);
+                pal[p++] = (byte) (rgba >>> 24);
+                pal[p++] = (byte) (rgba >>> 16);
+                pal[p++] = (byte) (rgba >>> 8);
+            }
+            writeChunks(output.write(false), chunks);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -2036,7 +2036,8 @@ public class PaletteReducer {
                 MathUtils.clamp((int) ((luma - 0.375f * warm + mild) * 256f), 0, 255)<<16|
                 MathUtils.clamp((int) ((luma - 0.375f * warm - mild) * 256f), 0, 255)<<8|
                 a);
-    }    public static void hueShiftPalette(int[] palette)
+    }
+    public static void hueShiftPalette(int[] palette)
     {
         for (int i = 0; i < palette.length; i++) {
             palette[i] = hueShift(palette[i]);
