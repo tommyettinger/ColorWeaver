@@ -1,4 +1,4 @@
-package colorweaver.view.color;
+package colorweaver;
 
 /**
  * An IDimmer converts from the color index of a voxel to an actual color based on lighting, like a dimmer on a light

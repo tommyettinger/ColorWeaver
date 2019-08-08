@@ -1,10 +1,10 @@
 //port of https://github.com/mcychan/nQuant.j2se
 //Apache 2.0 license
-package org.cie;
+package colorweaver;
 
 import com.badlogic.gdx.graphics.Color;
 
-import static colorweaver.TrigTools.*;
+import static colorweaver.tools.TrigTools.*;
 
 public class CIELABConverter {
 

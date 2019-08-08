@@ -1,4 +1,4 @@
-package colorweaver;
+package colorweaver.tools;
 
 /**
  * Created by Tommy Ettinger on 8/6/2019.

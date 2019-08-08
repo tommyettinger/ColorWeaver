@@ -1,19 +1,11 @@
 package colorweaver;
 
+import com.badlogic.gdx.utils.ObjectIntMap;
+
 /**
  * Created by Tommy Ettinger on 11/4/2017.
  */
 public class Coloring {
-    // values with special meanings
-    /** Empty space with nothing in it. */
-    public static final byte EMPTY = 0,
-    /** Used for shadows on the ground, only if nothing is at that space; does not produce outlines. */ SHADOW = 1,
-    /** A solid black outline drawn around the perimeter of a 2D image; never used in 3D. */ OUTLINE = 2,
-    /** A solid object that is transparent, so it will have an outline but no color of its own. */ CLEAR = 3;
-    // 4, 5, 6, and 7 are reserved for later use.
-    // all other bytes are organized so the bottom 3 bits determine shading, from darkest at 0 to lightest at 7, while
-    // the top 5 bits are palette-dependent and are used to determine the precise hue and saturation.
-
     public static final int[] CW_PALETTE = {
             0x00000000, 0x444444ff, 0x000000ff, 0x88ffff00, 0x212121ff, 0x00ff00ff, 0x0000ffff, 0x080808ff,
             0x1f1f1fff, 0x3f3f3fff, 0x5f5f5fff, 0x7f7f7fff, 0x9f9f9fff, 0xbfbfbfff, 0xdfdfdfff, 0xffffffff,
@@ -132,172 +124,6 @@ public class Coloring {
             0x330000FF, 0x4C0000FF, 0x6B0000FF, 0x930000FF, 0xBC0B0BFF, 0xDB3838FF, 0xF47878FF, 0xFFC2C2FF,
             0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
             0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-            
-//            0x00000000, 0x444444FF, 0x000000FF, 0x88FFFF00, 0x212121FF, 0x00FF00FF, 0x0000FFFF, 0x0F0F0FFF,
-//            0x2B2B2BFF, 0x474747FF, 0x636363FF, 0x7F7F7FFF, 0x9B9B9BFF, 0xB7B7B7FF, 0xD3D3D3FF, 0xEFEFEFFF,
-//            0x1F0000FF, 0x3F0000FF, 0x5F0000FF, 0x7F0000FF, 0x9F0000FF, 0xBF1010FF, 0xDF4545FF, 0xFF9292FF,
-//            0x1F0300FF, 0x3F0900FF, 0x5F1300FF, 0x7F2200FF, 0x9F3900FF, 0xBF5A0EFF, 0xDF8643FF, 0xFFBF8FFF,
-//            0x1F0700FF, 0x3F1000FF, 0x5F1D00FF, 0x7F2F00FF, 0x9F4800FF, 0xBF6A1EFF, 0xDF9756FF, 0xFFD0A5FF,
-//            0x1F0C00FF, 0x3F1900FF, 0x5F2A00FF, 0x7F3E00FF, 0x9F5800FF, 0xBF7911FF, 0xDFA147FF, 0xFFD494FF,
-//            0x1F1800FF, 0x3F3100FF, 0x5F4A00FF, 0x7F6600FF, 0x9F8300FF, 0xBFA30CFF, 0xDFC641FF, 0xFFED8DFF,
-//            0x1F1F00FF, 0x3F3F00FF, 0x5F5F00FF, 0x7F7F00FF, 0x9F9F00FF, 0xBFBF0DFF, 0xDFDF42FF, 0xFFFF8FFF,
-//            0x151F00FF, 0x2B3F00FF, 0x425F00FF, 0x5B7F00FF, 0x789F00FF, 0x98BF0EFF, 0xBDDF43FF, 0xE6FF90FF,
-//            0x101F00FF, 0x213F00FF, 0x355F00FF, 0x4B7F00FF, 0x669F00FF, 0x86BF0BFF, 0xADDF40FF, 0xDAFF8CFF,
-//            0x081F00FF, 0x123F00FF, 0x205F00FF, 0x327F00FF, 0x4B9F00FF, 0x6CBF17FF, 0x97DF4EFF, 0xCEFF9CFF,
-//            0x001F00FF, 0x003F00FF, 0x005F00FF, 0x007F00FF, 0x029F00FF, 0x24BF0FFF, 0x56DF45FF, 0x9EFF92FF,
-//            0x001F00FF, 0x003F00FF, 0x005F00FF, 0x007F08FF, 0x009F1DFF, 0x18BF3FFF, 0x4EDF71FF, 0x9DFFB4FF,
-//            0x001F0EFF, 0x003F1EFF, 0x005F30FF, 0x007F46FF, 0x009F61FF, 0x12BF81FF, 0x48DFA9FF, 0x95FFD9FF,
-//            0x001F1EFF, 0x003F3DFF, 0x005F5CFF, 0x007F7BFF, 0x009F9AFF, 0x0BBFBAFF, 0x3FDFDAFF, 0x8BFFFBFF,
-//            0x00161FFF, 0x002D3FFF, 0x00455FFF, 0x005F7FFF, 0x007C9FFF, 0x139DBFFF, 0x49C1DFFF, 0x96EAFFFF,
-//            0x00041FFF, 0x000B3FFF, 0x00155FFF, 0x00257FFF, 0x003C9FFF, 0x0F5DBFFF, 0x4589DFFF, 0x92C2FFFF,
-//            0x00001FFF, 0x00003FFF, 0x00005FFF, 0x00007FFF, 0x00009FFF, 0x0E1ABFFF, 0x434EDFFF, 0x9097FFFF,
-//            0x00001FFF, 0x00003FFF, 0x02005FFF, 0x0E007FFF, 0x23009FFF, 0x430BBFFF, 0x7140DFFF, 0xB08CFFFF,
-//            0x09001FFF, 0x14003FFF, 0x22005FFF, 0x35007FFF, 0x4E009FFF, 0x6E11BFFF, 0x9846DFFF, 0xCD93FFFF,
-//            0x17001FFF, 0x2F003FFF, 0x48005FFF, 0x63007FFF, 0x80009FFF, 0xA013BFFF, 0xC449DFFF, 0xEC96FFFF,
-//            0x1F0015FF, 0x3F002BFF, 0x5F0043FF, 0x7F005CFF, 0x9F0079FF, 0xBF0D99FF, 0xDF42BEFF, 0xFF8FE7FF,
-//            0x1F0004FF, 0x3F0009FF, 0x5F0013FF, 0x7F0022FF, 0x9F0039FF, 0xBF0C5AFF, 0xDF4186FF, 0xFF8DBFFF,
-//            0x000000FF, 0x101010FF, 0x202020FF, 0x303030FF, 0x404040FF, 0x505050FF, 0x606060FF, 0x707070FF,
-//            0x808080FF, 0x909090FF, 0xA0A0A0FF, 0xB0B0B0FF, 0xC0C0C0FF, 0xD0D0D0FF, 0xE0E0E0FF, 0xF0F0F0FF,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-//            0x1F1800FF, 0x3F3100FF, 0x5F4A00FF, 0x7F6600FF, 0x9F8300FF, 0xBFA30CFF, 0xDFC641FF, 0xFFED8DFF,
-//            0x1F0300FF, 0x3F0900FF, 0x5F1300FF, 0x7F2200FF, 0x9F3900FF, 0xBF5A0EFF, 0xDF8643FF, 0xFFBF8FFF,
-//            0x1F0700FF, 0x3F1000FF, 0x5F1D00FF, 0x7F2F00FF, 0x9F4800FF, 0xBF6A1EFF, 0xDF9756FF, 0xFFD0A5FF,
-//            0x1F0000FF, 0x3F0000FF, 0x5F0000FF, 0x7F0000FF, 0x9F0000FF, 0xBF1010FF, 0xDF4545FF, 0xFF9292FF,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-
-
-//            0x00000000, 0x444444FF, 0x000000FF, 0x88FFFF00, 0x212121FF, 0x00FF00FF, 0x0000FFFF, 0x0F0F0FFF,
-//            0x2B2B2BFF, 0x474747FF, 0x636363FF, 0x7F7F7FFF, 0x9B9B9BFF, 0xB7B7B7FF, 0xD3D3D3FF, 0xEFEFEFFF,
-//            0x1F0000FF, 0x3F0000FF, 0x5F0000FF, 0x7F1414FF, 0x9F3232FF, 0xBF5B5BFF, 0xDF8D8DFF, 0xFFC9C9FF,
-//            0x1F0700FF, 0x3F1500FF, 0x5F2800FF, 0x7F4113FF, 0x9F6031FF, 0xBF8459FF, 0xDFAE8AFF, 0xFFDEC6FF,
-//            0x1F0B00FF, 0x3F1B00FF, 0x5F3108FF, 0x7F4C1EFF, 0x9F6C3FFF, 0xBF9269FF, 0xDFBC9EFF, 0xFFECDCFF,
-//            0x1F0F00FF, 0x3F2200FF, 0x5F3901FF, 0x7F5416FF, 0x9F7434FF, 0xBF975CFF, 0xDFBE8FFF, 0xFFEACBFF,
-//            0x1F1900FF, 0x3F3400FF, 0x5F5000FF, 0x7F6E12FF, 0x9F8E30FF, 0xBFAF57FF, 0xDFD188FF, 0xFFF5C4FF,
-//            0x1F1F00FF, 0x3F3F00FF, 0x5F5F00FF, 0x7F7F13FF, 0x9F9F31FF, 0xBFBF58FF, 0xDFDF8AFF, 0xFFFFC6FF,
-//            0x161F00FF, 0x2F3F00FF, 0x4A5F00FF, 0x677F13FF, 0x879F31FF, 0xA8BF59FF, 0xCCDF8BFF, 0xF2FFC7FF,
-//            0x121F00FF, 0x283F00FF, 0x415F00FF, 0x5D7F11FF, 0x7C9F2FFF, 0x9EBF56FF, 0xC3DF87FF, 0xECFFC2FF,
-//            0x0C1F00FF, 0x1C3F00FF, 0x325F04FF, 0x4D7F19FF, 0x6D9F39FF, 0x91BF62FF, 0xBBDF95FF, 0xE9FFD3FF,
-//            0x001F00FF, 0x003F00FF, 0x0B5F00FF, 0x207F14FF, 0x3F9F32FF, 0x66BF5AFF, 0x96DF8CFF, 0xCFFFC8FF,
-//            0x001F01FF, 0x003F09FF, 0x045F1AFF, 0x1A7F32FF, 0x399F51FF, 0x63BF78FF, 0x96DFA7FF, 0xD3FFDEFF,
-//            0x001F11FF, 0x003F25FF, 0x015F3EFF, 0x167F5AFF, 0x349F79FF, 0x5DBF9CFF, 0x8FDFC2FF, 0xCCFFECFF,
-//            0x001F1EFF, 0x003F3DFF, 0x005F5DFF, 0x117F7CFF, 0x2E9F9CFF, 0x56BFBCFF, 0x87DFDCFF, 0xC2FFFDFF,
-//            0x00171FFF, 0x00313FFF, 0x024D5FFF, 0x166A7FFF, 0x358A9FFF, 0x5EABBFFF, 0x90CFDFFF, 0xCDF5FFFF,
-//            0x00081FFF, 0x00163FFF, 0x002A5FFF, 0x14437FFF, 0x32629FFF, 0x5A87BFFF, 0x8CB1DFFF, 0xC8E0FFFF,
-//            0x00001FFF, 0x00003FFF, 0x00065FFF, 0x131A7FFF, 0x31389FFF, 0x5960BFFF, 0x8B90DFFF, 0xC7CAFFFF,
-//            0x02001FFF, 0x0C003FFF, 0x1C005FFF, 0x33117FFF, 0x522F9FFF, 0x7756BFFF, 0xA287DFFF, 0xD5C3FFFF,
-//            0x0C001FFF, 0x1E003FFF, 0x34015FFF, 0x4E157FFF, 0x6D339FFF, 0x915CBFFF, 0xB98EDFFF, 0xE6CAFFFF,
-//            0x18001FFF, 0x32003FFF, 0x4E025FFF, 0x6C167FFF, 0x8C359FFF, 0xAD5EBFFF, 0xD190DFFF, 0xF6CDFFFF,
-//            0x1F0016FF, 0x3F0030FF, 0x5F004BFF, 0x7F1368FF, 0x9F3188FF, 0xBF58A9FF, 0xDF8ACDFF, 0xFFC6F2FF,
-//            0x1F0008FF, 0x3F0015FF, 0x5F0028FF, 0x7F1241FF, 0x9F3060FF, 0xBF5784FF, 0xDF89AEFF, 0xFFC4DDFF,
-//            0x000000FF, 0x101010FF, 0x202020FF, 0x303030FF, 0x404040FF, 0x505050FF, 0x606060FF, 0x707070FF,
-//            0x808080FF, 0x909090FF, 0xA0A0A0FF, 0xB0B0B0FF, 0xC0C0C0FF, 0xD0D0D0FF, 0xE0E0E0FF, 0xF0F0F0FF,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-//            0x1F1900FF, 0x3F3400FF, 0x5F5000FF, 0x7F6E12FF, 0x9F8E30FF, 0xBFAF57FF, 0xDFD188FF, 0xFFF5C4FF,
-//            0x1F0700FF, 0x3F1500FF, 0x5F2800FF, 0x7F4113FF, 0x9F6031FF, 0xBF8459FF, 0xDFAE8AFF, 0xFFDEC6FF,
-//            0x1F0B00FF, 0x3F1B00FF, 0x5F3108FF, 0x7F4C1EFF, 0x9F6C3FFF, 0xBF9269FF, 0xDFBC9EFF, 0xFFECDCFF,
-//            0x1F0000FF, 0x3F0000FF, 0x5F0000FF, 0x7F1414FF, 0x9F3232FF, 0xBF5B5BFF, 0xDF8D8DFF, 0xFFC9C9FF,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-
-//            0x00000000, 0x444444FF, 0x000000FF, 0x88FFFF00, 0x212121FF, 0x00FF00FF, 0x0000FFFF, 0x0F0F0FFF,
-//            0x2B2B2BFF, 0x474747FF, 0x636363FF, 0x7F7F7FFF, 0x9B9B9BFF, 0xB7B7B7FF, 0xD3D3D3FF, 0xEFEFEFFF,
-//            0x170000FF, 0x370000FF, 0x570000FF, 0x770000FF, 0x970000FF, 0xB70808FF, 0xD71717FF, 0xF72929FF,
-//            0x17100BFF, 0x37291DFF, 0x574334FF, 0x77604EFF, 0x977F6CFF, 0xB7A08FFF, 0xD7C4B5FF, 0xF7EAE0FF,
-//            0x170800FF, 0x371600FF, 0x572500FF, 0x773700FF, 0x974B08FF, 0xB76115FF, 0xD77927FF, 0xF7933CFF,
-//            0x170C00FF, 0x371E00FF, 0x573200FF, 0x774703FF, 0x975E0DFF, 0xB7771CFF, 0xD7912EFF, 0xF7AD44FF,
-//            0x170F03FF, 0x37250CFF, 0x573D19FF, 0x775729FF, 0x97723EFF, 0xB78F57FF, 0xD7AD73FF, 0xF7CE94FF,
-//            0x171300FF, 0x372E00FF, 0x574900FF, 0x776503FF, 0x97820DFF, 0xB79F1CFF, 0xD7BD2EFF, 0xF7DB44FF,
-//            0x171705FF, 0x373710FF, 0x57561FFF, 0x777632FF, 0x979649FF, 0xB7B564FF, 0xD7D583FF, 0xF7F5A6FF,
-//            0x141708FF, 0x303717FF, 0x4D572AFF, 0x6B7741FF, 0x8A975CFF, 0xAAB77BFF, 0xCAD79EFF, 0xECF7C5FF,
-//            0x101700FF, 0x283700FF, 0x405700FF, 0x597700FF, 0x739700FF, 0x8EB700FF, 0xAAD70BFF, 0xC6F71CFF,
-//            0x0D1700FF, 0x213700FF, 0x355700FF, 0x4B7700FF, 0x629700FF, 0x7BB700FF, 0x94D701FF, 0xAFF710FF,
-//            0x12170DFF, 0x2D3722FF, 0x49573BFF, 0x687759FF, 0x88977AFF, 0xABB79FFF, 0xD0D7C8FF, 0xF6F7F6FF,
-//            0x001700FF, 0x003700FF, 0x005700FF, 0x007700FF, 0x069700FF, 0x11B700FF, 0x20D709FF, 0x33F71AFF,
-//            0x001704FF, 0x00370DFF, 0x065719FF, 0x0F7728FF, 0x1D973AFF, 0x2EB74FFF, 0x44D767FF, 0x5EF782FF,
-//            0x051709FF, 0x103718FF, 0x1F572BFF, 0x317741FF, 0x489759FF, 0x63B775FF, 0x82D794FF, 0xA5F7B6FF,
-//            0x00170EFF, 0x003722FF, 0x005738FF, 0x08774FFF, 0x149768FF, 0x23B782FF, 0x37D79DFF, 0x4FF7BAFF,
-//            0x051717FF, 0x0F3736FF, 0x1D5755FF, 0x307775FF, 0x469794FF, 0x61B7B4FF, 0x7FD7D4FF, 0xA1F7F4FF,
-//            0x081417FF, 0x163037FF, 0x284E57FF, 0x3F6B77FF, 0x598A97FF, 0x77AAB7FF, 0x99CAD7FF, 0xC0EBF7FF,
-//            0x001117FF, 0x002A37FF, 0x004357FF, 0x005D77FF, 0x007897FF, 0x0393B7FF, 0x11B0D7FF, 0x23CDF7FF,
-//            0x000617FF, 0x001137FF, 0x001F57FF, 0x002E77FF, 0x004097FF, 0x0854B7FF, 0x176AD7FF, 0x2983F7FF,
-//            0x0B0D17FF, 0x1E2237FF, 0x353A57FF, 0x515677FF, 0x707597FF, 0x9398B7FF, 0xBABED7FF, 0xE5E7F7FF,
-//            0x010017FF, 0x050037FF, 0x0B0057FF, 0x150077FF, 0x210097FF, 0x3000B7FF, 0x4200D7FF, 0x560DF7FF,
-//            0x000000FF, 0x101010FF, 0x202020FF, 0x303030FF, 0x404040FF, 0x505050FF, 0x606060FF, 0x707070FF,
-//            0x808080FF, 0x909090FF, 0xA0A0A0FF, 0xB0B0B0FF, 0xC0C0C0FF, 0xD0D0D0FF, 0xE0E0E0FF, 0xF0F0F0FF,
-//            0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF,
-//            0x170F03FF, 0x37250CFF, 0x573D19FF, 0x775729FF, 0x97723EFF, 0xB78F57FF, 0xD7AD73FF, 0xF7CE94FF,
-//            0x17100BFF, 0x37291DFF, 0x574334FF, 0x77604EFF, 0x977F6CFF, 0xB7A08FFF, 0xD7C4B5FF, 0xF7EAE0FF,
-//            0x170800FF, 0x371600FF, 0x572500FF, 0x773700FF, 0x974B08FF, 0xB76115FF, 0xD77927FF, 0xF7933CFF,
-//            0x170000FF, 0x370000FF, 0x570000FF, 0x770000FF, 0x970000FF, 0xB70808FF, 0xD71717FF, 0xF72929FF,
-//            0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF,
-//            0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF,
-
-//            0x00000000, 0x444444FF, 0x000000FF, 0x88FFFF00, 0x212121FF, 0x00FF00FF, 0x0000FFFF, 0x0F0F0FFF,
-//            0x2B2B2BFF, 0x474747FF, 0x636363FF, 0x7F7F7FFF, 0x9B9B9BFF, 0xB7B7B7FF, 0xD3D3D3FF, 0xEFEFEFFF,
-//            0x170101FF, 0x370707FF, 0x571111FF, 0x771E1EFF, 0x973030FF, 0xB74646FF, 0xD75F5FFF, 0xF77D7DFF,
-//            0x170B01FF, 0x371B06FF, 0x572E10FF, 0x77441DFF, 0x975B2EFF, 0xB77544FF, 0xD7915DFF, 0xF7B07AFF,
-//            0x170D03FF, 0x37200BFF, 0x573617FF, 0x774D27FF, 0x97673CFF, 0xB78354FF, 0xD7A070FF, 0xF7C090FF,
-//            0x170F01FF, 0x372407FF, 0x573B11FF, 0x77541FFF, 0x976E31FF, 0xB78A47FF, 0xD7A761FF, 0xF7C67FFF,
-//            0x171401FF, 0x373006FF, 0x574C0FFF, 0x77691CFF, 0x97872DFF, 0xB7A542FF, 0xD7C45BFF, 0xF7E378FF,
-//            0x171701FF, 0x373706FF, 0x575710FF, 0x77771DFF, 0x97972EFF, 0xB7B743FF, 0xD7D75DFF, 0xF7F77AFF,
-//            0x121701FF, 0x2D3706FF, 0x485710FF, 0x63771DFF, 0x80972FFF, 0x9EB744FF, 0xBCD75DFF, 0xDBF77BFF,
-//            0x101701FF, 0x283706FF, 0x40570EFF, 0x5A771BFF, 0x75972CFF, 0x92B741FF, 0xAFD75AFF, 0xCEF777FF,
-//            0x0D1702FF, 0x213709FF, 0x365714FF, 0x4E7723FF, 0x679736FF, 0x83B74DFF, 0xA0D768FF, 0xBFF787FF,
-//            0x041701FF, 0x0C3707FF, 0x195710FF, 0x28771EFF, 0x3C9730FF, 0x52B745FF, 0x6DD75FFF, 0x8BF77DFF,
-//            0x021707FF, 0x093714FF, 0x145724FF, 0x237737FF, 0x36974DFF, 0x4DB766FF, 0x68D782FF, 0x87F7A2FF,
-//            0x011710FF, 0x083726FF, 0x12573EFF, 0x207758FF, 0x329773FF, 0x48B78FFF, 0x62D7ADFF, 0x80F7CCFF,
-//            0x011717FF, 0x053736FF, 0x0E5755FF, 0x1B7775FF, 0x2C9794FF, 0x41B7B4FF, 0x5AD7D3FF, 0x76F7F3FF,
-//            0x021317FF, 0x082E37FF, 0x124957FF, 0x206677FF, 0x328397FF, 0x48A1B7FF, 0x63C0D7FF, 0x81DFF7FF,
-//            0x010B17FF, 0x071C37FF, 0x103057FF, 0x1E4577FF, 0x305D97FF, 0x4578B7FF, 0x5F94D7FF, 0x7DB3F7FF,
-//            0x010217FF, 0x060A37FF, 0x101557FF, 0x1D2377FF, 0x2F3697FF, 0x444CB7FF, 0x5E66D7FF, 0x7B83F7FF,
-//            0x080117FF, 0x150637FF, 0x250E57FF, 0x381B77FF, 0x4E2C97FF, 0x6641B7FF, 0x815AD7FF, 0x9F77F7FF,
-//            0x0D0117FF, 0x210737FF, 0x371157FF, 0x4E1F77FF, 0x683197FF, 0x8347B7FF, 0xA060D7FF, 0xBF7EF7FF,
-//            0x130217FF, 0x2F0837FF, 0x4B1257FF, 0x672077FF, 0x853297FF, 0xA348B7FF, 0xC263D7FF, 0xE181F7FF,
-//            0x170113FF, 0x37062DFF, 0x571048FF, 0x771D64FF, 0x972E81FF, 0xB7439EFF, 0xD75DBDFF, 0xF77ADCFF,
-//            0x17010BFF, 0x37061BFF, 0x570F2EFF, 0x771C44FF, 0x972D5BFF, 0xB74275FF, 0xD75B91FF, 0xF778AFFF,
-//            0x000000FF, 0x101010FF, 0x202020FF, 0x303030FF, 0x404040FF, 0x505050FF, 0x606060FF, 0x707070FF,
-//            0x000000FF, 0x101010FF, 0x202020FF, 0x303030FF, 0x404040FF, 0x505050FF, 0x606060FF, 0x707070FF,
-//            0x808080FF, 0x909090FF, 0xA0A0A0FF, 0xB0B0B0FF, 0xC0C0C0FF, 0xD0D0D0FF, 0xE0E0E0FF, 0xF0F0F0FF,
-//            0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF,
-//            0x171401FF, 0x373006FF, 0x574C0FFF, 0x77691CFF, 0x97872DFF, 0xB7A542FF, 0xD7C45BFF, 0xF7E378FF,
-//            0x170B01FF, 0x371B06FF, 0x572E10FF, 0x77441DFF, 0x975B2EFF, 0xB77544FF, 0xD7915DFF, 0xF7B07AFF,
-//            0x170D03FF, 0x37200BFF, 0x573617FF, 0x774D27FF, 0x97673CFF, 0xB78354FF, 0xD7A070FF, 0xF7C090FF,
-//            0x170101FF, 0x370707FF, 0x571111FF, 0x771E1EFF, 0x973030FF, 0xB74646FF, 0xD75F5FFF, 0xF77D7DFF,
-//            0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF, 0x000000FF,
-
-//            0x00000000, 0x444444FF, 0x000000FF, 0x88FFFF00, 0x212121FF, 0x00FF00FF, 0x0000FFFF, 0x0F0F0FFF,
-//            0x2B2B2BFF, 0x474747FF, 0x636363FF, 0x7F7F7FFF, 0x9B9B9BFF, 0xB7B7B7FF, 0xD3D3D3FF, 0xEFEFEFFF,
-//            0x170000FF, 0x370101FF, 0x570707FF, 0x771212FF, 0x972020FF, 0xB73232FF, 0xD74949FF, 0xF76363FF,
-//            0x17110DFF, 0x372B22FF, 0x57473BFF, 0x776558FF, 0x978679FF, 0xB7A99EFF, 0xD7CEC7FF, 0xF7F5F4FF,
-//            0x170B00FF, 0x371C04FF, 0x572F0CFF, 0x774519FF, 0x975C29FF, 0xB7763DFF, 0xD79155FF, 0xF7AF71FF,
-//            0x170E01FF, 0x372306FF, 0x573A0FFF, 0x77521CFF, 0x976C2DFF, 0xB78742FF, 0xD7A45CFF, 0xF7C379FF,
-//            0x171107FF, 0x372914FF, 0x574325FF, 0x775E3BFF, 0x977B54FF, 0xB79A71FF, 0xD7BB93FF, 0xF7DDB8FF,
-//            0x171401FF, 0x373006FF, 0x574C0FFF, 0x77691CFF, 0x97872DFF, 0xB7A542FF, 0xD7C45BFF, 0xF7E478FF,
-//            0x171708FF, 0x373718FF, 0x57572BFF, 0x777742FF, 0x97965DFF, 0xB7B67CFF, 0xD7D69FFF, 0xF7F6C6FF,
-//            0x15170BFF, 0x32371DFF, 0x4F5733FF, 0x6E774EFF, 0x8E976CFF, 0xAEB78EFF, 0xCFD7B5FF, 0xF1F7DFFF,
-//            0x121700FF, 0x2B3700FF, 0x455704FF, 0x60770DFF, 0x7C9719FF, 0x98B72AFF, 0xB6D73FFF, 0xD4F758FF,
-//            0x0F1700FF, 0x253700FF, 0x3C5700FF, 0x547708FF, 0x6E9713FF, 0x89B723FF, 0xA5D737FF, 0xC2F74EFF,
-//            0x13170EFF, 0x2E3726FF, 0x4C5741FF, 0x6B7760FF, 0x8D9783FF, 0xB1B7ABFF, 0xD6D7D6FF, 0xFEF7FFFF,
-//            0x001700FF, 0x053700FF, 0x0D5703FF, 0x18770CFF, 0x279718FF, 0x39B729FF, 0x4FD73EFF, 0x69F757FF,
-//            0x031707FF, 0x0A3715FF, 0x165725FF, 0x267738FF, 0x3A974FFF, 0x51B769FF, 0x6DD785FF, 0x8DF7A5FF,
-//            0x08170CFF, 0x17371EFF, 0x2A5734FF, 0x41774DFF, 0x5C9769FF, 0x7BB788FF, 0x9DD7AAFF, 0xC4F7D0FF,
-//            0x011710FF, 0x083726FF, 0x12573EFF, 0x207758FF, 0x329773FF, 0x48B78FFF, 0x62D7ADFF, 0x80F7CCFF,
-//            0x081717FF, 0x173736FF, 0x295756FF, 0x407776FF, 0x5B9795FF, 0x79B7B5FF, 0x9CD7D5FF, 0xC2F7F5FF,
-//            0x0A1517FF, 0x1C3237FF, 0x325057FF, 0x4B6E77FF, 0x698E97FF, 0x8BAEB7FF, 0xB1CFD7FF, 0xDAF1F7FF,
-//            0x001217FF, 0x002C37FF, 0x064757FF, 0x0F6277FF, 0x1D7F97FF, 0x2E9CB7FF, 0x44BAD7FF, 0x5ED8F7FF,
-//            0x000A17FF, 0x011937FF, 0x072A57FF, 0x113E77FF, 0x205497FF, 0x326CB7FF, 0x4887D7FF, 0x62A4F7FF,
-//            0x0D0E17FF, 0x232537FF, 0x3C3F57FF, 0x5A5D77FF, 0x7C7F97FF, 0xA1A4B7FF, 0xCBCCD7FF, 0xF8F8F7FF,
-//            0x050017FF, 0x0F0037FF, 0x1B0057FF, 0x2A0677FF, 0x3C1297FF, 0x5021B7FF, 0x6834D7FF, 0x814CF7FF,
-//            0x000000FF, 0x101010FF, 0x202020FF, 0x303030FF, 0x404040FF, 0x505050FF, 0x606060FF, 0x707070FF,
-//            0x808080FF, 0x909090FF, 0xA0A0A0FF, 0xB0B0B0FF, 0xC0C0C0FF, 0xD0D0D0FF, 0xE0E0E0FF, 0xF0F0F0FF,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-//            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
     };
     /**
      * DawnBringer's 256-color Aurora palette, modified slightly to fit one transparent color by removing one gray.
@@ -353,51 +179,7 @@ public class Coloring {
             0x7bd5f3ff, 0x6c88ffff, 0x6440d8ff, 0x3d2e93ff, 0x85a3c7ff, 0x676cadff, 0x683395ff, 0x323751ff,
             0xff59beff, 0xc51aeaff, 0x6e10abff, 0x331685ff, 0xfb9585ff, 0xe97461ff, 0xb53772ff, 0x93278fff,
     };
-
-    /**
-     * This palette was given along with the Unseven palette
-     * <a href="https://www.deviantart.com/foguinhos/art/Unseven-Full-541514728">in this set of swatches</a>, but it's
-     * unclear if Unseven made it, or if this palette was published in some other medium. It's a nice palette, with 8
-     * levels of lightness ramp for 30 ramps with different hues. It seems meant for pixel art that includes human
-     * characters, and doesn't lack for skin tones like Unseven does. It has a generally good selection of light brown
-     * colors, but less dark brown colors than one might expect, and many ramps become more purple as they go into
-     * darker shades.
-     */
-    public static final int[] RINSED_OLD = {
-            0x00000000, 0x444444ff, 0x000000ff, 0x88ffff00, 0x212121ff, 0x00ff00ff, 0x0000ffff, 0x080808ff,
-            0xff574600, 0xffb14600, 0xfffd4600, 0x4bff4600, 0x51bf6c00, 0x4697ff00, 0x9146ff00, 0xff46ae00,
-            0xf8f9faff, 0xc4c3c5ff, 0x9c9c9dff, 0x757676ff, 0x616262ff, 0x4c484aff, 0x252626ff, 0x090304ff,
-            0xfef5e1ff, 0xe9dfd3ff, 0xcfc5baff, 0xbaafabff, 0xaaa291ff, 0x9a877bff, 0x816f69ff, 0x615d56ff,
-            0xf9ce8fff, 0xeba685ff, 0xc48772ff, 0xa96e5cff, 0x8a5a4bff, 0x7c4b49ff, 0x6a3e3dff, 0x572d2fff,
-            0x97d6f9ff, 0x3eb0caff, 0x3c919fff, 0x0a737cff, 0x226171ff, 0x0b505fff, 0x0d3948ff, 0x052935ff,
-            0xfdf067ff, 0xfdbf60ff, 0xef995aff, 0xcc7148ff, 0xb65549ff, 0xa34547ff, 0x7d303fff, 0x61242fff,
-            0xceeefdff, 0xcdd7feff, 0xa1aed7ff, 0x898caeff, 0x7c7196ff, 0x5e597cff, 0x404163ff, 0x26294cff,
-            0xadd54bff, 0x80b040ff, 0x599135ff, 0x35761aff, 0x2a621fff, 0x1e5220ff, 0x063824ff, 0x012b1dff,
-            0x91fcfcff, 0x68dbfeff, 0x5cb1d5ff, 0x4c8caaff, 0x406883ff, 0x2b4965ff, 0x29324dff, 0x1c1e34ff,
-            0x91e49dff, 0x69c085ff, 0x4f8f62ff, 0x4a7855ff, 0x396044ff, 0x385240ff, 0x31413dff, 0x233631ff,
-            0xfcd9fbff, 0xfdb8c7ff, 0xfd97aaff, 0xf46e7eff, 0xc65365ff, 0x9e303cff, 0x741b28ff, 0x50071aff,
-            0xddbba4ff, 0xc0a68fff, 0x9f8871ff, 0x7f6b5cff, 0x6b5755ff, 0x5d464cff, 0x482f3dff, 0x30232dff,
-            0xf7c1e7ff, 0xd791c6ff, 0xbb6faaff, 0xaf6190ff, 0x924b76ff, 0x623155ff, 0x47253fff, 0x2f0e25ff,
-            0x09efd0ff, 0x07cca2ff, 0x03aa83ff, 0x038d75ff, 0x04726dff, 0x01585aff, 0x05454eff, 0x083142ff,
-            0xfef1a8ff, 0xe4ce85ff, 0xc9ad77ff, 0xb19169ff, 0x957859ff, 0x7b604cff, 0x60463bff, 0x472f2aff,
-            0xeed8a1ff, 0xe7b38cff, 0xcc967fff, 0xb6776dff, 0x995a55ff, 0x803d49ff, 0x662139ff, 0x500328ff,
-            0xe3d1fdff, 0xbaabfaff, 0x9f94e2ff, 0x9588d7ff, 0x7b71b3ff, 0x675e9cff, 0x4f4d7cff, 0x333158ff,
-            0xfdc7fbff, 0xfc9fc5ff, 0xfb71a9ff, 0xe6497eff, 0xc33c6bff, 0x933255ff, 0x68243fff, 0x3f122aff,
-            0xd89789ff, 0xc4877aff, 0xb47b76ff, 0xa36c72ff, 0x905861ff, 0x76454cff, 0x5f3234ff, 0x452327ff,
-            0xcbd350ff, 0xb3b24bff, 0x9a9e3aff, 0x808b30ff, 0x647717ff, 0x4b6309ff, 0x305413ff, 0x272a07ff,
-            0xfefc74ff, 0xe8d861ff, 0xcdad53ff, 0xb2893eff, 0x91672fff, 0x7d4f21ff, 0x693c12ff, 0x562810ff,
-            0xf9dcb8ff, 0xceb29aff, 0xb29891ff, 0x8f797fff, 0x75636fff, 0x554b67ff, 0x3e3552ff, 0x272340ff,
-            0x8dc655ff, 0x7ba838ff, 0x6c8a37ff, 0x5d733aff, 0x4f633cff, 0x3f5244ff, 0x323d4aff, 0x232a45ff,
-            0xeaa18dff, 0xcf9180ff, 0xb87c6bff, 0xa06a60ff, 0x905c59ff, 0x73474bff, 0x52383eff, 0x35242aff,
-            0xe8ffefff, 0xa9ddc0ff, 0x95c89cff, 0x91b48eff, 0x759983ff, 0x627f72ff, 0x4c655cff, 0x36514aff,
-            0x80d1fbff, 0x62b2e7ff, 0x4d96dbff, 0x267db9ff, 0x195f97ff, 0x114776ff, 0x0b355aff, 0x031d41ff,
-            0xfdfe9cff, 0xfdd7aaff, 0xe9bba4ff, 0xc9a09dff, 0xb7889aff, 0x957088ff, 0x755b7bff, 0x514265ff,
-            0xd2bafbff, 0xbda5f0ff, 0xab90edff, 0x977ae8ff, 0x745dadff, 0x584481ff, 0x3f314cff, 0x221f24ff,
-            0x8391c1ff, 0x7181caff, 0x5e71beff, 0x555fa2ff, 0x424c84ff, 0x323b6dff, 0x2b325cff, 0x292349ff,
-            0xfddddcff, 0xd1abb1ff, 0xb48c9aff, 0x9d7482ff, 0x8b5d6eff, 0x705057ff, 0x583c4bff, 0x421e29ff,
-            0xfdfcb7ff, 0xfcfa3cff, 0xfad725ff, 0xf5b325ff, 0xd7853cff, 0xb25345ff, 0x8a2b2bff, 0x67160aff,
-    };
-
+    
     /**
      * This palette was given along with the Unseven palette
      * <a href="https://www.deviantart.com/foguinhos/art/Unseven-Full-541514728">in this set of swatches</a>, but it's
@@ -407,15 +189,14 @@ public class Coloring {
      * colors, and has been adjusted to add some dark brown colors, as well as vividly saturated purple. Many ramps also
      * become more purple as they go into darker shades.
      * <p>
-     * This is organized so the colors from index 24 to index 255 inclusive are sorted by hue, from red to orange to
+     * This is organized so the colors from index 1 to index 232 inclusive are sorted by hue, from red to orange to
      * yellow to green to blue to purple, while still being organized in blocks of 8 colors at a time from bright to
      * dark. Some almost-grayscale blocks are jumbled in the middle, but they do have a hue and it is always at the
      * point where they are in the sort. A block of colors that are practically true grayscale are at indices 16-23,
      * inclusive.
      */
     public static final int[] RINSED = {
-            0x00000000, 0x4444447F, 0x1111117F, 0x88FFFF00, 0x2121217F, 0x00FF003F, 0x0000FF3F, 0x0808083F,
-            0xFF574600, 0xFFB14600, 0xFFFD4600, 0x4BFF4600, 0x51BF6C00, 0x4697FF00, 0x9146FF00, 0xFF46AE00,
+            0x00000000,
             0xF8F9FAFF, 0xC4C3C5FF, 0x9C9C9DFF, 0x757676FF, 0x616262FF, 0x4C484AFF, 0x252626FF, 0x090304FF,
             0xD89789FF, 0xC4877AFF, 0xB47B76FF, 0xA36C72FF, 0x905861FF, 0x76454CFF, 0x5F3234FF, 0x452327FF,
             0xF9DCB8FF, 0xCEB29AFF, 0xB29891FF, 0x8F797FFF, 0x75636FFF, 0x554B67FF, 0x3E3552FF, 0x272340FF,
@@ -448,119 +229,107 @@ public class Coloring {
             0xFCD9FBFF, 0xFDB8C7FF, 0xFD97AAFF, 0xF46E7EFF, 0xC65365FF, 0x9E303CFF, 0x741B28FF, 0x50071AFF,
     };
 
-//    /**
-//     * @param name Name of a color
-//     * @return Retrieves color as a byte from RINSED_NAMES, or 0 if the name isn't found
-//     */
-//    public static byte rinsed(String name) {
-//        return RINSED_NAMES.getOrDefault(name, 0).byteValue();
-//    }
-//
-//    /**
-//     * Big OrderedMap of a name for each color in {@link #RINSED}, mapping String keys to index values, while also
-//     * allowing lookup from an index to the corresponding String key using {@link OrderedMap#keyAt(int)}.
-//     * Colors with numbers after the names have 0 mean the lightest color in a ramp and 7 mean the darkest.
-//     * If you're reading the source, there's a comment above each ramp saying which index that ramp would have out of
-//     * the full list of 30 ramps (each with 8 colors). The first ramp, which goes from white to black, takes up index 16
-//     * to index 23. Before that, there's various special-use colors, such as invisible connectors for joining parts of
-//     * some larger model, and a reserved black outline for when solid black surrounds the edges of a render.
-//     */
-//    public static final OrderedMap<String, Integer> RINSED_NAMES = OrderedMap.makeMap(
-//            "Transparent", 0, "Shadow", 1, "Black Outline", 2, "Outlined Glass", 3,
-//            "Gleaming Eyes", 4, "Green Placeholder", 5, "Blue Placeholder", 6, "Dark Placeholder", 7,
-//            "Connector A", 8, "Connector B", 9, "Connector C", 10, "Connector D", 11,
-//            "Connector E", 12, "Connector F", 13, "Connector G", 14, "Connector H", 15,
-//            //0
-//            "Gray 0", 16, "Gray 1", 17, "Gray 2", 18, "Gray 3", 19,
-//            "Gray 4", 20, "Gray 5", 21, "Gray 6", 22, "Gray 7", 23,
-//            //1
-//            "Blush Skin 0", 24, "Blush Skin 1", 25, "Blush Skin 2", 26, "Blush Skin 3", 27,
-//            "Blush Skin 4", 28, "Blush Skin 5", 29, "Blush Skin 6", 30, "Blush Skin 7", 31,
-//            //2
-//            "Dark Deepening Skin 0", 32, "Dark Deepening Skin 1", 33, "Dark Deepening Skin 2", 34, "Dark Deepening Skin 3", 35,
-//            "Dark Deepening Skin 4", 36, "Dark Deepening Skin 5", 37, "Dark Deepening Skin 6", 38, "Dark Deepening Skin 7", 39,
-//            //3
-//            "Warm Skin 0", 40, "Warm Skin 1", 41, "Warm Skin 2", 42, "Warm Skin 3", 43,
-//            "Warm Skin 4", 44, "Warm Skin 5", 45, "Warm Skin 6", 46, "Warm Skin 7", 47,
-//            //4
-//            "Dark Skin 0", 48, "Dark Skin 1", 49, "Dark Skin 2", 50, "Dark Skin 3", 51,
-//            "Dark Skin 4", 52, "Dark Skin 5", 53, "Dark Skin 6", 54, "Dark Skin 7", 55,
-//            //5
-//            "Bold Skin 0", 56, "Bold Skin 1", 57, "Bold Skin 2", 58, "Bold Skin 3", 59,
-//            "Bold Skin 4", 60, "Bold Skin 5", 61, "Bold Skin 6", 62, "Bold Skin 7", 63,
-//            //6
-//            "Light Deepening Skin 0", 64, "Light Deepening Skin 1", 65, "Light Deepening Skin 2", 66, "Light Deepening Skin 3", 67,
-//            "Light Deepening Skin 4", 68, "Light Deepening Skin 5", 69, "Light Deepening Skin 6", 70, "Light Deepening Skin 7", 71,
-//            //7
-//            "Yellow Orange 0", 72, "Yellow Orange 1", 73, "Yellow Orange 2", 74, "Yellow Orange 3", 75,
-//            "Yellow Orange 4", 76, "Yellow Orange 5", 77, "Yellow Orange 6", 78, "Yellow Orange 7", 79,
-//            //8
-//            "Wood 0", 80, "Wood 1", 81, "Wood 2", 82, "Wood 3", 83,
-//            "Wood 4", 84, "Wood 5", 85, "Wood 6", 86, "Wood 7", 87,
-//            //9
-//            "Discolored Gray 0", 88, "Discolored Gray 1", 89, "Discolored Gray 2", 90, "Discolored Gray 3", 91,
-//            "Discolored Gray 4", 92, "Discolored Gray 5", 93, "Discolored Gray 6", 94, "Discolored Gray 7", 95,
-//            //10
-//            "Bronze Skin 0", 96, "Bronze Skin 1", 97, "Bronze Skin 2", 98, "Bronze Skin 3", 99,
-//            "Bronze Skin 4", 100, "Bronze Skin 5", 101, "Bronze Skin 6", 102, "Bronze Skin 7", 103,
-//            //11
-//            "Gold Fur 0", 104, "Gold Fur 1", 105, "Gold Fur 2", 106, "Gold Fur 3", 107,
-//            "Gold Fur 4", 108, "Gold Fur 5", 109, "Gold Fur 6", 110, "Gold Fur 7", 111,
-//            //12
-//            "Fire 0", 112, "Fire 1", 113, "Fire 2", 114, "Fire 3", 115,
-//            "Fire 4", 116, "Fire 5", 117, "Fire 6", 118, "Fire 7", 119,
-//            //13
-//            "Avocado 0", 120, "Avocado 1", 121, "Avocado 2", 122, "Avocado 3", 123,
-//            "Avocado 4", 124, "Avocado 5", 125, "Avocado 6", 126, "Avocado 7", 127,
-//            //14
-//            "Dull Green 0", 128, "Dull Green 1", 129, "Dull Green 2", 130, "Dull Green 3", 131,
-//            "Dull Green 4", 132, "Dull Green 5", 133, "Dull Green 6", 134, "Dull Green 7", 135,
-//            //15
-//            "Vivid Green 0", 136, "Vivid Green 1", 137, "Vivid Green 2", 138, "Vivid Green 3", 139,
-//            "Vivid Green 4", 140, "Vivid Green 5", 141, "Vivid Green 6", 142, "Vivid Green 7", 143,
-//            //16
-//            "Gray Green 0", 144, "Gray Green 1", 145, "Gray Green 2", 146, "Gray Green 3", 147,
-//            "Gray Green 4", 148, "Gray Green 5", 149, "Gray Green 6", 150, "Gray Green 7", 151,
-//            //17
-//            "Cold Forest 0", 152, "Cold Forest 1", 153, "Cold Forest 2", 154, "Cold Forest 3", 155,
-//            "Cold Forest 4", 156, "Cold Forest 5", 157, "Cold Forest 6", 158, "Cold Forest 7", 159,
-//            //18
-//            "Turquoise 0", 160, "Turquoise 1", 161, "Turquoise 2", 162, "Turquoise 3", 163,
-//            "Turquoise 4", 164, "Turquoise 5", 165, "Turquoise 6", 166, "Turquoise 7", 167,
-//            //19
-//            "Coastal Water 0", 168, "Coastal Water 1", 169, "Coastal Water 2", 170, "Coastal Water 3", 171,
-//            "Coastal Water 4", 172, "Coastal Water 5", 173, "Coastal Water 6", 174, "Coastal Water 7", 175,
-//            //20
-//            "Ice 0", 176, "Ice 1", 177, "Ice 2", 178, "Ice 3", 179,
-//            "Ice 4", 180, "Ice 5", 181, "Ice 6", 182, "Ice 7", 183,
-//            //21
-//            "Powder Blue 0", 184, "Powder Blue 1", 185, "Powder Blue 2", 186, "Powder Blue 3", 187,
-//            "Powder Blue 4", 188, "Powder Blue 5", 189, "Powder Blue 6", 190, "Powder Blue 7", 191,
-//            //22
-//            "Dusty Gray 0", 192, "Dusty Gray 1", 193, "Dusty Gray 2", 194, "Dusty Gray 3", 195,
-//            "Dusty Gray 4", 196, "Dusty Gray 5", 197, "Dusty Gray 6", 198, "Dusty Gray 7", 199,
-//            //23
-//            "Blue Steel 0", 200, "Blue Steel 1", 201, "Blue Steel 2", 202, "Blue Steel 3", 203,
-//            "Blue Steel 4", 204, "Blue Steel 5", 205, "Blue Steel 6", 206, "Blue Steel 7", 207,
-//            //24
-//            "Lavender 0", 208, "Lavender 1", 209, "Lavender 2", 210, "Lavender 3", 211,
-//            "Lavender 4", 212, "Lavender 5", 213, "Lavender 6", 214, "Lavender 7", 215,
-//            //25
-//            "Heliotrope 0", 216, "Heliotrope 1", 217, "Heliotrope 2", 218, "Heliotrope 3", 219,
-//            "Heliotrope 4", 220, "Heliotrope 5", 221, "Heliotrope 6", 222, "Heliotrope 7", 223,
-//            //26
-//            "Purple 0", 224, "Purple 1", 225, "Purple 2", 226, "Purple 3", 227,
-//            "Purple 4", 228, "Purple 5", 229, "Purple 6", 230, "Purple 7", 231,
-//            //27
-//            "Hot Pink 0", 232, "Hot Pink 1", 233, "Hot Pink 2", 234, "Hot Pink 3", 235,
-//            "Hot Pink 4", 236, "Hot Pink 5", 237, "Hot Pink 6", 238, "Hot Pink 7", 239,
-//            //28
-//            "Withered Plum 0", 240, "Withered Plum 1", 241, "Withered Plum 2", 242, "Withered Plum 3", 243,
-//            "Withered Plum 4", 244, "Withered Plum 5", 245, "Withered Plum 6", 246, "Withered Plum 7", 247,
-//            //29
-//            "Red 0", 248, "Red 1", 249, "Red 2", 250, "Red 3", 251,
-//            "Red 4", 252, "Red 5", 253, "Red 6", 254, "Red 7", 255);
-    
+    /**
+     * @param name Name of a color
+     * @return Retrieves color as an int from RINSED_MAP, or 0 if the name isn't found
+     */
+    public static int rinsed(String name) {
+        return RINSED_MAP.get(name, 0);
+    }
+
+    public static final String[] RINSED_NAMES = {
+            "Transparent",
+            //0
+            "Gray 0", "Gray 1", "Gray 2", "Gray 3",
+            "Gray 4", "Gray 5", "Gray 6", "Gray 7",
+            //1
+            "Blush Skin 0", "Blush Skin 1", "Blush Skin 2", "Blush Skin 3",
+            "Blush Skin 4", "Blush Skin 5", "Blush Skin 6", "Blush Skin 7",
+            //2
+            "Dark Deepening Skin 0", "Dark Deepening Skin 1", "Dark Deepening Skin 2", "Dark Deepening Skin 3",
+            "Dark Deepening Skin 4", "Dark Deepening Skin 5", "Dark Deepening Skin 6", "Dark Deepening Skin 7",
+            //3
+            "Warm Skin 0", "Warm Skin 1", "Warm Skin 2", "Warm Skin 3",
+            "Warm Skin 4", "Warm Skin 5", "Warm Skin 6", "Warm Skin 7",
+            //4
+            "Dark Skin 0", "Dark Skin 1", "Dark Skin 2", "Dark Skin 3",
+            "Dark Skin 4", "Dark Skin 5", "Dark Skin 6", "Dark Skin 7",
+            //5
+            "Bold Skin 0", "Bold Skin 1", "Bold Skin 2", "Bold Skin 3",
+            "Bold Skin 4", "Bold Skin 5", "Bold Skin 6", "Bold Skin 7",
+            //6
+            "Light Deepening Skin 0", "Light Deepening Skin 1", "Light Deepening Skin 2", "Light Deepening Skin 3",
+            "Light Deepening Skin 4", "Light Deepening Skin 5", "Light Deepening Skin 6", "Light Deepening Skin 7",
+            //7
+            "Yellow Orange 0", "Yellow Orange 1", "Yellow Orange 2", "Yellow Orange 3",
+            "Yellow Orange 4", "Yellow Orange 5", "Yellow Orange 6", "Yellow Orange 7",
+            //8
+            "Wood 0", "Wood 1", "Wood 2", "Wood 3",
+            "Wood 4", "Wood 5", "Wood 6", "Wood 7",
+            //9
+            "Discolored Gray 0", "Discolored Gray 1", "Discolored Gray 2", "Discolored Gray 3",
+            "Discolored Gray 4", "Discolored Gray 5", "Discolored Gray 6", "Discolored Gray 7",
+            //10
+            "Bronze Skin 0", "Bronze Skin 1", "Bronze Skin 2", "Bronze Skin 3",
+            "Bronze Skin 4", "Bronze Skin 5", "Bronze Skin 6", "Bronze Skin 7",
+            //11
+            "Gold Fur 0", "Gold Fur 1", "Gold Fur 2", "Gold Fur 3",
+            "Gold Fur 4", "Gold Fur 5", "Gold Fur 6", "Gold Fur 7",
+            //12
+            "Fire 0", "Fire 1", "Fire 2", "Fire 3",
+            "Fire 4", "Fire 5", "Fire 6", "Fire 7",
+            //13
+            "Avocado 0", "Avocado 1", "Avocado 2", "Avocado 3",
+            "Avocado 4", "Avocado 5", "Avocado 6", "Avocado 7",
+            //14
+            "Dull Green 0", "Dull Green 1", "Dull Green 2", "Dull Green 3",
+            "Dull Green 4", "Dull Green 5", "Dull Green 6", "Dull Green 7",
+            //15
+            "Vivid Green 0", "Vivid Green 1", "Vivid Green 2", "Vivid Green 3",
+            "Vivid Green 4", "Vivid Green 5", "Vivid Green 6", "Vivid Green 7",
+            //16
+            "Gray Green 0", "Gray Green 1", "Gray Green 2", "Gray Green 3",
+            "Gray Green 4", "Gray Green 5", "Gray Green 6", "Gray Green 7",
+            //17
+            "Cold Forest 0", "Cold Forest 1", "Cold Forest 2", "Cold Forest 3",
+            "Cold Forest 4", "Cold Forest 5", "Cold Forest 6", "Cold Forest 7",
+            //18
+            "Turquoise 0", "Turquoise 1", "Turquoise 2", "Turquoise 3",
+            "Turquoise 4", "Turquoise 5", "Turquoise 6", "Turquoise 7",
+            //19
+            "Coastal Water 0", "Coastal Water 1", "Coastal Water 2", "Coastal Water 3",
+            "Coastal Water 4", "Coastal Water 5", "Coastal Water 6", "Coastal Water 7",
+            //20
+            "Ice 0", "Ice 1", "Ice 2", "Ice 3",
+            "Ice 4", "Ice 5", "Ice 6", "Ice 7",
+            //21
+            "Powder Blue 0", "Powder Blue 1", "Powder Blue 2", "Powder Blue 3",
+            "Powder Blue 4", "Powder Blue 5", "Powder Blue 6", "Powder Blue 7",
+            //22
+            "Dusty Gray 0", "Dusty Gray 1", "Dusty Gray 2", "Dusty Gray 3",
+            "Dusty Gray 4", "Dusty Gray 5", "Dusty Gray 6", "Dusty Gray 7",
+            //23
+            "Blue Steel 0", "Blue Steel 1", "Blue Steel 2", "Blue Steel 3",
+            "Blue Steel 4", "Blue Steel 5", "Blue Steel 6", "Blue Steel 7",
+            //24
+            "Lavender 0", "Lavender 1", "Lavender 2", "Lavender 3",
+            "Lavender 4", "Lavender 5", "Lavender 6", "Lavender 7",
+            //25
+            "Heliotrope 0", "Heliotrope 1", "Heliotrope 2", "Heliotrope 3",
+            "Heliotrope 4", "Heliotrope 5", "Heliotrope 6", "Heliotrope 7",
+            //26
+            "Purple 0", "Purple 1", "Purple 2", "Purple 3",
+            "Purple 4", "Purple 5", "Purple 6", "Purple 7",
+            //27
+            "Hot Pink 0", "Hot Pink 1", "Hot Pink 2", "Hot Pink 3",
+            "Hot Pink 4", "Hot Pink 5", "Hot Pink 6", "Hot Pink 7",
+            //28
+            "Withered Plum 0", "Withered Plum 1", "Withered Plum 2", "Withered Plum 3",
+            "Withered Plum 4", "Withered Plum 5", "Withered Plum 6", "Withered Plum 7",
+            //29
+            "Red 0", "Red 1", "Red 2", "Red 3",
+            "Red 4", "Red 5", "Red 6", "Red 7",
+};    
     public static final int[] PURE = {
             0x00000000, 
             0x000000FF, 0x202020FF, 0x404040FF, 0x606060FF, 0x808080FF, 0xA0A0A0FF, 0xC0C0C0FF, 0xE0E0E0FF, 0xFFFFFFFF, //Gray
@@ -576,6 +345,19 @@ public class Coloring {
             //0xF7C1E7FF, 0xD791C6FF, 0xBB6FAAFF, 0xAF6190FF, 0x924B76FF, 0x623155FF, 0x47253FFF, 0x2F0E25FF, //Purple
             0xFCD9FBFF, 0xFDB8C7FF, 0xFD97AAFF, 0xF46E7EFF, 0xC65365FF, 0x9E303CFF, 0x741B28FF, 0x50071AFF, //Red
     };
+    /**
+     * Big ObjectIntMap of a name for each color in {@link #RINSED}, mapping String keys to RGBA8888 color ints.
+     * Colors with numbers after the names have 0 mean the lightest color in a ramp and 7 mean the darkest.
+     * If you're reading the source, there's a comment above each ramp saying which index that ramp would have out of
+     * the full list of 30 ramps (each with 8 colors). The first ramp, which goes from white to black, takes up index 1
+     * to index 8.
+     */
+    public static final ObjectIntMap<String> RINSED_MAP = new ObjectIntMap<>(256);
+    static {
+        for (int i = 0; i < RINSED.length; i++) {
+            RINSED_MAP.put(RINSED_NAMES[i], RINSED[i]);
+        }
+    }
 
     /**
      * DawnBringer16 palette, plus transparent first. Has slight changes to match the palette used in DawnLike.
@@ -693,64 +475,6 @@ public class Coloring {
             0xF34FE9FF, 0x7A3045FF, 0xF04F78FF, 0xC93038FF,
     };
     
-    public static final int[] FLESURRECT_ALT = {
-            0x00000000, 0x0F0813FF,
-            0x41484BFF, 0x6F717AFF, 0x9CA3A8FF, 0xBFCBCFFF,
-            0xD9E5EDFF, 0xf0f0f0FF, 0x5C3A41FF, 0x826481FF,
-            0x966C6CFF, 0x715A56FF, 0xAB947AFF, 0xF68181FF,
-            0xF53333FF, 0x5A0A07FF, 0xAE4539FF, 0x8A503EFF,
-            0xCD683DFF, 0xFBA458FF, 0xcc7e35FF, 0xDDBBA4FF,
-            0xFDD7AAFF, 0xFFA514FF, 0xC29162FF, 0xE8B710FF,
-            0xFBE626FF, 0xb8ff9eFF, 0x65e800FF, 0xB4D645FF,
-            0x156e05FF, 0xC8E4BEFF, 0x45F520FF, 0x51C43FFF,
-            0x8cd1bbFF, 0x55F084FF, 0x1EBC73FF, 0x30E1B9FF,
-            0x7FE0C2FF, 0xB8FDFFFF, 0x039F78FF, 0x63C2C9FF,
-            0x216981FF, 0x7FE8F2FF, 0x5369EFFF, 0x4D9BE6FF,
-            0x28306FFF, 0x5C76BFFF, 0x4D44C0FF, 0x180FCFFF,
-            0x53207DFF, 0x8657CCFF, 0xA884F3FF, 0x630867FF,
-            0xA03EB2FF, 0x881AC4FF, 0xE4A8FAFF, 0xB53D86FF,
-            0xF34FE9FF, 0x7A3045FF, 0xF04F78FF, 0xC93038FF,
-            0xceb0ffFF, 0x6100c2FF, 0xdef200FF
-    };
-//    { // not-as-old, but still has some near-duplicate colors
-//            0x00000000, 0x1F1833FF, 0x2B2E42FF, 0x3E3546FF,
-//            0x414859FF, 0x68717AFF, 0x90A1A8FF, 0xB6CBCFFF,
-//            0xD3E5EDFF, 0xFFFFFFFF, 0x5C3A41FF, 0x826481FF,
-//            0x966C6CFF, 0xAB947AFF, 0xF68181FF, 0xF53333FF,
-//            0x5A0A07FF, 0xAE4539FF, 0x8A503EFF, 0xCD683DFF,
-//            0xFBA458FF, 0xFB6B1DFF, 0x9F8562FF, 0xF9C79FFF,
-//            0xFFA514FF, 0xE8B710FF, 0xE3C896FF, 0xFBE626FF,
-//            0xC0B510FF, 0xFBFF86FF, 0xB4D645FF, 0x729446FF,
-//            0x91DB69FF, 0x358510FF, 0x51C43FFF, 0x0E4904FF,
-//            0x4BA14AFF, 0x1EBC73FF, 0x30E1B9FF, 0x7FE0C2FF,
-//            0xB8FDFFFF, 0x039F78FF, 0x63C2C9FF, 0x216981FF,
-//            0x7FE8F2FF, 0x3B509FFF, 0x4D9BE6FF, 0x28306FFF,
-//            0x5C76BFFF, 0x4D50D4FF, 0x180FCFFF, 0x53207DFF,
-//            0x8657CCFF, 0xA884F3FF, 0x630867FF, 0xA03EB2FF,
-//            0x881AC4FF, 0xE4A8FAFF, 0xB53D86FF, 0xF34FE9FF,
-//            0x7A3045FF, 0xF04F78FF, 0xC27182FF, 0xC93038FF,
-//    };
-// // old FLESURRECT palette, does not have very dark green or red
-//    {
-//            0x00000000, 0x1F1833FF, 0x2B2E42FF, 0x3E3546FF,
-//            0x414859FF, 0x68717AFF, 0x90A1A8FF, 0xB6CBCFFF,
-//            0xD3E5EDFF, 0xFFFFFFFF, 0x5C3A41FF, 0x826481FF,
-//            0x966C6CFF, 0xAB947AFF, 0xF68181FF, 0xF53333FF,
-//            0xFF5A4AFF, 0xAE4539FF, 0x8A503EFF, 0xCD683DFF,
-//            0xFBA458FF, 0xFB6B1DFF, 0x9F8562FF, 0xFCBF8AFF,
-//            0xFF9E17FF, 0xF0B628FF, 0xE3C896FF, 0xFBE626FF,
-//            0xEDD500FF, 0xFBFF86FF, 0xB4D645FF, 0x729446FF,
-//            0x91DB69FF, 0x358510FF, 0x51C43FFF, 0x4BA14AFF,
-//            0x1EBC73FF, 0x30E1B9FF, 0x7FE0C2FF, 0xB8FDFFFF,
-//            0x039F78FF, 0x63C2C9FF, 0x4F83BFFF, 0x216981FF,
-//            0x7FE8F2FF, 0x3B509FFF, 0x4D9BE6FF, 0x28306FFF,
-//            0x4870CFFF, 0x4D50D4FF, 0x180FCFFF, 0x53207DFF,
-//            0x8657CCFF, 0xA884F3FF, 0x630867FF, 0xA03EB2FF,
-//            0x8032BCFF, 0xE4A8FAFF, 0xB53D86FF, 0xF34FE9FF,
-//            0x7A3045FF, 0xF04F78FF, 0xC27182FF, 0xC93038FF,
-//    };
-//
-
     public static final PaletteReducer FLESURRECT_REDUCER = new PaletteReducer(FLESURRECT,
             "\001\001\001\001\001\001\001\001\001\001\001000000043333333333333\001\001\001\001\001\001\001\001\001\001\001000000003333333333333\001\001\001\001\001\001\001\001\001\001\002000000003333333333333\001\001\001\001\001\001\001\001\001\001\002000000000333333333333"+
                     "\001\001\001\001\001\001\001\001\001\002\002000000000333333333333$\001\001\001\001\001\001\001\002\002\002000000000333333333333$$$\001\001\001\001\002\002\002\002000000000333333333333$$$$$\002\002\002\002\002\0020000000,,22333333333."+
@@ -1194,17 +918,6 @@ public class Coloring {
             0x746658FF, 0x6B7B89FF, 0x939388FF
     };
     
-    public static final int[] CURVEBALL64 = {
-            0x00000000, 0xF1D5B0FF, 0xF9C969FF, 0xA4CE87FF, 0xAFF8EFFF, 0x1DAA9DFF, 0x10D6DBFF, 0x1C1C1CFF,
-            0x106AD4FF, 0x7FA8F8FF, 0x5229EEFF, 0x79A2F9FF, 0xA11BFDFF, 0xD486F3FF, 0xEC9E38FF, 0x3D3D3DFF,
-            0x9CFEE7FF, 0x81ECD7FF, 0x3AD6D9FF, 0x26E0D3FF, 0xB1EDEDFF, 0x7895CAFF, 0x879AFCFF, 0x5E5E5EFF,
-            0xC5A3EAFF, 0xBD15FFFF, 0xFB8DBBFF, 0xB91DB1FF, 0xCF48CCFF, 0xF16F9BFF, 0xC9D88DFF, 0x7F7F7FFF,
-            0xBCDD8EFF, 0x89E3CEFF, 0x51C7EEFF, 0x7AAAF2FF, 0x839FDAFF, 0xA3A0DEFF, 0xBF93F8FF, 0x9C9C9CFF,
-            0xBB44ACFF, 0xDF6AEEFF, 0xFD47F9FF, 0xB7E88FFF, 0x9FE0B2FF, 0x68F6E5FF, 0x6FE0C1FF, 0xBDBDBDFF,
-            0x70FCCEFF, 0x3DA1C7FF, 0x6DABEFFF, 0xC8ADF2FF, 0xBD63FFFF, 0xBA37D9FF, 0xAF68B1FF, 0xDEDEDEFF,
-            0xF345DEFF, 0xE1B29BFF, 0xFAC05AFF, 0xCFE996FF, 0xA0F18DFF, 0x76CA7CFF, 0xA9EFD9FF, 0xFFFFFFFF, 
-    };
-
     /**
      * Not very usable on its own because the brightnesses here are artificially close together; meant for use as part
      * of a Bonus Colorizer.

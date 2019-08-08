@@ -1,5 +1,6 @@
 package colorweaver;
 
+import colorweaver.tools.StringKit;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -384,7 +385,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
 //                color[1] = Math.sqrt(1.0 - nextDouble() * nextDouble()) * 100.0;
 //                color[2] = curvedDouble() * 100.0;
 //                color[2] = i * (94.0 / 255.0) + 3.0;
-//                System.out.println(StringKit.join(", ", color) + "  -> " + StringKit.join(", ", HSLUVColorConverter.hsluvToRgb(color)));                 
+//                System.out.println(StringKit.join(", ", color) + "  -> " + StringKit.join(", ", HSLUVConverter.hsluvToRgb(color)));                 
 
 ////normally this next section is used
                   r = MathUtils.clamp((int) ((luma + warm * 0.625 - mild * 0.5) * 255.5), 0, 255);

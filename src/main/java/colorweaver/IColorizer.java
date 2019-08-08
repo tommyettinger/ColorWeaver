@@ -1,4 +1,4 @@
-package colorweaver.model.color;
+package colorweaver;
 
 /**
  * An interface to abstract away the complexity of different color palettes

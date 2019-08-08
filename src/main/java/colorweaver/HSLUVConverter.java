@@ -18,11 +18,12 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-package org.hsluv;
+package colorweaver;
 
-import colorweaver.StringKit;
+import colorweaver.tools.StringKit;
+import colorweaver.tools.TrigTools;
 
-public class HSLUVColorConverter {
+public class HSLUVConverter {
     private static final double[][] m = new double[][]
             {
                     new double[]{3.240969941904521, -1.537383177570093, -0.498610760293},
@@ -78,7 +79,7 @@ public class HSLUVColorConverter {
     }
 
     private static double lengthOfRayUntilIntersect(double theta, double[] line) {
-        return line[1] / (Math.sin(theta) - line[0] * Math.cos(theta));
+        return line[1] / (TrigTools.sin(theta) - line[0] * TrigTools.cos(theta));
     }
 
     private static double maxSafeChromaForL(double L) {
@@ -226,7 +227,7 @@ public class HSLUVColorConverter {
         if (C < 0.00000001) {
             H = 0;
         } else {
-            double Hrad = Math.atan2(V, U);
+            double Hrad = TrigTools.atan2(V, U);
 
             // pi to more digits than they provide it in the stdlib
             H = (Hrad * 180.0) / 3.1415926535897932;
@@ -247,8 +248,8 @@ public class HSLUVColorConverter {
 
         double Hrad = (H / 360.0) * 6.283185307179586;
         result[0] = L;
-        result[1] = Math.cos(Hrad) * C;
-        result[2] = Math.sin(Hrad) * C;
+        result[1] = TrigTools.cos(Hrad) * C;
+        result[2] = TrigTools.sin(Hrad) * C;
     }
 
     public static void hsluvToLch(double[] tuple, double[] result) {

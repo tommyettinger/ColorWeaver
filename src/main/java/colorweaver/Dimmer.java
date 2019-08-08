@@ -1,7 +1,6 @@
-package colorweaver.view.color;
+package colorweaver;
 
 import com.badlogic.gdx.math.MathUtils;
-import colorweaver.Coloring;
 
 /**
  * Dimmer provides default implementations of bright, dimmer, dim and dark which refer to the light method, and a default implementation of the light method which refers to the other four. Extension classes can overload just the light method or alternatively can overload the other four. Either way will work.
