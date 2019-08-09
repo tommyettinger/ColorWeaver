@@ -37,6 +37,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
     private Texture palette;
     private Vector3 add, mul;
 
+    private ColorEqualizer eq;
+
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("Palette Reducer");
@@ -64,13 +66,15 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if(!file.exists())
             return;
         if(screenTexture != null) screenTexture.dispose();
-        screenTexture = new Texture(file);
+//        screenTexture = new Texture(file);
+        screenTexture = new Texture(eq.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
         screenTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
     }
 
     @Override
     public void create() {
         startTime = TimeUtils.millis();
+        eq = new ColorEqualizer();
         palette = new Texture(Gdx.files.local("palettes/DB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
         palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         font = new BitmapFont();

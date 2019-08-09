@@ -1,6 +1,11 @@
 package colorweaver.tools;
 
 /**
+ * Some alternative approximations to sin(), cos(), asin(), acos(), and atan2(), including the option to measure
+ * most values in turns instead of radians (where 1 turn equals 2pi radians). The convention here is to have methods
+ * that take input in turns or produce output in turns use a {@code _} suffix, like {@link #sin_(double)}, for turns to
+ * never be returned as a negative value but for negative turn inputs to be accepted, and for the output type to match
+ * the input type (float input gives float output, double input gives double output).
  * Created by Tommy Ettinger on 8/6/2019.
  */
 public class TrigTools {

@@ -8,17 +8,17 @@ import static com.badlogic.gdx.utils.NumberUtils.doubleToLongBits;
 import static com.badlogic.gdx.utils.NumberUtils.floatToIntBits;
 
 /**
+ * 32-bit and 64-bit hash code functions for arrays and some other types, with cross-platform equivalent results.
  * A fairly fast hashing algorithm in general, Water performs especially well on large arrays, and passes SMHasher's
- * newest and most stringent version of tests. The int-hashing {@link #hash(int[])} method is almost twice as fast
- * as {@link CrossHash#hash(int[])} and faster than {@link Arrays#hashCode(int[])}. Based on
+ * newest and most stringent version of tests. The int-hashing {@link #hash(int[])} method is faster than
+ * {@link Arrays#hashCode(int[])}, and all hashes are higher-quality than Arrays.hashCode(). Based on
  * <a href="https://github.com/wangyi-fudan/wyhash">wyhash</a>, specifically
  * <a href="https://github.com/tommyettinger/waterhash">the waterhash variant</a>. This version passes SMHasher for
  * both the 32-bit output hash() methods and the 64-bit output hash64() methods (which use the slightly tweaked
  * wheathash variant in the waterhash Git repo, or woothash for hashing long arrays). While an earlier version
  * passed rurban/smhasher, it failed demerphq/smhasher (Yves' more stringent fork), so some minor tweaks allowed the
  * latest code to pass Yves' test. Uses 64-bit math, so it won't be as fast on GWT. Currently, the methods that hash
- * types other than int arrays aren't as fast as the int array hash, but they are usually faster than the default
- * Hive implementation, and unlike Hive, these pass SMHasher.
+ * types other than int arrays aren't as fast as the int array hash, but they are usually fast enough and pass SMHasher.
  * <br>
  * These hash functions are so fast because they operate in bulk on 4 items at a time, such as 4 ints (which is the
  * optimal case), 4 bytes, or 4 longs (which uses a different algorithm). This bulk operation usually entails 3
