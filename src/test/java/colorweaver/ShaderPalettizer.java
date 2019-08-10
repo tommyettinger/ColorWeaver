@@ -66,8 +66,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if(!file.exists())
             return;
         if(screenTexture != null) screenTexture.dispose();
-//        screenTexture = new Texture(file);
-        screenTexture = new Texture(eq.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+        screenTexture = new Texture(file);
+//        screenTexture = new Texture(eq.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
         screenTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
     }
 
@@ -160,15 +160,18 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                     case Input.Keys.NUM_1:
                     case Input.Keys.NUMPAD_1:
-                        palette = new Texture(Gdx.files.local("palettes/Quorum64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                        palette = new Texture(Gdx.files.local("Slab64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        palette = new Texture(Gdx.files.local("palettes/Quorum64_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_2:
                     case Input.Keys.NUMPAD_2:
-                        palette = new Texture(Gdx.files.local("palettes/Quorum128_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                        palette = new Texture(Gdx.files.local("Slab256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        palette = new Texture(Gdx.files.local("palettes/Quorum128_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_3:
                     case Input.Keys.NUMPAD_3:
-                        palette = new Texture(Gdx.files.local("palettes/Quorum256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                        palette = new Texture(Gdx.files.local("SlabBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        palette = new Texture(Gdx.files.local("palettes/Quorum256_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_4:
                     case Input.Keys.NUMPAD_4:
