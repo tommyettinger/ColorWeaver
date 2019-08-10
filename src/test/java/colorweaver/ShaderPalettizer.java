@@ -160,17 +160,17 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                     case Input.Keys.NUM_1:
                     case Input.Keys.NUMPAD_1:
-                        palette = new Texture(Gdx.files.local("Slab64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                        palette = new Texture(Gdx.files.local("palettes/Slab64_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Quorum64_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_2:
                     case Input.Keys.NUMPAD_2:
-                        palette = new Texture(Gdx.files.local("Slab256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                        palette = new Texture(Gdx.files.local("palettes/Slab256_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Quorum128_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_3:
                     case Input.Keys.NUMPAD_3:
-                        palette = new Texture(Gdx.files.local("SlabBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                        palette = new Texture(Gdx.files.local("palettes/SlabBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Quorum256_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_4:
@@ -179,15 +179,24 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                     case Input.Keys.NUM_5:
                     case Input.Keys.NUMPAD_5:
-                        palette = new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                                ? new Texture(Gdx.files.local("palettes/Blarg64_GLSL.png"), Pixmap.Format.RGBA8888, false)
+                                : new Texture(Gdx.files.local("palettes/Blade64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        palette = new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_6:
                     case Input.Keys.NUMPAD_6:
-                        palette = new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                                ? new Texture(Gdx.files.local("palettes/BlargBonus_GLSL.png"), Pixmap.Format.RGBA8888, false)
+                                : new Texture(Gdx.files.local("palettes/BladeBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        palette = new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_7:
                     case Input.Keys.NUMPAD_7:
-                        palette = new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL_HS.png"), Pixmap.Format.RGBA8888, false);
+                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                                ? new Texture(Gdx.files.local("palettes/Blarg256_GLSL.png"), Pixmap.Format.RGBA8888, false)
+                                : new Texture(Gdx.files.local("palettes/Blade256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        palette = new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL_HS.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/JudgeBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_8:
