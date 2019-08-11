@@ -52,7 +52,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
             public void filesDropped(String[] files) {
                 if (files != null && files.length > 0) {
                     if (files[0].endsWith(".png") || files[0].endsWith(".jpg") || files[0].endsWith(".jpeg"))
-                        app.load(files[0]);
+                        app.load(files[0], Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
                 }
             }
         });
@@ -60,14 +60,17 @@ public class ShaderPalettizer extends ApplicationAdapter {
         new Lwjgl3Application(app, config);
     }
 
-    public void load(String name) {
+    public void load(String name, boolean equalize) {
         //// loads a file by its full path, which we get via drag+drop
         FileHandle file = Gdx.files.absolute(name);
         if(!file.exists())
             return;
         if(screenTexture != null) screenTexture.dispose();
-        screenTexture = new Texture(file);
-//        screenTexture = new Texture(eq.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+        
+        if(equalize)
+            screenTexture = new Texture(eq.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+        else
+            screenTexture = new Texture(file);
         screenTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
     }
 
@@ -94,7 +97,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
 
         // if you don't have these files on this absolute path, that's fine, and they will be ignored
 //        load("D:/Painting_by_Henri_Biva.jpg");
-        load("D:/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg");
+        load("D:/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg", false);
 //        load("D:/Mona_Lisa.jpg");
     }
 
@@ -227,22 +230,22 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         palette = new Texture(Gdx.files.local("palettes/GBGreen16_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.M: // Mona Lisa
-                        load("samples/Mona_Lisa.jpg");
+                        load("samples/Mona_Lisa.jpg", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
                         break;
                     case Input.Keys.S: //Sierra Nevada
-                        load("samples/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg");
+                        load("samples/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
                         break;
                     case Input.Keys.B: // Biva
-                        load("samples/Painting_by_Henri_Biva.jpg");
+                        load("samples/Painting_by_Henri_Biva.jpg", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
                         break;
                     case Input.Keys.C: // Color Guard
-                        load("samples/Color_Guard.png");
+                        load("samples/Color_Guard.png", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
                         break;
                     case Input.Keys.F: // lower-color palette
-                        load("samples/Flesurrect_Spaceships.png");
+                        load("samples/Flesurrect_Spaceships.png", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
                         break;
                     case Input.Keys.A: // higher-color palette
-                        load("samples/Aurora_Spaceships.png");
+                        load("samples/Aurora_Spaceships.png", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
                         break;
 //                    case Input.Keys.D: // dither/disable
 //                        if(!batch.getShader().equals(shader))

@@ -31,7 +31,7 @@ public class ColorEqualizer {
                     area--;
             }
         }
-        final float invArea = 1f / area;
+        final float invArea = 63.75f / area;
 
         c = 0;
 //        int minLuma = 0, maxLuma = 2040;
@@ -45,8 +45,11 @@ public class ColorEqualizer {
         for (int i = 0; i < 2041; i++) {
             if(c != (c += lumas[i])) // hoo boy. if this luma showed up at least once, add its frequency to c and run.
             {
+                lumas[i] = c * invArea;
+
+//                lumas[i] = (float)(Math.pow(2.0, c * invArea) - 1.0) * 255f;
+                
 //                lumas[i] = TrigTools.sin_(c * invArea) * 255f;
-                lumas[i] = (float)(Math.pow(2.0, c * invArea) - 1.0) * 255f;
 //                lumas[i] = (float)Math.expm1(c * invArea) * 148.40406025167826f;
 //                maxLuma = i;
             }
@@ -59,7 +62,7 @@ public class ColorEqualizer {
                 c = pm.getPixel(x, y);
                 t = (c >>> 23 & 0x1FE) + (c >>> 24) + (c >>> 14 & 0x3FC) + (c >>> 8 & 0xFF);
 //                luma = lumas[t];
-                luma = (lumas[t] + (t >>> 3)) * 0.5f;
+                luma = (lumas[t] + (t >>> 4) + (t >>> 5)); // 3/4 from actual lightness, 1/4 equalized
                 warm = (c >>> 24) - (c >>> 8 & 0xFF);
                 mild = ((c >>> 16 & 0xFF) - (c >>> 8 & 0xFF)) * 0.5f;
                 pm.drawPixel(x, y, 
