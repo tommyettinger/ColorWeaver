@@ -104,12 +104,12 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
     }
     
     public void create() {
-        IntArray base = new IntArray(600);
+        IntArray base = new IntArray(900);
         double depth;
-        for (int ct = 0, i = 1, cie; ct < 600; i++, ct++) {
-            while (0 == (cie = CIELABConverter.rgba8888(ct % 100.0,
-                    TrigTools.sin(i * 1.6180339887498949) * (depth = TrigTools.cos(i * 10) * 140),
-                    TrigTools.cos(i * 1.6180339887498949) * depth))) {
+        for (int ct = 0, i = 1, cie; ct < 900; i++, ct++) {
+            while (0 == (cie = CIELABConverter.rgba8888((ct + i * 0.03) % 100.0,
+                    TrigTools.sin(i * 2.6180339887498949) * (depth = TrigTools.cos(i * 10.101) * 145),
+                    TrigTools.cos(i * 3.6180339887498949) * depth))) {
                 i++;
             }
             base.add(cie);
@@ -162,7 +162,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
 //            }
 //        }
         int[] BIG_PALETTE = new int[256];
-//        int[] BIG_PALETTE = Coloring.SWIRL256;
+//        int[] BIG_PALETTE = Coloring.TWIRL256;
 //        while (base.size < -1) {
         while (base.size > 63) {
             System.out.println(base.size);
@@ -477,7 +477,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
             }
         }
 
-        System.out.println("public static final byte[][] SWIRL_RAMPS = new byte[][]{");
+        System.out.println("public static final byte[][] TWIRL_RAMPS = new byte[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println(
                     "{ " + ramps[i][3]
@@ -488,7 +488,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         }
         System.out.println("};");
 
-        System.out.println("public static final int[][] SWIRL_RAMP_VALUES = new int[][]{");
+        System.out.println("public static final int[][] TWIRL_RAMP_VALUES = new int[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println("{ 0x" + StringKit.hex(PALETTE[ramps[i][3] & 255])
                     + ", 0x" + StringKit.hex(PALETTE[ramps[i][2] & 255])
@@ -661,7 +661,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         PNG8 png8 = new PNG8();
         png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("Swirl64.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Twirl64.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -679,7 +679,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         }
 
         try {
-            png8.writePrecisely(Gdx.files.local("Swirl64_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("Twirl64_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -690,7 +690,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         }
         png8.palette.exact(BIG_PALETTE, labRoughMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("Swirl256.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Twirl256.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -706,7 +706,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         }
 
         try {
-            png8.writePrecisely(Gdx.files.local("Swirl256_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("Twirl256_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -757,9 +757,9 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
 //
 //        PNG8 png8 = new PNG8();
         png8.palette = new PaletteReducer(PALETTE, labRoughMetric);        
-        int[][] SWIRL_BONUS_RAMP_VALUES = new int[256][4];
+        int[][] TWIRL_BONUS_RAMP_VALUES = new int[256][4];
         for (int i = 1; i < PALETTE.length; i++) {
-            int color = SWIRL_BONUS_RAMP_VALUES[i | 128][2] = SWIRL_BONUS_RAMP_VALUES[i][2] =
+            int color = TWIRL_BONUS_RAMP_VALUES[i | 128][2] = TWIRL_BONUS_RAMP_VALUES[i][2] =
                     PALETTE[i];             
 //            r = (color >>> 24);
 //            g = (color >>> 16 & 0xFF);
@@ -767,9 +767,9 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
             luma = lumas[i];
             warm = warms[i];
             mild = milds[i];
-            SWIRL_BONUS_RAMP_VALUES[i | 64][1] = SWIRL_BONUS_RAMP_VALUES[i | 64][2] =
-                    SWIRL_BONUS_RAMP_VALUES[i | 64][3] = color;
-            SWIRL_BONUS_RAMP_VALUES[i | 192][0] = SWIRL_BONUS_RAMP_VALUES[i | 192][2] = color;
+            TWIRL_BONUS_RAMP_VALUES[i | 64][1] = TWIRL_BONUS_RAMP_VALUES[i | 64][2] =
+                    TWIRL_BONUS_RAMP_VALUES[i | 64][3] = color;
+            TWIRL_BONUS_RAMP_VALUES[i | 192][0] = TWIRL_BONUS_RAMP_VALUES[i | 192][2] = color;
 //            int co = r - b, t = b + (co >> 1), cg = g - t, y = t + (cg >> 1),
 //                    yBright = y * 21 >> 4, yDim = y * 11 >> 4, yDark = y * 6 >> 4, chromO, chromG;
 //            chromO = (co * 3) >> 2;
@@ -781,43 +781,43 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
             r = MathUtils.clamp((int) ((luma * 0.83f + (warm *  0.625f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
             g = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f + mild * 0.5f) * 0.7f) * 256f), 0, 255);
             b = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
-            SWIRL_BONUS_RAMP_VALUES[i | 192][1] = SWIRL_BONUS_RAMP_VALUES[i | 128][1] =
-                    SWIRL_BONUS_RAMP_VALUES[i | 64][0] = SWIRL_BONUS_RAMP_VALUES[i][1] =
+            TWIRL_BONUS_RAMP_VALUES[i | 192][1] = TWIRL_BONUS_RAMP_VALUES[i | 128][1] =
+                    TWIRL_BONUS_RAMP_VALUES[i | 64][0] = TWIRL_BONUS_RAMP_VALUES[i][1] =
                             MathUtils.clamp(r, 0, 255) << 24 |
                                     MathUtils.clamp(g, 0, 255) << 16 |
                                     MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
             r = MathUtils.clamp((int) ((luma * 1.35f + (warm *  0.625f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
             g = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f + mild * 0.5f) * 0.65f) * 256f), 0, 255);
             b = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
-            SWIRL_BONUS_RAMP_VALUES[i | 192][3] = SWIRL_BONUS_RAMP_VALUES[i | 128][3] =
-                    SWIRL_BONUS_RAMP_VALUES[i][3] =
+            TWIRL_BONUS_RAMP_VALUES[i | 192][3] = TWIRL_BONUS_RAMP_VALUES[i | 128][3] =
+                    TWIRL_BONUS_RAMP_VALUES[i][3] =
                             MathUtils.clamp(r, 0, 255) << 24 |
                                     MathUtils.clamp(g, 0, 255) << 16 |
                                     MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
             r = MathUtils.clamp((int) ((luma * 0.65f + (warm *  0.625f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
             g = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f + mild * 0.5f) * 0.8f) * 256f), 0, 255);
             b = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
-            SWIRL_BONUS_RAMP_VALUES[i | 128][0] = SWIRL_BONUS_RAMP_VALUES[i][0] =
+            TWIRL_BONUS_RAMP_VALUES[i | 128][0] = TWIRL_BONUS_RAMP_VALUES[i][0] =
                     MathUtils.clamp(r, 0, 255) << 24 |
                             MathUtils.clamp(g, 0, 255) << 16 |
                             MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
         }
         sb.setLength(0);
         sb.ensureCapacity(2800);
-        sb.append("private static final int[][] SWIRL_BONUS_RAMP_VALUES = new int[][] {\n");
+        sb.append("private static final int[][] TWIRL_BONUS_RAMP_VALUES = new int[][] {\n");
         for (int i = 0; i < 256; i++) {
             sb.append("{ 0x");
-            StringKit.appendHex(sb, SWIRL_BONUS_RAMP_VALUES[i][0]);
-            StringKit.appendHex(sb.append(", 0x"), SWIRL_BONUS_RAMP_VALUES[i][1]);
-            StringKit.appendHex(sb.append(", 0x"), SWIRL_BONUS_RAMP_VALUES[i][2]);
-            StringKit.appendHex(sb.append(", 0x"), SWIRL_BONUS_RAMP_VALUES[i][3]);
+            StringKit.appendHex(sb, TWIRL_BONUS_RAMP_VALUES[i][0]);
+            StringKit.appendHex(sb.append(", 0x"), TWIRL_BONUS_RAMP_VALUES[i][1]);
+            StringKit.appendHex(sb.append(", 0x"), TWIRL_BONUS_RAMP_VALUES[i][2]);
+            StringKit.appendHex(sb.append(", 0x"), TWIRL_BONUS_RAMP_VALUES[i][3]);
             sb.append(" },\n");
 
         }
         System.out.println(sb.append("};"));
         PALETTE = new int[256];
         for (int i = 0; i < 64; i++) {
-            System.arraycopy(SWIRL_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
+            System.arraycopy(TWIRL_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
         }
         sb.setLength(0);
         sb.ensureCapacity((1 + 12 * 8) * (PALETTE.length >>> 3));
@@ -837,7 +837,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         //pix.drawPixel(255, 0, 0);
         png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("SwirlBonus.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("TwirlBonus.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -854,7 +854,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("SwirlBonus_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("TwirlBonus_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -869,7 +869,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         }
         png8.palette = new PaletteReducer(PALETTE);
         try {
-            png8.writePrecisely(Gdx.files.local("SwirlBonusMagicaVoxel.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("TwirlBonusMagicaVoxel.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }

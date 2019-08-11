@@ -180,22 +180,22 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.NUM_5:
                     case Input.Keys.NUMPAD_5:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-                                ? new Texture(Gdx.files.local("palettes/Blarg64_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("Swirl64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                ? new Texture(Gdx.files.local("palettes/Twirl64_GLSL.png"), Pixmap.Format.RGBA8888, false)
+                                : new Texture(Gdx.files.local("palettes/Swirl64_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_6:
                     case Input.Keys.NUMPAD_6:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-                                ? new Texture(Gdx.files.local("palettes/BlargBonus_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("SwirlBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                ? new Texture(Gdx.files.local("palettes/TwirlBonus_GLSL.png"), Pixmap.Format.RGBA8888, false)
+                                : new Texture(Gdx.files.local("palettes/SwirlBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_7:
                     case Input.Keys.NUMPAD_7:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-                                ? new Texture(Gdx.files.local("palettes/Blarg256_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("Swirl256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                ? new Texture(Gdx.files.local("palettes/Twirl256_GLSL.png"), Pixmap.Format.RGBA8888, false)
+                                : new Texture(Gdx.files.local("palettes/Swirl256_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL_HS.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/JudgeBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
