@@ -181,21 +181,21 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.NUMPAD_5:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
                                 ? new Texture(Gdx.files.local("palettes/Blarg64_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/Blade64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                : new Texture(Gdx.files.local("Swirl64_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_6:
                     case Input.Keys.NUMPAD_6:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
                                 ? new Texture(Gdx.files.local("palettes/BlargBonus_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/BladeBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                : new Texture(Gdx.files.local("SwirlBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_7:
                     case Input.Keys.NUMPAD_7:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
                                 ? new Texture(Gdx.files.local("palettes/Blarg256_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/Blade256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                : new Texture(Gdx.files.local("Swirl256_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL_HS.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/JudgeBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
@@ -227,22 +227,22 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         palette = new Texture(Gdx.files.local("palettes/GBGreen16_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.M: // Mona Lisa
-                        load("D:/Mona_Lisa.jpg");
+                        load("samples/Mona_Lisa.jpg");
                         break;
                     case Input.Keys.S: //Sierra Nevada
-                        load("D:/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg");
+                        load("samples/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg");
                         break;
                     case Input.Keys.B: // Biva
-                        load("D:/Painting_by_Henri_Biva.jpg");
+                        load("samples/Painting_by_Henri_Biva.jpg");
                         break;
                     case Input.Keys.C: // Color Guard
-                        load("D:/Color_Guard.png");
+                        load("samples/Color_Guard.png");
                         break;
                     case Input.Keys.F: // lower-color palette
-                        load("samples/FlesurrectBonus_Ships/Flesurrect_Spaceships.png");
+                        load("samples/Flesurrect_Spaceships.png");
                         break;
                     case Input.Keys.A: // higher-color palette
-                        load("samples/Aurora_Ships/Aurora_Spaceships.png");
+                        load("samples/Aurora_Spaceships.png");
                         break;
 //                    case Input.Keys.D: // dither/disable
 //                        if(!batch.getShader().equals(shader))
@@ -262,11 +262,11 @@ public class ShaderPalettizer extends ApplicationAdapter {
                             batch.setShader(shader);
                             Gdx.graphics.setTitle("Softness OFF");
                         }
-                        else if(batch.getShader().equals(shader))
-                        {
-                            batch.setShader(shaderNoDither);
-                            Gdx.graphics.setTitle("Softness ON");
-                        }
+//                        else if(batch.getShader().equals(shader))
+//                        {
+//                            batch.setShader(shaderNoDither);
+//                            Gdx.graphics.setTitle("Softness ON");
+//                        }
                         else 
                         {
                             batch.setShader(defaultShader);
