@@ -50,32 +50,33 @@ public class Palettizer extends ApplicationAdapter {
 
     public void load(String name) {
         try {
+            final String suffix = "";
             //// loads a file by its full path, which we get via drag+drop
             Pixmap pm = new Pixmap(Gdx.files.absolute(name));
 //            reducer.analyze(pm, 1600, 32);
             String subname = name.substring(Math.max(name.lastIndexOf('/'), name.lastIndexOf('\\')) + 1, name.lastIndexOf('.'));
             pm = reducer.reduceWithNoise(pm);
-            png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinbergHu.png"), pm, false);
+            png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinbergHu"+suffix+".png"), pm, false);
             pm = reducer.reduceFloydSteinberg(new Pixmap(Gdx.files.absolute(name)));
-            png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg.png"), pm, false);
+            png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg"+suffix+".png"), pm, false);
             pm = reducer.reduceBurkes(new Pixmap(Gdx.files.absolute(name)));
-            png8.writePrecisely(Gdx.files.local(subname + "_Burkes.png"), pm, false);
+            png8.writePrecisely(Gdx.files.local(subname + "_Burkes"+suffix+".png"), pm, false);
             pm = reducer.reduce(new Pixmap(Gdx.files.absolute(name)));
-            png8.writePrecisely(Gdx.files.local(subname + "_SierraLite.png"), pm, false);
+            png8.writePrecisely(Gdx.files.local(subname + "_SierraLite"+suffix+".png"), pm, false);
             pm = reducer.reduceSolid(new Pixmap(Gdx.files.absolute(name)));
-            png8.writePrecisely(Gdx.files.local(subname + "_Solid.png"), pm, false);
+            png8.writePrecisely(Gdx.files.local(subname + "_Solid"+suffix+".png"), pm, false);
             pm = reducer.reduceWithRoberts(new Pixmap(Gdx.files.absolute(name)));
-            png8.writePrecisely(Gdx.files.local(subname + "_Roberts.png"), pm, false);
+            png8.writePrecisely(Gdx.files.local(subname + "_Roberts"+suffix+".png"), pm, false);
             pm = reducer.reduceRobertsMul(new Pixmap(Gdx.files.absolute(name)));
-            png8.writePrecisely(Gdx.files.local(subname + "_RobertsMul.png"), pm, false);
+            png8.writePrecisely(Gdx.files.local(subname + "_RobertsMul"+suffix+".png"), pm, false);
             pm = reducer.reduceRobertsEdit(new Pixmap(Gdx.files.absolute(name)));
-            png8.writePrecisely(Gdx.files.local(subname + "_RobertsEdit.png"), pm, false);
+            png8.writePrecisely(Gdx.files.local(subname + "_RobertsEdit"+suffix+".png"), pm, false);
             pm = reducer.reduceShaderMimic(new Pixmap(Gdx.files.absolute(name)));
-            FileHandle next = Gdx.files.local(subname + "_ShaderMimic.png");
+            FileHandle next = Gdx.files.local(subname + "_ShaderMimic"+suffix+".png");
             png8.writePrecisely(next, pm, Coloring.AURORA, false, 0);
             int[] hsp = Arrays.copyOf(Coloring.AURORA, 256);
             PaletteReducer.hueShiftPalette(hsp);
-            PNG8.swapPalette(next, Gdx.files.local(subname + "_ShaderMimic_HSP.png"), hsp);
+            PNG8.swapPalette(next, Gdx.files.local(subname + "_ShaderMimicHSP"+suffix+".png"), hsp);
             screenTexture = new Texture(next);
         } catch (IOException ignored) {
         }
@@ -85,9 +86,10 @@ public class Palettizer extends ApplicationAdapter {
     public void create() {
         font = new BitmapFont();
         batch = new SpriteBatch();
-        reducer = //new PaletteReducer(Colorizer.JudgeBonusPalette);
+        reducer = new PaletteReducer(Coloring.AURORA, PaletteReducer.ENCODED_AURORA); 
+                //new PaletteReducer(Colorizer.JudgeBonusPalette);
                 //Coloring.FLESURRECT_REDUCER;
-                Colorizer.AuroraColorizer.getReducer();
+                //Colorizer.AuroraColorizer.getReducer();
                 //Colorizer.RinsedColorizer.getReducer();
                 // new PaletteReducer(Coloring.RINSED);
         reducer.setDitherStrength(1f);
