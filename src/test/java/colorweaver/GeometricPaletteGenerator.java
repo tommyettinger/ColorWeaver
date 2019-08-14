@@ -1,31 +1,29 @@
 package colorweaver;
 
 import colorweaver.tools.StringKit;
-import colorweaver.tools.TrigTools;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.IntArray;
 
 import java.io.IOException;
 
-import static colorweaver.PaletteReducer.labMetric;
+import static colorweaver.PaletteReducer.labRoughMetric;
 
 /**
  * Created by Tommy Ettinger on 1/21/2018.
  */
-public class ExploratoryPaletteGenerator extends ApplicationAdapter {
+public class GeometricPaletteGenerator extends ApplicationAdapter {
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setTitle("EXPLORATORY Palette Stuff");
+        config.setTitle("GEOMETRIC Palette Stuff");
         config.setWindowedMode(1000, 600);
         config.setIdleFPS(10);
         config.setResizable(false);
-        new Lwjgl3Application(new ExploratoryPaletteGenerator(), config);
+        new Lwjgl3Application(new GeometricPaletteGenerator(), config);
     }
 
     private static float hue(int rgba) {
@@ -82,7 +80,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
     }
 
 
-    private long state = 99999999999999999L;
+    private long state = 9005L;
     
     private double nextDouble()
     {
@@ -104,256 +102,19 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
     }
     
     public void create() {
-        IntArray base = new IntArray(900);
-//        for(NamedColor nc : NamedColor.FULL_PALETTE)
-//        {
-//            if(nc.a >= 1f)
-//                base.add(Color.rgba8888(nc));
-//        }
-//        for(NamedColor nc : NamedColor.COLOR_WHEEL_PALETTE)
-//        {
-//            if(nc.a >= 1f)
-//                base.add(Color.rgba8888(nc));
-//        }
-//        for(NamedColor nc : NamedColor.DAWNBRINGER_AURORA)
-//        {
-//            if(nc.a >= 1f)
-//                base.add(Color.rgba8888(nc));
-//        }
-//        for (int r = 0; r < 6; r++) {
-//            for (int g = 0; g < 6; g++) {
-//                for (int b = 0; b < 6; b++) {
-//                    base.add(r * 0x33000000 | g * 0x330000 | b * 0x3300 | 0xFF);
-//                }
-//            }
-//        }
-//        for (int ct = 0, i = 1, cie; ct < 800; i++, ct++) {
-//            while (0 == (cie = CIELABConverter.rgba8888((i * 1.6180339887498949) % 100.0,
-//                    vdc(3, i) * 290 - 145, nextDouble() * 290 - 145))) {
-//                i++;
-//            }
-//            base.add(cie);
-//        }
-
-        //0.7548776662466927, 0.5698402909980532
-        //2.6180339887498949, 3.6180339887498949
-        double depth;
-        for (int ct = 0, i = 1, cie; ct < 1100; i++, ct++) {
-            while (0 == (cie = CIELABConverter.rgba8888((ct + i * 0.05) % 100.0,
-                    TrigTools.sin(i * 0.7548776662466927) * (depth = TrigTools.cos(i * 11.111) * 145),
-                    TrigTools.cos(i * 0.5698402909980532) * depth))) {
-                i++;
-            }
-            base.add(cie);
-        }
-//
-//        base.addAll(
-//                0x000000FF,
-//                0x1F1F1FFF,
-//                0x3F3F3FFF,
-//                0x5F5F5FFF,
-//                0x7F7F7FFF,
-//                0x9F9F9FFF,
-//                0xBFBFBFFF,
-//                0xDFDFDFFF,
-//                0xFFFFFFFF);
-//
-//        for (int i = 20, ct = 0, cie; ct < 1000; i++, ct++) {
-//            while (0 == (cie = CIELABConverter.rgba8888(vdc(5, i) * 100.0,
-//                    vdc(3, i) * 256 - 128,
-//                    vdc(7, i) * 256 - 128))) {
-//                i++;
-//            }
-//            base.add(cie);
-//        }
-
-
-//            rr = (int)(i * i * 0xD1B54A32D192ED03L + i * 0xC13FA9A902A6328FL >>> 56);
-//            gg = (int)(i * i * 0x9E3779B97F4A7C15L + i * 0xD1B54A32D192ED03L >>> 56);
-//            bb = (int)(i * i * 0xC13FA9A902A6328FL + i * 0x9E3779B97F4A7C15L >>> 56);
-//            rr = (int)(Math.pow((i * 0xD1B54A32D192ED03L >>> 12) * 0x1p-52, DiverRNG.randomizeDouble(i * 17L) + 0.25) * 256.0);
-//            gg = (int)(Math.pow((i * 0xABC98388FB8FAC03L >>> 12) * 0x1p-52, DiverRNG.randomizeDouble(i * 37L) + 0.25) * 256.0);
-//            bb = (int)(Math.pow((i * 0x8CB92BA72F3D8DD7L >>> 12) * 0x1p-52, DiverRNG.randomizeDouble(i * 47L) + 0.25) * 256.0);
-//            rr = (int)(Math.pow(DiverRNG.randomizeDouble(i * 0xD1B54A32D192ED03L), DiverRNG.randomizeDouble(i * 17L) + 0.2) * 256.0);
-//            gg = (int)(Math.pow(DiverRNG.randomizeDouble(i * 0xABC98388FB8FAC03L), DiverRNG.randomizeDouble(i * 37L) + 0.2) * 256.0);
-//            bb = (int)(Math.pow(DiverRNG.randomizeDouble(i * 0x8CB92BA72F3D8DD7L), DiverRNG.randomizeDouble(i * 47L) + 0.2) * 256.0);
-
-//            base.add((int)DiverRNG.randomize(i) | 0xFF);
-//            rr = (int)(i * 0xD1B54A32D192ED03L >>> 32 & 0xFF000000L);
-//            gg = (int)(i * 0xABC98388FB8FAC03L >>> 40 & 0x00FF0000L);
-//            bb = (int)(i * 0x8CB92BA72F3D8DD7L >>> 48 & 0x0000FF00L);
-//            base.add(rr | gg | bb | 0xFF);
-            
-//        for (int r = 0, rr = 0; r < 10; r++) {
-//            rr = r * 32 - (r >>> 3) << 24;
-//            for (int g = 0, gg = 0; g < 10; g++) {
-//                gg = g * 32 - (g >>> 3) << 16;
-//                for (int b = 0, bb = 0; b < 10; b++) {
-//                    bb = b * 32 - (b >>> 3) << 8;
-//                    base.add(rr | gg | bb | 0xFF);
-//                }
-//            }
-//        }
-        int[] BIG_PALETTE = new int[256];
-//        int[] BIG_PALETTE = Coloring.TINCTURE256;
-//        while (base.size < -1) {
-        while (base.size > 63) {
-            System.out.println(base.size);
-            if(base.size == 255)
-                System.arraycopy(base.items, 0, BIG_PALETTE, 1, 255);
-            int ca = 0, cb = 1, cc, idx, color1, color2;
-//            int t, d = 0xFFFFFFF;
-            double t, d = 0x1p500;
-            OUTER:
-            for (int i = 0; i < base.size; i++) {
-                color1 = base.get(i);
-//                lab1.fromRGBA(base.get(i));
-                for (int j = i + 1; j < base.size; j++) {
-                    color2 = base.get(j);
-//                    lab2.fromRGBA(base.get(j));
-//                    if ((t = difference(color1, color2)) < d) {
-                    if ((t = labMetric.difference(color1, color2)) < d) {
-                        d = t;
-                        ca = i;
-                        cb = j;
-                        if(d <= 0)
-                            break OUTER;
-                    }
+        int[] PALETTE = new int[64];
+        final int[] points = {0, 75, 140, 210, 255};
+        int ctr = 1;
+        for (int r = 0; r < 5; r++) {
+            for (int g = 0; g < 5; g++) {
+                for (int b = 0; b < 5; b++) {
+                    if(((r ^ g ^ b) & 1) == 0) 
+                        PALETTE[ctr++] = points[r] << 24 | points[g] << 16 | points[b] << 8 | 0xFF;
                 }
             }
-            idx = cb;
-            cc = base.get(ca);
-            cb = base.get(cb);
-            int ra = (cc >>> 24), ga = (cc >>> 16 & 0xFF), ba = (cc >>> 8 & 0xFF),
-                    rb = (cb >>> 24), gb = (cb >>> 16 & 0xFF), bb = (cb >>> 8 & 0xFF);
-
-            //base.set(ca, (ra * ra + ga * ga + ba * ba >= rb * rb + gb * gb + bb * bb)
-            //        ? ra << 24 | ga << 16 | ba << 8 | 0xFF
-            //        : rb << 24 | gb << 16 | bb << 8 | 0xFF);
-            
-            //base.set(ca, 
-            //          (Math.max(ra, rb) + 1 >> 1) + (ra + rb >> 2) << 24 
-            //        | (Math.max(ga, gb) + 1 >> 1) + (ga + gb >> 2) << 16 
-            //        | (Math.max(ba, bb) + 1 >> 1) + (ba + bb >> 2) << 8 
-            //        | 0xFF);
-
-//            base.set(ca, Math.max(ra, rb) << 24 | Math.max(ga, gb) << 16 | Math.max(ba, bb) << 8 | 0xFF);
-
-            base.set(ca,
-                    (ra + rb + 1 << 23 & 0xFF000000)
-                            | (ga + gb + 1 << 15 & 0xFF0000)
-                            | (ba + bb + 1 << 7 & 0xFF00)
-                            | 0xFF);
-            base.removeIndex(idx);
         }
-        base.insert(0, 0);
-        int[] PALETTE = base.toArray();
-
-        // used for NonUniform256
-//        int[] PALETTE = new int[256];
-//        PALETTE[1] = 0x000000FF;
-//        PALETTE[2] = 0x1F1F1FFF;
-//        PALETTE[3] = 0x3F3F3FFF;
-//        PALETTE[4] = 0x5F5F5FFF;
-//        PALETTE[5] = 0x7F7F7FFF;
-//        PALETTE[6] = 0x9F9F9FFF;
-//        PALETTE[7] = 0xBFBFBFFF;
-//        PALETTE[8] = 0xDFDFDFFF;
-//        PALETTE[9] = 0xFFFFFFFF;
-//        int idx = 10;
-//        for (int n = 21; idx < 256; n++, idx++) {
-//            while(0 == (PALETTE[idx] = CIELABConverter.rgba8888(vdc(5, n) * 100.0,
-//                    vdc(7, n) * 254 - 127,
-//                    vdc(3, n) * 254 - 127))){
-//                n++;
-//            }
-//        }
-
-//        int[] PALETTE = 
-//                new int[64];
-//        {
-//            int i = 1;
-//            for (int j = 0; j < 9; j++) {
-//                int v = 256 - (8-j) * (8-j) * 4 + (-j >> 31);
-//                PALETTE[i++] = v << 24 | v << 16 | v << 8 | 0xFF;
-//            }
-//            int[] rgb = {0, 0, 0};
-//            for (int sel = 0; sel < 3; sel++) {
-//                int o1 = (sel + 1) % 3, o2 = (sel + 2) % 3;
-//                for (int j = 0; j < 9; j++) {
-//                    if((j & 1) == 0)
-//                    {
-//                        rgb[sel] = MathUtils.clamp(j * 60 + 50, 0, 255);
-//                        rgb[o1] = rgb[o2] = MathUtils.clamp(-100 + j * 40, 0, 240);
-//                    }
-//                    else
-//                    {
-//                        rgb[sel] = MathUtils.clamp(j * 44 + 56, 0, 255);
-//                        rgb[o1] = rgb[o2] = MathUtils.clamp(-16 + j * 26, 0, 220);
-//                    }
-//                    PALETTE[i++] = rgb[0] << 24 | rgb[1] << 16 | rgb[2] << 8 | 0xFF;
-//                }
-//                for (int j = 0; j < 9; j++) {
-//                    if((j & 1) == 1)
-//                    {
-//                        rgb[o1] = rgb[o2] = MathUtils.clamp(j * 56 + 50, 0, 255);
-//                        rgb[sel] = MathUtils.clamp(-100 + j * 42, 0, 240);
-//                    }
-//                    else
-//                    {
-//                        rgb[o1] = rgb[o2] = MathUtils.clamp(j * 38 + 56, 0, 255);
-//                        rgb[sel] = MathUtils.clamp(-16 + j * 32, 0, 220);
-//                    }
-//                    PALETTE[i++] = rgb[0] << 24 | rgb[1] << 16 | rgb[2] << 8 | 0xFF;
-//                }
-//            }
-//            
-////            int i = 1, r, g, b;
-////            for (int cw : new int[] {0, -1, 1}) {
-////                for (int cm : new int[]{0, -1, 1}) {
-////                    for (int lu = 0; lu <= 6; lu++) {
-////                        double luma, warm, mild;
-////                        if ((cm | cw) == 0)
-////                            luma = lu / 6.0;
-////                        else
-////                            luma = 0.9 - Math.pow((6.0 - lu) / 6.0, 1.125) * 0.8;
-////                        if ((cm & cw) == 0) {
-////                            if (cw == 1) {
-////                                warm = 0.7;
-////                                mild = 0.0625;
-////                            } else if(cm == -1){
-////                                warm = 0.25;
-////                                mild = -0.65;
-////                            }else {
-////                                warm = cw * 0.5;
-////                                mild = cm * 0.5;
-////                            }
-////                        } else if(cw == 1 && cm == 1) {
-////                            warm = 1.0;
-////                            mild = 0.75 + luma * 0.3;
-////                            luma = Math.pow(luma, 0.6);
-////                        }
-////                        else {
-////                            warm = cw;
-////                            mild = cm;
-////                        }
-////                        if((lu & 1) == 1)
-////                        {
-////                            warm *= 0.7;
-////                            mild *= 0.7;
-////                        }
-////                        r = MathUtils.clamp((int) ((luma + warm * 0.625 - mild * 0.5) * 255.5), 0, 255);
-////                        g = MathUtils.clamp((int) ((luma + mild * 0.5 - warm * 0.375) * 255.5), 0, 255);
-////                        b = MathUtils.clamp((int) ((luma - warm * 0.375 - mild * 0.5) * 255.5), 0, 255);
-////                        PALETTE[i++] = r << 24 | g << 16 | b << 8 | 0xFF;
-////
-////                    }
-////                }
-////            }
-//        }
         double luma, warm, mild, hue;
         double[] lumas = new double[PALETTE.length], warms = new double[PALETTE.length], milds = new double[PALETTE.length];
-        int ctr = 1;
         int r, g, b;
         int pal;
         for (int i = 1; i < PALETTE.length; i++) {
@@ -510,7 +271,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
             }
         }
 
-        System.out.println("public static final byte[][] TINCTURE_RAMPS = new byte[][]{");
+        System.out.println("public static final byte[][] WEAK_RAMPS = new byte[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println(
                     "{ " + ramps[i][3]
@@ -521,7 +282,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         }
         System.out.println("};");
 
-        System.out.println("public static final int[][] TINCTURE_RAMP_VALUES = new int[][]{");
+        System.out.println("public static final int[][] WEAK_RAMP_VALUES = new int[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println("{ 0x" + StringKit.hex(PALETTE[ramps[i][3] & 255])
                     + ", 0x" + StringKit.hex(PALETTE[ramps[i][2] & 255])
@@ -664,19 +425,10 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
 //        
 //
         System.out.println("64-color: ");
-        StringBuilder sb = new StringBuilder((1 + 12 * 8) * (BIG_PALETTE.length >>> 3));
+        StringBuilder sb = new StringBuilder((1 + 12 * 8) * (PALETTE.length >>> 3));
         for (int i = 0; i < (PALETTE.length + 7 >>> 3); i++) {
             for (int j = 0; j < 8 && (i << 3 | j) < PALETTE.length; j++) {
                 sb.append("0x").append(StringKit.hex(PALETTE[i << 3 | j])).append(", ");
-            }
-            sb.append('\n');
-        }
-        System.out.println(sb);
-        sb.setLength(0);
-        System.out.println("256-color: ");
-        for (int i = 0; i < (BIG_PALETTE.length + 7 >>> 3); i++) {
-            for (int j = 0; j < 8 && (i << 3 | j) < BIG_PALETTE.length; j++) {
-                sb.append("0x").append(StringKit.hex(BIG_PALETTE[i << 3 | j])).append(", ");
             }
             sb.append('\n');
         }
@@ -692,9 +444,9 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
 //        }
         //pix.drawPixel(255, 0, 0);
         PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE, labMetric);
+        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("Tincture64.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Weak64.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -712,34 +464,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         }
 
         try {
-            png8.writePrecisely(Gdx.files.local("Tincture64_GLSL.png"), p2, false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        for (int i = 0; i < BIG_PALETTE.length; i++) {
-            pix.drawPixel(i, 0, BIG_PALETTE[i]);
-        }
-        png8.palette.exact(BIG_PALETTE, labMetric);
-        try {
-            png8.writePrecisely(Gdx.files.local("Tincture256.png"), pix, false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        for (int red = 0; red < 32; red++) {
-            for (int blu = 0; blu < 32; blu++) {
-                for (int gre = 0; gre < 32; gre++) {
-                    p2.drawPixel(red << 5 | blu, gre, BIG_PALETTE[png8.palette.paletteMapping[
-                            ((red << 10) & 0x7C00)
-                                    | ((gre << 5) & 0x3E0)
-                                    | blu] & 0xFF]);
-                }
-            }
-        }
-
-        try {
-            png8.writePrecisely(Gdx.files.local("Tincture256_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("Weak64_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -789,10 +514,10 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
 //        Pixmap p2;
 //
 //        PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE, labMetric);        
-        int[][] TINCTURE_BONUS_RAMP_VALUES = new int[256][4];
+        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);        
+        int[][] WEAK_BONUS_RAMP_VALUES = new int[256][4];
         for (int i = 1; i < PALETTE.length; i++) {
-            int color = TINCTURE_BONUS_RAMP_VALUES[i | 128][2] = TINCTURE_BONUS_RAMP_VALUES[i][2] =
+            int color = WEAK_BONUS_RAMP_VALUES[i | 128][2] = WEAK_BONUS_RAMP_VALUES[i][2] =
                     PALETTE[i];             
 //            r = (color >>> 24);
 //            g = (color >>> 16 & 0xFF);
@@ -800,9 +525,9 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
             luma = lumas[i];
             warm = warms[i];
             mild = milds[i];
-            TINCTURE_BONUS_RAMP_VALUES[i | 64][1] = TINCTURE_BONUS_RAMP_VALUES[i | 64][2] =
-                    TINCTURE_BONUS_RAMP_VALUES[i | 64][3] = color;
-            TINCTURE_BONUS_RAMP_VALUES[i | 192][0] = TINCTURE_BONUS_RAMP_VALUES[i | 192][2] = color;
+            WEAK_BONUS_RAMP_VALUES[i | 64][1] = WEAK_BONUS_RAMP_VALUES[i | 64][2] =
+                    WEAK_BONUS_RAMP_VALUES[i | 64][3] = color;
+            WEAK_BONUS_RAMP_VALUES[i | 192][0] = WEAK_BONUS_RAMP_VALUES[i | 192][2] = color;
 //            int co = r - b, t = b + (co >> 1), cg = g - t, y = t + (cg >> 1),
 //                    yBright = y * 21 >> 4, yDim = y * 11 >> 4, yDark = y * 6 >> 4, chromO, chromG;
 //            chromO = (co * 3) >> 2;
@@ -814,43 +539,43 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
             r = MathUtils.clamp((int) ((luma * 0.83f + (warm *  0.625f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
             g = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f + mild * 0.5f) * 0.7f) * 256f), 0, 255);
             b = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
-            TINCTURE_BONUS_RAMP_VALUES[i | 192][1] = TINCTURE_BONUS_RAMP_VALUES[i | 128][1] =
-                    TINCTURE_BONUS_RAMP_VALUES[i | 64][0] = TINCTURE_BONUS_RAMP_VALUES[i][1] =
+            WEAK_BONUS_RAMP_VALUES[i | 192][1] = WEAK_BONUS_RAMP_VALUES[i | 128][1] =
+                    WEAK_BONUS_RAMP_VALUES[i | 64][0] = WEAK_BONUS_RAMP_VALUES[i][1] =
                             MathUtils.clamp(r, 0, 255) << 24 |
                                     MathUtils.clamp(g, 0, 255) << 16 |
                                     MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
             r = MathUtils.clamp((int) ((luma * 1.35f + (warm *  0.625f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
             g = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f + mild * 0.5f) * 0.65f) * 256f), 0, 255);
             b = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
-            TINCTURE_BONUS_RAMP_VALUES[i | 192][3] = TINCTURE_BONUS_RAMP_VALUES[i | 128][3] =
-                    TINCTURE_BONUS_RAMP_VALUES[i][3] =
+            WEAK_BONUS_RAMP_VALUES[i | 192][3] = WEAK_BONUS_RAMP_VALUES[i | 128][3] =
+                    WEAK_BONUS_RAMP_VALUES[i][3] =
                             MathUtils.clamp(r, 0, 255) << 24 |
                                     MathUtils.clamp(g, 0, 255) << 16 |
                                     MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
             r = MathUtils.clamp((int) ((luma * 0.65f + (warm *  0.625f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
             g = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f + mild * 0.5f) * 0.8f) * 256f), 0, 255);
             b = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
-            TINCTURE_BONUS_RAMP_VALUES[i | 128][0] = TINCTURE_BONUS_RAMP_VALUES[i][0] =
+            WEAK_BONUS_RAMP_VALUES[i | 128][0] = WEAK_BONUS_RAMP_VALUES[i][0] =
                     MathUtils.clamp(r, 0, 255) << 24 |
                             MathUtils.clamp(g, 0, 255) << 16 |
                             MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
         }
         sb.setLength(0);
         sb.ensureCapacity(2800);
-        sb.append("private static final int[][] TINCTURE_BONUS_RAMP_VALUES = new int[][] {\n");
+        sb.append("private static final int[][] WEAK_BONUS_RAMP_VALUES = new int[][] {\n");
         for (int i = 0; i < 256; i++) {
             sb.append("{ 0x");
-            StringKit.appendHex(sb, TINCTURE_BONUS_RAMP_VALUES[i][0]);
-            StringKit.appendHex(sb.append(", 0x"), TINCTURE_BONUS_RAMP_VALUES[i][1]);
-            StringKit.appendHex(sb.append(", 0x"), TINCTURE_BONUS_RAMP_VALUES[i][2]);
-            StringKit.appendHex(sb.append(", 0x"), TINCTURE_BONUS_RAMP_VALUES[i][3]);
+            StringKit.appendHex(sb, WEAK_BONUS_RAMP_VALUES[i][0]);
+            StringKit.appendHex(sb.append(", 0x"), WEAK_BONUS_RAMP_VALUES[i][1]);
+            StringKit.appendHex(sb.append(", 0x"), WEAK_BONUS_RAMP_VALUES[i][2]);
+            StringKit.appendHex(sb.append(", 0x"), WEAK_BONUS_RAMP_VALUES[i][3]);
             sb.append(" },\n");
 
         }
         System.out.println(sb.append("};"));
         PALETTE = new int[256];
         for (int i = 0; i < 64; i++) {
-            System.arraycopy(TINCTURE_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
+            System.arraycopy(WEAK_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
         }
         sb.setLength(0);
         sb.ensureCapacity((1 + 12 * 8) * (PALETTE.length >>> 3));
@@ -868,9 +593,9 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
             pix.drawPixel(i, 0, PALETTE[i + 1]);
         }
         //pix.drawPixel(255, 0, 0);
-        png8.palette = new PaletteReducer(PALETTE, labMetric);
+        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("TinctureBonus.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("WeakBonus.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -887,7 +612,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("TinctureBonus_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("WeakBonus_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -902,7 +627,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         }
         png8.palette = new PaletteReducer(PALETTE);
         try {
-            png8.writePrecisely(Gdx.files.local("TinctureBonusMagicaVoxel.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("WeakBonusMagicaVoxel.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
