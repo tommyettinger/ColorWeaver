@@ -86,7 +86,7 @@ public class Palettizer extends ApplicationAdapter {
     public void create() {
         font = new BitmapFont();
         batch = new SpriteBatch();
-        reducer = new PaletteReducer(Coloring.AURORA, PaletteReducer.ENCODED_AURORA); 
+        reducer = new PaletteReducer(); 
                 //new PaletteReducer(Colorizer.JudgeBonusPalette);
                 //Coloring.FLESURRECT_REDUCER;
                 //Colorizer.AuroraColorizer.getReducer();

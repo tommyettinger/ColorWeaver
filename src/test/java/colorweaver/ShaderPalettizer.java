@@ -38,6 +38,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
     private Vector3 add, mul;
 
     private ColorEqualizer eq;
+    
+    public static boolean equalize = true;
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -46,13 +48,14 @@ public class ShaderPalettizer extends ApplicationAdapter {
         config.setIdleFPS(10);
         config.useVsync(true);
         config.setResizable(false);
+        
         final ShaderPalettizer app = new ShaderPalettizer();
         config.setWindowListener(new Lwjgl3WindowAdapter() {
             @Override
             public void filesDropped(String[] files) {
                 if (files != null && files.length > 0) {
                     if (files[0].endsWith(".png") || files[0].endsWith(".jpg") || files[0].endsWith(".jpeg"))
-                        app.load(files[0], Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
+                        app.load(files[0], equalize = !equalize);
                 }
             }
         });
@@ -184,21 +187,21 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.NUMPAD_5:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
                                 ? new Texture(Gdx.files.local("palettes/Twirl64_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/Swirl64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                : new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_6:
                     case Input.Keys.NUMPAD_6:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
                                 ? new Texture(Gdx.files.local("palettes/TwirlBonus_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/SwirlBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                : new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_7:
                     case Input.Keys.NUMPAD_7:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
                                 ? new Texture(Gdx.files.local("palettes/Twirl256_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/Swirl256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                : new Texture(Gdx.files.local("palettes/Knee256_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL_HS.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/JudgeBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;

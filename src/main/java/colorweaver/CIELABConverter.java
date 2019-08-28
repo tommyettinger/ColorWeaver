@@ -432,4 +432,56 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 		
 		return L * L * 11.0 + A * A * 1.6 + B * B;
 	}
+	public static double[][] makeLAB15()
+	{
+		final double[][] labs = new double[3][0x8000];
+		double r, g, b, x, y, z, L, A, B;
+		double minL = 100, maxL = 0, minA = 0, maxA = 0, minB = 0, maxB = 0;
+		for (int ri = 0; ri < 32; ri++) {
+			r = ri / 31.0;
+			r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
+			for (int gi = 0; gi < 32; gi++) {
+				g = gi / 31.0;
+				g = ((g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92);
+				for (int bi = 0; bi < 32; bi++) {
+					b = bi / 31.0;
+					b = ((b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92);
+
+					int idx = ri << 10 | gi << 5 | bi;
+
+					x = (r * 0.4124 + g * 0.3576 + b * 0.1805);// / 0.950489; // 0.96422;
+					y = (r * 0.2126 + g * 0.7152 + b * 0.0722);// / 1.000000; // 1.00000;
+					z = (r * 0.0193 + g * 0.1192 + b * 0.9505);// / 1.088840; // 0.82521;
+
+
+					x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
+					y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
+					z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
+
+					labs[0][idx] = L = (116.0 * y) - 16.0;
+					labs[1][idx] = A = 500.0 * (x - y);
+					labs[2][idx] = B = 200.0 * (y - z);
+					minL = Math.min(minL, L);
+					maxL = Math.max(maxL, L);
+					minA = Math.min(minA, A);
+					maxA = Math.max(maxA, A);
+					minB = Math.min(minB, B);
+					maxB = Math.max(maxB, B);
+				}
+			}
+		}
+		System.out.println("L ranges from " + minL + " to " + maxL);
+		System.out.println("A ranges from " + minA + " to " + maxA);
+		System.out.println("B ranges from " + minB + " to " + maxB);
+		return labs;
+	}
+	
+	public static double difference15(final double[][] lab15, final int indexA, final int indexB)
+	{
+		final double
+				L = lab15[0][indexA] - lab15[0][indexB],
+				A = lab15[1][indexA] - lab15[1][indexB],
+				B = lab15[2][indexA] - lab15[2][indexB];
+		return L * L * 350.0 + A * A * 25.0 + B * B * 10.0;
+	}
 }

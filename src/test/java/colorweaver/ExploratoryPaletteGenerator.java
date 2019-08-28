@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.IntArray;
 
 import java.io.IOException;
 
-import static colorweaver.PaletteReducer.labMetric;
+import static colorweaver.PaletteReducer.labRoughMetric;
 
 /**
  * Created by Tommy Ettinger on 1/21/2018.
@@ -105,6 +105,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
     
     public void create() {
         IntArray base = new IntArray(900);
+        base.addAll(Coloring.AURORA, 1, 255);
 //        for(NamedColor nc : NamedColor.FULL_PALETTE)
 //        {
 //            if(nc.a >= 1f)
@@ -138,10 +139,10 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         //0.7548776662466927, 0.5698402909980532
         //2.6180339887498949, 3.6180339887498949
         double depth;
-        for (int ct = 0, i = 1, cie; ct < 1100; i++, ct++) {
-            while (0 == (cie = CIELABConverter.rgba8888((ct + i * 0.05) % 100.0,
-                    TrigTools.sin(i * 0.7548776662466927) * (depth = TrigTools.cos(i * 11.111) * 145),
-                    TrigTools.cos(i * 0.5698402909980532) * depth))) {
+        for (int ct = 0, i = 1, cie; ct < 900; i++, ct++) {
+            while (0 == (cie = CIELABConverter.rgba8888((ct + i * 0.03) % 100.0,
+                    TrigTools.sin(i * 2.6180339887498949) * (depth = TrigTools.cos(i * 10.7548776662466927) * 175.0),
+                    TrigTools.cos(i * 3.6180339887498949 + 1.0) * depth))) {
                 i++;
             }
             base.add(cie);
@@ -212,7 +213,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
                     color2 = base.get(j);
 //                    lab2.fromRGBA(base.get(j));
 //                    if ((t = difference(color1, color2)) < d) {
-                    if ((t = labMetric.difference(color1, color2)) < d) {
+                    if ((t = labRoughMetric.difference(color1, color2)) < d) {
                         d = t;
                         ca = i;
                         cb = j;
@@ -692,7 +693,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
 //        }
         //pix.drawPixel(255, 0, 0);
         PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE, labMetric);
+        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
         try {
             png8.writePrecisely(Gdx.files.local("Tincture64.png"), pix, false);
         } catch (IOException e) {
@@ -721,7 +722,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
         for (int i = 0; i < BIG_PALETTE.length; i++) {
             pix.drawPixel(i, 0, BIG_PALETTE[i]);
         }
-        png8.palette.exact(BIG_PALETTE, labMetric);
+        png8.palette.exact(BIG_PALETTE, labRoughMetric);
         try {
             png8.writePrecisely(Gdx.files.local("Tincture256.png"), pix, false);
         } catch (IOException e) {
@@ -789,7 +790,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
 //        Pixmap p2;
 //
 //        PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE, labMetric);        
+        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);        
         int[][] TINCTURE_BONUS_RAMP_VALUES = new int[256][4];
         for (int i = 1; i < PALETTE.length; i++) {
             int color = TINCTURE_BONUS_RAMP_VALUES[i | 128][2] = TINCTURE_BONUS_RAMP_VALUES[i][2] =
@@ -868,7 +869,7 @@ public class ExploratoryPaletteGenerator extends ApplicationAdapter {
             pix.drawPixel(i, 0, PALETTE[i + 1]);
         }
         //pix.drawPixel(255, 0, 0);
-        png8.palette = new PaletteReducer(PALETTE, labMetric);
+        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
         try {
             png8.writePrecisely(Gdx.files.local("TinctureBonus.png"), pix, false);
         } catch (IOException e) {

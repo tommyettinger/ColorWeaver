@@ -1,6 +1,5 @@
 package colorweaver;
 
-import colorweaver.tools.CrossHash;
 import colorweaver.tools.StringKit;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Colors;
@@ -19,7 +18,7 @@ import java.io.Serializable;
  *
  * @author Eben Howard - http://squidpony.com - howard@squidpony.com
  */
-public class NamedColor extends Color implements Serializable {
+public class NamedColor extends Color implements Serializable, Comparable<Color> {
     private static final long serialVersionUID = 1L;
     public final String name;
     private float calculatedFloat;
@@ -12525,6 +12524,7 @@ public class NamedColor extends Color implements Serializable {
      */
     public static float luma(final Color color)
     {
+        // [0.299 0.587 0.114]
         return (color.r * 0.299f) +
                (color.g * 0.587f) +
                (color.b * 0.114f);
@@ -13989,8 +13989,34 @@ B = t - Co;
         return (other instanceof Color) && toIntBits() == ((Color) other).toIntBits();
     }
 
+    /**
+     * The hash code here depends only on the color channels, not the name.
+     * @return a 32-bit hash code; may by any int, including 0, and should not have a bias toward any bits.
+     */
     @Override
     public int hashCode() {
-        return (155 + CrossHash.hash(name)) * 31 ^ toIntBits();
+        long z = NumberUtils.floatToIntBits(calculatedFloat);
+        z = (z ^ (z << 41 | z >>> 23) ^ (z << 17 | z >>> 47)) * 0x369DEA0F31A53F85L;
+        z = (z ^ z >>> 25 ^ z >>> 37) * 0xDB4F0B9175AE2165L;
+        return (int)(z ^ z >>> 28);
+
+    }
+
+    /**
+     * Compares this NamedColor with the specified Color for order.  Returns a
+     * negative integer, zero, or a positive integer as this object is less
+     * than, equal to, or greater than the specified Color or NamedColor. This
+     * comparison is based first on alpha (if the two Colors have non-equal alpha
+     * then the comparison will only be determined by those alpha values), then
+     * red, green, and blue.
+     *
+     * @param c the object to be compared.
+     * @return a negative integer, zero, or a positive integer as this object
+     * is less than, equal to, or greater than the specified object.
+     * @throws NullPointerException if the specified object is null
+     */
+    @Override
+    public int compareTo(Color c) {
+        return (Float.compare(a, c.a) << 3) + (Float.compare(r, c.r) << 2) + (Float.compare(g, c.g) << 1) + (Float.compare(b, c.b));
     }
 }
