@@ -209,7 +209,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.NUMPAD_8:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
                                 ? new Texture(Gdx.files.local("palettes/Lawn64_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/Tincture64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                : new Texture(Gdx.files.local("palettes/Smith256_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                                : new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Uniform216_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Laser64_GLSL.png"), Pixmap.Format.RGBA8888, false);
