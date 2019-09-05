@@ -451,9 +451,9 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 
 					int idx = ri << 10 | gi << 5 | bi;
 
-					x = (r * 0.4124 + g * 0.3576 + b * 0.1805);// / 0.950489; // 0.96422;
+					x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
 					y = (r * 0.2126 + g * 0.7152 + b * 0.0722);// / 1.000000; // 1.00000;
-					z = (r * 0.0193 + g * 0.1192 + b * 0.9505);// / 1.088840; // 0.82521;
+					z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.088840; // 0.82521;
 
 
 					x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
@@ -534,14 +534,15 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 		}
 		sb.append("};\n");
 		System.out.println(sb);
-		//System.exit(0);
+
+//		System.exit(0);
 		return labs;
 	}
 	
 	private static int puff(int small)
 	{
 		int r = small & 0x7C00, g = small & 0x3E0, b = small & 0x1F;
-		return ((r << 17 | r << 12) & 0xFF000000) | ((g << 14 | g << 9) & 0xFF0000) | ((b << 11 | b << 6) & 0xFF00) | 0xFF;
+		return (r << 17 & 0xF8000000) | (r << 12 & 0x07000000) | ((g << 14 & 0xF80000) | (g << 9 & 0x070000)) | (b << 11 & 0xF800) | (b << 6 & 0x0700) | 0xFF;
 	}
 	
 	private static int split15(int left, int right)
