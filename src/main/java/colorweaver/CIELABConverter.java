@@ -2,6 +2,7 @@
 //Apache 2.0 license
 package colorweaver;
 
+import colorweaver.tools.StringKit;
 import com.badlogic.gdx.graphics.Color;
 
 import static colorweaver.tools.TrigTools.*;
@@ -436,7 +437,8 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 	{
 		final double[][] labs = new double[3][0x8000];
 		double r, g, b, x, y, z, L, A, B;
-		double minL = 100, maxL = 0, minA = 0, maxA = 0, minB = 0, maxB = 0;
+		double[] minA = new double[10], maxA = new double[10], minB = new double[10], maxB = new double[10];
+		int[][][] grids = new int[10][5][5];
 		for (int ri = 0; ri < 32; ri++) {
 			r = ri / 31.0;
 			r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
@@ -461,19 +463,106 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 					labs[0][idx] = L = (116.0 * y) - 16.0;
 					labs[1][idx] = A = 500.0 * (x - y);
 					labs[2][idx] = B = 200.0 * (y - z);
-					minL = Math.min(minL, L);
-					maxL = Math.max(maxL, L);
-					minA = Math.min(minA, A);
-					maxA = Math.max(maxA, A);
-					minB = Math.min(minB, B);
-					maxB = Math.max(maxB, B);
+					int l = (int)(L / 11.111 + 0.5);
+					minA[l] = Math.min(minA[l], A);
+					maxA[l] = Math.max(maxA[l], A);
+					minB[l] = Math.min(minB[l], B);
+					maxB[l] = Math.max(maxB[l], B);
+					if(A == minA[l])
+						grids[l][0][0] = idx;
+					if(B == minB[l])
+						grids[l][4][0] = idx;
+					if(B == maxB[l])
+						grids[l][0][4] = idx;
+					if(A == maxA[l])
+						grids[l][4][4] = idx;
+//					if(A == minA[l] && B == minB[l])
+//						grids[l][0][0] = idx;
+//					if(A == maxA[l] && B == minB[l])
+//						grids[l][4][0] = idx;
+//					if(A == minA[l] && B == maxB[l])
+//						grids[l][0][4] = idx;
+//					if(A == maxA[l] && B == maxB[l])
+//						grids[l][4][4] = idx;
 				}
 			}
 		}
-		System.out.println("L ranges from " + minL + " to " + maxL);
-		System.out.println("A ranges from " + minA + " to " + maxA);
-		System.out.println("B ranges from " + minB + " to " + maxB);
+
+		for (int l = 0; l < 10; l++) {
+			int lowLow = grids[l][0][0], highLow = grids[l][4][0], lowHigh = grids[l][0][4], highHigh = grids[l][4][4];
+			grids[l][1][0] = splitLeft15(lowLow, highLow);
+			grids[l][2][0] = split15(lowLow, highLow);
+			grids[l][3][0] = splitRight15(lowLow, highLow);
+
+			grids[l][1][4] = splitLeft15(lowHigh, highHigh);
+			grids[l][2][4] = split15(lowHigh, highHigh);
+			grids[l][3][4] = splitRight15(lowHigh, highHigh);
+
+			grids[l][0][1] = splitLeft15(lowLow, lowHigh);
+			grids[l][0][2] = split15(lowLow, lowHigh);
+			grids[l][0][3] = splitRight15(lowLow, lowHigh);
+
+			grids[l][4][1] = splitLeft15(highLow, highHigh);
+			grids[l][4][2] = split15(highLow, highHigh);
+			grids[l][4][3] = splitRight15(highLow, highHigh);
+
+			grids[l][1][1] = split15(splitLeft15(grids[l][1][0], grids[l][1][4]), splitLeft15(grids[l][0][1], grids[l][4][1]));
+			grids[l][2][1] = split15(splitLeft15(grids[l][2][0], grids[l][2][4]), split15(grids[l][0][1], grids[l][4][1]));
+			grids[l][3][1] = split15(splitLeft15(grids[l][3][0], grids[l][3][4]), splitRight15(grids[l][0][1], grids[l][4][1]));
+
+			grids[l][1][2] = split15(split15(grids[l][1][0], grids[l][1][4]), splitLeft15(grids[l][0][2], grids[l][4][2]));
+			grids[l][2][2] = split15(split15(grids[l][2][0], grids[l][2][4]), split15(grids[l][0][2], grids[l][4][2]));
+			grids[l][3][2] = split15(split15(grids[l][3][0], grids[l][3][4]), splitRight15(grids[l][0][2], grids[l][4][2]));
+			
+			grids[l][1][3] = split15(splitRight15(grids[l][1][0], grids[l][1][4]), splitLeft15(grids[l][0][3], grids[l][4][3]));
+			grids[l][2][3] = split15(splitRight15(grids[l][2][0], grids[l][2][4]), split15(grids[l][0][3], grids[l][4][3]));
+			grids[l][3][3] = split15(splitRight15(grids[l][3][0], grids[l][3][4]), splitRight15(grids[l][0][3], grids[l][4][3]));
+		}
+		StringBuilder sb = new StringBuilder(500).append("new int[] {\n");
+		for (int i = 0; i < 10; i++) {
+//			System.out.println("At L " + (int)(i * 11.1112) + ", A ranges from " + minA[i] + " to " + maxA[i]);
+//			System.out.println("At L " + (int)(i * 11.1112) + ", B ranges from " + minB[i] + " to " + maxB[i]);
+			sb.append("\n");
+			for (int bb = 0; bb < 5; bb++) {
+//				sb.append("{ ");
+				for (int aa = 0; aa < 5; aa++) {
+					StringKit.appendHex(sb.append("0x"), puff(grids[i][aa][bb])).append(", ");
+				}
+				sb.append("\n");
+			}
+			sb.append("\n");
+		}
+		sb.append("};\n");
+		System.out.println(sb);
+		//System.exit(0);
 		return labs;
+	}
+	
+	private static int puff(int small)
+	{
+		int r = small & 0x7C00, g = small & 0x3E0, b = small & 0x1F;
+		return ((r << 17 | r << 12) & 0xFF000000) | ((g << 14 | g << 9) & 0xFF0000) | ((b << 11 | b << 6) & 0xFF00) | 0xFF;
+	}
+	
+	private static int split15(int left, int right)
+	{
+		return ((left >>> 10) + (right >>> 10) + 1 << 9 & 0x7C00) |
+				((left >>> 5 & 0x3E0) + (right >>> 5 & 0x3E0) + 1 << 4 & 0x3E0) |
+				((left & 0x1F) + (right & 0x1F) + 1 >>> 1 & 0x1F);
+	}
+
+	private static int splitRight15(int left, int right)
+	{
+		return ((left >>> 10) + (right >>> 10) * 3 + 3 << 8 & 0x7C00) |
+				((left >>> 5 & 0x3E0) + (right >>> 5 & 0x3E0) * 3 + 3 << 3 & 0x3E0) |
+				((left & 0x1F) + (right & 0x1F) * 3 + 3 >>> 2 & 0x1F);
+	}
+
+	private static int splitLeft15(int left, int right)
+	{
+		return ((left >>> 10) * 3 + (right >>> 10) + 3 << 8 & 0x7C00) |
+				((left >>> 5 & 0x3E0) * 3 + (right >>> 5 & 0x3E0) + 3 << 3 & 0x3E0) |
+				((left & 0x1F) * 3 + (right & 0x1F) + 3 >>> 2 & 0x1F);
 	}
 	
 	public static double difference15(final double[][] lab15, final int indexA, final int indexB)
