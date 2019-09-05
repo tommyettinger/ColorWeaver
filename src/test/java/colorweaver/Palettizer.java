@@ -50,7 +50,7 @@ public class Palettizer extends ApplicationAdapter {
 
     public void load(String name) {
         try {
-            final String suffix = "";
+            final String suffix = "_Smash";
             //// loads a file by its full path, which we get via drag+drop
             Pixmap pm = new Pixmap(Gdx.files.absolute(name));
 //            reducer.analyze(pm, 1600, 32);
@@ -73,8 +73,8 @@ public class Palettizer extends ApplicationAdapter {
             png8.writePrecisely(Gdx.files.local(subname + "_RobertsEdit"+suffix+".png"), pm, false);
             pm = reducer.reduceShaderMimic(new Pixmap(Gdx.files.absolute(name)));
             FileHandle next = Gdx.files.local(subname + "_ShaderMimic"+suffix+".png");
-            png8.writePrecisely(next, pm, Coloring.AURORA, false, 0);
-            int[] hsp = Arrays.copyOf(Coloring.AURORA, 256);
+            png8.writePrecisely(next, pm, reducer.paletteArray, false, 0);
+            int[] hsp = Arrays.copyOf(reducer.paletteArray, 256);
             PaletteReducer.hueShiftPalette(hsp);
             PNG8.swapPalette(next, Gdx.files.local(subname + "_ShaderMimicHSP"+suffix+".png"), hsp);
             screenTexture = new Texture(next);
@@ -86,7 +86,8 @@ public class Palettizer extends ApplicationAdapter {
     public void create() {
         font = new BitmapFont();
         batch = new SpriteBatch();
-        reducer = new PaletteReducer(); 
+        reducer = Colorizer.SmashColorizer.getReducer(); 
+                //new PaletteReducer(); 
                 //new PaletteReducer(Colorizer.JudgeBonusPalette);
                 //Coloring.FLESURRECT_REDUCER;
                 //Colorizer.AuroraColorizer.getReducer();
