@@ -50,7 +50,7 @@ public class Palettizer extends ApplicationAdapter {
 
     public void load(String name) {
         try {
-            final String suffix = "_Smash";
+            final String suffix = "_Aurora";
             //// loads a file by its full path, which we get via drag+drop
             Pixmap pm = new Pixmap(Gdx.files.absolute(name));
 //            reducer.analyze(pm, 1600, 32);
@@ -86,8 +86,8 @@ public class Palettizer extends ApplicationAdapter {
     public void create() {
         font = new BitmapFont();
         batch = new SpriteBatch();
-        reducer = Colorizer.SmashColorizer.getReducer(); 
-                //new PaletteReducer(); 
+        reducer = //Colorizer.SmashColorizer.getReducer(); 
+                new PaletteReducer(); 
                 //new PaletteReducer(Colorizer.JudgeBonusPalette);
                 //Coloring.FLESURRECT_REDUCER;
                 //Colorizer.AuroraColorizer.getReducer();

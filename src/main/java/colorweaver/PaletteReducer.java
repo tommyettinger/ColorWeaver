@@ -1904,6 +1904,7 @@ public class PaletteReducer {
         int color, used;
         float pos;
         float adj;
+        final float strength = 0x1.4p-10f * ditherStrength;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1914,7 +1915,7 @@ public class PaletteReducer {
                     int rr = ((color >>> 24)       );
                     int gg = ((color >>> 16) & 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);
-                    float len = (rr * 5 + gg * 9 + bb * 2) * 0x1.9p-12f + 1f;
+                    float len = (rr * 5 + gg * 9 + bb * 2) * strength + 1f;
                     //adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * len - len * 0.5;
                     used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
