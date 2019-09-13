@@ -275,9 +275,35 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        Gdx.files.local("DawnBringer_Aurora_Official.hex").writeString(sbs, false);
 //        sb.setLength(0);
 
-        
+        final double[][] lab15 = CIELABConverter.makeLAB15();
+        PaletteReducer.ColorMetric cm = new PaletteReducer.ColorMetric(){
+            @Override
+            public double difference(int color1, int color2) {
+                return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+            }
+
+            @Override
+            public double difference(int color1, int r2, int g2, int b2) {
+                return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+            }
+
+            @Override
+            public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+                int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
+                        indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
+                final double
+                        L = lab15[0][indexA] - lab15[0][indexB],
+                        A = lab15[1][indexA] - lab15[1][indexB],
+                        B = lab15[2][indexA] - lab15[2][indexB];
+                return L * L * 170.0 + A * A * 25.0 + B * B * 25.0;
+            }
+        };
         PALETTE = Coloring.SMASH256;
         PaletteReducer pr = new PaletteReducer(PALETTE, PaletteReducer.labRoughMetric);
+        for (int i = 1; i < Coloring.GRAY8.length; i++) {
+            int color = Coloring.GRAY8[i];
+            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
+        }
         for (int i = 1; i < Coloring.DB16.length; i++) {
             int color = Coloring.DB16[i];
             PALETTE[pr.reduceIndex(color) & 0xFF] = color;
@@ -325,7 +351,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        }
 //        PALETTE = Colorizer.CurveballBonusPalette;
         PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE, PaletteReducer.labRoughMetric);
+        png8.palette = new PaletteReducer(PALETTE, cm);
 //        Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
 //        for (int i = 1; i < 64; i++) {
 //            pix.drawPixel(i-1, 0, PALETTE[i << 2 | 2]);
@@ -345,7 +371,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         }
         pix.drawPixel(255, 0, 0);
         try {
-            png8.writePrecisely(Gdx.files.local("DawnSmash256.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("DawnSmash256_Custom.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -362,7 +388,7 @@ public class PaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("DawnSmash256_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("DawnSmash256_Custom_GLSL.png"), p2, false);
 //            png8.writePrecisely(Gdx.files.local("Uniform"+PALETTE.length+"_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
