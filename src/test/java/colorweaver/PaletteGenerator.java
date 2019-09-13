@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.utils.IntArray;
 
 import java.io.IOException;
 
@@ -90,7 +89,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        int[] PALETTE = new int[64];
         int[] PALETTE;
 
-        IntArray base = new IntArray(0x912);
+//        IntArray base = new IntArray(0x912);
 //        base.addAll(Coloring.AURORA, 1, 255);
 //        base.addAll(0x010101FF, 0x2D2D2DFF, 0x555555FF, 0x7B7B7BFF,
 //                0x9F9F9FFF, 0xC1C1C1FF, 0xE1E1E1FF, 0xFFFFFFFF);
@@ -276,20 +275,27 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        Gdx.files.local("DawnBringer_Aurora_Official.hex").writeString(sbs, false);
 //        sb.setLength(0);
 
-//        PALETTE = Coloring.GB_GREEN;
-        PALETTE = new int[17];
-        PALETTE[1] = 0x000000FF;
-        PALETTE[2] = Coloring.GB_GREEN[1];
-        PALETTE[6] = Coloring.GB_GREEN[2];
-        PALETTE[10] = Coloring.GB_GREEN[3];
-        PALETTE[14] = Coloring.GB_GREEN[4];
-        PALETTE[15] = Coloring.mixEvenly(Coloring.GB_GREEN[4], 0xFFFFFFFF);
-        PALETTE[16] = 0xFFFFFFFF;
-        for (int i = 3; i < 14; i+=4) {
-            PALETTE[i] = Coloring.mixLightly(PALETTE[i-1], PALETTE[i+3]);
-            PALETTE[i+1] = Coloring.mixEvenly(PALETTE[i-1], PALETTE[i+3]);
-            PALETTE[i+2] = Coloring.mixHeavily(PALETTE[i-1], PALETTE[i+3]);
+        
+        PALETTE = Coloring.SMASH256;
+        PaletteReducer pr = new PaletteReducer(PALETTE, PaletteReducer.labRoughMetric);
+        for (int i = 1; i < Coloring.DB16.length; i++) {
+            int color = Coloring.DB16[i];
+            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
         }
+        
+//        PALETTE = new int[17];
+//        PALETTE[1] = 0x000000FF;
+//        PALETTE[2] = Coloring.GB_GREEN[1];
+//        PALETTE[6] = Coloring.GB_GREEN[2];
+//        PALETTE[10] = Coloring.GB_GREEN[3];
+//        PALETTE[14] = Coloring.GB_GREEN[4];
+//        PALETTE[15] = Coloring.mixEvenly(Coloring.GB_GREEN[4], 0xFFFFFFFF);
+//        PALETTE[16] = 0xFFFFFFFF;
+//        for (int i = 3; i < 14; i+=4) {
+//            PALETTE[i] = Coloring.mixLightly(PALETTE[i-1], PALETTE[i+3]);
+//            PALETTE[i+1] = Coloring.mixEvenly(PALETTE[i-1], PALETTE[i+3]);
+//            PALETTE[i+2] = Coloring.mixHeavily(PALETTE[i-1], PALETTE[i+3]);
+//        }
         StringBuilder sb = new StringBuilder((1 + 12 * 8) * (PALETTE.length + 7 >>> 3));
         for (int i = 0; i < (PALETTE.length + 7 >>> 3); i++) {
             for (int j = 0; j < 8 && (i << 3 | j) < PALETTE.length; j++) {
@@ -319,7 +325,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        }
 //        PALETTE = Colorizer.CurveballBonusPalette;
         PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE);
+        png8.palette = new PaletteReducer(PALETTE, PaletteReducer.labRoughMetric);
 //        Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
 //        for (int i = 1; i < 64; i++) {
 //            pix.drawPixel(i-1, 0, PALETTE[i << 2 | 2]);
@@ -339,7 +345,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         }
         pix.drawPixel(255, 0, 0);
         try {
-            png8.writePrecisely(Gdx.files.local("GBGreen16.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("DawnSmash256.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -356,7 +362,7 @@ public class PaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("GBGreen16_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("DawnSmash256_GLSL.png"), p2, false);
 //            png8.writePrecisely(Gdx.files.local("Uniform"+PALETTE.length+"_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
