@@ -200,7 +200,12 @@ public class MutantBatch implements Batch {
     }
 
     public void setRGBAColor (final int color) {
-        this.color = NumberUtils.intToFloatColor(Integer.reverseBytes(color & -2));
+        this.color = NumberUtils.intBitsToFloat(Integer.reverseBytes(color & -2));
+    }
+
+    public void setRGBAColor (int r, int g, int b, int a) {
+        color = NumberUtils.intBitsToFloat((a << 24 & 0xFE000000)
+                | (b << 16 & 0xFF0000) | (g << 8 & 0xFF00) | (r & 0xFF));
     }
 
     @Override

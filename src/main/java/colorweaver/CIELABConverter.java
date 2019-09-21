@@ -2,7 +2,6 @@
 //Apache 2.0 license
 package colorweaver;
 
-import colorweaver.tools.StringKit;
 import com.badlogic.gdx.graphics.Color;
 
 import static colorweaver.tools.TrigTools.*;
@@ -54,6 +53,30 @@ public class CIELABConverter {
 			L = (116.0 * y) - 16.0;
 			A = 500.0 * (x - y);
 			B = 200.0 * (y - z);
+		}
+		public Lab set(Color color)
+		{
+			double r = color.r, g = color.g, b = color.b;
+			alpha = color.a;
+			double x, y, z;
+
+			r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
+			g = ((g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92);
+			b = ((b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92);
+
+			x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489;
+			y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000;
+			z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.088840;
+
+			x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
+			y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
+			z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
+
+			L = (116.0 * y) - 16.0;
+			A = 500.0 * (x - y);
+			B = 200.0 * (y - z);
+			
+			return this;
 		}
 		
 		public double lightnessLAB(Color color)
@@ -109,6 +132,27 @@ public class CIELABConverter {
 			b = (b > 0.0031308) ? (1.055 * Math.pow(b, 1.0 / 2.4) - 0.055) : 12.92 * b;
 
 			return new Color((float)r, (float)g, (float)b, (float)alpha);
+		}
+
+		public Color intoColor(Color color){
+			double y = (L + 16.0) / 116.0;
+			double x = A / 500.0 + y;
+			double z = y - B / 200.0;
+			double r, g, b;
+
+			x = 0.95047 * ((x > 0.2068930344229638) ? x * x * x : (x - 16.0 / 116.0) / 7.787);
+			y = 1.00000 * ((y > 0.2068930344229638) ? y * y * y : (y - 16.0 / 116.0) / 7.787);
+			z = 1.08883 * ((z > 0.2068930344229638) ? z * z * z : (z - 16.0 / 116.0) / 7.787);
+
+			r = x *  3.2406 + y * -1.5372 + z * -0.4986;
+			g = x * -0.9689 + y *  1.8758 + z *  0.0415;
+			b = x *  0.0557 + y * -0.2040 + z *  1.0570;
+
+			r = (r > 0.0031308) ? (1.055 * Math.pow(r, 1.0 / 2.4) - 0.055) : 12.92 * r;
+			g = (g > 0.0031308) ? (1.055 * Math.pow(g, 1.0 / 2.4) - 0.055) : 12.92 * g;
+			b = (b > 0.0031308) ? (1.055 * Math.pow(b, 1.0 / 2.4) - 0.055) : 12.92 * b;
+
+			return color.set((float)r, (float)g, (float)b, (float)alpha);
 		}
 
 		public int toRGBA(){
@@ -437,8 +481,8 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 	{
 		final double[][] labs = new double[3][0x8000];
 		double r, g, b, x, y, z, L, A, B;
-		double[] minA = new double[10], maxA = new double[10], minB = new double[10], maxB = new double[10];
-		int[][][] grids = new int[10][5][5];
+		double[] minA = new double[20], maxA = new double[20], minB = new double[20], maxB = new double[20];
+		int[][][] grids = new int[20][5][5];
 		for (int ri = 0; ri < 32; ri++) {
 			r = ri / 31.0;
 			r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
@@ -451,9 +495,9 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 
 					int idx = ri << 10 | gi << 5 | bi;
 
-					x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
+					x = (r * 0.4124 + g * 0.3576 + b * 0.1805);// / 0.950489; // 0.96422;
 					y = (r * 0.2126 + g * 0.7152 + b * 0.0722);// / 1.000000; // 1.00000;
-					z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.088840; // 0.82521;
+					z = (r * 0.0193 + g * 0.1192 + b * 0.9505);// / 1.088840; // 0.82521;
 
 
 					x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
@@ -463,7 +507,7 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 					labs[0][idx] = L = (116.0 * y) - 16.0;
 					labs[1][idx] = A = 500.0 * (x - y);
 					labs[2][idx] = B = 200.0 * (y - z);
-					int l = (int)(L / 11.111 + 0.5);
+					int l = (int)(L / 5.2631578947368425 + 0.5); // was 11.111
 					minA[l] = Math.min(minA[l], A);
 					maxA[l] = Math.max(maxA[l], A);
 					minB[l] = Math.min(minB[l], B);
@@ -488,7 +532,7 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 			}
 		}
 
-		for (int l = 0; l < 10; l++) {
+		for (int l = 0; l < 20; l++) {
 			int lowLow = grids[l][0][0], highLow = grids[l][4][0], lowHigh = grids[l][0][4], highHigh = grids[l][4][4];
 			grids[l][1][0] = splitLeft15(lowLow, highLow);
 			grids[l][2][0] = split15(lowLow, highLow);
@@ -518,28 +562,33 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 			grids[l][2][3] = split15(splitRight15(grids[l][2][0], grids[l][2][4]), split15(grids[l][0][3], grids[l][4][3]));
 			grids[l][3][3] = split15(splitRight15(grids[l][3][0], grids[l][3][4]), splitRight15(grids[l][0][3], grids[l][4][3]));
 		}
-		StringBuilder sb = new StringBuilder(500).append("new int[] {\n");
-		for (int i = 0; i < 10; i++) {
-//			System.out.println("At L " + (int)(i * 11.1112) + ", A ranges from " + minA[i] + " to " + maxA[i]);
-//			System.out.println("At L " + (int)(i * 11.1112) + ", B ranges from " + minB[i] + " to " + maxB[i]);
-			sb.append("\n");
-			for (int bb = 0; bb < 5; bb++) {
-//				sb.append("{ ");
-				for (int aa = 0; aa < 5; aa++) {
-					StringKit.appendHex(sb.append("0x"), puff(grids[i][aa][bb])).append(", ");
-				}
-				sb.append("\n");
-			}
-			sb.append("\n");
-		}
-		sb.append("};\n");
-		System.out.println(sb);
-
-//		System.exit(0);
+//		StringBuilder sb = new StringBuilder(500).append("new int[] {\n");
+//		for (int i = 0; i < 20; i++) {
+//			System.out.println("At L " + (int)(i * 5.2631578947368425) + ", A ranges from " + minA[i] + " to " + maxA[i]);
+//			System.out.println("At L " + (int)(i * 5.2631578947368425) + ", B ranges from " + minB[i] + " to " + maxB[i]);
+//			sb.append("\n");
+//			for (int bb = 0; bb < 5; bb++) {
+////				sb.append("{ ");
+//				for (int aa = 0; aa < 5; aa++) {
+//					StringKit.appendHex(sb.append("0x"), puff(grids[i][aa][bb])).append(", ");
+//				}
+//				sb.append("\n");
+//			}
+//			sb.append("\n");
+//		}
+//		sb.append("};\n");
+//		System.out.println(sb);
+		
 		return labs;
 	}
 	
-	private static int puff(int small)
+	public static void main(String[] args)
+	{
+		makeLAB15();
+		System.exit(0);
+	}
+	
+	public static int puff(int small)
 	{
 		int r = small & 0x7C00, g = small & 0x3E0, b = small & 0x1F;
 		return (r << 17 & 0xF8000000) | (r << 12 & 0x07000000) | ((g << 14 & 0xF80000) | (g << 9 & 0x070000)) | (b << 11 & 0xF800) | (b << 6 & 0x0700) | 0xFF;
@@ -572,6 +621,6 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 				L = lab15[0][indexA] - lab15[0][indexB],
 				A = lab15[1][indexA] - lab15[1][indexB],
 				B = lab15[2][indexA] - lab15[2][indexB];
-		return L * L * 350.0 + A * A * 25.0 + B * B * 10.0;
+		return L * L * 50.0 + A * A * 50.0 + B * B * 50.0;
 	}
 }

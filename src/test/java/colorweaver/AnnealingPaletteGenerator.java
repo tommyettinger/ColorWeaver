@@ -7,8 +7,6 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.IntSet;
 
 import java.io.IOException;
 
@@ -65,8 +63,8 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
     private static double difference(double y1, double w1, double m1, double y2, double w2, double m2) {
         return (y1 - y2) * (y1 - y2) + ((w1 - w2) * (w1 - w2) + (m1 - m2) * (m1 - m2)) * 0.1625;
     }
-    
-    
+
+
     public int[] anneal(final double[][] lab15, int[] palette) {
         double temperature = 15.0;
         for (int iter = 0; iter < 100; iter++) {
@@ -145,84 +143,85 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
     
     public void create() {
         final double[][] lab15 =  CIELABConverter.makeLAB15();
-        IntSet distinct = IntSet.with(0x001000FF, 0x000018FF, 0x000029FF, 0x000042FF, 0x000052FF,
-                0x08C600FF, 0x080018FF, 0x080029FF, 0x080042FF, 0x000052FF,
-                0x108400FF, 0x100018FF, 0x080029FF, 0x080042FF, 0x000052FF,
-                0x184200FF, 0x180018FF, 0x100029FF, 0x080042FF, 0x000052FF,
-                0x181000FF, 0x184218FF, 0x108429FF, 0x08C642FF, 0x000052FF,
-
-
-                0x003100FF, 0x000029FF, 0x00004AFF, 0x000073FF, 0x000094FF,
-                0x18C600FF, 0x180029FF, 0x10004AFF, 0x108473FF, 0x084294FF,
-                0x318400FF, 0x290029FF, 0x21844AFF, 0x188473FF, 0x088494FF,
-                0x4A4200FF, 0x390029FF, 0x29004AFF, 0x180073FF, 0x08C694FF,
-                0x5A0000FF, 0x4A8429FF, 0x31004AFF, 0x218473FF, 0x080094FF,
-
-
-                0x004A00FF, 0x000039FF, 0x000073FF, 0x0000ADFF, 0x0000DEFF,
-                0x210000FF, 0x210039FF, 0x180073FF, 0x1000ADFF, 0x0842DEFF,
-                0x420000FF, 0x390039FF, 0x290073FF, 0x1800ADFF, 0x0884DEFF,
-                0x630000FF, 0x520039FF, 0x390073FF, 0x2100ADFF, 0x08C6DEFF,
-                0x841000FF, 0x6B4239FF, 0x4A8473FF, 0x29C6ADFF, 0x0800DEFF,
-
-
-                0x006B00FF, 0x000042FF, 0x000084FF, 0x0000C6FF, 0x0000FFFF,
-                0x318400FF, 0x318442FF, 0x290084FF, 0x2984C6FF, 0x2142FFFF,
-                0x5A0000FF, 0x520042FF, 0x4A0084FF, 0x4200C6FF, 0x3984FFFF,
-                0x8C8400FF, 0x848442FF, 0x730084FF, 0x6300C6FF, 0x52C6FFFF,
-                0xB51800FF, 0xA5C642FF, 0x948484FF, 0x8442C6FF, 0x6B00FFFF,
-
-
-                0x008400FF, 0x100042FF, 0x210084FF, 0x3100C6FF, 0x4231FFFF,
-                0x424200FF, 0x4A0042FF, 0x520084FF, 0x5A00C6FF, 0x63C6FFFF,
-                0x7B8400FF, 0x848442FF, 0x848484FF, 0x8400C6FF, 0x8484FFFF,
-                0xB5C600FF, 0xB50042FF, 0xAD0084FF, 0xAD00C6FF, 0xA542FFFF,
-                0xEF0000FF, 0xE78442FF, 0xD60084FF, 0xCE84C6FF, 0xBD00FFFF,
-
-
-                0x00A500FF, 0x298442FF, 0x4A0084FF, 0x7384C6FF, 0x944AFFFF,
-                0x42C600FF, 0x630042FF, 0x7B0084FF, 0x9C00C6FF, 0xB542FFFF,
-                0x848400FF, 0x9C8442FF, 0xAD8484FF, 0xBD00C6FF, 0xCE84FFFF,
-                0xC64200FF, 0xCE0042FF, 0xD60084FF, 0xDE00C6FF, 0xE7C6FFFF,
-                0xFF5A00FF, 0xFF0042FF, 0xFF0084FF, 0xFF00C6FF, 0xFF00FFFF,
-
-
-                0x00CE00FF, 0x100042FF, 0x210084FF, 0x3100C6FF, 0x4294FFFF,
-                0x42C600FF, 0x520042FF, 0x5A0084FF, 0x6B00C6FF, 0x73C6FFFF,
-                0x848400FF, 0x8C0042FF, 0x940084FF, 0x9C00C6FF, 0xA584FFFF,
-                0xC64200FF, 0xCE8442FF, 0xCE0084FF, 0xD684C6FF, 0xD642FFFF,
-                0xFF9400FF, 0xFF0042FF, 0xFF0084FF, 0xFF00C6FF, 0xFF21FFFF,
-
-
-                0x00EF00FF, 0x080042FF, 0x100084FF, 0x1800C6FF, 0x21BDFFFF,
-                0x42C600FF, 0x4A0042FF, 0x520084FF, 0x5A84C6FF, 0x5AC6FFFF,
-                0x848400FF, 0x8C8442FF, 0x8C0084FF, 0x9484C6FF, 0x9484FFFF,
-                0xC64200FF, 0xCE8442FF, 0xCE8484FF, 0xCE84C6FF, 0xCE42FFFF,
-                0xFFC600FF, 0xFF0042FF, 0xFF0084FF, 0xFF00C6FF, 0xFF84FFFF,
-
-
-                0x00FF00FF, 0x218442FF, 0x390084FF, 0x5A84C6FF, 0x73DEFFFF,
-                0x428400FF, 0x5A0042FF, 0x738484FF, 0x8C84C6FF, 0x9C42FFFF,
-                0x7B0000FF, 0x948442FF, 0x9C0084FF, 0xAD00C6FF, 0xBD84FFFF,
-                0xBD8400FF, 0xCE8442FF, 0xCE0084FF, 0xD600C6FF, 0xDEC6FFFF,
-                0xF7F700FF, 0xFF4242FF, 0xFF8484FF, 0xFFC6C6FF, 0xFFBDFFFF,
-
-
-                0xD6FF52FF, 0xCE8484FF, 0xBD00ADFF, 0xB584D6FF, 0xA5FFFFFF,
-                0xE74242FF, 0xDE0073FF, 0xD684A5FF, 0xCE00D6FF, 0xBDC6FFFF,
-                0xEF8429FF, 0xEF8463FF, 0xE7849CFF, 0xDE00CEFF, 0xD684FFFF,
-                0xF7C618FF, 0xF70052FF, 0xF78494FF, 0xF784CEFF, 0xEF42FFFF,
-                0xFFFF00FF, 0xFF0042FF, 0xFF0084FF, 0xFF00C6FF, 0xFFEFFFFF);
-        IntArray ia = distinct.iterator().toArray();
-        ia.insert(0, 0);
-        int baseLen = ia.size;
-        System.out.println("baseLen is " + baseLen);
-        int[] items = new int[256];
-        System.arraycopy(ia.items, 0, items, 0, baseLen);
-        System.out.println("items int[] has length " + items.length);
-        for (int i = baseLen; i < 256; i++) {
-            items[i] = Coloring.LAVA256[i];
-        }
+//        IntSet distinct = IntSet.with(0x001000FF, 0x000018FF, 0x000029FF, 0x000042FF, 0x000052FF,
+//                0x08C600FF, 0x080018FF, 0x080029FF, 0x080042FF, 0x000052FF,
+//                0x108400FF, 0x100018FF, 0x080029FF, 0x080042FF, 0x000052FF,
+//                0x184200FF, 0x180018FF, 0x100029FF, 0x080042FF, 0x000052FF,
+//                0x181000FF, 0x184218FF, 0x108429FF, 0x08C642FF, 0x000052FF,
+//
+//
+//                0x003100FF, 0x000029FF, 0x00004AFF, 0x000073FF, 0x000094FF,
+//                0x18C600FF, 0x180029FF, 0x10004AFF, 0x108473FF, 0x084294FF,
+//                0x318400FF, 0x290029FF, 0x21844AFF, 0x188473FF, 0x088494FF,
+//                0x4A4200FF, 0x390029FF, 0x29004AFF, 0x180073FF, 0x08C694FF,
+//                0x5A0000FF, 0x4A8429FF, 0x31004AFF, 0x218473FF, 0x080094FF,
+//
+//
+//                0x004A00FF, 0x000039FF, 0x000073FF, 0x0000ADFF, 0x0000DEFF,
+//                0x210000FF, 0x210039FF, 0x180073FF, 0x1000ADFF, 0x0842DEFF,
+//                0x420000FF, 0x390039FF, 0x290073FF, 0x1800ADFF, 0x0884DEFF,
+//                0x630000FF, 0x520039FF, 0x390073FF, 0x2100ADFF, 0x08C6DEFF,
+//                0x841000FF, 0x6B4239FF, 0x4A8473FF, 0x29C6ADFF, 0x0800DEFF,
+//
+//
+//                0x006B00FF, 0x000042FF, 0x000084FF, 0x0000C6FF, 0x0000FFFF,
+//                0x318400FF, 0x318442FF, 0x290084FF, 0x2984C6FF, 0x2142FFFF,
+//                0x5A0000FF, 0x520042FF, 0x4A0084FF, 0x4200C6FF, 0x3984FFFF,
+//                0x8C8400FF, 0x848442FF, 0x730084FF, 0x6300C6FF, 0x52C6FFFF,
+//                0xB51800FF, 0xA5C642FF, 0x948484FF, 0x8442C6FF, 0x6B00FFFF,
+//
+//
+//                0x008400FF, 0x100042FF, 0x210084FF, 0x3100C6FF, 0x4231FFFF,
+//                0x424200FF, 0x4A0042FF, 0x520084FF, 0x5A00C6FF, 0x63C6FFFF,
+//                0x7B8400FF, 0x848442FF, 0x848484FF, 0x8400C6FF, 0x8484FFFF,
+//                0xB5C600FF, 0xB50042FF, 0xAD0084FF, 0xAD00C6FF, 0xA542FFFF,
+//                0xEF0000FF, 0xE78442FF, 0xD60084FF, 0xCE84C6FF, 0xBD00FFFF,
+//
+//
+//                0x00A500FF, 0x298442FF, 0x4A0084FF, 0x7384C6FF, 0x944AFFFF,
+//                0x42C600FF, 0x630042FF, 0x7B0084FF, 0x9C00C6FF, 0xB542FFFF,
+//                0x848400FF, 0x9C8442FF, 0xAD8484FF, 0xBD00C6FF, 0xCE84FFFF,
+//                0xC64200FF, 0xCE0042FF, 0xD60084FF, 0xDE00C6FF, 0xE7C6FFFF,
+//                0xFF5A00FF, 0xFF0042FF, 0xFF0084FF, 0xFF00C6FF, 0xFF00FFFF,
+//
+//
+//                0x00CE00FF, 0x100042FF, 0x210084FF, 0x3100C6FF, 0x4294FFFF,
+//                0x42C600FF, 0x520042FF, 0x5A0084FF, 0x6B00C6FF, 0x73C6FFFF,
+//                0x848400FF, 0x8C0042FF, 0x940084FF, 0x9C00C6FF, 0xA584FFFF,
+//                0xC64200FF, 0xCE8442FF, 0xCE0084FF, 0xD684C6FF, 0xD642FFFF,
+//                0xFF9400FF, 0xFF0042FF, 0xFF0084FF, 0xFF00C6FF, 0xFF21FFFF,
+//
+//
+//                0x00EF00FF, 0x080042FF, 0x100084FF, 0x1800C6FF, 0x21BDFFFF,
+//                0x42C600FF, 0x4A0042FF, 0x520084FF, 0x5A84C6FF, 0x5AC6FFFF,
+//                0x848400FF, 0x8C8442FF, 0x8C0084FF, 0x9484C6FF, 0x9484FFFF,
+//                0xC64200FF, 0xCE8442FF, 0xCE8484FF, 0xCE84C6FF, 0xCE42FFFF,
+//                0xFFC600FF, 0xFF0042FF, 0xFF0084FF, 0xFF00C6FF, 0xFF84FFFF,
+//
+//
+//                0x00FF00FF, 0x218442FF, 0x390084FF, 0x5A84C6FF, 0x73DEFFFF,
+//                0x428400FF, 0x5A0042FF, 0x738484FF, 0x8C84C6FF, 0x9C42FFFF,
+//                0x7B0000FF, 0x948442FF, 0x9C0084FF, 0xAD00C6FF, 0xBD84FFFF,
+//                0xBD8400FF, 0xCE8442FF, 0xCE0084FF, 0xD600C6FF, 0xDEC6FFFF,
+//                0xF7F700FF, 0xFF4242FF, 0xFF8484FF, 0xFFC6C6FF, 0xFFBDFFFF,
+//
+//
+//                0xD6FF52FF, 0xCE8484FF, 0xBD00ADFF, 0xB584D6FF, 0xA5FFFFFF,
+//                0xE74242FF, 0xDE0073FF, 0xD684A5FF, 0xCE00D6FF, 0xBDC6FFFF,
+//                0xEF8429FF, 0xEF8463FF, 0xE7849CFF, 0xDE00CEFF, 0xD684FFFF,
+//                0xF7C618FF, 0xF70052FF, 0xF78494FF, 0xF784CEFF, 0xEF42FFFF,
+//                0xFFFF00FF, 0xFF0042FF, 0xFF0084FF, 0xFF00C6FF, 0xFFEFFFFF);
+//        IntArray ia = distinct.iterator().toArray();
+//        ia.insert(0, 0);
+//        int baseLen = ia.size;
+//        System.out.println("baseLen is " + baseLen);
+//        int[] items = new int[256];
+//        System.arraycopy(ia.items, 0, items, 0, baseLen);
+//        System.out.println("items int[] has length " + items.length);
+//        for (int i = baseLen; i < 256; i++) {
+//            items[i] = Coloring.LAVA256[i];
+//        }
+        int[] items = Coloring.AURORA;
         int[] PALETTE = anneal(lab15, items);
         double luma, warm, mild;
         double[] lumas = new double[PALETTE.length], warms = new double[PALETTE.length], milds = new double[PALETTE.length];

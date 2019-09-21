@@ -298,16 +298,19 @@ public class PaletteGenerator extends ApplicationAdapter {
                 return L * L * 170.0 + A * A * 25.0 + B * B * 25.0;
             }
         };
-        PALETTE = Coloring.SMASH256;
-        PaletteReducer pr = new PaletteReducer(PALETTE, PaletteReducer.labRoughMetric);
-        for (int i = 1; i < Coloring.GRAY8.length; i++) {
-            int color = Coloring.GRAY8[i];
-            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
-        }
-        for (int i = 1; i < Coloring.DB16.length; i++) {
-            int color = Coloring.DB16[i];
-            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
-        }
+//        PALETTE = Coloring.SMASH256;
+//        PaletteReducer pr = new PaletteReducer(PALETTE, PaletteReducer.labRoughMetric);
+//        for (int i = 1; i < Coloring.GRAY8.length; i++) {
+//            int color = Coloring.GRAY8[i];
+//            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
+//        }
+//        for (int i = 1; i < Coloring.DB16.length; i++) {
+//            int color = Coloring.DB16[i];
+//            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
+//        }
+        
+        PALETTE = Coloring.AURORA;
+//        PALETTE = Coloring.SHELTZY32;
         
 //        PALETTE = new int[17];
 //        PALETTE[1] = 0x000000FF;
@@ -371,7 +374,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         }
         pix.drawPixel(255, 0, 0);
         try {
-            png8.writePrecisely(Gdx.files.local("DawnSmash256_Custom.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("DB_Aurora_Custom.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -388,7 +391,7 @@ public class PaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("DawnSmash256_Custom_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("DB_Aurora_Custom_GLSL.png"), p2, false);
 //            png8.writePrecisely(Gdx.files.local("Uniform"+PALETTE.length+"_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
