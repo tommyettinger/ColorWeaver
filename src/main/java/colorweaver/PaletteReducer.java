@@ -403,9 +403,18 @@ public class PaletteReducer {
     }
 
 
-    public static class LABEvenColorMetric implements ColorMetric {
+    public static class YCwCmColorMetric implements ColorMetric {
+        public static final double[] yLUT = new double[2041], cLUT = new double[511];
+        static {
+            for (int i = 1; i < 2041; i++) {
+                yLUT[i] = Math.cbrt(i / 2041.0) * 1163.73;
+            }
+            for (int i = 1; i < 256; i++) {
+                cLUT[255 - i] = -(cLUT[255 + i] = Math.pow(i / 257.0, 0.40625) * 200.25);
+            }
+        }
         /**
-         * Color difference metric (squared) using L*A*B color space; returns large numbers even for smallish differences.
+         * Color difference metric (squared) using YCwCm color space with cube-root Y; returns large numbers even for smallish differences.
          * If this returns 250 or more, the colors may be perceptibly different; 500 or more almost guarantees it.
          *
          * @param rgba1 an RGBA8888 color as an int
@@ -416,143 +425,38 @@ public class PaletteReducer {
         public double difference(final int rgba1, final int rgba2)
         {
             if(((rgba1 ^ rgba2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
-            double x, y, z, r, g, b;
-
-            r = (rgba1 >>> 24) / 255.0;
-            g = (rgba1 >>> 16 & 0xFF) / 255.0;
-            b = (rgba1 >>> 8 & 0xFF) / 255.0;
-
-            r = Math.pow((r + 0.055) / 1.055, 2.4);
-            g = Math.pow((g + 0.055) / 1.055, 2.4);
-            b = Math.pow((b + 0.055) / 1.055, 2.4);
-
-            x = (r * 0.4124 + g * 0.3576 + b * 0.1805);
-            y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
-            z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
-
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
-
-            double L = 100.0 * y;
-            double A = 500.0 * (x - y);
-            double B = 200.0 * (y - z);
-
-            r = (rgba2 >>> 24) / 255.0;
-            g = (rgba2 >>> 16 & 0xFF) / 255.0;
-            b = (rgba2 >>> 8 & 0xFF) / 255.0;
-
-            r = Math.pow((r + 0.055) / 1.055, 2.4);
-            g = Math.pow((g + 0.055) / 1.055, 2.4);
-            b = Math.pow((b + 0.055) / 1.055, 2.4);
-
-            x = (r * 0.4124 + g * 0.3576 + b * 0.1805);
-            y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
-            z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
-
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
-
-            L -= 100.0 * y;
-            A -= 500.0 * (x - y);
-            B -= 200.0 * (y - z);
-
-            return L * L * 100.0 + A * A * 30.0 + B * B * 20.0;
+            final int r1 = (rgba1 >>> 24);
+            final int g1 = (rgba1 >>> 16 & 0xFF);
+            final int b1 = (rgba1 >>> 8 & 0xFF);
+            final int r2 = (rgba2 >>> 24);
+            final int g2 = (rgba2 >>> 16 & 0xFF);
+            final int b2 = (rgba2 >>> 8 & 0xFF);
+            
+            final double y = yLUT[r1 * 3 + g1 * 4 + b1] - yLUT[r2 * 3 + g2 * 4 + b2];
+            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 2.5;
+            final double cm = cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2];
+            return y * y + cw * cw + cm * cm;
+            
         }
         @Override
         public double difference(final int rgba1, final int r2, final int g2, final int b2)
         {
             if((rgba1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
-            double x, y, z, r, g, b;
+            final int r1 = (rgba1 >>> 24);
+            final int g1 = (rgba1 >>> 16 & 0xFF);
+            final int b1 = (rgba1 >>> 8 & 0xFF);
 
-            r = (rgba1 >>> 24) / 255.0;
-            g = (rgba1 >>> 16 & 0xFF) / 255.0;
-            b = (rgba1 >>> 8 & 0xFF) / 255.0;
-
-            r = Math.pow((r + 0.055) / 1.055, 2.4);
-            g = Math.pow((g + 0.055) / 1.055, 2.4);
-            b = Math.pow((b + 0.055) / 1.055, 2.4);
-
-            x = (r * 0.4124 + g * 0.3576 + b * 0.1805);
-            y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
-            z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
-
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
-
-            double L = 100 * y;
-            double A = 500.0 * (x - y);
-            double B = 200.0 * (y - z);
-
-            r = r2 / 255.0;
-            g = g2 / 255.0;
-            b = b2 / 255.0;
-
-            r = Math.pow((r + 0.055) / 1.055, 2.4);
-            g = Math.pow((g + 0.055) / 1.055, 2.4);
-            b = Math.pow((b + 0.055) / 1.055, 2.4);
-
-            x = (r * 0.4124 + g * 0.3576 + b * 0.1805);
-            y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
-            z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
-
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
-
-            L -= 100.0 * y;
-            A -= 500.0 * (x - y);
-            B -= 200.0 * (y - z);
-
-            return L * L * 100.0 + A * A * 30.0 + B * B * 20.0;
+            final double y = yLUT[r1 * 3 + g1 * 4 + b1] - yLUT[r2 * 3 + g2 * 4 + b2];
+            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 2.5;
+            final double cm = cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2];
+            return y * y + cw * cw + cm * cm;
         }
         @Override
         public double difference(final int r1, final int g1, final int b1, final int r2, final int g2, final int b2) {
-            double x, y, z, r, g, b;
-
-            r = r1 / 255.0;
-            g = g1 / 255.0;
-            b = b1 / 255.0;
-
-            r = Math.pow((r + 0.055) / 1.055, 2.4);
-            g = Math.pow((g + 0.055) / 1.055, 2.4);
-            b = Math.pow((b + 0.055) / 1.055, 2.4);
-
-            x = (r * 0.4124 + g * 0.3576 + b * 0.1805);
-            y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
-            z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
-
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
-
-            double L = 100 * y;
-            double A = 500.0 * (x - y);
-            double B = 200.0 * (y - z);
-
-            r = r2 / 255.0;
-            g = g2 / 255.0;
-            b = b2 / 255.0;
-
-            r = Math.pow((r + 0.055) / 1.055, 2.4);
-            g = Math.pow((g + 0.055) / 1.055, 2.4);
-            b = Math.pow((b + 0.055) / 1.055, 2.4);
-
-            x = (r * 0.4124 + g * 0.3576 + b * 0.1805);
-            y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
-            z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
-
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
-
-            L -= 100.0 * y;
-            A -= 500.0 * (x - y);
-            B -= 200.0 * (y - z);
-
-            return L * L * 100.0 + A * A * 30.0 + B * B * 20.0;
+            final double y = yLUT[r1 * 3 + g1 * 4 + b1] - yLUT[r2 * 3 + g2 * 4 + b2];
+            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 2.5;
+            final double cm = cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2];
+            return y * y + cw * cw + cm * cm;
         }
 
     }
@@ -560,7 +464,7 @@ public class PaletteReducer {
     public static final BasicColorMetric basicMetric = new BasicColorMetric(); // has no state, should be fine static
     public static final LABEuclideanColorMetric labMetric = new LABEuclideanColorMetric();
     public static final LABRoughColorMetric labRoughMetric = new LABRoughColorMetric();
-    public static final LABEvenColorMetric labEvenMetric = new LABEvenColorMetric();
+    public static final YCwCmColorMetric ycwcmMetric = new YCwCmColorMetric();
     public byte[] paletteMapping;
     public final int[] paletteArray = new int[256];
     ByteArray curErrorRedBytes, nextErrorRedBytes, curErrorGreenBytes, nextErrorGreenBytes, curErrorBlueBytes, nextErrorBlueBytes;

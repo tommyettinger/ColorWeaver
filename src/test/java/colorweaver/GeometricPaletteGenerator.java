@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.MathUtils;
 
 import java.io.IOException;
 
-import static colorweaver.PaletteReducer.labRoughMetric;
+import static colorweaver.PaletteReducer.*;
 
 /**
  * Created by Tommy Ettinger on 1/21/2018.
@@ -102,12 +102,12 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
     }
 
     public int[] lloyd(int[] palette) {
-        PaletteReducer pr = new PaletteReducer(palette, labRoughMetric);
+        PaletteReducer pr = new PaletteReducer(palette, ycwcmMetric);
         int[][] centroids = new int[4][palette.length];
         byte[] pm = pr.paletteMapping;
         int index, mix;
         float count;
-        for (int iter = 0; iter < 7; iter++) {
+        for (int iter = 0; iter < 40; iter++) {
             System.out.println("Relaxation iteration #" + (iter + 1));
             for (int i = 0; i < 0x8000; i++) {
                 index = pm[i] & 0xFF;
@@ -118,10 +118,12 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
             }
             for (int i = 1; i < 256; i++) {
                 count = centroids[3][i];
-                mix = (int)(centroids[0][i] / count) << 10 | (int)(centroids[1][i] / count) << 5 | (int)(centroids[2][i] / count);
+                mix = MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10 |
+                        MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5 |
+                        MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
                 palette[i] = CIELABConverter.puff(mix);
             }
-            pr.exact(palette, labRoughMetric);
+            pr.exact(palette, ycwcmMetric);
         }
         return palette;
     }
