@@ -1,5 +1,6 @@
 package colorweaver;
 
+import colorweaver.annotation.GwtIncompatible;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -8,7 +9,6 @@ import com.badlogic.gdx.utils.ByteArray;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.IntIntMap;
 import com.badlogic.gdx.utils.StreamUtils;
-import colorweaver.annotation.GwtIncompatible;
 
 import java.io.*;
 import java.util.HashMap;
@@ -18,18 +18,14 @@ import java.util.zip.CheckedOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
-import static colorweaver.PaletteReducer.randomXi;
-
 /** PNG-8 encoder with compression. An instance can be reused to encode multiple PNGs with minimal allocation.
  * You can configure the target palette and how this can dither colors via the {@link #palette} field, which is a
  * {@link PaletteReducer} object that is allowed to be null and can be reused. The methods
  * {@link PaletteReducer#exact(Color[])} or {@link PaletteReducer#analyze(Pixmap)} can be used to make the target
  * palette match a specific set of colors or the colors in an existing image. You can use
- * {@link PaletteReducer#setDitherStrength(float)} to reduce (or increase) dither strength; the dithering algorithm used
- * here is a modified version of the algorithm presented in "Simple gradient-based error-diffusion method" by Xaingyu Y.
- * Hu in the Journal of Electronic Imaging, 2016. This algorithm uses pseudo-randomly-generated noise (it is
- * deterministic, and is seeded using the color information) to adjust Floyd-Steinberg dithering. It yields
- * surprisingly non-random-looking dithers, but still manages to break up artificial patterns most of the time.
+ * {@link PaletteReducer#setDitherStrength(float)} to reduce (or increase) dither strength; the algorithm used here is
+ * standard Floyd-Steinberg dithering.
+ * <br>
  * Note that much of the time you will want to use {@link #writePrecisely(FileHandle, Pixmap, boolean)} instead of
  * {@link #write(FileHandle, Pixmap, boolean, boolean)}, since writePrecisely will attempt to reproduce the exact colors
  * if there are 256 colors or less in the Pixmap, and will automatically change to calling write() if there are more
@@ -850,16 +846,14 @@ public class PNG8 implements Disposable {
             }
 
         }
-
-
+        
         lastLineLen = w;
 
-        int color, used, rdiff, gdiff, bdiff, state = 0xFEEDBEEF;
+        int color, used, rdiff, gdiff, bdiff;
         byte er, eg, eb, paletteIndex;
-        float xi1, xi2, w1 = palette.ditherStrength * 0.125f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float w1 = palette.ditherStrength * 0.125f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
-            int py = flipY ? (h - y - 1) : y;
-            int ny = flipY ? (h - y - 2) : y + 1;
+            int ny = y + 1;
             for (int i = 0; i < w; i++) {
                 curErrorRed[i] = nextErrorRed[i];
                 curErrorGreen[i] = nextErrorGreen[i];
@@ -869,7 +863,7 @@ public class PNG8 implements Disposable {
                 nextErrorBlue[i] = 0;
             }
             for (int px = 0; px < w; px++) {
-                color = pixmap.getPixel(px, py) & 0xF8F8F880;
+                color = pixmap.getPixel(px, y) & 0xF8F8F880;
                 if ((color & 0x80) == 0 && hasTransparent)
                     curLine[px] = 0;
                 else {
@@ -888,38 +882,32 @@ public class PNG8 implements Disposable {
                     rdiff = (color>>>24)-    (used>>>24);
                     gdiff = (color>>>16&255)-(used>>>16&255);
                     bdiff = (color>>>8&255)- (used>>>8&255);
-                    state += (color + 0x41C64E6D) ^ color >>> 7;
-                    state = (state << 21 | state >>> 11);
-                    xi1 = randomXi(state);
-                    state ^= (state << 5 | state >>> 27) + 0x9E3779B9;
-                    xi2 = randomXi(state);
                     if(px < w - 1)
                     {
-                        curErrorRed[px+1]   += rdiff * w7 * (1f + xi1);
-                        curErrorGreen[px+1] += gdiff * w7 * (1f + xi1);
-                        curErrorBlue[px+1]  += bdiff * w7 * (1f + xi1);
+                        curErrorRed[px+1]   += rdiff * w7;
+                        curErrorGreen[px+1] += gdiff * w7;
+                        curErrorBlue[px+1]  += bdiff * w7;
                     }
                     if(ny < h)
                     {
                         if(px > 0)
                         {
-                            nextErrorRed[px-1]   += rdiff * w3 * (1f + xi2);
-                            nextErrorGreen[px-1] += gdiff * w3 * (1f + xi2);
-                            nextErrorBlue[px-1]  += bdiff * w3 * (1f + xi2);
+                            nextErrorRed[px-1]   += rdiff * w3;
+                            nextErrorGreen[px-1] += gdiff * w3;
+                            nextErrorBlue[px-1]  += bdiff * w3;
                         }
                         if(px < w - 1)
                         {
-                            nextErrorRed[px+1]   += rdiff * w1 * (1f - xi2);
-                            nextErrorGreen[px+1] += gdiff * w1 * (1f - xi2);
-                            nextErrorBlue[px+1]  += bdiff * w1 * (1f - xi2);
+                            nextErrorRed[px+1]   += rdiff * w1;
+                            nextErrorGreen[px+1] += gdiff * w1;
+                            nextErrorBlue[px+1]  += bdiff * w1;
                         }
-                        nextErrorRed[px]   += rdiff * w5 * (1f - xi1);
-                        nextErrorGreen[px] += gdiff * w5 * (1f - xi1);
-                        nextErrorBlue[px]  += bdiff * w5 * (1f - xi1);
+                        nextErrorRed[px]   += rdiff * w5;
+                        nextErrorGreen[px] += gdiff * w5;
+                        nextErrorBlue[px]  += bdiff * w5;
                     }
                 }
             }
-
             lineOut[0] = (byte)(curLine[0] - prevLine[0]);
 
             //Paeth

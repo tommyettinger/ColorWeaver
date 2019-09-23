@@ -120,20 +120,30 @@ public class ShaderUtils {
                     "const vec3 bright = vec3(0.375, 0.5, 0.125);\n" +
                     "void main()\n" +
                     "{\n" +
-                    "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
-                    "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
-                    "   float len = dot(tgt.rgb, bright * 0.0625) + 1.5;\n" +
-                    "   float adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy + len))) * len - len * 0.5;\n" +
-                    "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
+                    "   vec4 tgt = v_color * texture2D( u_texture, v_texCoords );\n" +
                     "   tgt.rgb = u_add + u_mul * vec3(dot(tgt.rgb, bright), tgt.r - tgt.b, tgt.g - tgt.b);\n" +
-                    //// this is an alternate way but it messes up the colors on the blue to yellow axis
-//                    "   tgt.rgb = clamp(vec3(dot(tgt.rgb, vec3(1.0, 0.625, 0.0)), dot(tgt.rgb, vec3(1.0, 0.0, 0.5)), dot(tgt.rgb, vec3(1.0, -0.5, -0.375))), 0.0, 1.0);\n" +
-                    //// this is the documented "correct" way, and it seems to cover the full gamut
                     "   tgt.rgb = clamp(vec3(dot(tgt.rgb, vec3(1.0, 0.625, -0.5)), dot(tgt.rgb, vec3(1.0, -0.375, 0.5)), dot(tgt.rgb, vec3(1.0, -0.375, -0.5))), 0.0, 1.0);\n" +
-                    //// this is an alternative that seems to cover more colors, at least at medium luma levels, but has serious issues with blue and yellow tinting
-//                    "   tgt.rgb = clamp(vec3(dot(tgt.rgb, vec3(1.0, 0.5, 0.0)), dot(tgt.rgb, vec3(1.0, 0.0, 0.5)), dot(tgt.rgb, vec3(1.0, -0.25, -0.25))), 0.0, 1.0);\n" +
-                    "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
-                    "   gl_FragColor.a = v_color.a * tgt.a;\n" +
+                    "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
+                    "   float len = dot(used.rgb, bright) + 1.5;\n" +
+                    "   float adj = (fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) - 0.5) * len;\n" +
+                    "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
+                    "   gl_FragColor.rgb = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
+                    "   gl_FragColor.a = tgt.a;\n" +
+
+//                    "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
+//                    "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
+//                    "   float len = dot(tgt.rgb, bright * 0.0625) + 1.5;\n" +
+//                    "   float adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy + len))) * len - len * 0.5;\n" +
+//                    "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
+//                    "   tgt.rgb = u_add + u_mul * vec3(dot(tgt.rgb, bright), tgt.r - tgt.b, tgt.g - tgt.b);\n" +
+//                    //// this is an alternate way but it messes up the colors on the blue to yellow axis
+////                    "   tgt.rgb = clamp(vec3(dot(tgt.rgb, vec3(1.0, 0.625, 0.0)), dot(tgt.rgb, vec3(1.0, 0.0, 0.5)), dot(tgt.rgb, vec3(1.0, -0.5, -0.375))), 0.0, 1.0);\n" +
+//                    //// this is the documented "correct" way, and it seems to cover the full gamut
+//                    "   tgt.rgb = clamp(vec3(dot(tgt.rgb, vec3(1.0, 0.625, -0.5)), dot(tgt.rgb, vec3(1.0, -0.375, 0.5)), dot(tgt.rgb, vec3(1.0, -0.375, -0.5))), 0.0, 1.0);\n" +
+//                    //// this is an alternative that seems to cover more colors, at least at medium luma levels, but has serious issues with blue and yellow tinting
+////                    "   tgt.rgb = clamp(vec3(dot(tgt.rgb, vec3(1.0, 0.5, 0.0)), dot(tgt.rgb, vec3(1.0, 0.0, 0.5)), dot(tgt.rgb, vec3(1.0, -0.25, -0.25))), 0.0, 1.0);\n" +
+//                    "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
+//                    "   gl_FragColor.a = v_color.a * tgt.a;\n" +
                     "}";
     /**
      * This fragment shader allows color space adjustments to be done and does not do any color reduction. The uniforms

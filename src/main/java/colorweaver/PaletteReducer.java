@@ -1,7 +1,5 @@
 package colorweaver;
 
-import colorweaver.tools.StringKit;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
@@ -9,7 +7,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ByteArray;
 import com.badlogic.gdx.utils.IntIntMap;
 import com.badlogic.gdx.utils.NumberUtils;
-import colorweaver.annotation.GwtIncompatible;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;
@@ -410,7 +407,7 @@ public class PaletteReducer {
                 yLUT[i] = Math.cbrt(i / 2041.0) * 1163.73;
             }
             for (int i = 1; i < 256; i++) {
-                cLUT[255 - i] = -(cLUT[255 + i] = Math.pow(i / 257.0, 0.40625) * 200.25);
+                cLUT[255 - i] = -(cLUT[255 + i] = Math.pow(i / 257.0, 0.625) * 179.293);
             }
         }
         /**
@@ -433,7 +430,7 @@ public class PaletteReducer {
             final int b2 = (rgba2 >>> 8 & 0xFF);
             
             final double y = yLUT[r1 * 3 + g1 * 4 + b1] - yLUT[r2 * 3 + g2 * 4 + b2];
-            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 2.5;
+            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 1.5;
             final double cm = cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2];
             return y * y + cw * cw + cm * cm;
             
@@ -447,14 +444,14 @@ public class PaletteReducer {
             final int b1 = (rgba1 >>> 8 & 0xFF);
 
             final double y = yLUT[r1 * 3 + g1 * 4 + b1] - yLUT[r2 * 3 + g2 * 4 + b2];
-            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 2.5;
+            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 1.5;
             final double cm = cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2];
             return y * y + cw * cw + cm * cm;
         }
         @Override
         public double difference(final int r1, final int g1, final int b1, final int r2, final int g2, final int b2) {
             final double y = yLUT[r1 * 3 + g1 * 4 + b1] - yLUT[r2 * 3 + g2 * 4 + b2];
-            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 2.5;
+            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 1.5;
             final double cm = cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2];
             return y * y + cw * cw + cm * cm;
         }
@@ -969,52 +966,52 @@ public class PaletteReducer {
 //        generatePreloadCode(paletteMapping);
     }
 
-    /**
-     * Given a byte array, this writes a file containing a code snippet that can be pasted into Java code as the preload
-     * data used by {@link #exact(int[], String)}; this is almost never needed by external code. When using this for
-     * preload data, the byte array should be {@link #paletteMapping}.
-     * @param data the bytes to use as preload data, usually the {@link #paletteMapping} of a PaletteReducer
-     */
-    @GwtIncompatible
-    public static void generatePreloadCode(final byte[] data){
-        StringBuilder sb = new StringBuilder(data.length);
-        for (int i = 0; i < data.length;) {
-            sb.append('"');
-            for (int j = 0; j < 0x80 && i < data.length; j++) {
-                byte b = data[i++];
-                switch (b)
-                {
-                    case '\t': sb.append("\\t");
-                        break;
-                    case '\b': sb.append("\\b");
-                        break;
-                    case '\n': sb.append("\\n");
-                        break;
-                    case '\r': sb.append("\\r");
-                        break;
-                    case '\f': sb.append("\\f");
-                        break;
-                    case '\"': sb.append("\\\"");
-                        break;
-                    case '\\': sb.append("\\\\");
-                        break;
-                    default:
-                        if(Character.isISOControl(b))
-                            sb.append(String.format("\\%03o", b));
-                        else
-                            sb.append((char)(b&0xFF));
-                        break;
-                }
-            }
-            sb.append('"');
-            if(i != data.length)
-                sb.append('+');
-            sb.append('\n');
-        }
-        String filename = "bytes_" + StringKit.hexHash(data) + ".txt";
-        Gdx.files.local(filename).writeString(sb.toString(), false, "ISO-8859-1");
-        System.out.println("Wrote code snippet to " + filename);
-    }
+//    /**
+//     * Given a byte array, this writes a file containing a code snippet that can be pasted into Java code as the preload
+//     * data used by {@link #exact(int[], String)}; this is almost never needed by external code. When using this for
+//     * preload data, the byte array should be {@link #paletteMapping}.
+//     * @param data the bytes to use as preload data, usually the {@link #paletteMapping} of a PaletteReducer
+//     */
+//    @GwtIncompatible
+//    public static void generatePreloadCode(final byte[] data){
+//        StringBuilder sb = new StringBuilder(data.length);
+//        for (int i = 0; i < data.length;) {
+//            sb.append('"');
+//            for (int j = 0; j < 0x80 && i < data.length; j++) {
+//                byte b = data[i++];
+//                switch (b)
+//                {
+//                    case '\t': sb.append("\\t");
+//                        break;
+//                    case '\b': sb.append("\\b");
+//                        break;
+//                    case '\n': sb.append("\\n");
+//                        break;
+//                    case '\r': sb.append("\\r");
+//                        break;
+//                    case '\f': sb.append("\\f");
+//                        break;
+//                    case '\"': sb.append("\\\"");
+//                        break;
+//                    case '\\': sb.append("\\\\");
+//                        break;
+//                    default:
+//                        if(Character.isISOControl(b))
+//                            sb.append(String.format("\\%03o", b));
+//                        else
+//                            sb.append((char)(b&0xFF));
+//                        break;
+//                }
+//            }
+//            sb.append('"');
+//            if(i != data.length)
+//                sb.append('+');
+//            sb.append('\n');
+//        }
+//        String filename = "bytes_" + StringKit.hexHash(data) + ".txt";
+//        Gdx.files.local(filename).writeString(sb.toString(), false, "ISO-8859-1");
+//        System.out.println("Wrote code snippet to " + filename);
+//    }
     /**
      * Builds the palette information this PaletteReducer stores from the given array of RGBA8888 ints as a palette (see
      * {@link #exact(int[])} for more info) and an encoded String to use to look up pre-loaded color data. The encoded
@@ -1739,8 +1736,6 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, rdiff, gdiff, bdiff;
         byte er, eg, eb, paletteIndex;
-        //float xir1, xir2, xig1, xig2, xib1, xib2, // would be used if random factors were per-channel
-        // used now, where random factors are determined by whole colors as ints
         float w1 = ditherStrength * 0.125f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
@@ -1773,22 +1768,6 @@ public class PaletteReducer {
                     rdiff = (color>>>24)-    (used>>>24);
                     gdiff = (color>>>16&255)-(used>>>16&255);
                     bdiff = (color>>>8&255)- (used>>>8&255);
-
-//                    state += rdiff ^ rdiff << 9;
-//                    state = (state << 21 | state >>> 11);
-//                    xir1 = randomXi(state);
-//                    state = (state << 21 | state >>> 11);
-//                    xir2 = randomXi(state);
-//                    state += gdiff ^ gdiff << 9;
-//                    state = (state << 21 | state >>> 11);
-//                    xig1 = randomXi(state);
-//                    state = (state << 21 | state >>> 11);
-//                    xig2 = randomXi(state);
-//                    state += bdiff ^ bdiff << 9;
-//                    state = (state << 21 | state >>> 11);
-//                    xib1 = randomXi(state);
-//                    state = (state << 21 | state >>> 11);
-//                    xib2 = randomXi(state);
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * w7;
@@ -1815,7 +1794,6 @@ public class PaletteReducer {
                     }
                 }
             }
-
         }
         pixmap.setBlending(blending);
         return pixmap;

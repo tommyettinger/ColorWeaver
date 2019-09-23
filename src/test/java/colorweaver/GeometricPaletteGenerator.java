@@ -107,7 +107,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
         byte[] pm = pr.paletteMapping;
         int index, mix;
         float count;
-        for (int iter = 0; iter < 40; iter++) {
+        for (int iter = 0; iter < 50; iter++) {
             System.out.println("Relaxation iteration #" + (iter + 1));
             for (int i = 0; i < 0x8000; i++) {
                 index = pm[i] & 0xFF;
