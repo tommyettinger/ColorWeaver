@@ -966,57 +966,11 @@ public class PaletteReducer {
 //        generatePreloadCode(paletteMapping);
     }
 
-//    /**
-//     * Given a byte array, this writes a file containing a code snippet that can be pasted into Java code as the preload
-//     * data used by {@link #exact(int[], String)}; this is almost never needed by external code. When using this for
-//     * preload data, the byte array should be {@link #paletteMapping}.
-//     * @param data the bytes to use as preload data, usually the {@link #paletteMapping} of a PaletteReducer
-//     */
-//    @GwtIncompatible
-//    public static void generatePreloadCode(final byte[] data){
-//        StringBuilder sb = new StringBuilder(data.length);
-//        for (int i = 0; i < data.length;) {
-//            sb.append('"');
-//            for (int j = 0; j < 0x80 && i < data.length; j++) {
-//                byte b = data[i++];
-//                switch (b)
-//                {
-//                    case '\t': sb.append("\\t");
-//                        break;
-//                    case '\b': sb.append("\\b");
-//                        break;
-//                    case '\n': sb.append("\\n");
-//                        break;
-//                    case '\r': sb.append("\\r");
-//                        break;
-//                    case '\f': sb.append("\\f");
-//                        break;
-//                    case '\"': sb.append("\\\"");
-//                        break;
-//                    case '\\': sb.append("\\\\");
-//                        break;
-//                    default:
-//                        if(Character.isISOControl(b))
-//                            sb.append(String.format("\\%03o", b));
-//                        else
-//                            sb.append((char)(b&0xFF));
-//                        break;
-//                }
-//            }
-//            sb.append('"');
-//            if(i != data.length)
-//                sb.append('+');
-//            sb.append('\n');
-//        }
-//        String filename = "bytes_" + StringKit.hexHash(data) + ".txt";
-//        Gdx.files.local(filename).writeString(sb.toString(), false, "ISO-8859-1");
-//        System.out.println("Wrote code snippet to " + filename);
-//    }
     /**
      * Builds the palette information this PaletteReducer stores from the given array of RGBA8888 ints as a palette (see
      * {@link #exact(int[])} for more info) and an encoded String to use to look up pre-loaded color data. The encoded
-     * string is going to be hard to produce if you intend to do this from outside WarpWriter, but there is a
-     * generatePreloadCode() method in this class if you're hacking on WarpWriter. For external code, there's slightly
+     * string is going to be hard to produce if you intend to do this from outside ColorWeaver, but there is a
+     * generatePreloadCode() method ColorWeaver's tests. For external code, there's slightly
      * more startup time spent when initially calling {@link #exact(int[])}, but it will produce the same result. 
      *
      * @param palette an array of RGBA8888 ints to use as a palette
@@ -1982,12 +1936,12 @@ public class PaletteReducer {
      * when masked with 255 as with {@code (palette.randomColorIndex(random) & 255)}, can be used as an index into a
      * palette array with 256 or less elements that should have been used with {@link #exact(int[])} before to set the
      * palette this uses.
-     * @param random an IRNG instance, such as a GWTRNG or RNG
+     * @param random a Random instance, which may be seeded
      * @return a randomly selected color index from this palette with a non-uniform distribution, can be any byte but 0
      */
     public byte randomColorIndex(Random random)
     {
-        return paletteMapping[random.nextInt(1<<15)];
+        return paletteMapping[random.nextInt() >>> 17];
     }
 
     /**
@@ -1995,12 +1949,12 @@ public class PaletteReducer {
      * colors that are used more often in reductions (those with few similar colors). The color is returned as an
      * RGBA8888 int; you can assign one of these into a Color with {@link Color#rgba8888ToColor(Color, int)} or
      * {@link Color#set(int)}.
-     * @param random an IRNG instance, such as a GWTRNG or RNG
+     * @param random a Random instance, which may be seeded
      * @return a randomly selected color from this palette with a non-uniform distribution
      */
     public int randomColor(Random random)
     {
-        return paletteArray[paletteMapping[random.nextInt(1<<15)] & 255];
+        return paletteArray[paletteMapping[random.nextInt() >>> 17] & 255];
     }
 
     /**
