@@ -40,6 +40,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
     private ColorEqualizer eq;
     
     public static boolean equalize = true;
+    public static boolean equalizeDB = true;
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -69,9 +70,14 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if(!file.exists())
             return;
         if(screenTexture != null) screenTexture.dispose();
-        
+        ShaderPalettizer.equalize = equalize;
         if(equalize)
-            screenTexture = new Texture(eq.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+        {
+            if(equalizeDB = !equalizeDB)
+                screenTexture = new Texture(eq.processDB(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+            else
+                screenTexture = new Texture(eq.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+        }
         else
             screenTexture = new Texture(file);
         screenTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
@@ -283,7 +289,6 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         if(batch.getShader().equals(defaultShader))
                         {
                             batch.setShader(shader);
-                            Gdx.graphics.setTitle("Softness OFF");
                         }
 //                        else if(batch.getShader().equals(shader))
 //                        {
@@ -293,12 +298,11 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         else 
                         {
                             batch.setShader(defaultShader);
-                            Gdx.graphics.setTitle("Default Shader");
                         }
                         break;
                 }
                 palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-                return true;
+                Gdx.graphics.setTitle(((batch.getShader().equals(defaultShader)) ? "Full Color" : "Palette") + " with Equalize: " + (equalize ? (equalizeDB ? "DB" : "STANDARD") : "OFF"));                return true;
             }
         };
     }
