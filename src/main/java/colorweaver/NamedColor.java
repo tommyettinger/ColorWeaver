@@ -12924,6 +12924,23 @@ B = t - Co;
                 MathUtils.clamp(luma - warm * 0.375f - mild * 0.5f, 0f, 1f), opacity);
     }
 
+    public static Color ycwcmLerp(Color start, Color end, float alpha) {
+        final float luma = MathUtils.lerp(start.r * 0.375f + start.g * 0.5f + start.b * 0.125f, end.r * 0.375f + end.g * 0.5f + end.b * 0.125f, alpha),
+                warm = MathUtils.lerp(start.r - start.b, end.r - end.b, alpha),
+                mild = MathUtils.lerp(start.g - start.b, end.g - end.b, alpha),
+                opacity = MathUtils.lerp(start.a, end.a, alpha);
+        return new Color(luma + warm * 0.625f - mild * 0.5f,
+                luma + mild * 0.5f - warm * 0.375f,
+                luma - warm * 0.375f - mild * 0.5f, opacity);
+    }
+
+    public static Color lerp(Color start, Color end, float alpha) {
+        return new Color(MathUtils.lerp(start.r, end.r, alpha),
+                MathUtils.lerp(start.g, end.g, alpha),
+                MathUtils.lerp(start.b, end.b, alpha),
+                MathUtils.lerp(start.a, end.a, alpha));
+    }
+
 
     /**
      * A lookup table from 32 possible levels in the red channel to 6 possible values in the red channel; only change

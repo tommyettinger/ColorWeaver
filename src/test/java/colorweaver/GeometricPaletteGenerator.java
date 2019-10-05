@@ -12,7 +12,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import java.io.IOException;
 
 import static colorweaver.PaletteReducer.labRoughMetric;
-import static colorweaver.PaletteReducer.ycwcmMetric;
 
 /**
  * Created by Tommy Ettinger on 1/21/2018.
@@ -104,12 +103,12 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
     }
 
     public int[] lloyd(int[] palette) {
-        PaletteReducer pr = new PaletteReducer(palette, ycwcmMetric);
+        PaletteReducer pr = new PaletteReducer(palette, labRoughMetric);
         int[][] centroids = new int[4][palette.length];
         byte[] pm = pr.paletteMapping;
         int index, mix;
         float count;
-        for (int iter = 0; iter < 50; iter++) {
+        for (int iter = 0; iter < 20; iter++) {
             System.out.println("Relaxation iteration #" + (iter + 1));
             for (int i = 0; i < 0x8000; i++) {
                 index = pm[i] & 0xFF;
@@ -118,21 +117,22 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
                 centroids[2][index] += i & 0x1F;
                 centroids[3][index]++;
             }
-            for (int i = 1; i < 256; i++) {
+            for (int i = 1; i < palette.length; i++) {
                 count = centroids[3][i];
                 mix = MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10 |
                         MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5 |
                         MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
                 palette[i] = CIELABConverter.puff(mix);
             }
-            pr.exact(palette, ycwcmMetric);
+            pr.exact(palette, labRoughMetric);
         }
         return palette;
     }
 
 
     public void create() {
-        int[] PALETTE = lloyd(Coloring.AURORA);
+//        int[] PALETTE = lloyd(Coloring.AURORA);
+        int[] PALETTE = lloyd(Coloring.ROLLER);
         
         
 //        final int[] points = {0, 75, 140, 210, 255};
@@ -145,7 +145,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //                }
 //            }
 //        }
-        double luma, warm, mild, hue;
+        double luma, warm, mild;
         double[] lumas = new double[PALETTE.length], warms = new double[PALETTE.length], milds = new double[PALETTE.length];
         int r, g, b;
         int pal;
@@ -299,7 +299,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
             }
         }
 
-        System.out.println("public static final byte[][] AURORA_LLOYD_RAMPS = new byte[][]{");
+        System.out.println("public static final byte[][] RELAXED_ROLL_RAMPS = new byte[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println(
                     "{ " + ramps[i][3]
@@ -310,7 +310,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
         }
         System.out.println("};");
 
-        System.out.println("public static final int[][] AURORA_LLOYD_RAMP_VALUES = new int[][]{");
+        System.out.println("public static final int[][] RELAXED_ROLL_RAMP_VALUES = new int[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println("{ 0x" + StringKit.hex(PALETTE[ramps[i][3] & 255])
                     + ", 0x" + StringKit.hex(PALETTE[ramps[i][2] & 255])
@@ -474,7 +474,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
         PNG8 png8 = new PNG8();
         png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("AuroraLloyd.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("RelaxedRoll.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -492,7 +492,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
         }
 
         try {
-            png8.writePrecisely(Gdx.files.local("AuroraLloyd_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("RelaxedRoll_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -803,9 +803,9 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //
 //        PNG8 png8 = new PNG8();
 //        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);        
-//        int[][] AURORA_LLOYD_BONUS_RAMP_VALUES = new int[256][4];
+//        int[][] RELAXED_ROLL_BONUS_RAMP_VALUES = new int[256][4];
 //        for (int i = 1; i < PALETTE.length; i++) {
-//            int color = AURORA_LLOYD_BONUS_RAMP_VALUES[i | 128][2] = AURORA_LLOYD_BONUS_RAMP_VALUES[i][2] =
+//            int color = RELAXED_ROLL_BONUS_RAMP_VALUES[i | 128][2] = RELAXED_ROLL_BONUS_RAMP_VALUES[i][2] =
 //                    PALETTE[i];             
 ////            r = (color >>> 24);
 ////            g = (color >>> 16 & 0xFF);
@@ -813,9 +813,9 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //            luma = lumas[i];
 //            warm = warms[i];
 //            mild = milds[i];
-//            AURORA_LLOYD_BONUS_RAMP_VALUES[i | 64][1] = AURORA_LLOYD_BONUS_RAMP_VALUES[i | 64][2] =
-//                    AURORA_LLOYD_BONUS_RAMP_VALUES[i | 64][3] = color;
-//            AURORA_LLOYD_BONUS_RAMP_VALUES[i | 192][0] = AURORA_LLOYD_BONUS_RAMP_VALUES[i | 192][2] = color;
+//            RELAXED_ROLL_BONUS_RAMP_VALUES[i | 64][1] = RELAXED_ROLL_BONUS_RAMP_VALUES[i | 64][2] =
+//                    RELAXED_ROLL_BONUS_RAMP_VALUES[i | 64][3] = color;
+//            RELAXED_ROLL_BONUS_RAMP_VALUES[i | 192][0] = RELAXED_ROLL_BONUS_RAMP_VALUES[i | 192][2] = color;
 ////            int co = r - b, t = b + (co >> 1), cg = g - t, y = t + (cg >> 1),
 ////                    yBright = y * 21 >> 4, yDim = y * 11 >> 4, yDark = y * 6 >> 4, chromO, chromG;
 ////            chromO = (co * 3) >> 2;
@@ -827,43 +827,43 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //            r = MathUtils.clamp((int) ((luma * 0.83f + (warm *  0.625f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
 //            g = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f + mild * 0.5f) * 0.7f) * 256f), 0, 255);
 //            b = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
-//            AURORA_LLOYD_BONUS_RAMP_VALUES[i | 192][1] = AURORA_LLOYD_BONUS_RAMP_VALUES[i | 128][1] =
-//                    AURORA_LLOYD_BONUS_RAMP_VALUES[i | 64][0] = AURORA_LLOYD_BONUS_RAMP_VALUES[i][1] =
+//            RELAXED_ROLL_BONUS_RAMP_VALUES[i | 192][1] = RELAXED_ROLL_BONUS_RAMP_VALUES[i | 128][1] =
+//                    RELAXED_ROLL_BONUS_RAMP_VALUES[i | 64][0] = RELAXED_ROLL_BONUS_RAMP_VALUES[i][1] =
 //                            MathUtils.clamp(r, 0, 255) << 24 |
 //                                    MathUtils.clamp(g, 0, 255) << 16 |
 //                                    MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
 //            r = MathUtils.clamp((int) ((luma * 1.35f + (warm *  0.625f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
 //            g = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f + mild * 0.5f) * 0.65f) * 256f), 0, 255);
 //            b = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
-//            AURORA_LLOYD_BONUS_RAMP_VALUES[i | 192][3] = AURORA_LLOYD_BONUS_RAMP_VALUES[i | 128][3] =
-//                    AURORA_LLOYD_BONUS_RAMP_VALUES[i][3] =
+//            RELAXED_ROLL_BONUS_RAMP_VALUES[i | 192][3] = RELAXED_ROLL_BONUS_RAMP_VALUES[i | 128][3] =
+//                    RELAXED_ROLL_BONUS_RAMP_VALUES[i][3] =
 //                            MathUtils.clamp(r, 0, 255) << 24 |
 //                                    MathUtils.clamp(g, 0, 255) << 16 |
 //                                    MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
 //            r = MathUtils.clamp((int) ((luma * 0.65f + (warm *  0.625f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
 //            g = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f + mild * 0.5f) * 0.8f) * 256f), 0, 255);
 //            b = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
-//            AURORA_LLOYD_BONUS_RAMP_VALUES[i | 128][0] = AURORA_LLOYD_BONUS_RAMP_VALUES[i][0] =
+//            RELAXED_ROLL_BONUS_RAMP_VALUES[i | 128][0] = RELAXED_ROLL_BONUS_RAMP_VALUES[i][0] =
 //                    MathUtils.clamp(r, 0, 255) << 24 |
 //                            MathUtils.clamp(g, 0, 255) << 16 |
 //                            MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
 //        }
 //        sb.setLength(0);
 //        sb.ensureCapacity(2800);
-//        sb.append("private static final int[][] AURORA_LLOYD_BONUS_RAMP_VALUES = new int[][] {\n");
+//        sb.append("private static final int[][] RELAXED_ROLL_BONUS_RAMP_VALUES = new int[][] {\n");
 //        for (int i = 0; i < 256; i++) {
 //            sb.append("{ 0x");
-//            StringKit.appendHex(sb, AURORA_LLOYD_BONUS_RAMP_VALUES[i][0]);
-//            StringKit.appendHex(sb.append(", 0x"), AURORA_LLOYD_BONUS_RAMP_VALUES[i][1]);
-//            StringKit.appendHex(sb.append(", 0x"), AURORA_LLOYD_BONUS_RAMP_VALUES[i][2]);
-//            StringKit.appendHex(sb.append(", 0x"), AURORA_LLOYD_BONUS_RAMP_VALUES[i][3]);
+//            StringKit.appendHex(sb, RELAXED_ROLL_BONUS_RAMP_VALUES[i][0]);
+//            StringKit.appendHex(sb.append(", 0x"), RELAXED_ROLL_BONUS_RAMP_VALUES[i][1]);
+//            StringKit.appendHex(sb.append(", 0x"), RELAXED_ROLL_BONUS_RAMP_VALUES[i][2]);
+//            StringKit.appendHex(sb.append(", 0x"), RELAXED_ROLL_BONUS_RAMP_VALUES[i][3]);
 //            sb.append(" },\n");
 //
 //        }
 //        System.out.println(sb.append("};"));
 //        PALETTE = new int[256];
 //        for (int i = 0; i < 64; i++) {
-//            System.arraycopy(AURORA_LLOYD_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
+//            System.arraycopy(RELAXED_ROLL_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
 //        }
 //        sb.setLength(0);
 //        sb.ensureCapacity((1 + 12 * 8) * (PALETTE.length >>> 3));
@@ -883,7 +883,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //        //pix.drawPixel(255, 0, 0);
 //        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
 //        try {
-//            png8.writePrecisely(Gdx.files.local("AuroraLloydBonus.png"), pix, false);
+//            png8.writePrecisely(Gdx.files.local("RelaxedRollBonus.png"), pix, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -900,7 +900,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //            }
 //        }
 //        try {
-//            png8.writePrecisely(Gdx.files.local("AuroraLloydBonus_GLSL.png"), p2, false);
+//            png8.writePrecisely(Gdx.files.local("RelaxedRollBonus_GLSL.png"), p2, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -915,7 +915,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //        }
 //        png8.palette = new PaletteReducer(PALETTE);
 //        try {
-//            png8.writePrecisely(Gdx.files.local("AuroraLloydBonusMagicaVoxel.png"), pix, false);
+//            png8.writePrecisely(Gdx.files.local("RelaxedRollBonusMagicaVoxel.png"), pix, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }

@@ -602,8 +602,24 @@ B = t - Co;
         return floatGet(MathUtils.clamp(luma + warm * 0.625f - mild * 0.5f, 0f, 1f),
                 MathUtils.clamp(luma + mild * 0.5f - warm * 0.375f, 0f, 1f),
                 MathUtils.clamp(luma - warm * 0.375f - mild * 0.5f, 0f, 1f), opacity);
-
     }
+
+    public static float ycwcmLerp(float start, float end, float alpha) {
+        final int s = NumberUtils.floatToIntBits(start), e = NumberUtils.floatToIntBits(end),
+                sr = s & 0xFF, er = e & 0xFF,
+                sg = s >>> 8 & 0xFF, eg = e >>> 8 & 0xFF,
+                sb = s >>> 16 & 0xFF, eb = e >>> 16 & 0xFF,
+                sa = s >>> 25, ea = e >>> 25; // 7 bit opacity 
+        final float
+                luma = MathUtils.lerp(sr * 0x2.FDp-11f + sg * 0x0.FFp-9f + sb * 0x0.FFp-11f, er * 0x2.FDp-11f + eg * 0x0.FFp-9f + eb * 0x0.FFp-11f, alpha),
+                warm = MathUtils.lerp(sr - sb, er - eb, alpha) * 0x0.FFp-8f,
+                mild = MathUtils.lerp(sg - sb, eg - eb, alpha) * 0x0.FFp-8f,
+                opacity = MathUtils.lerp(sa, ea, alpha) * 0x0.FEp-7f;
+        return floatGet(luma + warm * 0.625f - mild * 0.5f,
+                luma + mild * 0.5f - warm * 0.375f,
+                luma - warm * 0.375f - mild * 0.5f, opacity);
+    }
+
 
     /**
      * Converts a packed float color in the format produced by {@link Color#toFloatBits()} to an RGBA8888 int. This format of

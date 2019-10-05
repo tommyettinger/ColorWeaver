@@ -1,5 +1,6 @@
 package colorweaver;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ObjectIntMap;
 
 /**
@@ -408,7 +409,60 @@ public class Coloring {
             0x5E9463FF, 0x73AA69FF, 0x88C070FF, 0x9ECE88FF, 0xB4DCA0FF, 0xCAEAB8FF, 0xE0F8D0FF, 0xEFFBE7FF,
             0xFFFFFFFF,
     };
+
+    public static final int[] BLUE16 = new int[16];
+    public static final int[] ORANGE16 = new int[16];
+    public static final int[] ROLLER = new int[64];
     
+    static {
+        for (int i = 1; i < 16; i++) {
+            BLUE16[i] = Color.rgba8888(NamedColor.ycwcm((i - 0.75f) / 13.25f, -1f, -1f + i * 0x1p-5f, 1f)) | 1;
+        }
+        final NamedColor low = NamedColor.BLACK, mid = NamedColor.CW_ORANGE, high = NamedColor.WHITE;
+        ORANGE16[7] = Color.rgba8888(mid);
+        for (int i = 1; i < 7; i++) {
+            final float a = (i - 1) / 6f;
+            ORANGE16[i] = Color.rgba8888(NamedColor.ycwcmLerp(low, mid, a));
+        }
+        for (int i = 8; i < 16; i++) {
+            final float a = (i - 7) / 8f;
+            ORANGE16[i] = Color.rgba8888(NamedColor.ycwcmLerp(mid, high, a));
+        }
+        for (int i = 0; i < 8; i++) {
+            ROLLER[i+1] = Color.rgba8888(NamedColor.lerp(NamedColor.BLACK, NamedColor.WHITE, i / 7f));
+        }
+        int c = 8;
+        NamedColor[] colors = {
+                NamedColor.CW_LIGHT_RED, NamedColor.CW_APRICOT, NamedColor.CW_DRAB_BROWN, NamedColor.CW_LIGHT_YELLOW,
+                NamedColor.CW_FLUSH_HONEYDEW, NamedColor.CW_GREEN, NamedColor.CW_DRAB_SEAFOAM, NamedColor.CW_RICH_BLUE,
+                NamedColor.CW_LIGHT_SAPPHIRE, NamedColor.CW_FADED_VIOLET, NamedColor.CW_ROSE
+        };
+        for(NamedColor nc : colors) {
+            ROLLER[1 + c] = Color.rgba8888(NamedColor.ycwcmLerp(NamedColor.BLACK, nc, 0.35f));
+            ROLLER[2 + c] = Color.rgba8888(NamedColor.ycwcmLerp(NamedColor.BLACK, nc, 0.75f));
+            ROLLER[3 + c] = Color.rgba8888(nc);
+            ROLLER[4 + c] = Color.rgba8888(NamedColor.ycwcmLerp(nc, NamedColor.WHITE, 0.25f));
+            ROLLER[5 + c] = Color.rgba8888(NamedColor.ycwcmLerp(nc, NamedColor.WHITE, 0.6f));
+            c += 5;
+        }
+    }
+
+    /**
+     * A 64-color palette that started with specific colors from NamedColor's Color Wheel palette, then lightened and
+     * darkened to get 5 variants on all colors (except 8 for grayscale), and finally ran the whole set through Lloyd
+     * relaxation to improve the worst similarity between any two colors. It is very good for a 64-color palette, and
+     * its only real weakness is a somewhat poor coverage of low-saturation colors.
+     */
+    public static final int[] RELAXED_ROLL = {
+            0x00000000, 0x100818ff, 0x181818ff, 0x314a6bff, 0x396b7bff, 0x4a9494ff, 0xa5b5adff, 0xb5e7e7ff,
+            0xf7efefff, 0x6b1831ff, 0xbd5242ff, 0xef6b4aff, 0xef9c9cff, 0xf7c6deff, 0x6b3921ff, 0xbd8421ff,
+            0xefa531ff, 0xe7ce42ff, 0xefd6a5ff, 0x292921ff, 0x7b5231ff, 0x8c7339ff, 0xb59473ff, 0xcec6a5ff,
+            0x316b31ff, 0xadbd42ff, 0xefef39ff, 0xeff79cff, 0xe7f7deff, 0x215a21ff, 0x52bd39ff, 0x84e731ff,
+            0xb5ef42ff, 0xbdef9cff, 0x295221ff, 0x29ad29ff, 0x31e729ff, 0x39ef7bff, 0x52f7b5ff, 0x214221ff,
+            0x318439ff, 0x42ad84ff, 0x4aceadff, 0x5ae7e7ff, 0x180842ff, 0x3118a5ff, 0x3921deff, 0x428cc6ff,
+            0x42bde7ff, 0x293163ff, 0x4a63b5ff, 0x5a84efff, 0x9ca5e7ff, 0xced6efff, 0x211073ff, 0x5a3194ff,
+            0x8431d6ff, 0xb573b5ff, 0xc6bde7ff, 0x421039ff, 0xa5214aff, 0xde2152ff, 0xde31ceff, 0xe784deff,
+    };
     public static final int[] GRAY = {
             0x00000000, 0x010101FF, 0x131313FF, 0x252525FF, 0x373737FF, 0x494949FF, 0x5B5B5BFF, 0x6E6E6EFF,
             0x808080FF, 0x929292FF, 0xA4A4A4FF, 0xB6B6B6FF, 0xC9C9C9FF, 0xDBDBDBFF, 0xEDEDEDFF, 0xFFFFFFFF,
