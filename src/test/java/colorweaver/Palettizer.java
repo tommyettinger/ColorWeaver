@@ -50,7 +50,7 @@ public class Palettizer extends ApplicationAdapter {
 
     public void load(String name) {
         try {
-            final String suffix = "_DB8";
+            final String suffix = "_RelaxedRoll64";
             //// loads a file by its full path, which we get via drag+drop
             Pixmap pm = new Pixmap(Gdx.files.absolute(name));
 //            reducer.analyze(pm, 1600, 32);
@@ -94,8 +94,9 @@ public class Palettizer extends ApplicationAdapter {
 //                Coloring.FLESURRECT_REDUCER;
                 //Colorizer.AuroraColorizer.getReducer();
                 //Colorizer.RinsedColorizer.getReducer();
-//                 new PaletteReducer(Coloring.RELAXED_ROLL);
-                 new PaletteReducer(Coloring.DB8);
+                 new PaletteReducer(Coloring.RELAXED_ROLL);
+//                 new PaletteReducer(Coloring.DB16, PaletteReducer.labMetric);
+//                 new PaletteReducer(Coloring.DB32);
         reducer.setDitherStrength(1f);
         png8 = new PNG8();
         png8.palette = reducer;

@@ -23,8 +23,10 @@ import static colorweaver.ShaderUtils.*;
 
 public class ShaderPalettizer extends ApplicationAdapter {
     //public static final int backgroundColor = Color.rgba8888(Color.DARK_GRAY);
-    public static final int SCREEN_WIDTH = 1280;
-    public static final int SCREEN_HEIGHT = 720;
+    public static final int SCREEN_WIDTH = 1531;
+    public static final int SCREEN_HEIGHT = 862;
+//    public static final int SCREEN_WIDTH = 1280;
+//    public static final int SCREEN_HEIGHT = 720;
     protected SpriteBatch batch;
     protected Viewport screenView;
     protected Texture screenTexture;
@@ -99,7 +101,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if (!shaderNoDither.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderNoDither.getLog());
         batch = new SpriteBatch(1000, defaultShader);
         screenView = new ScreenViewport();
-        screenView.getCamera().position.set(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0);
+        screenView.getCamera().position.set(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0);
         screenView.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.enableBlending();
         Gdx.input.setInputProcessor(inputProcessor());
@@ -173,8 +175,9 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.NUM_1:
                     case Input.Keys.NUMPAD_1:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-                                ? new Texture(Gdx.files.local("palettes/TinctureBonus_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/Slab64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                ? new Texture(Gdx.files.local("palettes/DB_Iso22_GLSL.png"), Pixmap.Format.RGBA8888, false)
+//                                : new Texture(Gdx.files.local("DB22LAB_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                : new Texture(Gdx.files.local("palettes/DB8_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Quorum64_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_2:
@@ -190,8 +193,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.NUM_3:
                     case Input.Keys.NUMPAD_3:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-                                ? new Texture(Gdx.files.local("palettes/AuroraRelaxed_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/AuroraLloydFlat_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                                ? new Texture(Gdx.files.local("palettes/LazyRoll_GLSL.png"), Pixmap.Format.RGBA8888, false)
+                                : new Texture(Gdx.files.local("palettes/BigRoller_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                                ? new Texture(Gdx.files.local("palettes/Smith256_GLSL_HS.png"), Pixmap.Format.RGBA8888, false)
 //                                : new Texture(Gdx.files.local("palettes/Smith256_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/SlabBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
@@ -200,7 +203,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.NUM_4:
                     case Input.Keys.NUMPAD_4:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-                                ? new Texture(Gdx.files.local("palettes/AuroraLloyd_GLSL.png"), Pixmap.Format.RGBA8888, false)
+                                ? new Texture(Gdx.files.local("palettes/AuroraRelaxed_GLSL.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/DB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_5:
