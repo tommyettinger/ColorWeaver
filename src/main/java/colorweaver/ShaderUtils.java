@@ -301,9 +301,32 @@ public class ShaderUtils {
                     "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
 //                    "   vec3 adj = fract(vec3(0.6710436067037893, 0.8191725133961645, 0.5497004779019703) * dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy));\n" +
                     //vec3(0.8986537126286993, 0.8075784952213448, 0.6521830259439717) * 
-                    "   float adj = fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) * 1.375 - 0.625;\n" +
+                    "   float adj = fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) * 1.421 - 0.654;\n" +
                     "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
                     "   gl_FragColor.rgb = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
+                    "   gl_FragColor.a = tgt.a;\n" +
+                    "}";
+
+    public static final String fragmentShaderRobertsLimited =
+            "varying vec2 v_texCoords;\n" +
+                    "varying vec4 v_color;\n" +
+                    "uniform sampler2D u_texture;\n" +
+                    "uniform sampler2D u_palette;\n" +
+                    "uniform vec3 u_add;\n" +
+                    "uniform vec3 u_mul;\n" +
+                    "const float b_adj = 31.0 / 32.0;\n" +
+                    "const float rb_adj = 32.0 / 1023.0;\n" +
+                    "const vec3 bright = vec3(0.375, 0.5, 0.125);\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "   vec4 tgt = v_color * texture2D( u_texture, v_texCoords );\n" +
+                    "   tgt.rgb = u_add + u_mul * vec3(dot(tgt.rgb, bright), tgt.r - tgt.b, tgt.g - tgt.b);\n" +
+                    "   vec4 used = texture2D(u_palette, vec2((clamp(dot(tgt.rgb, vec3(1.0, -0.375, -0.5)), 0.0, 1.0) * b_adj + floor(clamp(dot(tgt.rgb, vec3(1.0, 0.625, -0.5)), 0.0, 1.0) * 31.999)) * rb_adj, 1.0 - clamp(dot(tgt.rgb, vec3(1.0, -0.375, 0.5)), 0.0, 1.0)));\n" +
+                    "   used.rgb = vec3(dot(used.rgb, bright), used.r - used.b, used.g - used.b);\n" +
+                    "   float adj = fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) * 1.421 - 0.654;\n" +
+                    //"   vec3 adj = fract(vec3(0.8986537126286993, 0.8075784952213448, 0.6521830259439717) * dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) - 0.25;\n" +
+                    "   tgt.rgb += (tgt.rgb - used.rgb) * adj;\n" +
+                    "   gl_FragColor.rgb = texture2D(u_palette, vec2((clamp(dot(tgt.rgb, vec3(1.0, -0.375, -0.5)), 0.0, 1.0) * b_adj + floor(clamp(dot(tgt.rgb, vec3(1.0, 0.625, -0.5)), 0.0, 1.0) * 31.999)) * rb_adj, 1.0 - clamp(dot(tgt.rgb, vec3(1.0, -0.375, 0.5)), 0.0, 1.0))).rgb;\n" +
                     "   gl_FragColor.a = tgt.a;\n" +
                     "}";
 
