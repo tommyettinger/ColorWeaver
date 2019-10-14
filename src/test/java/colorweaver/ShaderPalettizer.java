@@ -34,8 +34,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
 
     private long startTime = 0L, lastProcessedTime = 0L;
     private ShaderProgram defaultShader;
-    private ShaderProgram shader;
-    private ShaderProgram shaderNoDither;
+    private ShaderProgram shader, shader2;
     private Texture palette;
     private Vector3 add, mul;
 
@@ -97,8 +96,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
         defaultShader = SpriteBatch.createDefaultShader();
         shader = new ShaderProgram(vertexShader, fragmentShaderWarmMildLimited);
         if (!shader.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shader.getLog());
-        shaderNoDither = new ShaderProgram(vertexShader, fragmentShaderWarmMildSoft);
-        if (!shaderNoDither.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderNoDither.getLog());
+        shader2 = new ShaderProgram(vertexShader, fragmentShaderRGBLimited);
+        if (!shader2.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shader2.getLog());
         batch = new SpriteBatch(1000, defaultShader);
         screenView = new ScreenViewport();
         screenView.getCamera().position.set(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0);
@@ -131,8 +130,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
                 //{
 //                    shader.setUniformf("u_mul", 0.9f, 0.7f, 0.75f);
 //                    shader.setUniformf("u_add", 0.05f, 0.14f, 0.16f);
-                    shader.setUniformf("u_mul", mul);
-                    shader.setUniformf("u_add", add);
+                    sh.setUniformf("u_mul", mul);
+                    sh.setUniformf("u_add", add);
 //                    shader.setUniformf("u_mul", 1f, 0.8f, 0.85f);
 //                    shader.setUniformf("u_add", 0.1f, 0.95f, NumberTools.swayRandomized(12345, TimeUtils.timeSinceMillis(startTime) * 0x1p-9f) * 0.4f + 0.2f);
                 //}
@@ -293,7 +292,11 @@ public class ShaderPalettizer extends ApplicationAdapter {
 //                        }
 //                        break;
                     case Input.Keys.SPACE:
-                        if(batch.getShader().equals(defaultShader))
+                        if((Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)))
+                        {
+                            batch.setShader(shader2);
+                        }
+                        else if(batch.getShader().equals(defaultShader))
                         {
                             batch.setShader(shader);
                         }
@@ -309,7 +312,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                 }
                 palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-                Gdx.graphics.setTitle(((batch.getShader().equals(defaultShader)) ? "Full Color" : "Palette") + " with Equalize: " + (equalize ? (equalizeDB ? "DB" : "STANDARD") : "OFF"));                return true;
+                Gdx.graphics.setTitle(((batch.getShader().equals(defaultShader)) ? "Full Color" : "Palette") + " with Equalize: " + (equalize ? (equalizeDB ? "DB" : "STANDARD") : "OFF") + (batch.getShader().equals(shader2) ? " on RGB mode" : ""));                return true;
             }
         };
     }
