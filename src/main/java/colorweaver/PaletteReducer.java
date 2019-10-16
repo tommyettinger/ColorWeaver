@@ -970,7 +970,7 @@ public class PaletteReducer {
      * Builds the palette information this PaletteReducer stores from the given array of RGBA8888 ints as a palette (see
      * {@link #exact(int[])} for more info) and an encoded String to use to look up pre-loaded color data. The encoded
      * string is going to be hard to produce if you intend to do this from outside ColorWeaver, but there is a
-     * generatePreloadCode() method ColorWeaver's tests. For external code, there's slightly
+     * generatePreloadCode() method in ColorWeaver's tests. For external code, there's slightly
      * more startup time spent when initially calling {@link #exact(int[])}, but it will produce the same result. 
      *
      * @param palette an array of RGBA8888 ints to use as a palette
