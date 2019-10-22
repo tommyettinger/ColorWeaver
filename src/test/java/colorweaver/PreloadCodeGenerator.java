@@ -1,5 +1,6 @@
 package colorweaver;
 
+import colorweaver.tools.StringKit;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -7,7 +8,6 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.TimeUtils;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -25,20 +25,37 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
     }
 
     public void create() {
-        Pixmap pix = new Pixmap(Gdx.files.internal("BlueNoise64x64.png"));
-        ByteBuffer l3a1 = pix.getPixels();
-        final int len = pix.getWidth() * pix.getHeight();
-        System.out.println("Original image has format " + pix.getFormat() + " and contains " +len + " pixels.");
-        byte[] brights = new byte[len];
-        for (int i = 0; i < len; i++) {
-            brights[i] = l3a1.get(i);
-            brights[i] += -128;
-        }
-        System.out.println(brights[0]);
-        //generatePreloadCode(brights);
-        check(pix);
-        System.out.println("Succeeded!");
+        int a = 127, b = 1111;
+        a = (a << 13 | a >>> 19) * 0x89A7;
+        b = (b << 17 | b >>> 15) * 0xBCFD;
+        generatePreloadCode(BlueNoise.generateMetropolis(a, b), "blue_" + StringKit.hex(a) + "_" + StringKit.hex(b) + ".txt");
+        a = (a << 13 | a >>> 19) * 0x89A7;
+        b = (b << 17 | b >>> 15) * 0xBCFD;
+        generatePreloadCode(BlueNoise.generateMetropolis(a, b), "blue_" + StringKit.hex(a) + "_" + StringKit.hex(b) + ".txt");
+        a = (a << 13 | a >>> 19) * 0x89A7;
+        b = (b << 17 | b >>> 15) * 0xBCFD;
+        generatePreloadCode(BlueNoise.generateMetropolis(a, b), "blue_" + StringKit.hex(a) + "_" + StringKit.hex(b) + ".txt");
+        a = (a << 13 | a >>> 19) * 0x89A7;
+        b = (b << 17 | b >>> 15) * 0xBCFD;
+        generatePreloadCode(BlueNoise.generateMetropolis(a, b), "blue_" + StringKit.hex(a) + "_" + StringKit.hex(b) + ".txt");
+        System.out.println("Done!");
+        Gdx.app.exit();
     }
+//    public void create() {
+//        Pixmap pix = new Pixmap(Gdx.files.internal("BlueNoise64x64.png"));
+//        ByteBuffer l3a1 = pix.getPixels();
+//        final int len = pix.getWidth() * pix.getHeight();
+//        System.out.println("Original image has format " + pix.getFormat() + " and contains " +len + " pixels.");
+//        byte[] brights = new byte[len];
+//        for (int i = 0; i < len; i++) {
+//            brights[i] = l3a1.get(i);
+//            brights[i] += -128;
+//        }
+//        System.out.println(brights[0]);
+//        //generatePreloadCode(brights);
+//        check(pix);
+//        System.out.println("Succeeded!");
+//    }
     
     public void check(Pixmap pix){
         byte[] blueNoise = ("ÁwK1¶\025à\007ú¾íNY\030çzÎúdÓi ­rì¨ýÝI£g;~O\023×\006vE1`»Ü\004)±7\fº%LÓD\0377ÜE*\fÿí\177£RÏA2\r(Å\0026\023¯?*Â;ÌE!Â\022,è\006ºá6h\"ó¢Én\"<sZÅAt×\022\002x,aèkZõ"+
@@ -125,7 +142,16 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
      * using this for preload data, the byte array should be {@link PaletteReducer#paletteMapping}.
      * @param data the bytes to use as preload data, usually {@link PaletteReducer#paletteMapping}
      */
-    public static void generatePreloadCode(final byte[] data){
+    public static void generatePreloadCode(final byte[] data) {
+        generatePreloadCode(data, "bytes_" + TimeUtils.millis() + ".txt");
+    }
+    /**
+     * Given a byte array, this writes a file containing a code snippet that can be pasted into Java code as the preload
+     * data used by {@link PaletteReducer#exact(int[], String)}; this is almost never needed by external code. When 
+     * using this for preload data, the byte array should be {@link PaletteReducer#paletteMapping}.
+     * @param data the bytes to use as preload data, usually {@link PaletteReducer#paletteMapping}
+     */
+    public static void generatePreloadCode(final byte[] data, String filename){
         StringBuilder sb = new StringBuilder(data.length);
         for (int i = 0; i < data.length;) {
             sb.append('"');
@@ -160,7 +186,6 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
                 sb.append('+');
             sb.append('\n');
         }
-        String filename = "bytes_" + TimeUtils.millis() + ".txt";
         Gdx.files.local(filename).writeString(sb.toString(), false, "ISO-8859-1");
         System.out.println("Wrote code snippet to " + filename);
     }
