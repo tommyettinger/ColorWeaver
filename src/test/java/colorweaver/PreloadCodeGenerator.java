@@ -1,6 +1,5 @@
 package colorweaver;
 
-import colorweaver.tools.StringKit;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -8,6 +7,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -18,44 +18,71 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("Preload Code Generator");
-        config.setWindowedMode(500, 100);
+        config.setWindowedMode(320, 320);
         config.setIdleFPS(1);
         config.setResizable(false);
         new Lwjgl3Application(new PreloadCodeGenerator(), config);
     }
-
-    public void create() {
-        int a = 127, b = 1111;
-        a = (a << 13 | a >>> 19) * 0x89A7;
-        b = (b << 17 | b >>> 15) * 0xBCFD;
-        generatePreloadCode(BlueNoise.generateMetropolis(a, b), "blue_" + StringKit.hex(a) + "_" + StringKit.hex(b) + ".txt");
-        a = (a << 13 | a >>> 19) * 0x89A7;
-        b = (b << 17 | b >>> 15) * 0xBCFD;
-        generatePreloadCode(BlueNoise.generateMetropolis(a, b), "blue_" + StringKit.hex(a) + "_" + StringKit.hex(b) + ".txt");
-        a = (a << 13 | a >>> 19) * 0x89A7;
-        b = (b << 17 | b >>> 15) * 0xBCFD;
-        generatePreloadCode(BlueNoise.generateMetropolis(a, b), "blue_" + StringKit.hex(a) + "_" + StringKit.hex(b) + ".txt");
-        a = (a << 13 | a >>> 19) * 0x89A7;
-        b = (b << 17 | b >>> 15) * 0xBCFD;
-        generatePreloadCode(BlueNoise.generateMetropolis(a, b), "blue_" + StringKit.hex(a) + "_" + StringKit.hex(b) + ".txt");
-        System.out.println("Done!");
-        Gdx.app.exit();
-    }
+//    private List<byte[]> bytes = new ArrayList<>();
+//    private int counter = 0;
+//    private int a = 3127, b = 31111;
+//    private ImmediateModeRenderer20 render;
+//    private Viewport view;
 //    public void create() {
-//        Pixmap pix = new Pixmap(Gdx.files.internal("BlueNoise64x64.png"));
-//        ByteBuffer l3a1 = pix.getPixels();
-//        final int len = pix.getWidth() * pix.getHeight();
-//        System.out.println("Original image has format " + pix.getFormat() + " and contains " +len + " pixels.");
-//        byte[] brights = new byte[len];
-//        for (int i = 0; i < len; i++) {
-//            brights[i] = l3a1.get(i);
-//            brights[i] += -128;
-//        }
-//        System.out.println(brights[0]);
-//        //generatePreloadCode(brights);
-//        check(pix);
-//        System.out.println("Succeeded!");
+//        bytes.add(BlueNoise.RAW_NOISE);
+//        render = new ImmediateModeRenderer20(320 * 320, false, true, 0);
+//        view = new ScreenViewport();
 //    }
+//    @Override
+//    public void resize(int width, int height) {
+//        super.resize(width, height);
+//        view.update(width, height, true);
+//        view.apply(true);
+//    }
+//
+//    @Override
+//    public void render() {
+//        int i = 0;
+//        byte[] bt;
+//        render.begin(view.getCamera().combined, GL20.GL_POINTS);
+//        for (int bx = 0; bx < 5; bx++) {
+//            for (int by = 0; by < 5; by++) {
+//                bt = bytes.get(i++ % bytes.size());
+//                for (int n = 0; n < 4096; n++) {
+//                    render.color(Float.intBitsToFloat((bt[n] + 128) * 0x010101 | 0xFE000000));
+//                    render.vertex(bx << 6 | n >>> 6, by << 6 | (n & 63), 0);
+//                }
+//            }
+//        }
+//        render.end();
+//        if(counter++ <= 0)
+//            return;
+//        a = (a << 13 | a >>> 19) * 0x89A7;
+//        b = (b << 17 | b >>> 15) * 0xBCFD;
+//        bt = BlueNoise.generateMetropolis(a, b);
+//        bytes.add(bt);
+//        generatePreloadCode(bt, "blue_" + StringKit.hex(a) + "_" + StringKit.hex(b) + ".txt");
+//    }
+    
+    public void create() {
+        Pixmap pix;// = new Pixmap(Gdx.files.internal("BlueNoise64x64.png"));
+//        System.out.println("Original image has format " + pix.getFormat());
+        for (int idx = 0; idx < 16; idx++) {
+            pix = new Pixmap(Gdx.files.internal("LDR_LLL1_" + idx + ".png"));
+            ByteBuffer l3a1 = pix.getPixels();
+            final int len = pix.getWidth() * pix.getHeight();
+            System.out.println("Original image has format " + pix.getFormat() + " and contains " + len + " pixels.");
+            byte[] brights =  new byte[len];
+            for (int i = 0; i < len; i++) {
+                brights[i] = l3a1.get(i);
+                brights[i] += -128;
+            }
+            //System.out.println(brights[0]);
+            generatePreloadCode(brights, "BlueNoise16.txt");
+        }
+        //check(pix);
+        System.out.println("Succeeded!");
+    }
     
     public void check(Pixmap pix){
         byte[] blueNoise = ("ÁwK1¶\025à\007ú¾íNY\030çzÎúdÓi ­rì¨ýÝI£g;~O\023×\006vE1`»Ü\004)±7\fº%LÓD\0377ÜE*\fÿí\177£RÏA2\r(Å\0026\023¯?*Â;ÌE!Â\022,è\006ºá6h\"ó¢Én\"<sZÅAt×\022\002x,aèkZõ"+
@@ -152,7 +179,8 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
      * @param data the bytes to use as preload data, usually {@link PaletteReducer#paletteMapping}
      */
     public static void generatePreloadCode(final byte[] data, String filename){
-        StringBuilder sb = new StringBuilder(data.length);
+        StringBuilder sb = new StringBuilder(data.length + 400);
+        sb.append("(");
         for (int i = 0; i < data.length;) {
             sb.append('"');
             for (int j = 0; j < 0x80 && i < data.length; j++) {
@@ -186,7 +214,8 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
                 sb.append('+');
             sb.append('\n');
         }
-        Gdx.files.local(filename).writeString(sb.toString(), false, "ISO-8859-1");
+        sb.append(").getBytes(StandardCharsets.ISO_8859_1),\n");
+        Gdx.files.local(filename).writeString(sb.toString(), true, "ISO-8859-1");
         System.out.println("Wrote code snippet to " + filename);
     }
 }

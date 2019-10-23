@@ -100,35 +100,21 @@ public class BlueNoise {
         final int[][] early = new int[64][64];
         final byte[] done = new byte[0x1000];
         int min = 0x40000000, max = 0;
-        int choice, prob, stateA = seedA, stateB = seedB, a, b;
-        stateA = stateA + 0xC1C64E6D | 0;
-        a = (stateA ^ stateA >>> 17) * ((stateB = stateB + 0x9E3779BB | 0) >>> 12 | 1);
-        a = (a ^ a >>> 16) * 0xAC451;
-        a ^= a >>> 15;
-        b = (stateA ^ stateA >>> 17) * ((stateB = stateB + 0x9E3779BB | 0) >>> 12 | 1);
-        b = (b ^ b >>> 16) * 0xAC451;
-        b ^= b >>> 15;
+        long choice, prob, stateA = ((seedA ^ seedA >>> 7) & 0x1FFFFFFL) + 1L, stateB = ((seedB ^ seedB >>> 7) & 0x1FFFFFFL) + 1L;
+        for (int n = 0; n < 0x7F8000; n++) {
+            choice = (stateA = (stateA << 29 | stateA >>> 35) * 0xAC564B05L) * 0x818102004182A025L;
 
-        for (int n = 0; n < 0xFF0000; n++) {
-            stateA = stateA + 0xC1C64E6D | 0;
-            choice = (stateA ^ stateA >>> 17) * ((stateB = stateB + 0x9E3779BB | 0) >>> 12 | 1);
-            choice = (choice ^ choice >>> 16) * 0xAC451;
-            choice ^= choice >>> 15;
-
-            int x = n & 0x3F, y = n >>> 6 & 0x3F,
+            int x = n + (int) choice & 63, y = n - (int)choice >>> 6 & 63,
                     cx = x, cy = y, choiceTicks = 0, probTicks = 0,
                     curr = RAW_NOISE[(y << 6 & 0xFC0) | (x & 0x3F)] + 128, chosen;
 
-            a = a + 0x9E3779D | 0;
-            prob = (a ^ a >>> 17) * ((b = b + ((a | -a) >> 31 & 0xABC1236B) | 0) >>> 12 | 1);
-            prob = (prob ^ prob >>> 16) * 0xAC451;
-            prob ^= prob >>> 15;
+            prob = (stateB = (stateB << 29 | stateB >>> 35) * 0xAC564B05L) * 0x818102004182A025L;
 
-            for (int i = 0; i < 1024; i++) {
+            for (int i = 0; i < 768; i++) {
                 // chooses diagonals only; bishop move restricts space this can use
 //                cx += -(choice & 1) | 1;
 //                cy += 1 - (choice & 2);
-                switch (choice & 3)
+                switch ((int) choice & 3)
                 {
                     case 0:
                         cx++;
@@ -143,15 +129,12 @@ public class BlueNoise {
                         cy--;
                 }
                 choice >>>= 2;
-                if (++choiceTicks == 16) {
-                    stateA = stateA + 0xC1C64E6D | 0;
-                    choice = (stateA ^ stateA >>> 17) * ((stateB = stateB + 0x9E3779BB | 0) >>> 12 | 1);
-                    choice = (choice ^ choice >>> 16) * 0xAC451;
-                    choice ^= choice >>> 15;
+                if (++choiceTicks == 32) {
+                    choice = (stateA = (stateA << 29 | stateA >>> 35) * 0xAC564B05L) * 0x818102004182A025L;
                     choiceTicks = 0;
                 }
                 if ((chosen = RAW_NOISE[(cy << 6 & 0xFC0) | (cx & 0x3F)] + 128) < curr) {
-                    if (((curr * (prob & 0xFF)) >>> 8) > chosen) {
+                    if (((curr * (prob & 0xFF)) >>> 8) >= chosen) {
                         cx = x;
                         cy = y;
                     } else {
@@ -159,12 +142,9 @@ public class BlueNoise {
                         y = cy;
                         curr = chosen;
                     }
-                    prob >>>= 8;
+                    prob >>>= 16;
                     if (++probTicks == 4) {
-                        a = a + 0x9E3779D | 0;
-                        prob = (a ^ a >>> 17) * ((b = b + ((a | -a) >> 31 & 0xABC1236B) | 0) >>> 12 | 1);
-                        prob = (prob ^ prob >>> 16) * 0xAC451;
-                        prob ^= prob >>> 15;
+                        prob = (stateB = (stateB << 29 | stateB >>> 35) * 0xAC564B05L) * 0x818102004182A025L;
                         probTicks = 0;
                     }
                 } else {
@@ -175,16 +155,16 @@ public class BlueNoise {
             }
             ++early[x & 63][y & 63];
         }
-//        int sum = 0;
+        int sum = 0;
         for (int x = 0; x < 64; x++) {
             for (int y = 0; y < 64; y++) {
                 final int e = early[x][y];
                 min = Math.min(min, e);
                 max = Math.max(max, e);
-//                sum += e;
+                sum += e;
             }
         }
-//        System.out.println("Before: min="+min+",max="+max+",sum="+sum+",avg=" + (sum * 0x1p-12));
+        System.out.println("Before: min="+min+",max="+max+",sum="+sum+",avg=" + (sum * 0x1p-12));
         if(max != min) {
             int i = 0;
             for (int x = 0; x < 64; x++) {
@@ -193,18 +173,16 @@ public class BlueNoise {
                 }
             }
         }
-//        sum = 0;
-//        min = 0x10000;
-//        max = 0;
-//        for (int x = 0; x < 64; x++) {
-//            for (int y = 0; y < 64; y++) {
-//                final int e = done[x][y] + 128;
-//                min = Math.min(min, e);
-//                max = Math.max(max, e);
-//                sum += e;
-//            }
-//        }
-//        System.out.println("After:  min="+min+",max="+max+",sum="+sum+",avg=" + (sum * 0x1p-12));
+        sum = 0;
+        min = 0x10000;
+        max = 0;         
+        for (int n = 0; n < 4096; n++) {
+            final int e = done[n] + 128;
+            min = Math.min(min, e);
+            max = Math.max(max, e);
+            sum += e;
+        }
+        System.out.println("After:  min="+min+",max="+max+",sum="+sum+",avg=" + (sum * 0x1p-12));
 
         return done;
     }
