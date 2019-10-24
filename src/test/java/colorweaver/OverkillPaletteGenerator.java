@@ -23,78 +23,6 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
         config.setResizable(false);
         new Lwjgl3Application(new OverkillPaletteGenerator(), config);
     }
-
-    private static float hue(int rgba) {
-        final float r = (rgba >>> 24 & 255) * 0.003921569f, g = (rgba >>> 16 & 255) * 0.003921569f,
-                b = (rgba >>> 8 & 255) * 0.003921569f;//, a = (e >>> 24 & 254) / 254f;
-        final float min = Math.min(Math.min(r, g), b);   //Min. value of RGB
-        final float max = Math.max(Math.max(r, g), b);   //Max value of RGB
-        final float delta = max - min;                           //Delta RGB value
-
-        if (delta < 0.0001f)                     //This is a gray, no chroma...
-        {
-            return 0f;
-        } else                                    //Chromatic data...
-        {
-            final float rDelta = (((max - r) / 6f) + (delta * 0.5f)) / delta;
-            final float gDelta = (((max - g) / 6f) + (delta * 0.5f)) / delta;
-            final float bDelta = (((max - b) / 6f) + (delta * 0.5f)) / delta;
-
-            if (r == max) return (1f + bDelta - gDelta) % 1f;
-            else if (g == max) return ((4f / 3f) + rDelta - bDelta) % 1f;
-            else return ((5f / 3f) + gDelta - rDelta) % 1f;
-        }
-    }
-
-    public static int difference(final int color1, final int color2) {
-        // if one color is transparent and the other isn't, then this is max-different
-        if (((color1 ^ color2) & 0x80) == 0x80) return 0x70000000;
-        final int r1 = (color1 >>> 24), g1 = (color1 >>> 16 & 0xFF), b1 = (color1 >>> 8 & 0xFF),
-                r2 = (color2 >>> 24), g2 = (color2 >>> 16 & 0xFF), b2 = (color2 >>> 8 & 0xFF),
-                rmean = (r1 + r2) * 53 >> 5,
-                r = r1 - r2,
-                g = g1 - g2,
-                b = b1 - b2,
-                y = Math.max(r1, Math.max(g1, b1)) - Math.max(r2, Math.max(g2, b2));
-//        return (((512 + rmean) * r * r) >> 8) + g * g + (((767 - rmean) * b * b) >> 8);
-//        return (((0x580 + rmean) * r * r) >> 7) + g * g * 12 + (((0x5FF - rmean) * b * b) >> 8) + y * y * 8;
-        return (((1024 + rmean) * r * r) >> 7) + g * g * 13 + (((1534 - rmean) * b * b) >> 8) + y * y * 12;
-//        return (((1024 + rmean) * r * r) >> 7) + g * g * 12 + (((1534 - rmean) * b * b) >> 8) + y * y * 14;
-    }
-
-    public final double fastGaussian() {
-        long a = (state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L,
-                b = (state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L;
-        a = (a & 0x0003FF003FF003FFL) + ((a & 0x0FFC00FFC00FFC00L) >>> 10);
-        b = (b & 0x0003FF003FF003FFL) + ((b & 0x0FFC00FFC00FFC00L) >>> 10);
-        a = (a & 0x000000007FF007FFL) + ((a & 0x0007FF0000000000L) >>> 40);
-        b = (b & 0x000000007FF007FFL) + ((b & 0x0007FF0000000000L) >>> 40);
-        return ((((a & 0x0000000000000FFFL) + ((a & 0x000000007FF00000L) >>> 20))
-                - ((b & 0x0000000000000FFFL) + ((b & 0x000000007FF00000L) >>> 20))) * 0x1p-10);
-    }
-
-    public double smooth (double a) {
-        return Math.sqrt(a) * a * (3 - 2 * a);
-    }
-
-
-    private long state = 9005L;
-    
-    private double nextDouble()
-    {
-        return ((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L & 0x1FFFFFFFFFFFFFL) * 0x1p-53;
-    }
-    private double curvedDouble()
-    {
-        // averages about 0.6
-//        return 0.1 * (nextDouble() + nextDouble() + nextDouble()
-//                + nextDouble() + nextDouble() + nextDouble())
-//                + 0.2 * ((1.0 - nextDouble() * nextDouble()) + (1.0 - nextDouble() * nextDouble()));
-        // averages about 0.685
-        return 0.25 * (0.5 * (nextDouble() + nextDouble() + nextDouble() + nextDouble()) +
-                (3.0 - nextDouble() * nextDouble() - nextDouble() * nextDouble() - nextDouble() * nextDouble()));
-
-    }
     private static double difference(double y1, double w1, double m1, double y2, double w2, double m2) {
         return (y1 - y2) * (y1 - y2) + ((w1 - w2) * (w1 - w2) + (m1 - m2) * (m1 - m2)) * 0.1625;
     }
@@ -346,7 +274,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
 ////            PALETTE[i++] = VoxelColor.mixThird  (Coloring.CORPUT_64[11+r*8], Coloring.CORPUT_64[12+r*8]);
 ////        }
 //        
-        int[] PALETTE = Coloring.LAWN64;
+        int[] PALETTE = Coloring.RELAXED_ROLL;
         double luma, warm, mild, hue;
         double[] lumas = new double[PALETTE.length], warms = new double[PALETTE.length], milds = new double[PALETTE.length];
         int ctr = 1;
@@ -506,7 +434,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
             }
         }
 
-        System.out.println("public static final byte[][] LAWN_RAMPS = new byte[][]{");
+        System.out.println("public static final byte[][] RELAXED_ROLL_RAMPS = new byte[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println(
                     "{ " + ramps[i][3]
@@ -517,7 +445,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
         }
         System.out.println("};");
 
-        System.out.println("public static final int[][] LAWN_RAMP_VALUES = new int[][]{");
+        System.out.println("public static final int[][] RELAXED_ROLL_RAMP_VALUES = new int[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println("{ 0x" + StringKit.hex(PALETTE[ramps[i][3] & 255])
                     + ", 0x" + StringKit.hex(PALETTE[ramps[i][2] & 255])
@@ -665,7 +593,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
 ////            }
 ////        }
 ////        int[] BIG_PALETTE = new int[256];
-//        int[] BIG_PALETTE = Coloring.LAWN256;
+//        int[] BIG_PALETTE = Coloring.RELAXED_ROLL256;
 //        while (base.size < -1) {
 ////        while (base.size > 63) {
 //            System.out.println(base.size);
@@ -705,7 +633,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
 //		}
 //        base.insert(0, 0);
 ////        int[] PALETTE = base.toArray();
-//        int[] PALETTE = Coloring.LAWN64;
+//        int[] PALETTE = Coloring.RELAXED_ROLL64;
 ////            idx = cb;
 ////            cc = base.get(DiverRNG.determine(ca * 0xC13FA9A902A6328FL + cb * 0x91E10DA5C79E7B1DL) < 0L ? ca : cb);
 ////            int ra = (cc >>> 24), ga = (cc >>> 16 & 0xFF), ba = (cc >>> 8 & 0xFF);
@@ -793,7 +721,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
 //        PNG8 png8 = new PNG8();
 //        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
 //        try {
-//            png8.writePrecisely(Gdx.files.local("Lawn64.png"), pix, false);
+//            png8.writePrecisely(Gdx.files.local("RelaxedRoll64.png"), pix, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -811,7 +739,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
 //        }
 //
 //        try {
-//            png8.writePrecisely(Gdx.files.local("Lawn64_GLSL.png"), p2, false);
+//            png8.writePrecisely(Gdx.files.local("RelaxedRoll64_GLSL.png"), p2, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -822,7 +750,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
 //        }
 //        png8.palette.exact(BIG_PALETTE, labRoughMetric);
 //        try {
-//            png8.writePrecisely(Gdx.files.local("Lawn256.png"), pix, false);
+//            png8.writePrecisely(Gdx.files.local("RelaxedRoll256.png"), pix, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -838,7 +766,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
 //        }
 //
 //        try {
-//            png8.writePrecisely(Gdx.files.local("Lawn256_GLSL.png"), p2, false);
+//            png8.writePrecisely(Gdx.files.local("RelaxedRoll256_GLSL.png"), p2, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -889,9 +817,9 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
 
         PNG8 png8 = new PNG8();
         png8.palette = new PaletteReducer(PALETTE, PaletteReducer.labRoughMetric);        
-        int[][] LAWN_BONUS_RAMP_VALUES = new int[256][4];
+        int[][] RELAXED_ROLL_BONUS_RAMP_VALUES = new int[256][4];
         for (int i = 1; i < PALETTE.length; i++) {
-            int color = LAWN_BONUS_RAMP_VALUES[i | 128][2] = LAWN_BONUS_RAMP_VALUES[i][2] =
+            int color = RELAXED_ROLL_BONUS_RAMP_VALUES[i | 128][2] = RELAXED_ROLL_BONUS_RAMP_VALUES[i][2] =
                     PALETTE[i];             
 //            r = (color >>> 24);
 //            g = (color >>> 16 & 0xFF);
@@ -899,9 +827,9 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
             luma = lumas[i];
             warm = warms[i];
             mild = milds[i];
-            LAWN_BONUS_RAMP_VALUES[i | 64][1] = LAWN_BONUS_RAMP_VALUES[i | 64][2] =
-                    LAWN_BONUS_RAMP_VALUES[i | 64][3] = color;
-            LAWN_BONUS_RAMP_VALUES[i | 192][0] = LAWN_BONUS_RAMP_VALUES[i | 192][2] = color;
+            RELAXED_ROLL_BONUS_RAMP_VALUES[i | 64][1] = RELAXED_ROLL_BONUS_RAMP_VALUES[i | 64][2] =
+                    RELAXED_ROLL_BONUS_RAMP_VALUES[i | 64][3] = color;
+            RELAXED_ROLL_BONUS_RAMP_VALUES[i | 192][0] = RELAXED_ROLL_BONUS_RAMP_VALUES[i | 192][2] = color;
 //            int co = r - b, t = b + (co >> 1), cg = g - t, y = t + (cg >> 1),
 //                    yBright = y * 21 >> 4, yDim = y * 11 >> 4, yDark = y * 6 >> 4, chromO, chromG;
 //            chromO = (co * 3) >> 2;
@@ -913,43 +841,43 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
             r = MathUtils.clamp((int) ((luma * 0.83f + (warm *  0.625f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
             g = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f + mild * 0.5f) * 0.7f) * 256f), 0, 255);
             b = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
-            LAWN_BONUS_RAMP_VALUES[i | 192][1] = LAWN_BONUS_RAMP_VALUES[i | 128][1] =
-                    LAWN_BONUS_RAMP_VALUES[i | 64][0] = LAWN_BONUS_RAMP_VALUES[i][1] =
+            RELAXED_ROLL_BONUS_RAMP_VALUES[i | 192][1] = RELAXED_ROLL_BONUS_RAMP_VALUES[i | 128][1] =
+                    RELAXED_ROLL_BONUS_RAMP_VALUES[i | 64][0] = RELAXED_ROLL_BONUS_RAMP_VALUES[i][1] =
                             MathUtils.clamp(r, 0, 255) << 24 |
                                     MathUtils.clamp(g, 0, 255) << 16 |
                                     MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
             r = MathUtils.clamp((int) ((luma * 1.35f + (warm *  0.625f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
             g = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f + mild * 0.5f) * 0.65f) * 256f), 0, 255);
             b = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
-            LAWN_BONUS_RAMP_VALUES[i | 192][3] = LAWN_BONUS_RAMP_VALUES[i | 128][3] =
-                    LAWN_BONUS_RAMP_VALUES[i][3] =
+            RELAXED_ROLL_BONUS_RAMP_VALUES[i | 192][3] = RELAXED_ROLL_BONUS_RAMP_VALUES[i | 128][3] =
+                    RELAXED_ROLL_BONUS_RAMP_VALUES[i][3] =
                             MathUtils.clamp(r, 0, 255) << 24 |
                                     MathUtils.clamp(g, 0, 255) << 16 |
                                     MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
             r = MathUtils.clamp((int) ((luma * 0.65f + (warm *  0.625f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
             g = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f + mild * 0.5f) * 0.8f) * 256f), 0, 255);
             b = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
-            LAWN_BONUS_RAMP_VALUES[i | 128][0] = LAWN_BONUS_RAMP_VALUES[i][0] =
+            RELAXED_ROLL_BONUS_RAMP_VALUES[i | 128][0] = RELAXED_ROLL_BONUS_RAMP_VALUES[i][0] =
                     MathUtils.clamp(r, 0, 255) << 24 |
                             MathUtils.clamp(g, 0, 255) << 16 |
                             MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
         }
         sb.setLength(0);
         sb.ensureCapacity(2800);
-        sb.append("private static final int[][] LAWN_BONUS_RAMP_VALUES = new int[][] {\n");
+        sb.append("private static final int[][] RELAXED_ROLL_BONUS_RAMP_VALUES = new int[][] {\n");
         for (int i = 0; i < 256; i++) {
             sb.append("{ 0x");
-            StringKit.appendHex(sb, LAWN_BONUS_RAMP_VALUES[i][0]);
-            StringKit.appendHex(sb.append(", 0x"), LAWN_BONUS_RAMP_VALUES[i][1]);
-            StringKit.appendHex(sb.append(", 0x"), LAWN_BONUS_RAMP_VALUES[i][2]);
-            StringKit.appendHex(sb.append(", 0x"), LAWN_BONUS_RAMP_VALUES[i][3]);
+            StringKit.appendHex(sb, RELAXED_ROLL_BONUS_RAMP_VALUES[i][0]);
+            StringKit.appendHex(sb.append(", 0x"), RELAXED_ROLL_BONUS_RAMP_VALUES[i][1]);
+            StringKit.appendHex(sb.append(", 0x"), RELAXED_ROLL_BONUS_RAMP_VALUES[i][2]);
+            StringKit.appendHex(sb.append(", 0x"), RELAXED_ROLL_BONUS_RAMP_VALUES[i][3]);
             sb.append(" },\n");
 
         }
         System.out.println(sb.append("};"));
         PALETTE = new int[256];
         for (int i = 0; i < 64; i++) {
-            System.arraycopy(LAWN_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
+            System.arraycopy(RELAXED_ROLL_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
         }
         sb.setLength(0);
         sb.ensureCapacity((1 + 12 * 8) * (PALETTE.length >>> 3));
@@ -969,7 +897,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
         //pix.drawPixel(255, 0, 0);
         png8.palette = new PaletteReducer(PALETTE, PaletteReducer.labRoughMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("LawnBonus.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("RelaxedRollBonus.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -986,7 +914,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("LawnBonus_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("RelaxedRollBonus_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1001,7 +929,7 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
         }
         png8.palette = new PaletteReducer(PALETTE);
         try {
-            png8.writePrecisely(Gdx.files.local("LawnBonusMagicaVoxel.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("RelaxedRollBonusMagicaVoxel.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1072,4 +1000,39 @@ public class OverkillPaletteGenerator extends ApplicationAdapter {
         System.out.printf("0x%08X, ", 1|NumberTools.floatToReversedIntBits(SColor.floatGetYCbCr(0.85f, NumberTools.cos(pi4-ph) * light, NumberTools.sin(pi4-ph) * light, 1f)));
 
      */
+
+    public final double fastGaussian() {
+        long a = (state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L,
+                b = (state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L;
+        a = (a & 0x0003FF003FF003FFL) + ((a & 0x0FFC00FFC00FFC00L) >>> 10);
+        b = (b & 0x0003FF003FF003FFL) + ((b & 0x0FFC00FFC00FFC00L) >>> 10);
+        a = (a & 0x000000007FF007FFL) + ((a & 0x0007FF0000000000L) >>> 40);
+        b = (b & 0x000000007FF007FFL) + ((b & 0x0007FF0000000000L) >>> 40);
+        return ((((a & 0x0000000000000FFFL) + ((a & 0x000000007FF00000L) >>> 20))
+                - ((b & 0x0000000000000FFFL) + ((b & 0x000000007FF00000L) >>> 20))) * 0x1p-10);
+    }
+
+    public double smooth (double a) {
+        return Math.sqrt(a) * a * (3 - 2 * a);
+    }
+
+
+    private long state = 9005L;
+
+    private double nextDouble()
+    {
+        return ((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L & 0x1FFFFFFFFFFFFFL) * 0x1p-53;
+    }
+    private double curvedDouble()
+    {
+        // averages about 0.6
+//        return 0.1 * (nextDouble() + nextDouble() + nextDouble()
+//                + nextDouble() + nextDouble() + nextDouble())
+//                + 0.2 * ((1.0 - nextDouble() * nextDouble()) + (1.0 - nextDouble() * nextDouble()));
+        // averages about 0.685
+        return 0.25 * (0.5 * (nextDouble() + nextDouble() + nextDouble() + nextDouble()) +
+                (3.0 - nextDouble() * nextDouble() - nextDouble() * nextDouble() - nextDouble() * nextDouble()));
+
+    }
+
 }
