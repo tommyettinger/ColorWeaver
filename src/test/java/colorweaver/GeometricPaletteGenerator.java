@@ -28,44 +28,6 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
         new Lwjgl3Application(new GeometricPaletteGenerator(), config);
     }
 
-    private static float hue(int rgba) {
-        final float r = (rgba >>> 24 & 255) * 0.003921569f, g = (rgba >>> 16 & 255) * 0.003921569f,
-                b = (rgba >>> 8 & 255) * 0.003921569f;//, a = (e >>> 24 & 254) / 254f;
-        final float min = Math.min(Math.min(r, g), b);   //Min. value of RGB
-        final float max = Math.max(Math.max(r, g), b);   //Max value of RGB
-        final float delta = max - min;                           //Delta RGB value
-
-        if (delta < 0.0001f)                     //This is a gray, no chroma...
-        {
-            return 0f;
-        } else                                    //Chromatic data...
-        {
-            final float rDelta = (((max - r) / 6f) + (delta * 0.5f)) / delta;
-            final float gDelta = (((max - g) / 6f) + (delta * 0.5f)) / delta;
-            final float bDelta = (((max - b) / 6f) + (delta * 0.5f)) / delta;
-
-            if (r == max) return (1f + bDelta - gDelta) % 1f;
-            else if (g == max) return ((4f / 3f) + rDelta - bDelta) % 1f;
-            else return ((5f / 3f) + gDelta - rDelta) % 1f;
-        }
-    }
-
-    public static int difference(final int color1, final int color2) {
-        // if one color is transparent and the other isn't, then this is max-different
-        if (((color1 ^ color2) & 0x80) == 0x80) return 0x70000000;
-        final int r1 = (color1 >>> 24), g1 = (color1 >>> 16 & 0xFF), b1 = (color1 >>> 8 & 0xFF),
-                r2 = (color2 >>> 24), g2 = (color2 >>> 16 & 0xFF), b2 = (color2 >>> 8 & 0xFF),
-                rmean = (r1 + r2) * 53 >> 5,
-                r = r1 - r2,
-                g = g1 - g2,
-                b = b1 - b2,
-                y = Math.max(r1, Math.max(g1, b1)) - Math.max(r2, Math.max(g2, b2));
-//        return (((512 + rmean) * r * r) >> 8) + g * g + (((767 - rmean) * b * b) >> 8);
-//        return (((0x580 + rmean) * r * r) >> 7) + g * g * 12 + (((0x5FF - rmean) * b * b) >> 8) + y * y * 8;
-        return (((1024 + rmean) * r * r) >> 7) + g * g * 13 + (((1534 - rmean) * b * b) >> 8) + y * y * 12;
-//        return (((1024 + rmean) * r * r) >> 7) + g * g * 12 + (((1534 - rmean) * b * b) >> 8) + y * y * 14;
-    }
-
     public final double fastGaussian() {
         long a = (state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L,
                 b = (state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L;
