@@ -259,10 +259,12 @@ public class ShaderUtils {
                     "}";
 
     /**
-     * This fragment shader substitutes colors with ones from a palette, dithering as needed using a variant on the R2
-     * point sequence dithering technique suggested by Martin Roberts. This particular set of changes seems especially
-     * good at avoiding obvious linear patterns, due to how it calculates the degree of adjustment towards (or, less
-     * frequently, away from) the target color using both R2 and asin().
+     * This fragment shader substitutes colors with ones from a palette, dithering as needed by mixing gradient interleaved noise,
+     * by Jorge Jimenez, with the R2 point sequence dithering technique suggested by Martin Robert. This particular set of changes
+     * seems especially good at avoiding obvious linear patterns, due to how it calculates the degree of adjustment towards (or,
+     * less frequently, away from) the target color using the gradient interleaved noise result (a large fraction of it), minus
+     * the R2 result (half of it), and finally running that through asin() to get a value that is positive more often than it is
+     * negative, with competing patterns that resolve into soft, winding noise.
      */
     public static final String fragmentShaderRobertsLimited =
        "varying vec2 v_texCoords;\n" +

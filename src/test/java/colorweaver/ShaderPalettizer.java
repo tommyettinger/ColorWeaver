@@ -39,9 +39,10 @@ public class ShaderPalettizer extends ApplicationAdapter {
     private Vector3 add, mul;
 
     private ColorEqualizer eq;
+    private ColorblindnessAdapter cba;
     
     public static boolean equalize = true;
-    public static boolean equalizeDB = true;
+    public static boolean equalizeCB = true;
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -74,8 +75,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
         ShaderPalettizer.equalize = equalize;
         if(equalize)
         {
-            if(equalizeDB = !equalizeDB)
-                screenTexture = new Texture(eq.processDB(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+            if(equalizeCB = !equalizeCB)
+                screenTexture = new Texture(cba.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
             else
                 screenTexture = new Texture(eq.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
         }
@@ -88,6 +89,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
     public void create() {
         startTime = TimeUtils.millis();
         eq = new ColorEqualizer();
+        cba = new ColorblindnessAdapter();
         palette = new Texture(Gdx.files.local("palettes/DB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
         palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         font = new BitmapFont();
@@ -313,7 +315,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                 }
                 palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
                 Gdx.graphics.setTitle(((batch.getShader().equals(defaultShader)) ? "Full Color" : "Palette")
-                   + " with Equalize: " + (equalize ? (equalizeDB ? "DB" : "STANDARD") : "OFF")
+                   + " with Equalize: " + (equalize ? (equalizeCB ? "COLORBLIND" : "STANDARD") : "OFF")
                    + (batch.getShader().equals(shader2) ? " on linear mode" : " on asin mode"));
                 return true;
             }
