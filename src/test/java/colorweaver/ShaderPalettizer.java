@@ -94,9 +94,9 @@ public class ShaderPalettizer extends ApplicationAdapter {
         add = new Vector3(0, 0, 0);
         mul = new Vector3(1, 1, 1);
         defaultShader = SpriteBatch.createDefaultShader();
-        shader = new ShaderProgram(vertexShader, fragmentShaderRGBLimited);
+        shader = new ShaderProgram(vertexShader, fragmentShaderRobertsLimited);
         if (!shader.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shader.getLog());
-        shader2 = new ShaderProgram(vertexShader, fragmentShaderRobertsLimited);
+        shader2 = new ShaderProgram(vertexShader, fragmentShaderRobertsWarmMild);
         if (!shader2.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shader2.getLog());
         batch = new SpriteBatch(1000, defaultShader);
         screenView = new ScreenViewport();
@@ -296,7 +296,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         {
                             batch.setShader(shader2);
                         }
-                        else if(batch.getShader().equals(defaultShader))
+                        else if(!batch.getShader().equals(shader))
                         {
                             batch.setShader(shader);
                         }
@@ -312,7 +312,10 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                 }
                 palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-                Gdx.graphics.setTitle(((batch.getShader().equals(defaultShader)) ? "Full Color" : "Palette") + " with Equalize: " + (equalize ? (equalizeDB ? "DB" : "STANDARD") : "OFF") + (batch.getShader().equals(shader2) ? " on RGB mode" : ""));                return true;
+                Gdx.graphics.setTitle(((batch.getShader().equals(defaultShader)) ? "Full Color" : "Palette")
+                   + " with Equalize: " + (equalize ? (equalizeDB ? "DB" : "STANDARD") : "OFF")
+                   + (batch.getShader().equals(shader2) ? " on linear mode" : " on asin mode"));
+                return true;
             }
         };
     }

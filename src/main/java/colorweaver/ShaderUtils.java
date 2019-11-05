@@ -219,34 +219,9 @@ public class ShaderUtils {
                     "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
                     "   gl_FragColor.a = v_color.a * tgt.a;\n" +
                     "}";
-
-
+    
     /**
-     * This fragment shader substitutes colors with ones from a palette, dithering as needed using a variant on the R2
-     * with triangle wave dithering technique suggested by Martin Roberts. This shows line artifacts in some places,
-     * aligned to a rhombic grid (matching the lines in isometric pixel art, interestingly).
-     */
-    public static final String fragmentShaderRoberts =
-            "varying vec2 v_texCoords;\n" +
-                    "varying vec4 v_color;\n" +
-                    "uniform sampler2D u_texture;\n" +
-                    "uniform sampler2D u_palette;\n" +
-                    "const float b_adj = 31.0 / 32.0;\n" +
-                    "const float rb_adj = 32.0 / 1023.0;\n" +
-                    "void main()\n" +
-                    "{\n" +
-                    "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
-//            "   gl_FragColor = vec4(texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb, tgt.a);\n" + //solid shading
-                    "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
-                    "   float len = length(tgt.rgb) * 0.75;\n" +
-                    "   float adj = sin(dot(gl_FragCoord.xy, vec2(4.743036261279236, 3.580412143837574)) + len) * (len * len + 0.175);\n" +
-                    "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
-                    "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
-                    "   gl_FragColor.a = v_color.a * tgt.a;\n" +
-                    "}";
-
-    /**
-     * Modeled after {@link #fragmentShaderRoberts}, but this doesn't try to use an ordered dither and instead tries to
+     * Modeled after {@link #fragmentShaderRobertsLimited}, but this doesn't try to use an ordered dither and instead tries to
      * use a noisy dither with a slight bias toward keeping close-enough matches as the same color.
      */
     public static final String fragmentShaderRandom =
@@ -283,29 +258,35 @@ public class ShaderUtils {
                     "   gl_FragColor = v_color * vec4(texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb, tgt.a);\n" +
                     "}";
 
-    public static final String fragmentShaderRGBLimited =
-            "varying vec2 v_texCoords;\n" +
-                    "varying vec4 v_color;\n" +
-                    "uniform sampler2D u_texture;\n" +
-                    "uniform sampler2D u_palette;\n" +
-                    "uniform vec3 u_add;\n" +
-                    "uniform vec3 u_mul;\n" +
-                    "const float b_adj = 31.0 / 32.0;\n" +
-                    "const float rb_adj = 32.0 / 1023.0;\n" +
-                    "void main()\n" +
-                    "{\n" +
-                    "   vec4 tgt = v_color * texture2D( u_texture, v_texCoords );\n" +
-                    "   tgt.rgb = u_add + u_mul * tgt.rgb;\n" +
-                    "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
-//                    "   vec3 adj = fract(vec3(0.6710436067037893, 0.8191725133961645, 0.5497004779019703) * dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy));\n" +
-                    //vec3(0.8986537126286993, 0.8075784952213448, 0.6521830259439717) * 
-                    "   float adj = fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) * 1.421 - 0.654;\n" +
-                    "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
-                    "   gl_FragColor.rgb = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
-                    "   gl_FragColor.a = tgt.a;\n" +
-                    "}";
-
+    /**
+     * This fragment shader substitutes colors with ones from a palette, dithering as needed using a variant on the R2
+     * point sequence dithering technique suggested by Martin Roberts. This particular set of changes seems especially
+     * good at avoiding obvious linear patterns, due to how it calculates the degree of adjustment towards (or, less
+     * frequently, away from) the target color using both R2 and asin().
+     */
     public static final String fragmentShaderRobertsLimited =
+       "varying vec2 v_texCoords;\n" +
+          "varying vec4 v_color;\n" +
+          "uniform sampler2D u_texture;\n" +
+          "uniform sampler2D u_palette;\n" +
+          "uniform vec3 u_add;\n" +
+          "uniform vec3 u_mul;\n" +
+          "const float b_adj = 31.0 / 32.0;\n" +
+          "const float rb_adj = 32.0 / 1023.0;\n" +
+          "void main()\n" +
+          "{\n" +
+          "   vec4 tgt = v_color * texture2D( u_texture, v_texCoords );\n" +
+          "   tgt.rgb = u_add + u_mul * tgt.rgb;\n" +
+          "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
+//          "   float adj = fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy));\n" + // Roberts
+//          "   float adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy)));\n" + // Jimenez
+          "   float adj = asin(fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * 0.875 - fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) * 0.5);\n" +
+          "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
+          "   gl_FragColor.rgb = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
+          "   gl_FragColor.a = tgt.a;\n" +
+          "}";
+
+    public static final String fragmentShaderRobertsWarmMild =
             "varying vec2 v_texCoords;\n" +
                     "varying vec4 v_color;\n" +
                     "uniform sampler2D u_texture;\n" +
