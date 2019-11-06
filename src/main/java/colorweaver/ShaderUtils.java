@@ -178,6 +178,32 @@ public class ShaderUtils {
     // older YCwCm to RGB conversion used previously in fragmentShaderOnlyWarmMild
     //                    "   gl_FragColor.rgb = v_color.rgb * clamp(vec3(dot(tgt.rgb, vec3(1.0, 0.625, -0.5)), dot(tgt.rgb, vec3(1.0, -0.375, 0.5)), dot(tgt.rgb, vec3(1.0, -0.375, -0.5))), 0.0, 1.0);\n" +
 
+    public static final String fragmentShaderColorblind =
+       "varying vec2 v_texCoords;\n"
+          + "varying vec4 v_color;\n"
+          + "uniform sampler2D u_texture;\n" 
+          + "void main()\n" 
+          + "{\n" 
+          + "    vec4 tgt = v_color * texture2D( u_texture, v_texCoords );\n"
+          + "    vec3 RGB = tgt.rgb;\n"
+          + "    mat3 RGBtoLMS = mat3(17.8824, 3.45570, 0.0300,\n"
+          + "                         43.5161, 27.1554, 0.1843,\n"
+          + "                         4.11940,  3.8671, 1.4671);\n"
+          + "    vec3 LMS = RGBtoLMS * RGB;\n"
+          + "    float alpha_d = 1.0;\n"
+          + "    float alpha_p = 0.0;\n"
+          + "    mat3 hybrid = mat3((1.0-alpha_p),   0.4942*alpha_d, 0.0,\n"
+          + "                        2.0234*alpha_p, 1.0-alpha_d,    0.0,\n"
+          + "                       -2.5258*alpha_p, 1.2483*alpha_d, 1.0);\n"
+          + "    LMS = hybrid * LMS;\n"
+          + "    mat3 LMStoRGB = mat3(0.0809446, -0.0102483, -0.000367778,\n"
+          + "                        -0.1305040,  0.0540190, -0.004117350,\n"
+          + "                         0.1167140, -0.1136120,  0.693502000);\n"
+          + "    RGB = LMStoRGB * LMS;\n" 
+          + "    gl_FragColor = vec4(RGB,tgt.a);\n"
+          + "}";
+
+
     /**
      * This fragment shader substitutes colors with ones from a palette, acting like {@link #fragmentShader} but also
      * allowing color space adjustments to be done after the palette swap (this won't change the color count). This

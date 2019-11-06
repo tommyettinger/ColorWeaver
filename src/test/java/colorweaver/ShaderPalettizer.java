@@ -34,7 +34,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
 
     private long startTime = 0L, lastProcessedTime = 0L;
     private ShaderProgram defaultShader;
-    private ShaderProgram shader, shader2;
+    private ShaderProgram shader, shader2, shaderCB;
     private Texture palette;
     private Vector3 add, mul;
 
@@ -76,7 +76,10 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if(equalize)
         {
             if(equalizeCB = !equalizeCB)
-                screenTexture = new Texture(cba.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+            {
+                screenTexture = new Texture(cba.processRoughness(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+                batch.setShader(shaderCB);
+            }
             else
                 screenTexture = new Texture(eq.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
         }
@@ -95,11 +98,16 @@ public class ShaderPalettizer extends ApplicationAdapter {
         font = new BitmapFont();
         add = new Vector3(0, 0, 0);
         mul = new Vector3(1, 1, 1);
-        defaultShader = SpriteBatch.createDefaultShader();
+        defaultShader =new ShaderProgram(vertexShader, fragmentShaderColorblind);
+//           SpriteBatch.createDefaultShader();
         shader = new ShaderProgram(vertexShader, fragmentShaderRobertsLimited);
         if (!shader.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shader.getLog());
         shader2 = new ShaderProgram(vertexShader, fragmentShaderRobertsWarmMild);
         if (!shader2.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shader2.getLog());
+        shaderCB = 
+           //defaultShader; 
+           new ShaderProgram(vertexShader, fragmentShaderColorblind);
+        if (!shaderCB.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderCB.getLog());
         batch = new SpriteBatch(1000, defaultShader);
         screenView = new ScreenViewport();
         screenView.getCamera().position.set(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0);
@@ -122,7 +130,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
         final ShaderProgram sh = batch.getShader();
         batch.setProjectionMatrix(screenView.getCamera().combined);
         if(screenTexture != null) {
-            if(!sh.equals(defaultShader)) {
+            if(!sh.equals(defaultShader) && !sh.equals(shaderCB)) {
                 batch.setPackedColor(-0x1.fffffep126f); // packed white
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE1);
                 palette.bind();
