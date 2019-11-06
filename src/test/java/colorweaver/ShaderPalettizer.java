@@ -81,7 +81,10 @@ public class ShaderPalettizer extends ApplicationAdapter {
                 batch.setShader(shaderCB);
             }
             else
-                screenTexture = new Texture(eq.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+            {
+                screenTexture = new Texture(cba.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+                batch.setShader(defaultShader);
+            }
         }
         else
             screenTexture = new Texture(file);
@@ -98,8 +101,9 @@ public class ShaderPalettizer extends ApplicationAdapter {
         font = new BitmapFont();
         add = new Vector3(0, 0, 0);
         mul = new Vector3(1, 1, 1);
-        defaultShader =new ShaderProgram(vertexShader, fragmentShaderColorblind);
-//           SpriteBatch.createDefaultShader();
+        defaultShader =
+           //new ShaderProgram(vertexShader, fragmentShaderColorblind);
+           SpriteBatch.createDefaultShader();
         shader = new ShaderProgram(vertexShader, fragmentShaderRobertsLimited);
         if (!shader.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shader.getLog());
         shader2 = new ShaderProgram(vertexShader, fragmentShaderRobertsWarmMild);
