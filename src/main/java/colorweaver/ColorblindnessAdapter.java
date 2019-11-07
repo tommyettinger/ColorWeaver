@@ -160,8 +160,8 @@ public class ColorblindnessAdapter {
                    (c & 0x0000ff00) * (0x1.010102p-8f * -0.081312f) + 512.5f);
                 cb = (cbs[b] + (b >>> 3) + (b >>> 4)) - 127.5f; // 3/4 from actual value, 1/4 equalized
                 cr = (crs[r] + (r >>> 3) + (r >>> 4)) - 127.5f;
-                luma = Math.max(0f, -0.1f + cr); // temporary
-                luma = (lumas[u] + (u >>> 3) + (u >>> 4)) + (((x ^ y) & 3) - 1.5f) * luma;
+                luma = Math.max(0f, -0.1f + cr) * 1.5f; // temporary
+                luma = (lumas[u] + (u >>> 3) + (u >>> 4)) + (((x ^ y >>> 1) & 1) - 0.5f) * luma;
                 pm.drawPixel(x, y,
                    MathUtils.clamp((int)(luma + cr * 1.402f + 0.5f), 0, 255)<<24|
                       MathUtils.clamp((int)(luma - cb * 0.344136f - cr * 0.714136f + 0.5f), 0, 255)<<16|
