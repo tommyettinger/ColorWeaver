@@ -222,14 +222,14 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.NUM_5:
                     case Input.Keys.NUMPAD_5:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-                                ? new Texture(Gdx.files.local("palettes/Twirl64_GLSL.png"), Pixmap.Format.RGBA8888, false)
+                                ? new Texture(Gdx.files.local("palettes/Ward_GLSL.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_6:
                     case Input.Keys.NUMPAD_6:
                         palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
-                                ? new Texture(Gdx.files.local("palettes/TwirlBonus_GLSL.png"), Pixmap.Format.RGBA8888, false)
+                                ? new Texture(Gdx.files.local("palettes/WardBonus_GLSL.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;

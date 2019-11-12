@@ -500,6 +500,10 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 					z = (r * 0.0193 + g * 0.1192 + b * 0.9505);// / 1.088840; // 0.82521;
 
 
+//					x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
+//					y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
+//					z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
+
 					x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
 					y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
 					z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
@@ -507,61 +511,53 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 					labs[0][idx] = L = (116.0 * y) - 16.0;
 					labs[1][idx] = A = 500.0 * (x - y);
 					labs[2][idx] = B = 200.0 * (y - z);
-					int l = (int)(L / 5.2631578947368425 + 0.5); // was 11.111
-					minA[l] = Math.min(minA[l], A);
-					maxA[l] = Math.max(maxA[l], A);
-					minB[l] = Math.min(minB[l], B);
-					maxB[l] = Math.max(maxB[l], B);
-					if(A == minA[l])
-						grids[l][0][0] = idx;
-					if(B == minB[l])
-						grids[l][4][0] = idx;
-					if(B == maxB[l])
-						grids[l][0][4] = idx;
-					if(A == maxA[l])
-						grids[l][4][4] = idx;
-//					if(A == minA[l] && B == minB[l])
+//					int l = (int)(L * 0.19 + 0.5); // was 1.0 / 11.111
+//					minA[l] = Math.min(minA[l], A);
+//					maxA[l] = Math.max(maxA[l], A);
+//					minB[l] = Math.min(minB[l], B);
+//					maxB[l] = Math.max(maxB[l], B);
+//					if(A == minA[l])
 //						grids[l][0][0] = idx;
-//					if(A == maxA[l] && B == minB[l])
+//					if(B == minB[l])
 //						grids[l][4][0] = idx;
-//					if(A == minA[l] && B == maxB[l])
+//					if(B == maxB[l])
 //						grids[l][0][4] = idx;
-//					if(A == maxA[l] && B == maxB[l])
+//					if(A == maxA[l])
 //						grids[l][4][4] = idx;
 				}
 			}
 		}
 
-		for (int l = 0; l < 20; l++) {
-			int lowLow = grids[l][0][0], highLow = grids[l][4][0], lowHigh = grids[l][0][4], highHigh = grids[l][4][4];
-			grids[l][1][0] = splitLeft15(lowLow, highLow);
-			grids[l][2][0] = split15(lowLow, highLow);
-			grids[l][3][0] = splitRight15(lowLow, highLow);
-
-			grids[l][1][4] = splitLeft15(lowHigh, highHigh);
-			grids[l][2][4] = split15(lowHigh, highHigh);
-			grids[l][3][4] = splitRight15(lowHigh, highHigh);
-
-			grids[l][0][1] = splitLeft15(lowLow, lowHigh);
-			grids[l][0][2] = split15(lowLow, lowHigh);
-			grids[l][0][3] = splitRight15(lowLow, lowHigh);
-
-			grids[l][4][1] = splitLeft15(highLow, highHigh);
-			grids[l][4][2] = split15(highLow, highHigh);
-			grids[l][4][3] = splitRight15(highLow, highHigh);
-
-			grids[l][1][1] = split15(splitLeft15(grids[l][1][0], grids[l][1][4]), splitLeft15(grids[l][0][1], grids[l][4][1]));
-			grids[l][2][1] = split15(splitLeft15(grids[l][2][0], grids[l][2][4]), split15(grids[l][0][1], grids[l][4][1]));
-			grids[l][3][1] = split15(splitLeft15(grids[l][3][0], grids[l][3][4]), splitRight15(grids[l][0][1], grids[l][4][1]));
-
-			grids[l][1][2] = split15(split15(grids[l][1][0], grids[l][1][4]), splitLeft15(grids[l][0][2], grids[l][4][2]));
-			grids[l][2][2] = split15(split15(grids[l][2][0], grids[l][2][4]), split15(grids[l][0][2], grids[l][4][2]));
-			grids[l][3][2] = split15(split15(grids[l][3][0], grids[l][3][4]), splitRight15(grids[l][0][2], grids[l][4][2]));
-			
-			grids[l][1][3] = split15(splitRight15(grids[l][1][0], grids[l][1][4]), splitLeft15(grids[l][0][3], grids[l][4][3]));
-			grids[l][2][3] = split15(splitRight15(grids[l][2][0], grids[l][2][4]), split15(grids[l][0][3], grids[l][4][3]));
-			grids[l][3][3] = split15(splitRight15(grids[l][3][0], grids[l][3][4]), splitRight15(grids[l][0][3], grids[l][4][3]));
-		}
+//		for (int l = 0; l < 20; l++) {
+//			int lowLow = grids[l][0][0], highLow = grids[l][4][0], lowHigh = grids[l][0][4], highHigh = grids[l][4][4];
+//			grids[l][1][0] = splitLeft15(lowLow, highLow);
+//			grids[l][2][0] = split15(lowLow, highLow);
+//			grids[l][3][0] = splitRight15(lowLow, highLow);
+//
+//			grids[l][1][4] = splitLeft15(lowHigh, highHigh);
+//			grids[l][2][4] = split15(lowHigh, highHigh);
+//			grids[l][3][4] = splitRight15(lowHigh, highHigh);
+//
+//			grids[l][0][1] = splitLeft15(lowLow, lowHigh);
+//			grids[l][0][2] = split15(lowLow, lowHigh);
+//			grids[l][0][3] = splitRight15(lowLow, lowHigh);
+//
+//			grids[l][4][1] = splitLeft15(highLow, highHigh);
+//			grids[l][4][2] = split15(highLow, highHigh);
+//			grids[l][4][3] = splitRight15(highLow, highHigh);
+//
+//			grids[l][1][1] = split15(splitLeft15(grids[l][1][0], grids[l][1][4]), splitLeft15(grids[l][0][1], grids[l][4][1]));
+//			grids[l][2][1] = split15(splitLeft15(grids[l][2][0], grids[l][2][4]), split15(grids[l][0][1], grids[l][4][1]));
+//			grids[l][3][1] = split15(splitLeft15(grids[l][3][0], grids[l][3][4]), splitRight15(grids[l][0][1], grids[l][4][1]));
+//
+//			grids[l][1][2] = split15(split15(grids[l][1][0], grids[l][1][4]), splitLeft15(grids[l][0][2], grids[l][4][2]));
+//			grids[l][2][2] = split15(split15(grids[l][2][0], grids[l][2][4]), split15(grids[l][0][2], grids[l][4][2]));
+//			grids[l][3][2] = split15(split15(grids[l][3][0], grids[l][3][4]), splitRight15(grids[l][0][2], grids[l][4][2]));
+//			
+//			grids[l][1][3] = split15(splitRight15(grids[l][1][0], grids[l][1][4]), splitLeft15(grids[l][0][3], grids[l][4][3]));
+//			grids[l][2][3] = split15(splitRight15(grids[l][2][0], grids[l][2][4]), split15(grids[l][0][3], grids[l][4][3]));
+//			grids[l][3][3] = split15(splitRight15(grids[l][3][0], grids[l][3][4]), splitRight15(grids[l][0][3], grids[l][4][3]));
+//		}
 //		StringBuilder sb = new StringBuilder(500).append("new int[] {\n");
 //		for (int i = 0; i < 20; i++) {
 //			System.out.println("At L " + (int)(i * 5.2631578947368425) + ", A ranges from " + minA[i] + " to " + maxA[i]);

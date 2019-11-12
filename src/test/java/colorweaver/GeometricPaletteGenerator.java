@@ -65,13 +65,13 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
         return (y1 - y2) * (y1 - y2) + ((w1 - w2) * (w1 - w2) + (m1 - m2) * (m1 - m2)) * 0.1625;
     }
 
-    public int[] lloyd(int[] palette) {
+    public static int[] lloyd(int[] palette, final int iterations) {
         PaletteReducer pr = new PaletteReducer(palette, basicMetric);
         int[][] centroids = new int[4][palette.length];
         byte[] pm = pr.paletteMapping;
         int index, mix;
         float count;
-        for (int iter = 0; iter < 50; iter++) {
+        for (int iter = 0; iter < iterations; iter++) {
             System.out.println("Relaxation iteration #" + (iter + 1));
             for (int i = 0; i < 0x8000; i++) {
                 index = pm[i] & 0xFF;
@@ -94,10 +94,10 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 
 
     public void create() {
-//        int[] PALETTE = lloyd(Coloring.AURORA);
-//        int[] PALETTE = lloyd(Coloring.DB_ISO22);
+//        int[] PALETTE = lloyd(Coloring.AURORA, 15);
+//        int[] PALETTE = lloyd(Coloring.DB_ISO22, 20);
         int[] PALETTE = Coloring.BIG_ROLLER;
-//        int[] PALETTE = lloyd(Coloring.BIG_ROLLER);
+//        int[] PALETTE = lloyd(Coloring.BIG_ROLLER, 50);
         
         
 //        final int[] points = {0, 75, 140, 210, 255};
