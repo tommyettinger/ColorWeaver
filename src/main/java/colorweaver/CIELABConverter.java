@@ -479,10 +479,10 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 	}
 	public static double[][] makeLAB15()
 	{
-		final double[][] labs = new double[3][0x8000];
+		final double[][] labs = new double[6][0x8000];
 		double r, g, b, x, y, z, L, A, B;
-		double[] minA = new double[20], maxA = new double[20], minB = new double[20], maxB = new double[20];
-		int[][][] grids = new int[20][5][5];
+//		double[] minA = new double[20], maxA = new double[20], minB = new double[20], maxB = new double[20];
+//		int[][][] grids = new int[20][5][5];
 		for (int ri = 0; ri < 32; ri++) {
 			r = ri / 31.0;
 			r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
@@ -495,22 +495,22 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 
 					int idx = ri << 10 | gi << 5 | bi;
 
-					x = (r * 0.4124 + g * 0.3576 + b * 0.1805);// / 0.950489; // 0.96422;
-					y = (r * 0.2126 + g * 0.7152 + b * 0.0722);// / 1.000000; // 1.00000;
-					z = (r * 0.0193 + g * 0.1192 + b * 0.9505);// / 1.088840; // 0.82521;
-
+					x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
+					y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
+					z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.088840; // 0.82521;
 
 //					x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
 //					y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
 //					z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
 
-					x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
-					y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
-					z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
+					labs[3][idx] = x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
+					labs[4][idx] = y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
+					labs[5][idx] = z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
 
-					labs[0][idx] = L = (116.0 * y) - 16.0;
-					labs[1][idx] = A = 500.0 * (x - y);
-					labs[2][idx] = B = 200.0 * (y - z);
+					labs[0][idx] = (116.0 * y) - 16.0;
+					labs[1][idx] = 500.0 * (x - y);
+					labs[2][idx] = 200.0 * (y - z);
+					
 //					int l = (int)(L * 0.19 + 0.5); // was 1.0 / 11.111
 //					minA[l] = Math.min(minA[l], A);
 //					maxA[l] = Math.max(maxA[l], A);

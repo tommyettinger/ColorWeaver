@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.MathUtils;
 
 import java.io.IOException;
 
-import static colorweaver.PaletteReducer.*;
+import static colorweaver.PaletteReducer.labMetric;
 
 /**
  * Uses the approach from <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.65.2790">this paper</a>,
@@ -18,15 +18,15 @@ import static colorweaver.PaletteReducer.*;
  * <br>
  * Created by Tommy Ettinger on 1/21/2018.
  */
-public class AnnealingPaletteGenerator extends ApplicationAdapter {
+public class HybridPaletteGenerator extends ApplicationAdapter {
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setTitle("ANNEALING Palette Stuff");
+        config.setTitle("HYBRID Palette Stuff");
         config.setWindowedMode(1000, 600);
         config.setIdleFPS(10);
         config.setResizable(false);
-        new Lwjgl3Application(new AnnealingPaletteGenerator(), config);
+        new Lwjgl3Application(new HybridPaletteGenerator(), config);
     }
 
     private long state = 99005L;
@@ -65,7 +65,7 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
     }
 
     public final int randomSign() {
-        return (int)((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 63 | 1L);
+        return (int)(((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 63 | 1L) & -(state & 1L));
     }
 
     public int[] lloyd(int[] palette, final int iterations) {
@@ -173,6 +173,25 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
         return palette;
     }
     
+    public static int xyzToColor(double x, double y, double z)
+    {
+        double r, g, b;
+        x = 0.95047 * ((x > 0.2068930344229638) ? x * x * x : (x - 16.0 / 116.0) / 7.787);
+        y = 1.00000 * ((y > 0.2068930344229638) ? y * y * y : (y - 16.0 / 116.0) / 7.787);
+        z = 1.08883 * ((z > 0.2068930344229638) ? z * z * z : (z - 16.0 / 116.0) / 7.787);
+
+        r = x *  3.2406 + y * -1.5372 + z * -0.4986;
+        g = x * -0.9689 + y *  1.8758 + z *  0.0415;
+        b = x *  0.0557 + y * -0.2040 + z *  1.0570;
+
+        r = (r > 0.0031308) ? (1.055 * Math.pow(r, 1.0 / 2.4) - 0.055) : 12.92 * r;
+        g = (g > 0.0031308) ? (1.055 * Math.pow(g, 1.0 / 2.4) - 0.055) : 12.92 * g;
+        b = (b > 0.0031308) ? (1.055 * Math.pow(b, 1.0 / 2.4) - 0.055) : 12.92 * b;
+        return MathUtils.clamp((int) (r * 255 + 0.5), 0, 255) << 24
+                | MathUtils.clamp((int) (g * 255 + 0.5), 0, 255) << 16
+                | MathUtils.clamp((int) (b * 255 + 0.5), 0, 255) << 8 | 0xFF;
+    }
+    
     public void create() {
         final double[][] lab15 =  CIELABConverter.makeLAB15();
 //        IntSet distinct = IntSet.with(0x001000FF, 0x000018FF, 0x000029FF, 0x000042FF, 0x000052FF,
@@ -254,12 +273,12 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
 //            items[i] = Coloring.LAVA256[i];
 //        }
         int[] PALETTE = Coloring.FLESURRECT;
-        anneal(lab15, PALETTE, 40);
+        anneal(lab15, PALETTE, 50);
         lloyd(PALETTE, 20);
-        double luma, warm, mild;
-        double[] lumas = new double[PALETTE.length], warms = new double[PALETTE.length], milds = new double[PALETTE.length];
+        double luma, xlab, zlab;
+        double[] lumas = new double[PALETTE.length], xlabs = new double[PALETTE.length], zlabs = new double[PALETTE.length];
         int r, g, b;
-        int pal;
+        int pal, index;
         for (int i = 1; i < PALETTE.length; i++) {
             //if ((i & 7) == 7)
 //            {
@@ -281,9 +300,12 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
             r = pal >>> 24;
             g = pal >>> 16 & 0xFF;
             b = pal >>> 8 & 0xFF;
-            mild = (g - b) / 255.0;
-            warm = (r - b) / 255.0;
-            luma = (0.375 * r + 0.5 * g + 0.125 * b) / 255.0;
+            index = (r >>> 3) << 10 | (g >>> 3) << 5 | b >>> 3;
+            // yes, 4 3 5 ordering is correct
+            lumas[i] = lab15[4][index];
+            xlabs[i] = lab15[3][index];
+            zlabs[i] = lab15[5][index];
+            
 //                    lumas[i] = luma = MathUtils.clamp(((0.375 * r + 0.5 * g + 0.125 * b) / 255.0) 
 //                            * (1.0 + (nextDouble() + nextDouble() - nextDouble() - nextDouble()) * 0.2), 0.05, 0.95);
 //                    lumas[i] = luma = (curvedDouble() + curvedDouble() + curvedDouble() + curvedDouble()) * 0.25;
@@ -295,13 +317,13 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
 //                System.out.println(StringKit.join(", ", color) + "  -> " + StringKit.join(", ", HSLUVConverter.hsluvToRgb(color)));
 
 ////normally this next section is used
-            r = MathUtils.clamp((int) ((luma + warm * 0.625 - mild * 0.5) * 255.5), 0, 255);
-            g = MathUtils.clamp((int) ((luma - warm * 0.375 + mild * 0.5) * 255.5), 0, 255);
-            b = MathUtils.clamp((int) ((luma - warm * 0.375 - mild * 0.5) * 255.5), 0, 255);
+//            r = MathUtils.clamp((int) ((luma + alab * 0.625 - blab * 0.5) * 255.5), 0, 255);
+//            g = MathUtils.clamp((int) ((luma - alab * 0.375 + blab * 0.5) * 255.5), 0, 255);
+//            b = MathUtils.clamp((int) ((luma - alab * 0.375 - blab * 0.5) * 255.5), 0, 255);
             ////PALETTE[i] = r << 24 | g << 16 | b << 8 | 0xFF;
-            milds[i] = (g - b) / 255.0;
-            warms[i] = (r - b) / 255.0;
-            lumas[i] = (0.375 * r + 0.5 * g + 0.125 * b) / 255.0;
+            //blabs[i] = (g - b) / 255.0;
+            //alabs[i] = (r - b) / 255.0;
+            //lumas[i] = (0.375 * r + 0.5 * g + 0.125 * b) / 255.0;
 //                }//while (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255);
 //                PALETTE[i++] = r << 24 |
 //                        g << 16 |
@@ -309,32 +331,32 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
 
 
         }
-        final double THRESHOLD = 0.011; // threshold controls the "stark-ness" of color changes; must not be negative.
+        final double THRESHOLD = 0.01; // threshold controls the "stark-ness" of color changes; must not be negative.
         byte[] paletteMapping = new byte[1 << 16];
         int[] reverse = new int[PALETTE.length];
         byte[][] ramps = new byte[PALETTE.length][4];
-        final int yLim = 63, cwLim = 31, cmLim = 31, shift1 = 6, shift2 = 11;
+        final int yLim = 63, xLim = 31, zLim = 31, shift1 = 6, shift2 = 11;
         for (int i = 1; i < PALETTE.length; i++) {
             reverse[i] =
                     (int) ((lumas[i]) * yLim)
-                            | (int) ((warms[i] * 0.5 + 0.5) * cwLim) << shift1
-                            | (int) ((milds[i] * 0.5 + 0.5) * cmLim) << shift2;
+                            | (int) ((xlabs[i]) * xLim) << shift1
+                            | (int) ((zlabs[i]) * zLim) << shift2;
             if(paletteMapping[reverse[i]] != 0)
                 System.out.println("color at index " + i + " overlaps an existing color that has index " + reverse[i] + "!");
             paletteMapping[reverse[i]] = (byte) i;
         }
-        double wf, mf, yf;
-        for (int cr = 0; cr <= cmLim; cr++) {
-            wf = (double) cr / cmLim - 0.5;
-            for (int cb = 0; cb <= cwLim; cb++) {
-                mf = (double) cb / cwLim - 0.5;
+        double zd, xd, yd;
+        for (int iz = 0; iz <= zLim; iz++) {
+            zd = (double) iz / zLim - 0.5;
+            for (int ix = 0; ix <= xLim; ix++) {
+                xd = (double) ix / xLim - 0.5;
                 for (int y = 0; y <= yLim; y++) {
-                    final int c2 = cr << shift2 | cb << shift1 | y;
+                    final int c2 = iz << shift2 | ix << shift1 | y;
                     if (paletteMapping[c2] == 0) {
-                        yf = (double) y / yLim;
+                        yd = (double) y / yLim;
                         double dist = Double.POSITIVE_INFINITY;
                         for (int i = 1; i < PALETTE.length; i++) {
-                            if (Math.abs(lumas[i] - yf) < 0.2f && dist > (dist = Math.min(dist, difference(lumas[i], warms[i], milds[i], yf, wf, mf))))
+                            if (Math.abs(lumas[i] - yd) < 0.2f && dist > (dist = Math.min(dist, difference(lumas[i], xlabs[i], zlabs[i], yd, xd, zd))))
                                 paletteMapping[c2] = (byte) i;
                         }
                     }
@@ -346,32 +368,32 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
         int idx2;
         for (int i = 1; i < PALETTE.length; i++) {
             int rev = reverse[i], y = rev & yLim, match = i;
-            yf = lumas[i];
-            warm = warms[i];
-            mild = milds[i];
+            yd = lumas[i];
+            xlab = xlabs[i] - 0.5;
+            zlab = zlabs[i] - 0.5;
             ramps[i][1] = (byte)i;//Color.rgba8888(DAWNBRINGER_AURORA[i]);
-            ramps[i][0] = 9;//15;  //0xFFFFFFFF, white
-            ramps[i][2] = 1;//0x010101FF, black
-            ramps[i][3] = 1;//0x010101FF, black
+            ramps[i][0] = paletteMapping[0x843F];//15;  //0xFFFFFFFF, white
+            ramps[i][2] = paletteMapping[0x8400];//0x010101FF, black
+            ramps[i][3] = paletteMapping[0x8400];//0x010101FF, black
             for (int yy = y + 2, rr = rev + 2; yy <= yLim; yy++, rr++) {
-                if ((idx2 = paletteMapping[rr] & 255) != i && difference(lumas[idx2], warms[idx2], milds[idx2], yf, warm, mild) > THRESHOLD) {
+                if ((idx2 = paletteMapping[rr] & 255) != i && difference(lumas[idx2], xlabs[idx2], zlabs[idx2], yd, xlab, zlab) > THRESHOLD) {
                     ramps[i][0] = paletteMapping[rr];
                     break;
                 }
                 adj = 1.0 + ((yLim + 1 >>> 1) - yy) * 0x1p-10;
-                mild = MathUtils.clamp(mild * adj, -0.5, 0.5);
-                warm = MathUtils.clamp(warm * adj + 0x1.8p-10, -0.5, 0.5);
+                zlab = MathUtils.clamp(zlab * adj, -0.5, 0.5);
+                xlab = MathUtils.clamp(xlab * adj + 0x1.8p-10, -0.5, 0.5);
 
 //                cof = (cof + 0.5f) * 0.984375f - 0.5f;
 //                cgf = (cgf - 0.5f) * 0.96875f + 0.5f;
                 rr = yy
-                        | (int) ((warm + 0.5) * cwLim) << shift1
-                        | (int) ((mild + 0.5) * cmLim) << shift2;
+                        | (int) ((xlab + 0.5) * xLim) << shift1
+                        | (int) ((zlab + 0.5) * zLim) << shift2;
             }
-            warm = warms[i];
-            mild = milds[i];
+            xlab = xlabs[i] - 0.5;
+            zlab = zlabs[i] - 0.5;
             for (int yy = y - 2, rr = rev - 2; yy > 0; rr--) {
-                if ((idx2 = paletteMapping[rr] & 255) != i && difference(lumas[idx2], warms[idx2], milds[idx2], yf, warm, mild) > THRESHOLD) {
+                if ((idx2 = paletteMapping[rr] & 255) != i && difference(lumas[idx2], xlabs[idx2], zlabs[idx2], yd, xlab, zlab) > THRESHOLD) {
                     ramps[i][2] = paletteMapping[rr];
                     rev = rr;
                     y = yy;
@@ -379,11 +401,12 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
                     break;
                 }
                 adj = 1.0 + (yy - (yLim + 1 >>> 1)) * 0x1p-10;
-                mild = MathUtils.clamp(mild * adj, -0.5, 0.5);
-                warm = MathUtils.clamp(warm * adj - 0x1.8p-10, -0.5, 0.5);
+                zlab = MathUtils.clamp(zlab * adj, -0.5, 0.5);
+                xlab = MathUtils.clamp(xlab * adj, -0.5, 0.5);
+//                xlab = MathUtils.clamp(xlab * adj - 0x1.8p-10, -0.5, 0.5);
                 rr = yy
-                        | (int) ((warm + 0.5) * cwLim) << shift1
-                        | (int) ((mild + 0.5) * cmLim) << shift2;
+                        | (int) ((xlab + 0.5) * xLim) << shift1
+                        | (int) ((zlab + 0.5) * zLim) << shift2;
 
 //                cof = MathUtils.clamp(cof * 0.9375f, -0.5f, 0.5f);
 //                cgf = MathUtils.clamp(cgf * 0.9375f, -0.5f, 0.5f);
@@ -396,16 +419,16 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
             }
             if (match >= 0) {
                 for (int yy = y - 3, rr = rev - 3; yy > 0; yy--, rr--) {
-                    if ((idx2 = paletteMapping[rr] & 255) != match && difference(lumas[idx2], warms[idx2], milds[idx2], yf, warm, mild) > THRESHOLD) {
+                    if ((idx2 = paletteMapping[rr] & 255) != match && difference(lumas[idx2], xlabs[idx2], zlabs[idx2], yd, xlab, zlab) > THRESHOLD) {
                         ramps[i][3] = paletteMapping[rr];
                         break;
                     }
                     adj = 1.0 + (yy - (yLim + 1 >>> 1)) * 0x1p-10;
-                    mild = MathUtils.clamp(mild * adj, -0.5, 0.5);
-                    warm = MathUtils.clamp(warm * adj - 0x1.8p-10, -0.5, 0.5);
+                    zlab = MathUtils.clamp(zlab * adj, -0.5, 0.5);
+                    xlab = MathUtils.clamp(xlab * adj - 0x1.8p-10, -0.5, 0.5);
                     rr = yy
-                            | (int) ((warm + 0.5) * cwLim) << shift1
-                            | (int) ((mild + 0.5) * cmLim) << shift2;
+                            | (int) ((xlab + 0.5) * xLim) << shift1
+                            | (int) ((zlab + 0.5) * zLim) << shift2;
                 }
             }
         }
@@ -430,139 +453,7 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
             );
         }
         System.out.println("};");
-
-
-//        IntVLA base = new IntVLA(52 * 52 * 52);
-//        base.addAll(PALETTE, 1, PALETTE.length - 1);
-////        base.addAll(Coloring.AURORA, 1, 255);
-////        base.addAll(0x010101FF, 0x2D2D2DFF, 0x555555FF, 0x7B7B7BFF,
-////                0x9F9F9FFF, 0xC1C1C1FF, 0xE1E1E1FF, 0xFFFFFFFF);
-//        
-//        int[] grayscale = {0x010101FF, 0x171717FF, 0x2D2D2DFF, 0x555555FF, 0x686868FF, 0x7B7B7BFF, 0x8D8D8DFF,
-//                0x9F9F9FFF, 0xB0B0B0FF, 0xC1C1C1FF, 0xD1D1D1FF, 0xE1E1E1FF, 0xF0F0F0FF, 0xFFFFFFFF};
-////        int[] grayscale = {0x010101FF, 0x212121FF, 0x414141FF, 0x616161FF,
-////                0x818181FF, 0xA1A1A1FF, 0xC1C1C1FF, 0xE1E1E1FF, 0xFFFFFFFF};
-////        int[] grayscale = {0x010101FF, 0x414141FF,
-////                0x818181FF, 0xC1C1C1FF, 0xFFFFFFFF};
-////        int[] grayscale = {0x010101FF, 0x2D2D2DFF, 0x555555FF, 0x7B7B7BFF,
-////                0x9F9F9FFF, 0xC1C1C1FF, 0xE1E1E1FF, 0xFFFFFFFF};
-//        base.addAll(grayscale);
-////        DiverRNG rng = new DiverRNG("sixty-four");
-////        MiniMover64RNG rng = new MiniMover64RNG(64);
-//        for (int i = 1; i <= 2240; i++) {
-////            double luma = Math.pow(i * 0x1.c7p-11, 0.875), // 0 to 1, more often near 1 than near 0
-//            double luma = i / 2240.0;//, mild = 0.0, warm = 0.0;// 0.0 to 1.0
-//            luma = (Math.sqrt(luma) + luma) * 128.0;
-//            //0xC13FA9A902A6328FL * i
-//            //0x91E10DA5C79E7B1DL * i
-////                    mild = ((DiverRNG.determineDouble(i) + DiverRNG.randomizeDouble(-i) - DiverRNG.randomizeDouble(123456789L - i) - DiverRNG.determineDouble(987654321L + i) + 0.5 - DiverRNG.randomizeDouble(123456789L + i)) * 0.4), // -1 to 1, curved random
-////                    warm = ((DiverRNG.determineDouble(-i) + DiverRNG.randomizeDouble((i^12345L)*i) - DiverRNG.randomizeDouble((i^99999L)*i) - DiverRNG.determineDouble((987654321L - i)*i) + 0.5  - DiverRNG.randomizeDouble((123456789L - i)*i)) * 0.4); // -1 to 1, curved random
-////                    mild = ((DiverRNG.determineDouble(i) + DiverRNG.randomizeDouble(-i) + DiverRNG.randomizeDouble(987654321L - i) - DiverRNG.randomizeDouble(123456789L - i) - DiverRNG.randomizeDouble(987654321L + i) - DiverRNG.determineDouble(1234567890L + i)) / 3.0), // -1 to 1, curved random
-////                    warm = ((DiverRNG.determineDouble(-i) + DiverRNG.randomizeDouble((i^12345L)*i) + DiverRNG.randomizeDouble((i^54321L)*i) - DiverRNG.randomizeDouble((i^99999L)*i) - DiverRNG.randomizeDouble((987654321L - i)*i) - DiverRNG.determineDouble((1234567890L - i)*i)) / 3.0); // -1 to 1, curved random
-//
-////            final double v1 = fastGaussian(rng), v2 = fastGaussian(rng), v3 = fastGaussian(rng);
-////            double mag = v1 * v1 + v2 * v2 + v3 * v3 + 1.0 / (1.0 - ((rng.nextLong() & 0x1FFFFFFFFFFFFFL) * 0x1p-53) * ((rng.nextLong() & 0x1FFFFFFFFFFFFFL) * 0x1p-53) * ((rng.nextLong() & 0x1FFFFFFFFFFFFFL) * 0x1p-53)) - 1.0;
-////            double mag = v1 * v1 + v2 * v2 + v3 * v3 + 1.0 / (1.0 - ((rng.nextLong() & 0x1FFFFFFFFFFFFFL) * 0x1p-53) * ((rng.nextLong() & 0x1FFFFFFFFFFFFFL) * 0x1p-53)) - 0.5;
-////            double mag = v1 * v1 + v2 * v2 + v3 * v3 - 2.0 * Math.log(((rng.nextLong() & 0x1FFFFFFFFFFFFFL) * 0x1p-53));
-////            final long t = rng.nextLong(), s = rng.nextLong(), angle = t >>> 48;
-////            float mag = (((t & 0xFFFFFFL)) * 0x0.7p-24f + (0x1.9p0f - ((s & 0xFFFFFFL) * 0x1.4p-24f) * ((s >>> 40) * 0x1.4p-24f))) * 0.555555f;
-////            mild = MathUtils.sin(angle) * mag;
-////            warm = MathUtils.cos(angle) * mag;
-////            double mag = ((t & 0xFFFFFFL) + (t >>> 40) + (s & 0xFFFFFFL) + (s >>> 40)) * 0x1p-26;
-////            if (mag != 0.0) {
-////                mag = 1.0 / Math.sqrt(mag);
-////                mild = v1 * mag;
-////                warm = v2 * mag;
-////            }
-//
-////            double mild = (nextDouble() + nextDouble() + nextDouble() + nextDouble() + nextDouble() + nextDouble()
-////                    - nextDouble() - nextDouble() - nextDouble() - nextDouble() - nextDouble() - nextDouble()) * 0.17 % 1.0, // -1 to 1, curved random
-////                    warm = (nextDouble() + nextDouble() + nextDouble() + nextDouble() + nextDouble() + nextDouble()
-////                            - nextDouble() - nextDouble()- nextDouble() - nextDouble() - nextDouble() - nextDouble()) * 0.17 % 1.0; // -1 to 1, curved random
-//            double co = (nextDouble() + nextDouble() + nextDouble() + nextDouble() * nextDouble() + nextDouble() * nextDouble()
-//                    - nextDouble() - nextDouble() - nextDouble() - nextDouble() * nextDouble() - nextDouble() * nextDouble()) * 32.0 % 128.0, // -256.0 to 256.0, curved random
-//                    cg = (nextDouble() + nextDouble() + nextDouble() + nextDouble() * nextDouble() + nextDouble() * nextDouble()
-//                            - nextDouble() - nextDouble()- nextDouble() - nextDouble() * nextDouble() - nextDouble() * nextDouble()) * 32.0 % 128.0; // -256.0 to 256.0, curved random
-////            mild = Math.signum(mild) * Math.pow(Math.abs(mild), 1.05);
-////            warm = Math.signum(warm) * Math.pow(Math.abs(warm), 0.8);
-////            if (mild > 0 && warm < 0) warm += mild * 1.666;
-////            else if (mild < -0.6) warm *= 0.4 - mild;
-//            final double t = luma - cg;
-//
-////            int g = (int) ((luma + mild * 0.5) * 255);
-////            int b = (int) ((luma - (warm + mild) * 0.25) * 255);
-////            int r = (int) ((luma + warm * 0.5) * 255);
-//            base.add(
-//                    (int) MathUtils.clamp(t + co, 0.0, 255.0) << 24 |
-//                            (int) MathUtils.clamp(luma + cg, 0.0, 255.0) << 16 |
-//                            (int) MathUtils.clamp(t - co, 0.0, 255.0) << 8 | 0xFF);
-//        }
-//
-////        base.addAll(Coloring.AURORA);
-////        base.addAll(Colorizer.FlesurrectBonusPalette);
-////        base.addAll(Coloring.VGA256);
-////        base.addAll(Coloring.RINSED);
-//        
-//        for (int r = 0, rr = 0; r < 29; r++, rr += 0x05000000) {
-//            for (int g = 0, gg = 0; g < 29; g++, gg += 0x050000) {
-//                for (int b = 0, bb = 0; b < 29; b++, bb += 0x0500) {
-
-//            idx = cb;
-//            cc = base.get(DiverRNG.determine(ca * 0xC13FA9A902A6328FL + cb * 0x91E10DA5C79E7B1DL) < 0L ? ca : cb);
-//            int ra = (cc >>> 24), ga = (cc >>> 16 & 0xFF), ba = (cc >>> 8 & 0xFF);
-////                    maxa = Math.max(ra, Math.max(ga, ba)), mina = Math.min(ra, Math.min(ga, ba)),
-////                    maxb = Math.max(rb, Math.max(gb, bb)), minb = Math.min(rb, Math.min(gb, bb));
-////            if (maxa - mina > 100)
-////                base.set(cb, ca);
-////            else if (maxb - minb > 100)
-////                base.set(cb, t);
-////            else
-//            base.set(ca,
-//                    (ra << 24 & 0xFF000000)
-//                            | (ga << 16 & 0xFF0000)
-//                            | (ba << 8 & 0xFF00)
-//                            | 0xFF);
-//
-//        base.insert(0, 0);
-////        System.arraycopy(grayscale, 0, base.items, 1, grayscale.length);
-//        int[] PALETTE = base.toArray();
-//        
-//        //// used for Uniform216 and SemiUniform256
-//        // used for NonUniform256
-//        PALETTE = new int[256];
-//        PALETTE[1] = 0x3F3F3FFF;
-//        PALETTE[2] = 0x7F7F7FFF;
-//        PALETTE[3] = 0xBFBFBFFF;
-//        int idx = 4;
-//        for (int rr = 0; rr < 7; rr++) {
-//            for (int gg = 0; gg < 9; gg++) {
-//                for (int bb = 0; bb < 4; bb++) {
-//                    PALETTE[idx++] = rr * 42 + (rr >> 1) << 24 | gg * 32 - (gg >> 3) << 16 | bb * 85 << 8 | 0xFF;
-//                }
-//            }
-//        }
-//////        for (int r = 0; r < 5; r++) {
-//////            for (int g = 0; g < 5; g++) {
-//////                for (int b = 0; b < 5; b++) {
-//////                    PALETTE[idx++] = r * 60 + (1 << r) - 1 << 24 | g * 60 + (1 << g) - 1 << 16 | b * 60 + (1 << b) - 1 << 8 | 0xFF;
-//////                }
-//////            }
-//////        }
-////        IntSet is = new IntSet(256);
-////        RNG rng = new RNG(new MiniMover64RNG(123456789));
-////        while (idx < 256)
-////        {
-////            int pt = rng.next(9);
-////            if(is.add(pt))
-////            {
-////                int r = pt & 7, g = (pt >>> 3) & 7, b = pt >>> 6;
-//////                int r = pt % 5, g = (pt / 5) % 5, b = pt / 25;
-//////                PALETTE[idx++] = r * 51 + 25 << 24 | g * 51 + 25 << 16 | b * 51 + 25 << 8 | 0xFF;
-////                PALETTE[idx++] = r * 32 + 15 << 24 | g * 32 + 15 << 16 | b * 32 + 15 << 8 | 0xFF;
-////            }
-////        }
-//        
-//
+        
         System.out.println(PALETTE.length+"-color: ");
         StringBuilder sb = new StringBuilder((1 + 12 * 8) * (PALETTE.length >>> 3));
         for (int i = 0; i < (PALETTE.length + 7 >>> 3); i++) {
@@ -611,50 +502,6 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
         Gdx.app.exit();
 
 
-//		Pixmap p2 = new Pixmap(1024, 32, Pixmap.Format.RGBA8888);
-//        
-//        byte[] paletteMapping = new byte[0x8000];
-//		Arrays.fill(paletteMapping, (byte) 0);
-//		final int plen = Math.min(256, PALETTE.length);
-//		int color, c2;
-//		double dist;
-////		int dist;
-//		for (int i = 0; i < plen; i++) {
-//			color = PALETTE[i];
-//			if ((color & 0x80) != 0) {
-//				paletteMapping[(color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F)] = (byte) i;
-//				p2.drawPixel((color >>> 22 & 0x3E0) | (color >>> 11 & 0x1F), color >>> 19 & 0x1F, color);
-//
-//			}
-//		}
-//		int rr, gg, bb, idx = 0;
-//		for (int r = 0; r < 32; r++) {
-//			rr = (r << 3 | r >>> 2);
-//			for (int g = 0; g < 32; g++) {
-//				gg = (g << 3 | g >>> 2);
-//				for (int b = 0; b < 32; b++) {
-//					c2 = r << 10 | g << 5 | b;
-//					if (paletteMapping[c2] == 0) {
-//						bb = (b << 3 | b >>> 2);
-//						dist = 0x1p500;
-////						dist = 0x7FFFFFFF;
-//						lab1.fromRGBA(rr << 24 | gg << 16 | bb << 8 | 0xFF);
-//						for (int i = 1; i < plen; i++) {
-//							lab2.fromRGBA(PALETTE[i]);
-//							if (dist > (dist = Math.min(dist, cielab.delta(lab1, lab2))))
-//								paletteMapping[c2] = (byte) i;
-//						}
-//						p2.drawPixel(r << 5 | b, g, PALETTE[paletteMapping[c2] & 0xFF]);
-//						System.out.println("Finished " + ++idx + " colors.");
-//					}
-//				}
-//			}
-//		}
-//        StringBuilder sb = new StringBuilder(13 * 256);
-//        Pixmap pix;         
-//        Pixmap p2;
-//
-//        PNG8 png8 = new PNG8();
         int[][] WARD_BONUS_RAMP_VALUES = new int[256][4];
         for (int i = 1; i < PALETTE.length; i++) {
             int color = WARD_BONUS_RAMP_VALUES[i | 128][2] = WARD_BONUS_RAMP_VALUES[i][2] =
@@ -663,8 +510,8 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
 //            g = (color >>> 16 & 0xFF);
 //            b = (color >>> 8 & 0xFF);
             luma = lumas[i];
-            warm = warms[i];
-            mild = milds[i];
+            xlab = xlabs[i];
+            zlab = zlabs[i];
             WARD_BONUS_RAMP_VALUES[i | 64][1] = WARD_BONUS_RAMP_VALUES[i | 64][2] =
                     WARD_BONUS_RAMP_VALUES[i | 64][3] = color;
             WARD_BONUS_RAMP_VALUES[i | 192][0] = WARD_BONUS_RAMP_VALUES[i | 192][2] = color;
@@ -676,29 +523,23 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
 //            g = chromG + t;
 //            b = t - (chromO >> 1);
 //            r = b + chromO;
-            r = MathUtils.clamp((int) ((luma * 0.83f + (warm *  0.625f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
-            g = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f + mild * 0.5f) * 0.7f) * 256f), 0, 255);
-            b = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
+//            r = MathUtils.clamp((int) ((luma * 0.83f + (xlab *  0.625f - zlab * 0.5f) * 0.7f) * 256f), 0, 255);
+//            g = MathUtils.clamp((int) ((luma * 0.83f + (xlab * -0.375f + zlab * 0.5f) * 0.7f) * 256f), 0, 255);
+//            b = MathUtils.clamp((int) ((luma * 0.83f + (xlab * -0.375f - zlab * 0.5f) * 0.7f) * 256f), 0, 255);
             WARD_BONUS_RAMP_VALUES[i | 192][1] = WARD_BONUS_RAMP_VALUES[i | 128][1] =
                     WARD_BONUS_RAMP_VALUES[i | 64][0] = WARD_BONUS_RAMP_VALUES[i][1] =
-                            MathUtils.clamp(r, 0, 255) << 24 |
-                                    MathUtils.clamp(g, 0, 255) << 16 |
-                                    MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
-            r = MathUtils.clamp((int) ((luma * 1.35f + (warm *  0.625f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
-            g = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f + mild * 0.5f) * 0.65f) * 256f), 0, 255);
-            b = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
+                            xyzToColor(xlab * 0.8, luma * 0.83, zlab * 0.8);
+//            r = MathUtils.clamp((int) ((luma * 1.35f + (xlab *  0.625f - zlab * 0.5f) * 0.65f) * 256f), 0, 255);
+//            g = MathUtils.clamp((int) ((luma * 1.35f + (xlab * -0.375f + zlab * 0.5f) * 0.65f) * 256f), 0, 255);
+//            b = MathUtils.clamp((int) ((luma * 1.35f + (xlab * -0.375f - zlab * 0.5f) * 0.65f) * 256f), 0, 255);
             WARD_BONUS_RAMP_VALUES[i | 192][3] = WARD_BONUS_RAMP_VALUES[i | 128][3] =
                     WARD_BONUS_RAMP_VALUES[i][3] =
-                            MathUtils.clamp(r, 0, 255) << 24 |
-                                    MathUtils.clamp(g, 0, 255) << 16 |
-                                    MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
-            r = MathUtils.clamp((int) ((luma * 0.65f + (warm *  0.625f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
-            g = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f + mild * 0.5f) * 0.8f) * 256f), 0, 255);
-            b = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
+                            xyzToColor(xlab * 0.7, luma * 1.35, zlab * 0.7);
+//            r = MathUtils.clamp((int) ((luma * 0.65f + (xlab *  0.625f - zlab * 0.5f) * 0.8f) * 256f), 0, 255);
+//            g = MathUtils.clamp((int) ((luma * 0.65f + (xlab * -0.375f + zlab * 0.5f) * 0.8f) * 256f), 0, 255);
+//            b = MathUtils.clamp((int) ((luma * 0.65f + (xlab * -0.375f - zlab * 0.5f) * 0.8f) * 256f), 0, 255);
             WARD_BONUS_RAMP_VALUES[i | 128][0] = WARD_BONUS_RAMP_VALUES[i][0] =
-                    MathUtils.clamp(r, 0, 255) << 24 |
-                            MathUtils.clamp(g, 0, 255) << 16 |
-                            MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
+                    xyzToColor(xlab * 0.8, luma * 0.65, zlab * 0.8);
         }
         sb.setLength(0);
         sb.ensureCapacity(2800);
