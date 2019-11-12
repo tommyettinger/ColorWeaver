@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.MathUtils;
 
 import java.io.IOException;
 
+import static colorweaver.CIELABConverter.differenceLAB;
+import static colorweaver.CIELABConverter.rgba8888;
 import static colorweaver.PaletteReducer.labMetric;
 
 /**
@@ -78,9 +80,12 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
             System.out.println("Relaxation iteration #" + (iter + 1));
             for (int i = 0; i < 0x8000; i++) {
                 index = pm[i] & 0xFF;
-                centroids[0][index] += MathUtils.clamp((i >>> 10) + randomSign(), 0, 31);
-                centroids[1][index] += MathUtils.clamp((i >>> 5 & 0x1F) + randomSign(), 0, 31);
-                centroids[2][index] += MathUtils.clamp((i & 0x1F) + randomSign(), 0, 31);
+                centroids[0][index] += (i >>> 10);
+                centroids[1][index] += (i >>> 5 & 0x1F);
+                centroids[2][index] += (i & 0x1F);
+//                centroids[0][index] += MathUtils.clamp((i >>> 10) + randomSign(), 0, 31);
+//                centroids[1][index] += MathUtils.clamp((i >>> 5 & 0x1F) + randomSign(), 0, 31);
+//                centroids[2][index] += MathUtils.clamp((i & 0x1F) + randomSign(), 0, 31);
                 centroids[3][index]++;
             }
             for (int i = 1; i < palette.length; i++) {
@@ -272,11 +277,13 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
 //        for (int i = baseLen; i < 256; i++) {
 //            items[i] = Coloring.LAVA256[i];
 //        }
-        int[] PALETTE = Coloring.FLESURRECT;
-        anneal(lab15, PALETTE, 50);
-        lloyd(PALETTE, 20);
-        double luma, xlab, zlab;
-        double[] lumas = new double[PALETTE.length], xlabs = new double[PALETTE.length], zlabs = new double[PALETTE.length];
+        int[] PALETTE = Coloring.DB_PLUS;
+//        anneal(lab15, PALETTE, 50);
+        lloyd(PALETTE, 25);
+//        anneal(lab15, PALETTE, 50);
+//        lloyd(PALETTE, 15);
+        double luma, alab, blab;
+        double[] lumas = new double[PALETTE.length], alabs = new double[PALETTE.length], blabs = new double[PALETTE.length];
         int r, g, b;
         int pal, index;
         for (int i = 1; i < PALETTE.length; i++) {
@@ -301,10 +308,9 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
             g = pal >>> 16 & 0xFF;
             b = pal >>> 8 & 0xFF;
             index = (r >>> 3) << 10 | (g >>> 3) << 5 | b >>> 3;
-            // yes, 4 3 5 ordering is correct
-            lumas[i] = lab15[4][index];
-            xlabs[i] = lab15[3][index];
-            zlabs[i] = lab15[5][index];
+            lumas[i] = lab15[0][index];
+            alabs[i] = lab15[1][index];
+            blabs[i] = lab15[2][index];
             
 //                    lumas[i] = luma = MathUtils.clamp(((0.375 * r + 0.5 * g + 0.125 * b) / 255.0) 
 //                            * (1.0 + (nextDouble() + nextDouble() - nextDouble() - nextDouble()) * 0.2), 0.05, 0.95);
@@ -335,28 +341,28 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
         byte[] paletteMapping = new byte[1 << 16];
         int[] reverse = new int[PALETTE.length];
         byte[][] ramps = new byte[PALETTE.length][4];
-        final int yLim = 63, xLim = 31, zLim = 31, shift1 = 6, shift2 = 11;
+        final int yLim = 63, aLim = 31, bLim = 31, shift1 = 6, shift2 = 11;
         for (int i = 1; i < PALETTE.length; i++) {
             reverse[i] =
-                    (int) ((lumas[i]) * yLim)
-                            | (int) ((xlabs[i]) * xLim) << shift1
-                            | (int) ((zlabs[i]) * zLim) << shift2;
+                    (int) ((lumas[i] * 0.01) * yLim)
+                            | (int) ((alabs[i] + 108.0) / 216.0 * aLim) << shift1
+                            | (int) ((blabs[i] + 108.0) / 216.0 * bLim) << shift2;
             if(paletteMapping[reverse[i]] != 0)
                 System.out.println("color at index " + i + " overlaps an existing color that has index " + reverse[i] + "!");
             paletteMapping[reverse[i]] = (byte) i;
         }
-        double zd, xd, yd;
-        for (int iz = 0; iz <= zLim; iz++) {
-            zd = (double) iz / zLim - 0.5;
-            for (int ix = 0; ix <= xLim; ix++) {
-                xd = (double) ix / xLim - 0.5;
+        double bd, ad, yd;
+        for (int ib = 0; ib <= bLim; ib++) {
+            bd = (double) ib / bLim * 216 - 108;
+            for (int ia = 0; ia <= aLim; ia++) {
+                ad = (double) ia / aLim * 216 - 108;
                 for (int y = 0; y <= yLim; y++) {
-                    final int c2 = iz << shift2 | ix << shift1 | y;
+                    final int c2 = ib << shift2 | ia << shift1 | y;
                     if (paletteMapping[c2] == 0) {
-                        yd = (double) y / yLim;
+                        yd = y * 100.0 / yLim;
                         double dist = Double.POSITIVE_INFINITY;
                         for (int i = 1; i < PALETTE.length; i++) {
-                            if (Math.abs(lumas[i] - yd) < 0.2f && dist > (dist = Math.min(dist, difference(lumas[i], xlabs[i], zlabs[i], yd, xd, zd))))
+                            if (Math.abs(lumas[i] - yd) < 0.2f && dist > (dist = Math.min(dist, differenceLAB(lumas[i], alabs[i], blabs[i], yd, ad, bd))))
                                 paletteMapping[c2] = (byte) i;
                         }
                     }
@@ -369,31 +375,31 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
         for (int i = 1; i < PALETTE.length; i++) {
             int rev = reverse[i], y = rev & yLim, match = i;
             yd = lumas[i];
-            xlab = xlabs[i] - 0.5;
-            zlab = zlabs[i] - 0.5;
+            alab = alabs[i];
+            blab = blabs[i];
             ramps[i][1] = (byte)i;//Color.rgba8888(DAWNBRINGER_AURORA[i]);
             ramps[i][0] = paletteMapping[0x843F];//15;  //0xFFFFFFFF, white
             ramps[i][2] = paletteMapping[0x8400];//0x010101FF, black
             ramps[i][3] = paletteMapping[0x8400];//0x010101FF, black
             for (int yy = y + 2, rr = rev + 2; yy <= yLim; yy++, rr++) {
-                if ((idx2 = paletteMapping[rr] & 255) != i && difference(lumas[idx2], xlabs[idx2], zlabs[idx2], yd, xlab, zlab) > THRESHOLD) {
+                if ((idx2 = paletteMapping[rr] & 255) != i && differenceLAB(lumas[idx2], alabs[idx2], blabs[idx2], yd, alab, blab) > THRESHOLD) {
                     ramps[i][0] = paletteMapping[rr];
                     break;
                 }
                 adj = 1.0 + ((yLim + 1 >>> 1) - yy) * 0x1p-10;
-                zlab = MathUtils.clamp(zlab * adj, -0.5, 0.5);
-                xlab = MathUtils.clamp(xlab * adj + 0x1.8p-10, -0.5, 0.5);
+                alab = MathUtils.clamp(alab * adj, -108, 108);
+                blab = MathUtils.clamp(blab * adj, -108, 108);
 
 //                cof = (cof + 0.5f) * 0.984375f - 0.5f;
 //                cgf = (cgf - 0.5f) * 0.96875f + 0.5f;
                 rr = yy
-                        | (int) ((xlab + 0.5) * xLim) << shift1
-                        | (int) ((zlab + 0.5) * zLim) << shift2;
+                        | (int) ((alab + 108.0) / 216.0 * aLim) << shift1
+                        | (int) ((blab + 108.0) / 216.0 * bLim) << shift2;
             }
-            xlab = xlabs[i] - 0.5;
-            zlab = zlabs[i] - 0.5;
+            alab = alabs[i] - 0.5;
+            blab = blabs[i] - 0.5;
             for (int yy = y - 2, rr = rev - 2; yy > 0; rr--) {
-                if ((idx2 = paletteMapping[rr] & 255) != i && difference(lumas[idx2], xlabs[idx2], zlabs[idx2], yd, xlab, zlab) > THRESHOLD) {
+                if ((idx2 = paletteMapping[rr] & 255) != i && difference(lumas[idx2], alabs[idx2], blabs[idx2], yd, alab, blab) > THRESHOLD) {
                     ramps[i][2] = paletteMapping[rr];
                     rev = rr;
                     y = yy;
@@ -401,12 +407,12 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
                     break;
                 }
                 adj = 1.0 + (yy - (yLim + 1 >>> 1)) * 0x1p-10;
-                zlab = MathUtils.clamp(zlab * adj, -0.5, 0.5);
-                xlab = MathUtils.clamp(xlab * adj, -0.5, 0.5);
+                alab = MathUtils.clamp(alab * adj, -108, 108);
+                blab = MathUtils.clamp(blab * adj, -108, 108);
 //                xlab = MathUtils.clamp(xlab * adj - 0x1.8p-10, -0.5, 0.5);
                 rr = yy
-                        | (int) ((xlab + 0.5) * xLim) << shift1
-                        | (int) ((zlab + 0.5) * zLim) << shift2;
+                        | (int) ((alab + 108.0) / 216.0 * aLim) << shift1
+                        | (int) ((blab + 108.0) / 216.0 * bLim) << shift2;
 
 //                cof = MathUtils.clamp(cof * 0.9375f, -0.5f, 0.5f);
 //                cgf = MathUtils.clamp(cgf * 0.9375f, -0.5f, 0.5f);
@@ -419,21 +425,23 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
             }
             if (match >= 0) {
                 for (int yy = y - 3, rr = rev - 3; yy > 0; yy--, rr--) {
-                    if ((idx2 = paletteMapping[rr] & 255) != match && difference(lumas[idx2], xlabs[idx2], zlabs[idx2], yd, xlab, zlab) > THRESHOLD) {
+                    if ((idx2 = paletteMapping[rr] & 255) != match && difference(lumas[idx2], alabs[idx2], blabs[idx2], yd, alab, blab) > THRESHOLD) {
                         ramps[i][3] = paletteMapping[rr];
                         break;
                     }
                     adj = 1.0 + (yy - (yLim + 1 >>> 1)) * 0x1p-10;
-                    zlab = MathUtils.clamp(zlab * adj, -0.5, 0.5);
-                    xlab = MathUtils.clamp(xlab * adj - 0x1.8p-10, -0.5, 0.5);
+//                    alab *= adj;
+//                    blab *= adj;
+                    alab = MathUtils.clamp(alab * adj, -108, 108);
+                    blab = MathUtils.clamp(blab * adj, -108, 108);
                     rr = yy
-                            | (int) ((xlab + 0.5) * xLim) << shift1
-                            | (int) ((zlab + 0.5) * zLim) << shift2;
+                            | (int) ((alab + 108.0) / 216.0 * aLim) << shift1
+                            | (int) ((blab + 108.0) / 216.0 * bLim) << shift2;
                 }
             }
         }
 
-        System.out.println("public static final byte[][] WARD_RAMPS = new byte[][]{");
+        System.out.println("public static final byte[][] TOWARD_RAMPS = new byte[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println(
                     "{ " + ramps[i][3]
@@ -444,7 +452,7 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
         }
         System.out.println("};");
 
-        System.out.println("public static final int[][] WARD_RAMP_VALUES = new int[][]{");
+        System.out.println("public static final int[][] TOWARD_RAMP_VALUES = new int[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println("{ 0x" + StringKit.hex(PALETTE[ramps[i][3] & 255])
                     + ", 0x" + StringKit.hex(PALETTE[ramps[i][2] & 255])
@@ -476,7 +484,7 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
         PNG8 png8 = new PNG8();
         png8.palette = new PaletteReducer(PALETTE, labMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("Ward.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Toward.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -494,7 +502,7 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
         }
 
         try {
-            png8.writePrecisely(Gdx.files.local("Ward_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("Toward_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -502,19 +510,19 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
         Gdx.app.exit();
 
 
-        int[][] WARD_BONUS_RAMP_VALUES = new int[256][4];
+        int[][] TOWARD_BONUS_RAMP_VALUES = new int[256][4];
         for (int i = 1; i < PALETTE.length; i++) {
-            int color = WARD_BONUS_RAMP_VALUES[i | 128][2] = WARD_BONUS_RAMP_VALUES[i][2] =
+            int color = TOWARD_BONUS_RAMP_VALUES[i | 128][2] = TOWARD_BONUS_RAMP_VALUES[i][2] =
                     PALETTE[i];
 //            r = (color >>> 24);
 //            g = (color >>> 16 & 0xFF);
 //            b = (color >>> 8 & 0xFF);
             luma = lumas[i];
-            xlab = xlabs[i];
-            zlab = zlabs[i];
-            WARD_BONUS_RAMP_VALUES[i | 64][1] = WARD_BONUS_RAMP_VALUES[i | 64][2] =
-                    WARD_BONUS_RAMP_VALUES[i | 64][3] = color;
-            WARD_BONUS_RAMP_VALUES[i | 192][0] = WARD_BONUS_RAMP_VALUES[i | 192][2] = color;
+            alab = alabs[i];
+            blab = blabs[i];
+            TOWARD_BONUS_RAMP_VALUES[i | 64][1] = TOWARD_BONUS_RAMP_VALUES[i | 64][2] =
+                    TOWARD_BONUS_RAMP_VALUES[i | 64][3] = color;
+            TOWARD_BONUS_RAMP_VALUES[i | 192][0] = TOWARD_BONUS_RAMP_VALUES[i | 192][2] = color;
 //            int co = r - b, t = b + (co >> 1), cg = g - t, y = t + (cg >> 1),
 //                    yBright = y * 21 >> 4, yDim = y * 11 >> 4, yDark = y * 6 >> 4, chromO, chromG;
 //            chromO = (co * 3) >> 2;
@@ -526,37 +534,46 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
 //            r = MathUtils.clamp((int) ((luma * 0.83f + (xlab *  0.625f - zlab * 0.5f) * 0.7f) * 256f), 0, 255);
 //            g = MathUtils.clamp((int) ((luma * 0.83f + (xlab * -0.375f + zlab * 0.5f) * 0.7f) * 256f), 0, 255);
 //            b = MathUtils.clamp((int) ((luma * 0.83f + (xlab * -0.375f - zlab * 0.5f) * 0.7f) * 256f), 0, 255);
-            WARD_BONUS_RAMP_VALUES[i | 192][1] = WARD_BONUS_RAMP_VALUES[i | 128][1] =
-                    WARD_BONUS_RAMP_VALUES[i | 64][0] = WARD_BONUS_RAMP_VALUES[i][1] =
-                            xyzToColor(xlab * 0.8, luma * 0.83, zlab * 0.8);
+            TOWARD_BONUS_RAMP_VALUES[i | 192][1] = TOWARD_BONUS_RAMP_VALUES[i | 128][1] =
+                    TOWARD_BONUS_RAMP_VALUES[i | 64][0] = TOWARD_BONUS_RAMP_VALUES[i][1] =
+//                            xyzToColor(xlab, luma * 0.8, zlab);
+                            rgba8888(luma * 0.85, alab * 0.7, blab * 0.7);
+//                            rgba8888(luma * 0.8, alab * 0.85, blab * 0.85);
 //            r = MathUtils.clamp((int) ((luma * 1.35f + (xlab *  0.625f - zlab * 0.5f) * 0.65f) * 256f), 0, 255);
 //            g = MathUtils.clamp((int) ((luma * 1.35f + (xlab * -0.375f + zlab * 0.5f) * 0.65f) * 256f), 0, 255);
 //            b = MathUtils.clamp((int) ((luma * 1.35f + (xlab * -0.375f - zlab * 0.5f) * 0.65f) * 256f), 0, 255);
-            WARD_BONUS_RAMP_VALUES[i | 192][3] = WARD_BONUS_RAMP_VALUES[i | 128][3] =
-                    WARD_BONUS_RAMP_VALUES[i][3] =
-                            xyzToColor(xlab * 0.7, luma * 1.35, zlab * 0.7);
+            TOWARD_BONUS_RAMP_VALUES[i | 192][3] = TOWARD_BONUS_RAMP_VALUES[i | 128][3] =
+                    TOWARD_BONUS_RAMP_VALUES[i][3] =
+//                            xyzToColor(alab, luma * 1.25, blab);
+                            rgba8888(luma * 1.35, alab * 0.65, blab * 0.65);
 //            r = MathUtils.clamp((int) ((luma * 0.65f + (xlab *  0.625f - zlab * 0.5f) * 0.8f) * 256f), 0, 255);
 //            g = MathUtils.clamp((int) ((luma * 0.65f + (xlab * -0.375f + zlab * 0.5f) * 0.8f) * 256f), 0, 255);
 //            b = MathUtils.clamp((int) ((luma * 0.65f + (xlab * -0.375f - zlab * 0.5f) * 0.8f) * 256f), 0, 255);
-            WARD_BONUS_RAMP_VALUES[i | 128][0] = WARD_BONUS_RAMP_VALUES[i][0] =
-                    xyzToColor(xlab * 0.8, luma * 0.65, zlab * 0.8);
+//            if (luma > 50) {
+                TOWARD_BONUS_RAMP_VALUES[i | 128][0] = TOWARD_BONUS_RAMP_VALUES[i][0] =
+//                    xyzToColor(alab, luma * 0.65, blab);
+                        rgba8888(luma * 0.65, alab * 0.8, blab * 0.8);
+//            }
+//            else
+//                TOWARD_BONUS_RAMP_VALUES[i | 128][0] = TOWARD_BONUS_RAMP_VALUES[i][0] =
+//                        rgba8888(luma * 1.65, alab * 0.6, blab * 0.6);
         }
         sb.setLength(0);
         sb.ensureCapacity(2800);
-        sb.append("private static final int[][] WARD_BONUS_RAMP_VALUES = new int[][] {\n");
+        sb.append("private static final int[][] TOWARD_BONUS_RAMP_VALUES = new int[][] {\n");
         for (int i = 0; i < 256; i++) {
             sb.append("{ 0x");
-            StringKit.appendHex(sb, WARD_BONUS_RAMP_VALUES[i][0]);
-            StringKit.appendHex(sb.append(", 0x"), WARD_BONUS_RAMP_VALUES[i][1]);
-            StringKit.appendHex(sb.append(", 0x"), WARD_BONUS_RAMP_VALUES[i][2]);
-            StringKit.appendHex(sb.append(", 0x"), WARD_BONUS_RAMP_VALUES[i][3]);
+            StringKit.appendHex(sb, TOWARD_BONUS_RAMP_VALUES[i][0]);
+            StringKit.appendHex(sb.append(", 0x"), TOWARD_BONUS_RAMP_VALUES[i][1]);
+            StringKit.appendHex(sb.append(", 0x"), TOWARD_BONUS_RAMP_VALUES[i][2]);
+            StringKit.appendHex(sb.append(", 0x"), TOWARD_BONUS_RAMP_VALUES[i][3]);
             sb.append(" },\n");
 
         }
         System.out.println(sb.append("};"));
         PALETTE = new int[256];
         for (int i = 0; i < 64; i++) {
-            System.arraycopy(WARD_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
+            System.arraycopy(TOWARD_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
         }
         sb.setLength(0);
         sb.ensureCapacity((1 + 12 * 8) * (PALETTE.length >>> 3));
@@ -576,7 +593,7 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
         //pix.drawPixel(255, 0, 0);
         png8.palette = new PaletteReducer(PALETTE, labMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("WardBonus.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("TowardBonus.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -593,7 +610,7 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("WardBonus_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("TowardBonus_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -608,7 +625,7 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
         }
         png8.palette = new PaletteReducer(PALETTE, labMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("WardBonusMagicaVoxel.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("TowardBonusMagicaVoxel.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }

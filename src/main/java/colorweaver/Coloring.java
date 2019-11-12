@@ -381,23 +381,29 @@ public class Coloring {
     public static final int[] ROLLER = new int[64];
     public static final int[] BIG_ROLLER = new int[256];
     
+    public static void fillGradient(int[] target, int targetStart, Color color)
+    {
+        final NamedColor low = NamedColor.BLACK, high = NamedColor.WHITE;
+        target[targetStart+7] = Color.rgba8888(color);
+        for (int i = 1; i < 7; i++) {
+            final float a = (i - 1) / 6f;
+            target[targetStart+i] = Color.rgba8888(NamedColor.ycwcmLerp(low, color, a));
+        }
+        for (int i = 8; i < 16; i++) {
+            final float a = (i - 7) / 8f;
+            target[targetStart+i] = Color.rgba8888(NamedColor.ycwcmLerp(color, high, a));
+        }
+
+    }
+    
     static {
         for (int i = 1; i < 16; i++) {
             BLUE16[i] = Color.rgba8888(NamedColor.ycwcm((i - 0.75f) / 13.25f, -1f, -1f + i * 0x1p-5f, 1f)) | 1;
         }
-        final NamedColor low = NamedColor.BLACK, mid = NamedColor.CW_ORANGE, high = NamedColor.WHITE;
-        ORANGE16[7] = Color.rgba8888(mid);
-        for (int i = 1; i < 7; i++) {
-            final float a = (i - 1) / 6f;
-            ORANGE16[i] = Color.rgba8888(NamedColor.ycwcmLerp(low, mid, a));
-        }
-        for (int i = 8; i < 16; i++) {
-            final float a = (i - 7) / 8f;
-            ORANGE16[i] = Color.rgba8888(NamedColor.ycwcmLerp(mid, high, a));
-        }
         for (int i = 0; i < 8; i++) {
             ROLLER[i+1] = Color.rgba8888(NamedColor.lerp(NamedColor.BLACK, NamedColor.WHITE, i / 7f));
         }
+        fillGradient(ORANGE16, 0, NamedColor.CW_ORANGE);
         int c = 8;
         NamedColor[] colors = {
                 NamedColor.CW_LIGHT_RED, NamedColor.CW_APRICOT, NamedColor.CW_DRAB_BROWN, NamedColor.CW_LIGHT_YELLOW,
@@ -442,6 +448,33 @@ public class Coloring {
             c += 14;
         }
     }
+    public static final int[] DB_PLUS = {
+            0x00000000, 0x000000FF, 0x222034FF, 0x45283CFF, 0x663931FF, 0x8F563BFF, 0xDF7126FF, 0xD9A066FF,
+            0xEEC39AFF, 0xFBF236FF, 0x99E550FF, 0x6ABE30FF, 0x37946EFF, 0x4B692FFF, 0x524B24FF, 0x323C39FF,
+            0x3F3F74FF, 0x306082FF, 0x5B6EE1FF, 0x639BFFFF, 0x5FCDE4FF, 0xCBDBFCFF, 0xFFFFFFFF, 0x9BADB7FF,
+            0x847E87FF, 0x696A6AFF, 0x595652FF, 0x76428AFF, 0xAC3232FF, 0xD95763FF, 0xD77BBAFF, 0x8F974AFF,
+            0x8A6F30FF, Color.rgba8888(NamedColor.CW_RED), Color.rgba8888(NamedColor.CW_LIGHT_APRICOT),
+            Color.rgba8888(NamedColor.CW_FLUSH_ORANGE), Color.rgba8888(NamedColor.CW_DRAB_BROWN),
+            Color.rgba8888(NamedColor.CW_BRIGHT_BROWN), Color.rgba8888(NamedColor.CW_LIGHT_GOLD), Color.rgba8888(NamedColor.CW_BRIGHT_YELLOW),
+
+            Color.rgba8888(NamedColor.CW_FLUSH_HONEYDEW), Color.rgba8888(NamedColor.CW_FADED_CHARTREUSE),
+            Color.rgba8888(NamedColor.CW_GREEN), Color.rgba8888(NamedColor.CW_PALE_JADE),
+            Color.rgba8888(NamedColor.CW_DARK_SEAFOAM), Color.rgba8888(NamedColor.CW_CYAN),
+            Color.rgba8888(NamedColor.CW_LIGHT_AZURE), Color.rgba8888(NamedColor.CW_BRIGHT_BLUE),
+
+            Color.rgba8888(NamedColor.CW_SAPPHIRE), Color.rgba8888(NamedColor.CW_FADED_VIOLET),
+            Color.rgba8888(NamedColor.CW_RICH_PURPLE), Color.rgba8888(NamedColor.CW_ROSE),
+            Color.rgba8888(NamedColor.CW_FLUSH_MAGENTA), Color.rgba8888(NamedColor.CW_INDIGO),
+            Color.rgba8888(NamedColor.CW_RICH_RED), Color.rgba8888(NamedColor.CW_DRAB_BLUE),
+
+            Color.rgba8888(NamedColor.AURORA_ARTICHOKE), Color.rgba8888(NamedColor.AURORA_VARISCITE),
+            Color.rgba8888(NamedColor.AURORA_BOYSENBERRY), Color.rgba8888(NamedColor.AURORA_PINK_SKIN_3),
+            Color.rgba8888(NamedColor.AURORA_TEA_ROSE), Color.rgba8888(NamedColor.AURORA_APPLE_GREEN),
+            Color.rgba8888(NamedColor.AURORA_DARK_SKIN_1), Color.rgba8888(NamedColor.AURORA_BRONZE_SKIN_3),
+
+
+
+    };
 
     /**
      * A 64-color palette that started with specific colors from NamedColor's Color Wheel palette, then lightened and
