@@ -617,6 +617,7 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 				L = lab15[0][indexA] - lab15[0][indexB],
 				A = lab15[1][indexA] - lab15[1][indexB],
 				B = lab15[2][indexA] - lab15[2][indexB];
-		return L * L * 50.0 + A * A * 50.0 + B * B * 50.0;
+		return L * L * 400.0 + A * A * 25.0 + B * B * 10.0;
+//		return L * L * 50.0 + A * A * 50.0 + B * B * 50.0;
 	}
 }

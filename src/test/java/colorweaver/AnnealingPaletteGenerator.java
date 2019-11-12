@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.MathUtils;
 
 import java.io.IOException;
 
-import static colorweaver.PaletteReducer.labRoughMetric;
+import static colorweaver.PaletteReducer.*;
 
 /**
  * Uses the approach from <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.65.2790">this paper</a>,
@@ -63,6 +63,38 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
     private static double difference(double y1, double w1, double m1, double y2, double w2, double m2) {
         return (y1 - y2) * (y1 - y2) + ((w1 - w2) * (w1 - w2) + (m1 - m2) * (m1 - m2)) * 0.1625;
     }
+
+    public final int randomSign() {
+        return (int)((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L & 6L) - 3;
+    }
+
+    public int[] lloyd(int[] palette, final int iterations) {
+        PaletteReducer pr = new PaletteReducer(palette, labMetric);
+        int[][] centroids = new int[4][palette.length];
+        byte[] pm = pr.paletteMapping;
+        int index, mix;
+        float count;
+        for (int iter = 0; iter < iterations; iter++) {
+            System.out.println("Relaxation iteration #" + (iter + 1));
+            for (int i = 0; i < 0x8000; i++) {
+                index = pm[i] & 0xFF;
+                centroids[0][index] += MathUtils.clamp((i >>> 10) + randomSign(), 0, 31);
+                centroids[1][index] += MathUtils.clamp((i >>> 5 & 0x1F) + randomSign(), 0, 31);
+                centroids[2][index] += MathUtils.clamp((i & 0x1F) + randomSign(), 0, 31);
+                centroids[3][index]++;
+            }
+            for (int i = 1; i < palette.length; i++) {
+                count = centroids[3][i];
+                mix = MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10 |
+                        MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5 |
+                        MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
+                palette[i] = CIELABConverter.puff(mix);
+            }
+            pr.exact(palette, labMetric);
+        }
+        return palette;
+    }
+
 
 
     public int[] anneal(final double[][] lab15, int[] palette, final int iterations) {
@@ -221,9 +253,9 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
 //        for (int i = baseLen; i < 256; i++) {
 //            items[i] = Coloring.LAVA256[i];
 //        }
-        int[] items = Coloring.FLESURRECT;
-        int[] PALETTE = anneal(lab15, items, 100);
-        GeometricPaletteGenerator.lloyd(PALETTE, 30);
+        int[] PALETTE = Coloring.FLESURRECT;
+        anneal(lab15, PALETTE, 40);
+        lloyd(PALETTE, 20);
         double luma, warm, mild;
         double[] lumas = new double[PALETTE.length], warms = new double[PALETTE.length], milds = new double[PALETTE.length];
         int r, g, b;
@@ -551,9 +583,9 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
 //        }
         //pix.drawPixel(255, 0, 0);
         PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
+        png8.palette = new PaletteReducer(PALETTE, labMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("Ward"+PALETTE.length+".png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Ward.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -571,7 +603,7 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
         }
 
         try {
-            png8.writePrecisely(Gdx.files.local("Ward"+PALETTE.length+"_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("Ward_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -623,7 +655,7 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
 //        Pixmap p2;
 //
 //        PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);        
+        png8.palette = new PaletteReducer(PALETTE, labMetric);        
         int[][] WARD_BONUS_RAMP_VALUES = new int[256][4];
         for (int i = 1; i < PALETTE.length; i++) {
             int color = WARD_BONUS_RAMP_VALUES[i | 128][2] = WARD_BONUS_RAMP_VALUES[i][2] =
@@ -702,7 +734,7 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
             pix.drawPixel(i, 0, PALETTE[i + 1]);
         }
         //pix.drawPixel(255, 0, 0);
-        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
+        png8.palette = new PaletteReducer(PALETTE, labMetric);
         try {
             png8.writePrecisely(Gdx.files.local("WardBonus.png"), pix, false);
         } catch (IOException e) {
@@ -734,7 +766,7 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
             pix.drawPixel(i+127, 0, PALETTE[i << 2 | 1]);
             pix.drawPixel(i+191, 0, PALETTE[i << 2 | 3]);
         }
-        png8.palette = new PaletteReducer(PALETTE);
+        png8.palette = new PaletteReducer(PALETTE, labMetric);
         try {
             png8.writePrecisely(Gdx.files.local("WardBonusMagicaVoxel.png"), pix, false);
         } catch (IOException e) {
