@@ -65,7 +65,7 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
     }
 
     public final int randomSign() {
-        return (int)((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 63 | 1L);
+        return (int)((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L & 6L) - 3;
     }
 
     public int[] lloyd(int[] palette, final int iterations) {
@@ -254,7 +254,7 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
 //            items[i] = Coloring.LAVA256[i];
 //        }
         int[] PALETTE = Coloring.FLESURRECT;
-        anneal(lab15, PALETTE, 40);
+        //anneal(lab15, PALETTE, 40);
         lloyd(PALETTE, 20);
         double luma, warm, mild;
         double[] lumas = new double[PALETTE.length], warms = new double[PALETTE.length], milds = new double[PALETTE.length];
@@ -655,6 +655,7 @@ public class AnnealingPaletteGenerator extends ApplicationAdapter {
 //        Pixmap p2;
 //
 //        PNG8 png8 = new PNG8();
+        png8.palette = new PaletteReducer(PALETTE, labMetric);        
         int[][] WARD_BONUS_RAMP_VALUES = new int[256][4];
         for (int i = 1; i < PALETTE.length; i++) {
             int color = WARD_BONUS_RAMP_VALUES[i | 128][2] = WARD_BONUS_RAMP_VALUES[i][2] =

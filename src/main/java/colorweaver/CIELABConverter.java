@@ -209,8 +209,8 @@ public class CIELABConverter {
 
 	public static double[] LAB2RGB(final Lab lab){
 		double y = (lab.L + 16.0) / 116.0;
-		double x = lab.A / 500.0 + y;
-		double z = y - lab.B / 200.0;
+		double x = lab.A * 0.002 + y;
+		double z = y - lab.B * 0.005;
 		double r, g, b;
 
 		x = 0.95047 * ((x > 0.2068930344229638) ? x * x * x : (x - 16.0 / 116.0) / 7.787);
@@ -435,7 +435,14 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 				(lab1.A - lab2.A) * (lab1.A - lab2.A) * 1.6 +
 				(lab1.B - lab2.B) * (lab1.B - lab2.B);
 	}
-	
+
+	public static double differenceLAB(double L, double A, double B, double L2, double A2, double B2)
+	{
+		L -= L2;
+		A -= A2;
+		B -= B2;
+		return L * L * 400.0 + A * A * 25.0 + B * B * 10.0;
+	}
 	public static double differenceLAB(final int rgba1, final int rgba2)
 	{
 		if(((rgba1 ^ rgba2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
@@ -483,21 +490,12 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 		
 		return L * L * 11.0 + A * A * 1.6 + B * B;
 	}
-	
-	public static double differenceLAB(double L, double A, double B, double L2, double A2, double B2)
-	{
-		L -= L2;
-		A -= A2;
-		B -= B2;
-		return L * L * 400.0 + A * A * 50.0 + B * B * 20.0;
-	}
-	
 	public static double[][] makeLAB15()
 	{
-		final double[][] labs = new double[6][0x8000];
+		final double[][] labs = new double[3][0x8000];
 		double r, g, b, x, y, z, L, A, B;
 		double[] minA = new double[20], maxA = new double[20], minB = new double[20], maxB = new double[20];
-//		int[][][] grids = new int[20][5][5];
+		int[][][] grids = new int[20][5][5];
 		for (int ri = 0; ri < 32; ri++) {
 			r = ri / 31.0;
 			r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
@@ -510,27 +508,27 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 
 					int idx = ri << 10 | gi << 5 | bi;
 
-					x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
-					y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
-					z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.088840; // 0.82521;
+					x = (r * 0.4124 + g * 0.3576 + b * 0.1805);// / 0.950489; // 0.96422;
+					y = (r * 0.2126 + g * 0.7152 + b * 0.0722);// / 1.000000; // 1.00000;
+					z = (r * 0.0193 + g * 0.1192 + b * 0.9505);// / 1.088840; // 0.82521;
+
 
 //					x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
 //					y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
 //					z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
 
-					labs[3][idx] = x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
-					labs[4][idx] = y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
-					labs[5][idx] = z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
+					x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
+					y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
+					z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
 
 					labs[0][idx] = L = (116.0 * y) - 16.0;
 					labs[1][idx] = A = 500.0 * (x - y);
 					labs[2][idx] = B = 200.0 * (y - z);
-					
-					int l = (int)(L * 0.19 + 0.5); // was 1.0 / 11.111
-					minA[l] = Math.min(minA[l], A);
-					maxA[l] = Math.max(maxA[l], A);
-					minB[l] = Math.min(minB[l], B);
-					maxB[l] = Math.max(maxB[l], B);
+//					int l = (int)(L * 0.19 + 0.5); // was 1.0 / 11.111
+//					minA[l] = Math.min(minA[l], A);
+//					maxA[l] = Math.max(maxA[l], A);
+//					minB[l] = Math.min(minB[l], B);
+//					maxB[l] = Math.max(maxB[l], B);
 //					if(A == minA[l])
 //						grids[l][0][0] = idx;
 //					if(B == minB[l])
@@ -574,20 +572,9 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 //			grids[l][3][3] = split15(splitRight15(grids[l][3][0], grids[l][3][4]), splitRight15(grids[l][0][3], grids[l][4][3]));
 //		}
 //		StringBuilder sb = new StringBuilder(500).append("new int[] {\n");
-//		double lowestA = 100, lowestB = 100, highestA = -100, highestB = -100;
 //		for (int i = 0; i < 20; i++) {
-//			System.out.println("At L " + (int) (i * 5.2631578947368425) + ", A ranges from " + minA[i] + " to " + maxA[i]);
-//			System.out.println("At L " + (int) (i * 5.2631578947368425) + ", B ranges from " + minB[i] + " to " + maxB[i]);
-//			lowestA = Math.min(lowestA, minA[i]);
-//			lowestB = Math.min(lowestB, minB[i]);
-//			highestA = Math.max(highestA, maxA[i]);
-//			highestB = Math.max(highestB, maxB[i]);
-//		}
-//		System.out.println("Lowest A: " + lowestA);
-//		System.out.println("Lowest B: " + lowestB);
-//		System.out.println("Highest A: " + highestA);
-//		System.out.println("Highest B: " + highestB);
-		
+//			System.out.println("At L " + (int)(i * 5.2631578947368425) + ", A ranges from " + minA[i] + " to " + maxA[i]);
+//			System.out.println("At L " + (int)(i * 5.2631578947368425) + ", B ranges from " + minB[i] + " to " + maxB[i]);
 //			sb.append("\n");
 //			for (int bb = 0; bb < 5; bb++) {
 ////				sb.append("{ ");
@@ -600,6 +587,7 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 //		}
 //		sb.append("};\n");
 //		System.out.println(sb);
+		
 		return labs;
 	}
 	
@@ -651,7 +639,7 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 				L = lab15[0][indexA] - lab15[0][indexB],
 				A = lab15[1][indexA] - lab15[1][indexB],
 				B = lab15[2][indexA] - lab15[2][indexB];
-		return L * L * 400.0 + A * A * 50.0 + B * B * 20.0;
+		return L * L * 400.0 + A * A * 25.0 + B * B * 10.0;
 //		return L * L * 50.0 + A * A * 50.0 + B * B * 50.0;
 	}
 }
