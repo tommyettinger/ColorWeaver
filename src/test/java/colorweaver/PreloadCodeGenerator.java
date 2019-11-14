@@ -66,8 +66,9 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
     public void create() {
         Pixmap pix;// = new Pixmap(Gdx.files.internal("BlueNoise64x64.png"));
 //        System.out.println("Original image has format " + pix.getFormat());
-        for (int idx = 0; idx < 64; idx++) {
-            pix = new Pixmap(Gdx.files.internal("LDR_LLL1_" + idx + ".png"));
+        for (int idx = 0; idx < 16; idx++) {
+//            pix = new Pixmap(Gdx.files.internal("LDR_LLL1_" + idx + ".png"));
+            pix = new Pixmap(Gdx.files.internal("blue_" + idx + ".png"));
             ByteBuffer l3a1 = pix.getPixels();
             final int len = pix.getWidth() * pix.getHeight();
             System.out.println("Original image has format " + pix.getFormat() + " and contains " + len + " pixels.");
@@ -77,12 +78,45 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
                 brights[i] += -128;
             }
             //System.out.println(brights[0]);
-            generatePreloadCode(brights, "BlueNoise64.txt");
+            generatePreloadCode(brights, "BlueNoiseTiling.txt");
         }
 
         System.out.println("Succeeded!");
     }
+    /*
+    First I ran MultiTileBlueNoise to get blue.png .
     
+    Then I ran this ImageMagick script:
+    
+    convert blue.png -crop 64x64 blueTiling_%d.png
+    
+    Then I ran this Clojure code to get the mv commands with the correct numbers:
+    
+    (println (clojure.string/join "\r\n"
+      (for
+        [n (range 16) :let [x (bit-and n 3) y (- 3 (bit-shift-right n 2))]]
+        (format "mv blueTiling_%d.png blue_%d.png" n
+          (+ (bit-xor x (bit-shift-right x 1)) (* 4 (bit-xor y (bit-shift-right y 1))))))))
+          
+    Then I ran those mv commands, which are:
+    
+    mv blueTiling_0.png blue_8.png
+    mv blueTiling_1.png blue_9.png
+    mv blueTiling_2.png blue_11.png
+    mv blueTiling_3.png blue_10.png
+    mv blueTiling_4.png blue_12.png
+    mv blueTiling_5.png blue_13.png
+    mv blueTiling_6.png blue_15.png
+    mv blueTiling_7.png blue_14.png
+    mv blueTiling_8.png blue_4.png
+    mv blueTiling_9.png blue_5.png
+    mv blueTiling_10.png blue_7.png
+    mv blueTiling_11.png blue_6.png
+    mv blueTiling_12.png blue_0.png
+    mv blueTiling_13.png blue_1.png
+    mv blueTiling_14.png blue_3.png
+    mv blueTiling_15.png blue_2.png
+     */
     /**
      * Given a byte array, this writes a file containing a code snippet that can be pasted into Java code as the preload
      * data used by {@link PaletteReducer#exact(int[], String)}; this is almost never needed by external code. When 
