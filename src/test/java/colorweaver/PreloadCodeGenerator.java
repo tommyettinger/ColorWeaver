@@ -92,11 +92,7 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
     
     Then I ran this Clojure code to get the mv commands with the correct numbers:
     
-    (println (clojure.string/join "\r\n"
-      (for
-        [n (range 16) :let [x (bit-and n 3) y (- 3 (bit-shift-right n 2))]]
-        (format "mv blueTiling_%d.png blue_%d.png" n
-          (+ (bit-xor x (bit-shift-right x 1)) (* 4 (bit-xor y (bit-shift-right y 1))))))))
+    (println (clojure.string/join "\r\n" (for [n (range 16) :let [x (bit-and n 3) y (bit-shift-right n 2)]] (format "mv blueTiling_%d.png blue_%d.png" n (+ (bit-xor x (bit-shift-right x 1)) (* 4 (bit-xor y (bit-shift-right y 1))))))))
           
     Then I ran those mv commands, which are:
     
@@ -116,6 +112,11 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
     mv blueTiling_13.png blue_1.png
     mv blueTiling_14.png blue_3.png
     mv blueTiling_15.png blue_2.png
+    
+    the bit == 1 determines what the right edge is.
+    the bit == 2 determines what the left edge is.
+    the bit == 4 determines what the bottom edge is.
+    the bit == 8 determines what the top edge is.
      */
     /**
      * Given a byte array, this writes a file containing a code snippet that can be pasted into Java code as the preload
