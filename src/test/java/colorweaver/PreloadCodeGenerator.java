@@ -88,35 +88,35 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
     
     Then I ran this ImageMagick script:
     
-    convert blue.png -crop 64x64 blueTiling_%d.png
+convert blue.png -crop 64x64 blueTiling_%d.png
     
     Then I ran this Clojure code to get the mv commands with the correct numbers:
     
-    (println (clojure.string/join "\r\n" (for [n (range 16) :let [x (bit-and n 3) y (bit-shift-right n 2)]] (format "mv blueTiling_%d.png blue_%d.png" n (+ (bit-xor x (bit-shift-right x 1)) (* 4 (bit-xor y (bit-shift-right y 1))))))))
-          
+(println (clojure.string/join "\r\n" (for [n (range 16) :let [x (bit-and n 3) y (bit-shift-right n 2)]] (format "mv blueTiling_%d.png blue_%d.png" n (+ (bit-xor x (bit-shift-right x 1)) (* 4 (bit-xor y (bit-shift-right y 1))))))))
+    
     Then I ran those mv commands, which are:
     
-    mv blueTiling_0.png blue_8.png
-    mv blueTiling_1.png blue_9.png
-    mv blueTiling_2.png blue_11.png
-    mv blueTiling_3.png blue_10.png
-    mv blueTiling_4.png blue_12.png
-    mv blueTiling_5.png blue_13.png
-    mv blueTiling_6.png blue_15.png
-    mv blueTiling_7.png blue_14.png
-    mv blueTiling_8.png blue_4.png
-    mv blueTiling_9.png blue_5.png
-    mv blueTiling_10.png blue_7.png
-    mv blueTiling_11.png blue_6.png
-    mv blueTiling_12.png blue_0.png
-    mv blueTiling_13.png blue_1.png
-    mv blueTiling_14.png blue_3.png
-    mv blueTiling_15.png blue_2.png
-    
+mv blueTiling_0.png blue_0.png
+mv blueTiling_1.png blue_1.png
+mv blueTiling_2.png blue_3.png
+mv blueTiling_3.png blue_2.png
+mv blueTiling_4.png blue_4.png
+mv blueTiling_5.png blue_5.png
+mv blueTiling_6.png blue_7.png
+mv blueTiling_7.png blue_6.png
+mv blueTiling_8.png blue_12.png
+mv blueTiling_9.png blue_13.png
+mv blueTiling_10.png blue_15.png
+mv blueTiling_11.png blue_14.png
+mv blueTiling_12.png blue_8.png
+mv blueTiling_13.png blue_9.png
+mv blueTiling_14.png blue_11.png
+mv blueTiling_15.png blue_10.png
+     
     the bit == 1 determines what the right edge is.
     the bit == 2 determines what the left edge is.
-    the bit == 4 determines what the bottom edge is.
-    the bit == 8 determines what the top edge is.
+    the bit == 4 determines what the bottom edge is (using y-down, so higher y).
+    the bit == 8 determines what the top edge is (using y-down, so lower y).
      */
     /**
      * Given a byte array, this writes a file containing a code snippet that can be pasted into Java code as the preload
