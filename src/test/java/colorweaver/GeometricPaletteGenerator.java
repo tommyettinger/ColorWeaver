@@ -96,7 +96,8 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
     public void create() {
 //        int[] PALETTE = lloyd(Coloring.AURORA, 15);
 //        int[] PALETTE = lloyd(Coloring.DB_ISO22, 20);
-        int[] PALETTE = Coloring.BIG_ROLLER;
+//        int[] PALETTE = Coloring.BIG_ROLLER;
+        int[] PALETTE = new int[]{0, 255, -1};
 //        int[] PALETTE = lloyd(Coloring.BIG_ROLLER, 50);
         
         
@@ -205,7 +206,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
             warm = warms[i];
             mild = milds[i];
             ramps[i][1] = (byte)i;//Color.rgba8888(DAWNBRINGER_AURORA[i]);
-            ramps[i][0] = 9;//15;  //0xFFFFFFFF, white
+            ramps[i][0] = 2;//15;  //0xFFFFFFFF, white
             ramps[i][2] = 1;//0x010101FF, black
             ramps[i][3] = 1;//0x010101FF, black
             for (int yy = y + 2, rr = rev + 2; yy <= yLim; yy++, rr++) {
@@ -440,7 +441,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
         PNG8 png8 = new PNG8();
         png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("BigRoller.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("BW.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -458,7 +459,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
         }
 
         try {
-            png8.writePrecisely(Gdx.files.local("BigRoller_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("BW_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -849,7 +850,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //        //pix.drawPixel(255, 0, 0);
 //        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
 //        try {
-//            png8.writePrecisely(Gdx.files.local("BigRollerBonus.png"), pix, false);
+//            png8.writePrecisely(Gdx.files.local("BWBonus.png"), pix, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -866,7 +867,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //            }
 //        }
 //        try {
-//            png8.writePrecisely(Gdx.files.local("BigRollerBonus_GLSL.png"), p2, false);
+//            png8.writePrecisely(Gdx.files.local("BWBonus_GLSL.png"), p2, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -881,7 +882,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //        }
 //        png8.palette = new PaletteReducer(PALETTE);
 //        try {
-//            png8.writePrecisely(Gdx.files.local("BigRollerBonusMagicaVoxel.png"), pix, false);
+//            png8.writePrecisely(Gdx.files.local("BWBonusMagicaVoxel.png"), pix, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }

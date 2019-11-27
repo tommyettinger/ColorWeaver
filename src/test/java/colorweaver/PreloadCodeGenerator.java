@@ -68,7 +68,7 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
 //        System.out.println("Original image has format " + pix.getFormat());
         for (int idx = 0; idx < 16; idx++) {
 //            pix = new Pixmap(Gdx.files.internal("LDR_LLL1_" + idx + ".png"));
-            pix = new Pixmap(Gdx.files.internal("blueM_" + idx + ".png"));
+            pix = new Pixmap(Gdx.files.internal("blueN_" + idx + ".png"));
             ByteBuffer l3a1 = pix.getPixels();
             final int len = pix.getWidth() * pix.getHeight();
             System.out.println("Original image has format " + pix.getFormat() + " and contains " + len + " pixels.");
@@ -92,26 +92,26 @@ convert blue.png -crop 64x64 blueTiling_%d.png
     
     Then I ran this Clojure code to get the mv commands with the correct numbers:
     
-(println (clojure.string/join "\r\n" (for [n (range 16) :let [x (bit-and n 3) y (bit-shift-right n 2)]] (format "mv blueTiling_%d.png blueM_%d.png" n (+ (bit-xor x (bit-shift-right x 1)) (* 4 (bit-xor y (bit-shift-right y 1))))))))
+(println (clojure.string/join "\r\n" (for [n (range 16) :let [x (bit-and n 3) y (bit-shift-right n 2)]] (format "mv blueTiling_%d.png blueN_%d.png" n (+ (bit-xor x (bit-shift-right x 1)) (* 4 (bit-xor y (bit-shift-right y 1))))))))
     
     Then I ran those mv commands, which are:
     
-mv blueTiling_0.png  blueM_0.png
-mv blueTiling_1.png  blueM_1.png
-mv blueTiling_2.png  blueM_3.png
-mv blueTiling_3.png  blueM_2.png
-mv blueTiling_4.png  blueM_4.png
-mv blueTiling_5.png  blueM_5.png
-mv blueTiling_6.png  blueM_7.png
-mv blueTiling_7.png  blueM_6.png
-mv blueTiling_8.png  blueM_12.png
-mv blueTiling_9.png  blueM_13.png
-mv blueTiling_10.png blueM_15.png
-mv blueTiling_11.png blueM_14.png
-mv blueTiling_12.png blueM_8.png
-mv blueTiling_13.png blueM_9.png
-mv blueTiling_14.png blueM_11.png
-mv blueTiling_15.png blueM_10.png
+mv blueTiling_0.png  blueN_0.png
+mv blueTiling_1.png  blueN_1.png
+mv blueTiling_2.png  blueN_3.png
+mv blueTiling_3.png  blueN_2.png
+mv blueTiling_4.png  blueN_4.png
+mv blueTiling_5.png  blueN_5.png
+mv blueTiling_6.png  blueN_7.png
+mv blueTiling_7.png  blueN_6.png
+mv blueTiling_8.png  blueN_12.png
+mv blueTiling_9.png  blueN_13.png
+mv blueTiling_10.png blueN_15.png
+mv blueTiling_11.png blueN_14.png
+mv blueTiling_12.png blueN_8.png
+mv blueTiling_13.png blueN_9.png
+mv blueTiling_14.png blueN_11.png
+mv blueTiling_15.png blueN_10.png
      
     the bit == 1 determines what the right edge is.
     the bit == 2 determines what the left edge is.

@@ -275,6 +275,9 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.EQUALS:
                         palette = new Texture(Gdx.files.local("palettes/GBGreen16_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
+                    case Input.Keys.BACKSPACE:
+                        palette = new Texture(Gdx.files.local("palettes/BW_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                        break;
                     case Input.Keys.M: // Mona Lisa
                         load("samples/Mona_Lisa.jpg", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
                         break;
