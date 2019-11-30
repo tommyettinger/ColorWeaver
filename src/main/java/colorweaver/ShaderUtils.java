@@ -330,13 +330,12 @@ public class ShaderUtils {
                     "   tgt.rgb = u_add + u_mul * vec3(dot(tgt.rgb, bright), tgt.r - tgt.b, tgt.g - tgt.b);\n" +
                     "   vec4 used = texture2D(u_palette, vec2((clamp(dot(tgt.rgb, vec3(1.0, -0.375, -0.5)), 0.0, 1.0) * b_adj + floor(clamp(dot(tgt.rgb, vec3(1.0, 0.625, -0.5)), 0.0, 1.0) * 31.999)) * rb_adj, 1.0 - clamp(dot(tgt.rgb, vec3(1.0, -0.375, 0.5)), 0.0, 1.0)));\n" +
                     "   used.rgb = vec3(dot(used.rgb, bright), used.r - used.b, used.g - used.b);\n" +
-                    "   float adj = (fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) + 0.125 - fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy))) * 0.6;\n" +
-//                    "   float adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * 0.75 - fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) * 0.6;\n" +
-//                    "   float adj = fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) * 1.421 - 0.654;\n" +
+                    "   float adj = (fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) + 0.09375 - fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy))) * 0.5125;\n" +
                     "   tgt.rgb += (tgt.rgb - used.rgb) * adj;\n" +
                     "   gl_FragColor.rgb = texture2D(u_palette, vec2((clamp(dot(tgt.rgb, vec3(1.0, -0.375, -0.5)), 0.0, 1.0) * b_adj + floor(clamp(dot(tgt.rgb, vec3(1.0, 0.625, -0.5)), 0.0, 1.0) * 31.999)) * rb_adj, 1.0 - clamp(dot(tgt.rgb, vec3(1.0, -0.375, 0.5)), 0.0, 1.0))).rgb;\n" +
                     "   gl_FragColor.a = tgt.a;\n" +
                     "}";
-//"   vec3 adj = fract(vec3(0.8986537126286993, 0.8075784952213448, 0.6521830259439717) * dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) - 0.25;\n" +
-
+    
+    
+    //"   vec3 adj = fract(vec3(0.8986537126286993, 0.8075784952213448, 0.6521830259439717) * dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) - 0.25;\n" +
 }

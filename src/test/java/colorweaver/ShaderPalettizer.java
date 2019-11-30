@@ -23,10 +23,10 @@ import static colorweaver.ShaderUtils.*;
 
 public class ShaderPalettizer extends ApplicationAdapter {
     //public static final int backgroundColor = Color.rgba8888(Color.DARK_GRAY);
-    public static final int SCREEN_WIDTH = 1531;
-    public static final int SCREEN_HEIGHT = 862;
-//    public static final int SCREEN_WIDTH = 1280;
-//    public static final int SCREEN_HEIGHT = 720;
+//    public static final int SCREEN_WIDTH = 1531;
+//    public static final int SCREEN_HEIGHT = 862;
+    public static final int SCREEN_WIDTH = 808;
+    public static final int SCREEN_HEIGHT =600;
     protected SpriteBatch batch;
     protected Viewport screenView;
     protected Texture screenTexture;
@@ -120,9 +120,9 @@ public class ShaderPalettizer extends ApplicationAdapter {
         Gdx.input.setInputProcessor(inputProcessor());
 
         // if you don't have these files on this absolute path, that's fine, and they will be ignored
-//        load("D:/Painting_by_Henri_Biva.jpg");
-        load("D:/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg", false);
-//        load("D:/Mona_Lisa.jpg");
+//        load("D:/Painting_by_Henri_Biva.jpg", false);
+//        load("D:/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg", false);
+        load("D:/Mona_Lisa.jpg", false);
     }
 
 
