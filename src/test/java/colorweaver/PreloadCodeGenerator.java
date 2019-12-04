@@ -2,9 +2,18 @@ package colorweaver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ai.pfa.Connection;
+import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
+import com.badlogic.gdx.ai.pfa.GraphPath;
+import com.badlogic.gdx.ai.pfa.Heuristic;
+import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
+import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectIntMap;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import java.nio.ByteBuffer;
@@ -62,25 +71,70 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
 //        bytes.add(bt);
 //        generatePreloadCode(bt, "blue_" + StringKit.hex(a) + "_" + StringKit.hex(b) + ".txt");
 //    }
-    
+    public byte[][] bytes;
     public void create() {
         Pixmap pix;// = new Pixmap(Gdx.files.internal("BlueNoise64x64.png"));
 //        System.out.println("Original image has format " + pix.getFormat());
-        for (int idx = 0; idx < 16; idx++) {
-//            pix = new Pixmap(Gdx.files.internal("LDR_LLL1_" + idx + ".png"));
-            pix = new Pixmap(Gdx.files.internal("blueN_" + idx + ".png"));
+        bytes = new byte[64][];
+        for (int idx = 0; idx < 64; idx++) {
+            pix = new Pixmap(Gdx.files.internal("LDR_LLL1_" + idx + ".png"));
+//            pix = new Pixmap(Gdx.files.internal("blueN_" + idx + ".png"));
             ByteBuffer l3a1 = pix.getPixels();
             final int len = pix.getWidth() * pix.getHeight();
-            System.out.println("Original image has format " + pix.getFormat() + " and contains " + len + " pixels.");
+//            System.out.println("Original image has format " + pix.getFormat() + " and contains " + len + " pixels.");
             byte[] brights =  new byte[len];
             for (int i = 0; i < len; i++) {
                 brights[i] = l3a1.get(i);
                 brights[i] += -128;
             }
+            bytes[idx] = brights;
             //System.out.println(brights[0]);
-            generatePreloadCode(brights, "BlueNoiseTiling.txt");
+//            generatePreloadCode(brights, "BlueNoiseTiling.txt");
         }
-
+        for (int i : new int[]{0, 1, 3, 2, 6, 7, 5, 4, 12, 13, 15, 14, 10, 11, 9, 8}) {
+            for (int e = 0; e < 4; e++) {
+                int choice = 63 - ((i & 1 << e) == 0 ? 1 : 0);
+                GridGraph gg = new GridGraph(i, choice);
+                IndexedAStarPathFinder<GridPoint2> astar = new IndexedAStarPathFinder<>(gg, false);
+                GraphPath<GridPoint2> dgp = new DefaultGraphPath<>(1024);
+                switch (e)
+                {
+                    case 0:
+                        astar.searchNodePath(new GridPoint2(63, 0), new GridPoint2(63, 63), gg.heu, dgp);
+                        for(GridPoint2 p : dgp) {
+                            for (int j = p.x + 1; j < 64; j++) {
+                                bytes[i][p.y << 6 | j] = bytes[choice][p.y << 6 | j];
+                            }
+                        }
+                        break;
+                    case 1:
+                        astar.searchNodePath(new GridPoint2(0, 0), new GridPoint2(0, 63), gg.heu, dgp);
+                        for(GridPoint2 p : dgp) {
+                            for (int j = p.x - 1; j >= 0; j--) {
+                                bytes[i][p.y << 6 | j] = bytes[choice][p.y << 6 | j];
+                            }
+                        }
+                        break;
+                    case 2:
+                        astar.searchNodePath(new GridPoint2(0, 63), new GridPoint2(63, 63), gg.heu, dgp);
+                        for(GridPoint2 p : dgp) {
+                            for (int j = p.y + 1; j < 64; j++) {
+                                bytes[i][j << 6 | p.x] = bytes[choice][j << 6 | p.x];
+                            }
+                        }
+                        break;
+                    default:
+                        astar.searchNodePath(new GridPoint2(0, 0), new GridPoint2(63, 0), gg.heu, dgp);
+                        for(GridPoint2 p : dgp) {
+                            for (int j = p.y - 1; j >= 0; j--) {
+                                bytes[i][j << 6 | p.x] = bytes[choice][j << 6 | p.x];
+                            }
+                        }
+                        break;
+                }
+            }
+            generatePreloadCode(bytes[i], "BlueNoiseTiling.txt");
+        }
         System.out.println("Succeeded!");
     }
     /*
@@ -173,5 +227,87 @@ mv blueTiling_15.png blueN_10.png
         sb.append("\".getBytes(StandardCharsets.ISO_8859_1),\n");
         Gdx.files.local(filename).writeString(sb.toString(), true, "ISO-8859-1");
         System.out.println("Wrote code snippet to " + filename);
+    }
+
+    class GridGraph implements IndexedGraph<GridPoint2>
+    {
+        public ObjectIntMap<GridPoint2> points = new ObjectIntMap<>(128 * 128);
+        public byte[] base, edge;
+        public Heuristic<GridPoint2> heu = new Heuristic<GridPoint2>() {
+            @Override
+            public float estimate(GridPoint2 node, GridPoint2 endNode) {
+                return 1;//Math.abs(node.x - endNode.x) + Math.abs(node.y - endNode.y);
+            }
+        };
+
+        public GridGraph(int baseIndex, int edgeIndex)
+        {
+            base = bytes[baseIndex];
+            edge = bytes[edgeIndex];
+            final int floorCount = 4096;
+            for (int i = 0; i < floorCount; i++) {
+                points.put(new GridPoint2(i & 63, i >>> 6), i);
+            }
+        }
+        @Override
+        public int getIndex(GridPoint2 node) {
+            return points.get(node, -1);
+        }
+
+        @Override
+        public int getNodeCount() {
+            return points.size;
+        }
+
+        @Override
+        public Array<Connection<GridPoint2>> getConnections(GridPoint2 fromNode) {
+            Array<Connection<GridPoint2>> conn = new Array<>(false, 4);
+            int index;
+            GridPoint2 t;
+            t = new GridPoint2(fromNode.cpy().add(1, 0));
+            index = points.get(t, -1);
+            if(index >= 0)
+                conn.add(new DijkstraConnection(fromNode, t, Math.abs(base[index] - edge[index])));
+            t = new GridPoint2(fromNode.cpy().add(-1, 0));
+            index = points.get(t, -1);
+            if(index >= 0)
+                conn.add(new DijkstraConnection(fromNode, t, Math.abs(base[index] - edge[index])));
+            t = new GridPoint2(fromNode.cpy().add(0, 1));
+            index = points.get(t, -1);
+            if(index >= 0)
+                conn.add(new DijkstraConnection(fromNode, t, Math.abs(base[index] - edge[index])));
+            t = new GridPoint2(fromNode.cpy().add(0, -1));
+            index = points.get(t, -1);
+            if(index >= 0)
+                conn.add(new DijkstraConnection(fromNode, t, Math.abs(base[index] - edge[index])));
+            return conn;
+        }
+    }
+    static class DijkstraConnection implements Connection<GridPoint2>
+    {
+        public float cost;
+        public GridPoint2 from, to;
+
+        public DijkstraConnection(GridPoint2 fromNode, GridPoint2 toNode, float travelCost)
+        {
+            cost = travelCost;
+            from = fromNode;
+            to = toNode;
+        }
+
+        @Override
+        public float getCost() {
+            return cost;
+        }
+
+        @Override
+        public GridPoint2 getFromNode() {
+            return from;
+        }
+
+        @Override
+        public GridPoint2 getToNode() {
+            return to;
+        }
     }
 }
