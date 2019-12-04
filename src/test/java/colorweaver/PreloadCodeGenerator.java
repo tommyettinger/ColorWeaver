@@ -100,34 +100,50 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
                 switch (e)
                 {
                     case 0:
-                        astar.searchNodePath(new GridPoint2(63, 0), new GridPoint2(63, 63), gg.heu, dgp);
-                        for(GridPoint2 p : dgp) {
-                            for (int j = p.x + 1; j < 64; j++) {
-                                bytes[i][p.y << 6 | j] = bytes[choice][p.y << 6 | j];
+                        if(!astar.searchNodePath(gg.grid[63][0], gg.grid[63][63], gg.heu, dgp))
+                            System.out.println("failed to find path");
+                        else {
+                            System.out.println("found path for e="+e);
+                            for (GridPoint2 p : dgp) {
+                                for (int j = p.x; j < 64; j++) {
+                                    bytes[i][p.y << 6 | j] = bytes[choice][p.y << 6 | j];
+                                }
                             }
                         }
                         break;
                     case 1:
-                        astar.searchNodePath(new GridPoint2(0, 0), new GridPoint2(0, 63), gg.heu, dgp);
-                        for(GridPoint2 p : dgp) {
-                            for (int j = p.x - 1; j >= 0; j--) {
-                                bytes[i][p.y << 6 | j] = bytes[choice][p.y << 6 | j];
+                        if(!astar.searchNodePath(gg.grid[0][0], gg.grid[0][63], gg.heu, dgp))
+                            System.out.println("failed to find path");
+                        else {
+                            System.out.println("found path for e="+e);
+                            for (GridPoint2 p : dgp) {
+                                for (int j = p.x; j >= 0; j--) {
+                                    bytes[i][p.y << 6 | j] = bytes[choice][p.y << 6 | j];
+                                }
                             }
                         }
                         break;
                     case 2:
-                        astar.searchNodePath(new GridPoint2(0, 63), new GridPoint2(63, 63), gg.heu, dgp);
-                        for(GridPoint2 p : dgp) {
-                            for (int j = p.y + 1; j < 64; j++) {
-                                bytes[i][j << 6 | p.x] = bytes[choice][j << 6 | p.x];
+                        if(!astar.searchNodePath(gg.grid[0][63], gg.grid[63][63], gg.heu, dgp))
+                            System.out.println("failed to find path");
+                        else {
+                            System.out.println("found path for e="+e);
+                            for (GridPoint2 p : dgp) {
+                                for (int j = p.y; j < 64; j++) {
+                                    bytes[i][j << 6 | p.x] = bytes[choice][j << 6 | p.x];
+                                }
                             }
                         }
                         break;
                     default:
-                        astar.searchNodePath(new GridPoint2(0, 0), new GridPoint2(63, 0), gg.heu, dgp);
-                        for(GridPoint2 p : dgp) {
-                            for (int j = p.y - 1; j >= 0; j--) {
-                                bytes[i][j << 6 | p.x] = bytes[choice][j << 6 | p.x];
+                        if(!astar.searchNodePath(gg.grid[0][0], gg.grid[63][0], gg.heu, dgp))
+                            System.out.println("failed to find path");
+                        else {
+                            System.out.println("found path for e="+e);
+                            for (GridPoint2 p : dgp) {
+                                for (int j = p.y; j >= 0; j--) {
+                                    bytes[i][j << 6 | p.x] = bytes[choice][j << 6 | p.x];
+                                }
                             }
                         }
                         break;
@@ -233,10 +249,11 @@ mv blueTiling_15.png blueN_10.png
     {
         public ObjectIntMap<GridPoint2> points = new ObjectIntMap<>(128 * 128);
         public byte[] base, edge;
+        public GridPoint2[][] grid = new GridPoint2[64][64];
         public Heuristic<GridPoint2> heu = new Heuristic<GridPoint2>() {
             @Override
             public float estimate(GridPoint2 node, GridPoint2 endNode) {
-                return 1;//Math.abs(node.x - endNode.x) + Math.abs(node.y - endNode.y);
+                return (Math.abs(node.x - endNode.x) + Math.abs(node.y - endNode.y)) * 42;
             }
         };
 
@@ -246,7 +263,8 @@ mv blueTiling_15.png blueN_10.png
             edge = bytes[edgeIndex];
             final int floorCount = 4096;
             for (int i = 0; i < floorCount; i++) {
-                points.put(new GridPoint2(i & 63, i >>> 6), i);
+                final int x =  i & 63, y = i >>> 6;
+                points.put(grid[x][y] = new GridPoint2(x, y), i);
             }
         }
         @Override
@@ -264,22 +282,27 @@ mv blueTiling_15.png blueN_10.png
             Array<Connection<GridPoint2>> conn = new Array<>(false, 4);
             int index;
             GridPoint2 t;
-            t = new GridPoint2(fromNode.cpy().add(1, 0));
-            index = points.get(t, -1);
-            if(index >= 0)
+            final int x = fromNode.x, y = fromNode.y;
+            if(x < 63) {
+                t = grid[x + 1][y];// new GridPoint2(fromNode.cpy().add(1, 0));
+                index = y << 6 | x + 1;
                 conn.add(new DijkstraConnection(fromNode, t, Math.abs(base[index] - edge[index])));
-            t = new GridPoint2(fromNode.cpy().add(-1, 0));
-            index = points.get(t, -1);
-            if(index >= 0)
+            }
+            if(x > 0) {
+                t = grid[x - 1][y];// new GridPoint2(fromNode.cpy().add(-1, 0));
+                index = y << 6 | x - 1;
                 conn.add(new DijkstraConnection(fromNode, t, Math.abs(base[index] - edge[index])));
-            t = new GridPoint2(fromNode.cpy().add(0, 1));
-            index = points.get(t, -1);
-            if(index >= 0)
+            }
+            if(y < 63) {
+                t = grid[x][y + 1];// new GridPoint2(fromNode.cpy().add(0, 1));
+                index = y + 1 << 6 | x;
                 conn.add(new DijkstraConnection(fromNode, t, Math.abs(base[index] - edge[index])));
-            t = new GridPoint2(fromNode.cpy().add(0, -1));
-            index = points.get(t, -1);
-            if(index >= 0)
+            }
+            if(y > 0) {
+                t = grid[x][y - 1];// new GridPoint2(fromNode.cpy().add(0, -1));
+                index = y - 1 << 6 | x;
                 conn.add(new DijkstraConnection(fromNode, t, Math.abs(base[index] - edge[index])));
+            }
             return conn;
         }
     }
