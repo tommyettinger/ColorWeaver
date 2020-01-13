@@ -120,9 +120,9 @@ public class ShaderPalettizer extends ApplicationAdapter {
         Gdx.input.setInputProcessor(inputProcessor());
 
         // if you don't have these files on this absolute path, that's fine, and they will be ignored
-//        load("D:/Painting_by_Henri_Biva.jpg", false);
-//        load("D:/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg", false);
-        load("D:/Mona_Lisa.jpg", false);
+//        load("samples/Painting_by_Henri_Biva.jpg", false);
+//        load("samples/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg", false);
+        load("samples/Mona_Lisa.jpg", false);
     }
 
 

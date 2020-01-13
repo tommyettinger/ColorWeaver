@@ -1,5 +1,6 @@
 package colorweaver;
 
+import colorweaver.tools.TrigTools;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ObjectIntMap;
 
@@ -382,6 +383,7 @@ public class Coloring {
     public static final int[] ORANGE16 = new int[16];
     public static final int[] ROLLER = new int[64];
     public static final int[] BIG_ROLLER = new int[256];
+    public static final int[] BIG_DB = new int[241];
 
     public static void fillGradient(int[] target, int targetStart, Color color)
     {
@@ -448,6 +450,22 @@ public class Coloring {
             BIG_ROLLER[13 + c] = Color.rgba8888(NamedColor.ycwcm(y - 0.2f, cw * 0.5f, cm * 0.5f, 1f));
             BIG_ROLLER[14 + c] = Color.rgba8888(NamedColor.ycwcm(y - 0.25f, cw * 0.75f, cm * 0.75f, 1f));
             c += 14;
+        }
+        float[] luma = new float[14], warm = new float[16], mild = new float[16];
+        for (int i = 1; i < 15; i++) {
+            luma[i-1] = (i + 0.5f) / 16.5f; 
+        }
+        for (int i = 1; i < 17; i++) {
+            float db = FloatColorTools.floatGet(DB16[i]);
+            warm[i-1] = FloatColorTools.chromaWarm(db); 
+            mild[i-1] = FloatColorTools.chromaMild(db);
+        }
+        System.arraycopy(DB16, 0, BIG_DB, 0, DB16.length);
+        for (int chrom = 0, idx = 17; chrom < 16; chrom++) { 
+            for (int lum = 0; lum < 14; lum++) {
+                float bright = luma[lum], affect = TrigTools.sin_(bright * 0.5f) + 0.5f;
+                BIG_DB[idx++] = Color.rgba8888(NamedColor.ycwcm(bright, affect * warm[chrom], affect * mild[chrom], 1f));
+            }
         }
     }
     public static final int[] DB_PLUS = {
