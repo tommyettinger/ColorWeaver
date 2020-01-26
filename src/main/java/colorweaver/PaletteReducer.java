@@ -272,9 +272,9 @@ public class PaletteReducer {
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
             z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
 
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
+            x = Math.pow(x, 0.3125);
+            y = Math.pow(y, 0.3125);
+            z = Math.pow(z, 0.3125);
 
             double L = 100.0 * y;
             double A = 500.0 * (x - y);
@@ -292,15 +292,15 @@ public class PaletteReducer {
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
             z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
 
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
+            x = Math.pow(x, 0.3125);
+            y = Math.pow(y, 0.3125);
+            z = Math.pow(z, 0.3125);
 
             L -= 100.0 * y;
             A -= 500.0 * (x - y);
             B -= 200.0 * (y - z);
 
-            return L * L * 350.0 + A * A * 25.0 + B * B * 10.0;
+            return L * L * Math.abs(L) * 350 + A * A * 25.0 + B * B * 15.0;
         }
         @Override
         public double difference(final int rgba1, final int r2, final int g2, final int b2)
@@ -320,9 +320,9 @@ public class PaletteReducer {
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
             z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
 
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
+            x = Math.pow(x, 0.3125);
+            y = Math.pow(y, 0.3125);
+            z = Math.pow(z, 0.3125);
 
             double L = 100 * y;
             double A = 500.0 * (x - y);
@@ -340,15 +340,15 @@ public class PaletteReducer {
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
             z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
 
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
+            x = Math.pow(x, 0.3125);
+            y = Math.pow(y, 0.3125);
+            z = Math.pow(z, 0.3125);
 
             L -= 100.0 * y;
             A -= 500.0 * (x - y);
             B -= 200.0 * (y - z);
 
-            return L * L * 350.0 + A * A * 25.0 + B * B * 10.0;
+            return L * L * Math.abs(L) * 350 + A * A * 25.0 + B * B * 15.0;
         }
         @Override
         public double difference(final int r1, final int g1, final int b1, final int r2, final int g2, final int b2) {
@@ -366,9 +366,9 @@ public class PaletteReducer {
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
             z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
 
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
+            x = Math.pow(x, 0.3125);
+            y = Math.pow(y, 0.3125);
+            z = Math.pow(z, 0.3125);
 
             double L = 100 * y;
             double A = 500.0 * (x - y);
@@ -386,15 +386,15 @@ public class PaletteReducer {
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
             z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
 
-            x = Math.sqrt(x);
-            y = Math.cbrt(y);
-            z = Math.sqrt(z);
+            x = Math.pow(x, 0.3125);
+            y = Math.pow(y, 0.3125);
+            z = Math.pow(z, 0.3125);
 
             L -= 100.0 * y;
             A -= 500.0 * (x - y);
             B -= 200.0 * (y - z);
 
-            return L * L * 350.0 + A * A * 25.0 + B * B * 10.0;
+            return L * L * Math.abs(L) * 350 + A * A * 25.0 + B * B * 15.0;
         }
 
     }

@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 import java.io.IOException;
 
-import static colorweaver.PaletteReducer.basicMetric;
 import static colorweaver.PaletteReducer.labRoughMetric;
 
 /**
@@ -66,7 +65,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
     }
 
     public static int[] lloyd(int[] palette, final int iterations) {
-        PaletteReducer pr = new PaletteReducer(palette, basicMetric);
+        PaletteReducer pr = new PaletteReducer(palette, labRoughMetric);
         int[][] centroids = new int[4][palette.length];
         byte[] pm = pr.paletteMapping;
         int index, mix;
@@ -87,7 +86,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
                         MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
                 palette[i] = CIELABConverter.puff(mix);
             }
-            pr.exact(palette, basicMetric);
+            pr.exact(palette, labRoughMetric);
         }
         return palette;
     }
@@ -96,9 +95,10 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
     public void create() {
 //        int[] PALETTE = lloyd(Coloring.AURORA, 15);
 //        int[] PALETTE = lloyd(Coloring.DB_ISO22, 20);
-        int[] PALETTE = Coloring.BIG_DB;
+//        int[] PALETTE = Coloring.BIG_DB;
+        int[] PALETTE = lloyd(Coloring.BIG_DB, 15);
 //        int[] PALETTE = new int[]{0, 255, -1};
-//        int[] PALETTE = lloyd(Coloring.DB_BIG, 50);
+//        int[] PALETTE = lloyd(Coloring.AURORA, 50);
         
         
 //        final int[] points = {0, 75, 140, 210, 255};
@@ -266,7 +266,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
             }
         }
 
-        System.out.println("public static final byte[][] DB_BIG_RAMPS = new byte[][]{");
+        System.out.println("public static final byte[][] DB_EASY_RAMPS = new byte[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println(
                     "{ " + ramps[i][3]
@@ -277,7 +277,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
         }
         System.out.println("};");
 
-        System.out.println("public static final int[][] DB_BIG_RAMP_VALUES = new int[][]{");
+        System.out.println("public static final int[][] DB_EASY_RAMP_VALUES = new int[][]{");
         for (int i = 0; i < PALETTE.length; i++) {
             System.out.println("{ 0x" + StringKit.hex(PALETTE[ramps[i][3] & 255])
                     + ", 0x" + StringKit.hex(PALETTE[ramps[i][2] & 255])
@@ -441,7 +441,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
         PNG8 png8 = new PNG8();
         png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
         try {
-            png8.writePrecisely(Gdx.files.local("DB_Big.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("DB_Easy.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -459,7 +459,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
         }
 
         try {
-            png8.writePrecisely(Gdx.files.local("DB_Big_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("DB_Easy_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -511,9 +511,9 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //
 //        PNG8 png8 = new PNG8();
 //        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);        
-//        int[][] DB_BIG_BONUS_RAMP_VALUES = new int[256][4];
+//        int[][] DB_EASY_BONUS_RAMP_VALUES = new int[256][4];
 //        for (int i = 1; i < PALETTE.length; i++) {
-//            int color = DB_BIG_BONUS_RAMP_VALUES[i | 128][2] = DB_BIG_BONUS_RAMP_VALUES[i][2] =
+//            int color = DB_EASY_BONUS_RAMP_VALUES[i | 128][2] = DB_EASY_BONUS_RAMP_VALUES[i][2] =
 //                    PALETTE[i];             
 ////            r = (color >>> 24);
 ////            g = (color >>> 16 & 0xFF);
@@ -521,9 +521,9 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //            luma = lumas[i];
 //            warm = warms[i];
 //            mild = milds[i];
-//            DB_BIG_BONUS_RAMP_VALUES[i | 64][1] = DB_BIG_BONUS_RAMP_VALUES[i | 64][2] =
-//                    DB_BIG_BONUS_RAMP_VALUES[i | 64][3] = color;
-//            DB_BIG_BONUS_RAMP_VALUES[i | 192][0] = DB_BIG_BONUS_RAMP_VALUES[i | 192][2] = color;
+//            DB_EASY_BONUS_RAMP_VALUES[i | 64][1] = DB_EASY_BONUS_RAMP_VALUES[i | 64][2] =
+//                    DB_EASY_BONUS_RAMP_VALUES[i | 64][3] = color;
+//            DB_EASY_BONUS_RAMP_VALUES[i | 192][0] = DB_EASY_BONUS_RAMP_VALUES[i | 192][2] = color;
 ////            int co = r - b, t = b + (co >> 1), cg = g - t, y = t + (cg >> 1),
 ////                    yBright = y * 21 >> 4, yDim = y * 11 >> 4, yDark = y * 6 >> 4, chromO, chromG;
 ////            chromO = (co * 3) >> 2;
@@ -535,43 +535,43 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //            r = MathUtils.clamp((int) ((luma * 0.83f + (warm *  0.625f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
 //            g = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f + mild * 0.5f) * 0.7f) * 256f), 0, 255);
 //            b = MathUtils.clamp((int) ((luma * 0.83f + (warm * -0.375f - mild * 0.5f) * 0.7f) * 256f), 0, 255);
-//            DB_BIG_BONUS_RAMP_VALUES[i | 192][1] = DB_BIG_BONUS_RAMP_VALUES[i | 128][1] =
-//                    DB_BIG_BONUS_RAMP_VALUES[i | 64][0] = DB_BIG_BONUS_RAMP_VALUES[i][1] =
+//            DB_EASY_BONUS_RAMP_VALUES[i | 192][1] = DB_EASY_BONUS_RAMP_VALUES[i | 128][1] =
+//                    DB_EASY_BONUS_RAMP_VALUES[i | 64][0] = DB_EASY_BONUS_RAMP_VALUES[i][1] =
 //                            MathUtils.clamp(r, 0, 255) << 24 |
 //                                    MathUtils.clamp(g, 0, 255) << 16 |
 //                                    MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
 //            r = MathUtils.clamp((int) ((luma * 1.35f + (warm *  0.625f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
 //            g = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f + mild * 0.5f) * 0.65f) * 256f), 0, 255);
 //            b = MathUtils.clamp((int) ((luma * 1.35f + (warm * -0.375f - mild * 0.5f) * 0.65f) * 256f), 0, 255);
-//            DB_BIG_BONUS_RAMP_VALUES[i | 192][3] = DB_BIG_BONUS_RAMP_VALUES[i | 128][3] =
-//                    DB_BIG_BONUS_RAMP_VALUES[i][3] =
+//            DB_EASY_BONUS_RAMP_VALUES[i | 192][3] = DB_EASY_BONUS_RAMP_VALUES[i | 128][3] =
+//                    DB_EASY_BONUS_RAMP_VALUES[i][3] =
 //                            MathUtils.clamp(r, 0, 255) << 24 |
 //                                    MathUtils.clamp(g, 0, 255) << 16 |
 //                                    MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
 //            r = MathUtils.clamp((int) ((luma * 0.65f + (warm *  0.625f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
 //            g = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f + mild * 0.5f) * 0.8f) * 256f), 0, 255);
 //            b = MathUtils.clamp((int) ((luma * 0.65f + (warm * -0.375f - mild * 0.5f) * 0.8f) * 256f), 0, 255);
-//            DB_BIG_BONUS_RAMP_VALUES[i | 128][0] = DB_BIG_BONUS_RAMP_VALUES[i][0] =
+//            DB_EASY_BONUS_RAMP_VALUES[i | 128][0] = DB_EASY_BONUS_RAMP_VALUES[i][0] =
 //                    MathUtils.clamp(r, 0, 255) << 24 |
 //                            MathUtils.clamp(g, 0, 255) << 16 |
 //                            MathUtils.clamp(b, 0, 255) << 8 | 0xFF;
 //        }
 //        sb.setLength(0);
 //        sb.ensureCapacity(2800);
-//        sb.append("private static final int[][] DB_BIG_BONUS_RAMP_VALUES = new int[][] {\n");
+//        sb.append("private static final int[][] DB_EASY_BONUS_RAMP_VALUES = new int[][] {\n");
 //        for (int i = 0; i < 256; i++) {
 //            sb.append("{ 0x");
-//            StringKit.appendHex(sb, DB_BIG_BONUS_RAMP_VALUES[i][0]);
-//            StringKit.appendHex(sb.append(", 0x"), DB_BIG_BONUS_RAMP_VALUES[i][1]);
-//            StringKit.appendHex(sb.append(", 0x"), DB_BIG_BONUS_RAMP_VALUES[i][2]);
-//            StringKit.appendHex(sb.append(", 0x"), DB_BIG_BONUS_RAMP_VALUES[i][3]);
+//            StringKit.appendHex(sb, DB_EASY_BONUS_RAMP_VALUES[i][0]);
+//            StringKit.appendHex(sb.append(", 0x"), DB_EASY_BONUS_RAMP_VALUES[i][1]);
+//            StringKit.appendHex(sb.append(", 0x"), DB_EASY_BONUS_RAMP_VALUES[i][2]);
+//            StringKit.appendHex(sb.append(", 0x"), DB_EASY_BONUS_RAMP_VALUES[i][3]);
 //            sb.append(" },\n");
 //
 //        }
 //        System.out.println(sb.append("};"));
 //        PALETTE = new int[256];
 //        for (int i = 0; i < 64; i++) {
-//            System.arraycopy(DB_BIG_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
+//            System.arraycopy(DB_EASY_BONUS_RAMP_VALUES[i], 0, PALETTE, i << 2, 4);
 //        }
 //        sb.setLength(0);
 //        sb.ensureCapacity((1 + 12 * 8) * (PALETTE.length >>> 3));
@@ -591,7 +591,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //        //pix.drawPixel(255, 0, 0);
 //        png8.palette = new PaletteReducer(PALETTE, labRoughMetric);
 //        try {
-//            png8.writePrecisely(Gdx.files.local("DB_Big_Bonus.png"), pix, false);
+//            png8.writePrecisely(Gdx.files.local("DB_Easy_Bonus.png"), pix, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -608,7 +608,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //            }
 //        }
 //        try {
-//            png8.writePrecisely(Gdx.files.local("DB_Big_Bonus_GLSL.png"), p2, false);
+//            png8.writePrecisely(Gdx.files.local("DB_Easy_Bonus_GLSL.png"), p2, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -623,7 +623,7 @@ public class GeometricPaletteGenerator extends ApplicationAdapter {
 //        }
 //        png8.palette = new PaletteReducer(PALETTE);
 //        try {
-//            png8.writePrecisely(Gdx.files.local("DB_Big_BonusMagicaVoxel.png"), pix, false);
+//            png8.writePrecisely(Gdx.files.local("DB_Easy_BonusMagicaVoxel.png"), pix, false);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
