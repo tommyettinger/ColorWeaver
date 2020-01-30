@@ -4792,6 +4792,102 @@ public abstract class Colorizer extends Dimmer implements IColorizer {
             }
         };
     }
+    public static Colorizer arbitraryLABColorizer(final int[] palette) {
+        final int COUNT = palette.length;
+        PaletteReducer reducer = new PaletteReducer(palette);
+
+        final byte[] primary = {
+                reducer.reduceIndex(0xFF0000FF), reducer.reduceIndex(0xFFFF00FF), reducer.reduceIndex(0x00FF00FF),
+                reducer.reduceIndex(0x00FFFFFF), reducer.reduceIndex(0x0000FFFF), reducer.reduceIndex(0xFF00FFFF)
+        }, grays = {
+                reducer.reduceIndex(0x000000FF), reducer.reduceIndex(0x444444FF), reducer.reduceIndex(0x888888FF),
+                reducer.reduceIndex(0xCCCCCCFF), reducer.reduceIndex(0xFFFFFFFF)
+        };
+        final CIELABConverter.Lab[] labs = new CIELABConverter.Lab[COUNT];
+        final byte[][] ramps = new byte[COUNT][4];
+        for (int i = 1; i < COUNT; i++) {
+            labs[i] = new CIELABConverter.Lab(palette[i]);
+            ramps[i][2] = (byte)i;
+        }
+        CIELABConverter.Lab lab, lab2, lab3;
+        for (int i = 0; i < COUNT; i++) {
+            if((lab = labs[i]).alpha == 0.0) {
+                ramps[i][0] = ramps[i][1] = ramps[i][3] = (byte)i;
+                continue;
+            }
+            ramps[i][0] = grays[0];
+            ramps[i][1] = grays[0];
+            ramps[i][3] = grays[4];
+            int dimIndex = ramps[i][1] & 0xFF;
+            double lighter = Double.POSITIVE_INFINITY, dimmer = Double.POSITIVE_INFINITY, temp;
+            for (int j = 0; j < COUNT; j++) {
+                if(i == j || (lab2 = labs[j]).alpha == 0.0) continue;
+                if(lab2.L > lab.L && lighter > (temp = CIELABConverter.delta(lab, lab2, 1.0, 3.0, 3.0)))
+                {
+                    lighter = temp;
+                    ramps[i][3] = (byte)j;
+                } 
+                else if(lab2.L < lab.L && dimmer > (temp = CIELABConverter.delta(lab, lab2, 1.0, 3.0, 3.0)))
+                {
+                    dimmer = temp;
+                    ramps[i][1] = (byte)j;
+                    dimIndex = j;
+                }
+            }
+            lab3 = labs[dimIndex];
+            dimmer = Double.POSITIVE_INFINITY;
+            for (int j = 1; j < COUNT; j++) {
+                if (i == j || j == dimIndex || (lab2 = labs[j]).alpha == 0.0)
+                    continue;
+                if (lab2.L < lab3.L && dimmer > (temp = CIELABConverter.delta(lab, lab2, 1.0, 3.0, 3.0))) {
+                    dimmer = temp;
+                    ramps[i][0] = (byte)j;
+                }
+            }
+        }
+
+        return new Colorizer(reducer) {
+
+            @Override
+            public byte[] mainColors() {
+                return primary;
+            }
+
+            /**
+             * @return An array of grayscale or close-to-grayscale color indices, with the darkest first and lightest last.
+             */
+            @Override
+            public byte[] grayscale() {
+                return grays;
+            }
+
+            @Override
+            public byte brighten(byte voxel) {
+                return ramps[(voxel & 0xFF) % COUNT][3];
+            }
+
+            @Override
+            public byte darken(byte voxel) {
+                return ramps[(voxel & 0xFF) % COUNT][1];
+            }
+
+            @Override
+            public int dimmer(int brightness, byte voxel) {
+                return palette[ramps[(voxel & 0xFF) % COUNT][
+                        Math.max(0, Math.min(brightness, 3))] & 0xFF];
+            }
+
+            @Override
+            public int getShadeBit() {
+                return 0;
+            }
+
+            @Override
+            public int getWaveBit() {
+                return 0;
+            }
+        };
+    }
     public static Colorizer arbitraryBonusColorizer(final int[] palette) {
         final int COUNT = palette.length;
         PaletteReducer reducer = new PaletteReducer(palette);

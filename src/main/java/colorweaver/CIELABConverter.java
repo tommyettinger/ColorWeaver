@@ -9,7 +9,7 @@ import static colorweaver.tools.TrigTools.*;
 
 public class CIELABConverter {
 
-	protected double a1Prime, a2Prime, CPrime1, CPrime2, barCPrime, barhPrime;
+	protected static double a1Prime, a2Prime, CPrime1, CPrime2, barCPrime, barhPrime;
 	public CIELABConverter()
 	{
 	}
@@ -37,6 +37,30 @@ public class CIELABConverter {
 		{
 			double r = color.r, g = color.g, b = color.b;
 			alpha = color.a;
+			double x, y, z;
+
+			r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
+			g = ((g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92);
+			b = ((b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92);
+
+			x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489;
+			y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000;
+			z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.088840;
+
+			x = (x > 0.008856) ? Math.cbrt(x) : (7.787037037037037 * x) + 0.13793103448275862;
+			y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
+			z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
+
+			L = (116.0 * y) - 16.0;
+			A = 500.0 * (x - y);
+			B = 200.0 * (y - z);
+		}
+		public Lab(int rgba)
+		{
+			double r = (rgba >>> 24) * 0x1.010101010101p-8,
+				g = (rgba >>> 16 & 0xFF) * 0x1.010101010101p-8,
+				b = (rgba >>> 8 & 0xFF) * 0x1.010101010101p-8;
+			alpha = (rgba & 0xFF) * 0x1.010101010101p-8;
 			double x, y, z;
 
 			r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
@@ -263,7 +287,7 @@ public class CIELABConverter {
 	private static final double deg2Rad275 = 275;//(4.799655442984406);
 	private static final double deg2Rad63  = 63 ;//(1.0995574287564276);
 
-	static double L_prime_div_k_L_S_L(final Lab lab1, final Lab lab2)
+	private static double L_prime_div_k_L_S_L(final Lab lab1, final Lab lab2)
 	{
 		final double k_L = 1.0;
 		double deltaLPrime = lab2.L - lab1.L;	
@@ -272,7 +296,7 @@ public class CIELABConverter {
 		return deltaLPrime / (k_L * S_L);
 	}
 
-	protected double C_prime_div_k_C_S_C(final Lab lab1, final Lab lab2)
+	private static double C_prime_div_k_C_S_C(final Lab lab1, final Lab lab2)
 	{
 		final double k_C = 1.0;
 		final double pow25To7 = 6103515625.0; /* pow(25, 7) */
@@ -293,7 +317,7 @@ public class CIELABConverter {
 		return deltaCPrime / (k_C * S_C);
 	}
 
-	protected double H_prime_div_k_H_S_H(final Lab lab1, final Lab lab2)
+	private static double H_prime_div_k_H_S_H(final Lab lab1, final Lab lab2)
 	{
 		final double k_H = 1.0;
 		final double deg360InRad = 360;//Math.PI * 2.0;
@@ -348,14 +372,13 @@ public class CIELABConverter {
 		return deltaHPrime / (k_H * S_H);
 	}
 
-	protected double R_T()
+	private static double R_T()
 	{
 		final double pow25To7 = 6103515625.0; /* Math.pow(25, 7) */
 		final double barCPrimeTo7 = Math.pow(barCPrime, 7.0);
-		double deltaTheta = deg2Rad30 * Math.exp(-Math.pow((barhPrime - deg2Rad275) / deg2Rad25, 2.0));
-		double R_C = -2.0 * Math.sqrt(barCPrimeTo7 / (barCPrimeTo7 + pow25To7));
-		double R_T = sin_(deltaTheta / 180.0) * R_C;
-		return R_T;
+		final double deltaTheta = deg2Rad30 * Math.exp(-Math.pow((barhPrime - deg2Rad275) / deg2Rad25, 2.0));
+		final double R_C = -2.0 * Math.sqrt(barCPrimeTo7 / (barCPrimeTo7 + pow25To7));
+		return sin_(deltaTheta / 180.0) * R_C;
 	}
 
 	/* From the paper "The CIEDE2000 Color-Difference Formula: Implementation Notes, */
@@ -363,7 +386,7 @@ public class CIELABConverter {
 	/* Gaurav Sharma, Wencheng Wu and Edul N. Dalal, */
 	/* Color Res. Appl., vol. 30, no. 1, pp. 21-30, Feb. 2005. */
 	/* Return the CIEDE2000 Delta E color difference measure squared, for two Lab values */
-	public double CIEDE2000(final Lab lab1, final Lab lab2)
+	public static double difference (final Lab lab1, final Lab lab2)
 	{
 		double deltaL_prime_div_k_L_S_L = L_prime_div_k_L_S_L(lab1, lab2);
 		double deltaC_prime_div_k_C_S_C = C_prime_div_k_C_S_C(lab1, lab2);
@@ -428,12 +451,19 @@ xSH = xDH / xSH
 Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 		 */
 	}
-	
-	public double delta(final Lab lab1, final Lab lab2)
+
+	public static double delta(final Lab lab1, final Lab lab2)
 	{
 		return (lab1.L - lab2.L) * (lab1.L - lab2.L) * 11.0 +
-				(lab1.A - lab2.A) * (lab1.A - lab2.A) * 1.6 +
-				(lab1.B - lab2.B) * (lab1.B - lab2.B);
+			(lab1.A - lab2.A) * (lab1.A - lab2.A) * 1.6 +
+			(lab1.B - lab2.B) * (lab1.B - lab2.B);
+	}
+
+	public static double delta(final Lab lab1, final Lab lab2, final double biasL, final double biasA, final double biasB)
+	{
+		return (lab1.L - lab2.L) * (lab1.L - lab2.L) * 11.0 * biasL +
+			(lab1.A - lab2.A) * (lab1.A - lab2.A) * 1.6 * biasA +
+			(lab1.B - lab2.B) * (lab1.B - lab2.B) * biasB;
 	}
 
 	public static double differenceLAB(double L, double A, double B, double L2, double A2, double B2)
@@ -441,9 +471,13 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 		L -= L2;
 		A -= A2;
 		B -= B2;
-		return L * L * 400.0 + A * A * 25.0 + B * B * 10.0;
+		return L * L * 11.0 + A * A * 1.6 + B * B;
 	}
 	public static double differenceLAB(final int rgba1, final int rgba2)
+	{
+		return differenceLAB(rgba1, rgba2, 1.0, 1.0, 1.0);
+	}
+	public static double differenceLAB(final int rgba1, final int rgba2, final double biasL, final double biasA, final double biasB)
 	{
 		if(((rgba1 ^ rgba2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
 		double x, y, z, r, g, b;
@@ -488,7 +522,7 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 		A -= 500.0 * (x - y);
 		B -= 200.0 * (y - z);
 		
-		return L * L * 11.0 + A * A * 1.6 + B * B;
+		return L * L * 11.0 * biasL + A * A * 1.6 * biasA + B * B * biasB;
 	}
 	public static double[][] makeLAB15()
 	{
