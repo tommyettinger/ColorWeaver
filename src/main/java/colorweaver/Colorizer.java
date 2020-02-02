@@ -4822,12 +4822,12 @@ public abstract class Colorizer extends Dimmer implements IColorizer {
             double lighter = Double.POSITIVE_INFINITY, dimmer = Double.POSITIVE_INFINITY, temp;
             for (int j = 0; j < COUNT; j++) {
                 if(i == j || (lab2 = labs[j]).alpha == 0.0) continue;
-                if(lab2.L > lab.L && lighter > (temp = CIELABConverter.delta(lab, lab2, 1.0, 8.0, 8.0)))
+                if(lab2.L >= Math.min(lab.L + 6, lab.L * 1.12) && lighter > (temp = CIELABConverter.delta(lab, lab2, 1.0, 8.0, 8.0)))
                 {
                     lighter = temp;
                     ramps[i][3] = (byte)j;
                 } 
-                else if(lab2.L < lab.L && dimmer > (temp = CIELABConverter.delta(lab, lab2, 1.0, 8.0, 8.0)))
+                else if(lab2.L <= Math.max(lab.L - 8, lab.L * 0.84) && dimmer > (temp = CIELABConverter.delta(lab, lab2, 1.0, 8.0, 8.0)))
                 {
                     dimmer = temp;
                     ramps[i][1] = (byte)j;
@@ -4839,7 +4839,7 @@ public abstract class Colorizer extends Dimmer implements IColorizer {
             for (int j = 0; j < COUNT; j++) {
                 if (i == j || j == dimIndex || (lab2 = labs[j]).alpha == 0.0)
                     continue;
-                if (lab2.L < lighter && dimmer > (temp = CIELABConverter.delta(lab, lab2, 1.0, 12.0, 12.0))) {
+                if (lab2.L <= lighter && dimmer > (temp = CIELABConverter.delta(lab, lab2, 1.0, 12.0, 12.0))) {
                     dimmer = temp;
                     ramps[i][0] = (byte)j;
                 }
