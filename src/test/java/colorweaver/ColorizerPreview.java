@@ -96,7 +96,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 	};
 
-	public static int[] lloyd(int[] palette) {
+	public int[] lloyd(int[] palette) {
 		PaletteReducer pr = new PaletteReducer(palette, labMetric);
 		int[][] centroids = new int[4][palette.length];
 		byte[] pm = pr.paletteMapping;
@@ -109,14 +109,22 @@ public class ColorizerPreview extends ApplicationAdapter {
 			centroids[2][index] += i & 0x1F;
 			centroids[3][index]++;
 		}
+		mixingPalette.clear();
 		for (int i = 0; i < palette.length; i++) {
 			if (palette[i] == 0)
+			{
+				mixingPalette.add(0, 0);
 				continue;
+			}
 			count = centroids[3][i];
 			mix = MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10
 				| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5 | MathUtils
 				.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
-			palette[i] = CIELABConverter.puff(mix);
+			mixingPalette.add(CIELABConverter.puff(mix));
+		}
+		Collections.sort(mixingPalette, hueComparator);
+		for (int i = 0; i < palette.length; i++) {
+			palette[i] = mixingPalette.get(i);
 		}
 		return palette;
 	}
@@ -257,6 +265,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 					}
 					System.out.println(sb);
 					System.out.println(palette.length + " colors used.");
+					Gdx.graphics.requestRendering();
 				}
 				return true;
 			}
