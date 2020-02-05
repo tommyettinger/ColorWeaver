@@ -1790,6 +1790,23 @@ public class Coloring {
         0xCE184AFF, 0x633942FF, 0xEF214AFF, 0x310810FF, 0xE7B5BDFF, 0x943942FF, 0x841018FF, 0xB51018FF,
     };
 
+    /**
+     * A 64-color (including fully transparent) palette made by combining Linear Color Palette Basic by
+     * GrafxKid with Sheltzy32 by NatTorpedia, then Lloyd relaxing until it "looked good."
+     * <a href="https://i.imgur.com/w7nLvln.png">PNG Preview</a>. Orange and violet coverage are not great,
+     * but nearby colors like red and purple are well-covered.
+     */
+    public static final int[] LANTERN = new int[]{
+        0x00000000, 0x000000FF, 0x181018FF, 0xD6E7DEFF, 0xE72929FF, 0xAD8C84FF, 0x943921FF, 0xEF6331FF,
+        0xE7A584FF, 0xBD6331FF, 0x735A4AFF, 0x634221FF, 0xDE8C29FF, 0x8C7331FF, 0xE7B531FF, 0xDED684FF,
+        0xE7EF31FF, 0xA5AD39FF, 0x849429FF, 0xADCE39FF, 0x9CEF39FF, 0xBDF7A5FF, 0xA5BD9CFF, 0x213918FF,
+        0xDEF7D6FF, 0x296B21FF, 0x31AD29FF, 0x42CE39FF, 0x39EF31FF, 0x298C29FF, 0x4AF7A5FF, 0x42BD8CFF,
+        0x42D69CFF, 0x39A57BFF, 0x397B6BFF, 0x295A52FF, 0x5AE7DEFF, 0x52CEDEFF, 0x3994A5FF, 0x21424AFF,
+        0x4AADD6FF, 0x396BA5FF, 0x5A8CDEFF, 0x394AADFF, 0x31396BFF, 0x5A6BE7FF, 0xB5B5DEFF, 0x2910CEFF,
+        0x211084FF, 0x29214AFF, 0x5229E7FF, 0x21084AFF, 0x52188CFF, 0xAD21DEFF, 0xD68CDEFF, 0xDE39DEFF,
+        0x9C2194FF, 0x9C5294FF, 0xE7298CFF, 0xE7C6D6FF, 0xDE7394FF, 0x8C1839FF, 0x631021FF, 0xBD2131FF
+    };
+
 //    
 //    public static final int[] WARD_BONUS = new int[]{
 //            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x1D3131FF, 0x2A3C3CFF, 0x314A4AFF, 0x4D5D5DFF,
