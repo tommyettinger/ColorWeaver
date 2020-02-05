@@ -44,6 +44,25 @@ public class ColorizerPreview extends ApplicationAdapter {
 		{4,4,4,4,4,0,0,2,1,0,0,4,4,4,4,4,},
 		{4,4,4,4,4,4,4,0,0,4,4,4,4,4,4,4,},
 	};
+	public static final int[][] BALL = {
+		{4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,},
+		{4,4,4,4,4,4,0,0,0,0,4,4,4,4,4,4,},
+		{4,4,4,4,0,0,2,2,2,2,0,0,4,4,4,4,},
+		{4,4,4,0,2,2,3,3,2,2,2,2,0,4,4,4,},
+		{4,4,0,2,2,3,3,3,3,2,2,2,2,0,4,4,},
+		{4,4,0,2,2,3,3,3,3,2,2,2,2,0,4,4,},
+		{4,0,2,2,2,2,3,3,2,2,2,2,2,2,0,4,},
+		{4,0,2,2,2,2,2,2,2,2,2,2,2,1,0,4,},
+		{4,0,2,2,2,2,2,2,2,2,2,2,1,1,0,4,},
+		{4,0,1,1,2,2,2,2,2,2,2,1,1,1,0,4,},
+		{4,4,0,1,1,2,2,2,2,1,1,1,1,0,4,4,},
+		{4,4,0,1,1,1,1,1,1,1,1,1,1,0,4,4,},
+		{4,4,4,0,1,1,1,1,1,1,1,1,0,4,4,4,},
+		{4,4,4,4,0,0,1,1,1,1,0,0,4,4,4,4,},
+		{4,4,4,4,4,4,0,0,0,0,4,4,4,4,4,4,},
+		{4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,},
+	};
+	public static int[][] SHAPE = BALL;
 	private Pixmap cubePix;
 	private Texture[] cubeTextures;
 	private Colorizer colorizer;
@@ -153,7 +172,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 		for (int i = 0; i < labs.size(); i++) {
 			for (int j = i + 1; j < labs.size(); j++) {
-				if(CIELABConverter.delta(labs.get(i), labs.get(j), 1.0, 1.0, 1.0) <= 50)
+				if(CIELABConverter.delta(labs.get(i), labs.get(j), 1.0, 1.0, 1.0) <= 150)
 				{
 					removalSet.add(i);
 					removalSet.add(j);
@@ -245,12 +264,23 @@ public class ColorizerPreview extends ApplicationAdapter {
 //		};
 		batch = new MutantBatch();
 		Gdx.input.setInputProcessor(new InputAdapter(){
-			public boolean keyUp (int keycode) {
+			public boolean keyUp (int keycode) { 
 				switch (keycode)
 				{
+				case Input.Keys.UNKNOWN: // to avoid PrintScreen triggering an event
+				case Input.Keys.SHIFT_LEFT:
+				case Input.Keys.SHIFT_RIGHT:
+				case Input.Keys.CONTROL_LEFT:
+				case Input.Keys.CONTROL_RIGHT:
+				case Input.Keys.ALT_LEFT:
+				case Input.Keys.ALT_RIGHT:
+					break;
 				case Input.Keys.Q:
 				case Input.Keys.ESCAPE:
 					Gdx.app.exit();
+					break;
+				case Input.Keys.S:
+					SHAPE = (SHAPE == CUBE) ? BALL : CUBE;
 					break;
 				default:
 					lloyd(palette);
@@ -282,7 +312,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		for (int i = 0; i < palette.length; i++) {
 			for (int x = 0; x < 16; x++) {
 				for (int y = 0; y < 16; y++) {						
-					cubePix.drawPixel(x, y, colorizer.dimmer(CUBE[y][x] & 3, (byte)i));
+					cubePix.drawPixel(x, y, colorizer.dimmer(SHAPE[y][x] & 3, (byte)i));
 				}
 			}
 			cubeTextures[i].draw(cubePix, 0, 0);

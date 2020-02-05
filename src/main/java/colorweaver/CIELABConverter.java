@@ -461,14 +461,12 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 
 	public static double delta(final Lab lab1, final Lab lab2, final double biasL, final double biasA, final double biasB)
 	{
+		final double purpleAdjustment = (Math.max(0.0, lab1.A - lab1.B * 2.5 - 50) * (lab1.A + lab1.B + lab1.L * 0.5)
+			- Math.max(0.0, lab2.A - lab2.B * 2.5 - 50) * (lab2.A + lab2.B + lab2.L * 0.5)) * 0.1;
 		return (lab1.L - lab2.L) * (lab1.L - lab2.L) * 11.0 * biasL +
 			(lab1.A - lab2.A) * (lab1.A - lab2.A) * biasA * 1.6 +
 			(lab1.B - lab2.B) * (lab1.B - lab2.B) * biasB
-			+ Math.pow(
-			  (Math.max(0.0, lab1.A - lab1.B * 2.5) * (lab1.A + lab1.B)
-			 - Math.max(0.0, lab2.A - lab2.B * 2.5) * (lab2.A + lab2.B)) * 0.125,
-			2.0)
-			//+ Math.abs(Math.abs(lab1.A) + Math.abs(lab1.B) - Math.abs(lab2.A) - Math.abs(lab2.B))
+			+ purpleAdjustment * purpleAdjustment
 			;
 	}
 
