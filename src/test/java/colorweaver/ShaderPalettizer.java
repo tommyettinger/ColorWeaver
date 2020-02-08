@@ -89,6 +89,9 @@ public class ShaderPalettizer extends ApplicationAdapter {
         else
             screenTexture = new Texture(file);
         screenTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        Gdx.graphics.setWindowedMode(screenTexture.getWidth() * 2, screenTexture.getHeight());
+        screenView.getCamera().position.set(screenTexture.getWidth(), screenTexture.getHeight() * 0.5f, 0);
+        screenView.update(screenTexture.getWidth() * 2, screenTexture.getHeight());
     }
 
     @Override

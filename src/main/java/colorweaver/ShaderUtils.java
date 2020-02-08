@@ -166,9 +166,14 @@ public class ShaderUtils {
                     "uniform sampler2D u_texture;\n" +
                     "uniform vec3 u_add;\n" +
                     "uniform vec3 u_mul;\n" +
+                    "vec3 pq(vec3 color) {\n" +
+                    "   color = pow(color, 0.1593017578125);\n" +
+                    "   return pow((0.8359375 + 18.8515625 * color) / (1.0 + 18.6875 * color), 78.84375);\n" +
+                    "}\n" +
                     "void main()\n" +
                     "{\n" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
+                    "   tgt.rgb = pq(tgt.rgb);\n" +
                     "   tgt.rgb = u_add + u_mul * vec3(dot(tgt.rgb, vec3(0.375, 0.5, 0.125)), tgt.r - tgt.b, tgt.g - tgt.b);\n" +
                     "   gl_FragColor.rgb = v_color.rgb * clamp(vec3(dot(tgt.rgb, vec3(1.0, 0.625, -0.5)), dot(tgt.rgb, vec3(1.0, -0.375, 0.5)), dot(tgt.rgb, vec3(1.0, -0.375, -0.5))), 0.0, 1.0);\n" +
 //                    "   gl_FragColor.rgb = v_color.rgb * clamp(vec3(dot(tgt.rgb, vec3(1.0, 0.5, 0.0)), dot(tgt.rgb, vec3(1.0, 0.0, 0.5)), dot(tgt.rgb, vec3(1.0, -0.25, -0.25))), 0.0, 1.0);\n" +
@@ -301,10 +306,15 @@ public class ShaderUtils {
           "uniform vec3 u_mul;\n" +
           "const float b_adj = 31.0 / 32.0;\n" +
           "const float rb_adj = 32.0 / 1023.0;\n" +
+          "const vec3 pq_m = vec3(78.84375, 78.84375, 78.84375);\n" +
+          "vec3 pq(vec3 color) {\n" +
+          "   return pow((0.8359375 + 18.8515625 * color) / (1.0 + 18.6875 * color), pq_m);\n" +
+          "}\n" +
           "void main()\n" +
           "{\n" +
           "   vec4 tgt = v_color * texture2D( u_texture, v_texCoords );\n" +
-          "   tgt.rgb = u_add + u_mul * tgt.rgb;\n" +
+//          "   tgt.rgb = u_add + u_mul * tgt.rgb;\n" +
+          "   tgt.rgb = u_add + u_mul * pq(tgt.rgb);\n" +
           "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
 //          "   float adj = fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy));\n" + // Roberts
 //          "   float adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy)));\n" + // Jimenez
@@ -324,9 +334,14 @@ public class ShaderUtils {
                     "const float b_adj = 31.0 / 32.0;\n" +
                     "const float rb_adj = 32.0 / 1023.0;\n" +
                     "const vec3 bright = vec3(0.375, 0.5, 0.125);\n" +
+                    "const vec3 pq_m = vec3(78.84375, 78.84375, 78.84375);\n" +
+                    "vec3 pq(vec3 color) {\n" +
+                    "   return pow((0.8359375 + 18.8515625 * color) / (1.0 + 18.6875 * color), pq_m);\n" +
+                    "}\n" +
                     "void main()\n" +
                     "{\n" +
                     "   vec4 tgt = v_color * texture2D( u_texture, v_texCoords );\n" +
+                    "   tgt.rgb = pq(tgt.rgb);\n" +
                     "   tgt.rgb = u_add + u_mul * vec3(dot(tgt.rgb, bright), tgt.r - tgt.b, tgt.g - tgt.b);\n" +
                     "   vec4 used = texture2D(u_palette, vec2((clamp(dot(tgt.rgb, vec3(1.0, -0.375, -0.5)), 0.0, 1.0) * b_adj + floor(clamp(dot(tgt.rgb, vec3(1.0, 0.625, -0.5)), 0.0, 1.0) * 31.999)) * rb_adj, 1.0 - clamp(dot(tgt.rgb, vec3(1.0, -0.375, 0.5)), 0.0, 1.0)));\n" +
                     "   used.rgb = vec3(dot(used.rgb, bright), used.r - used.b, used.g - used.b);\n" +
