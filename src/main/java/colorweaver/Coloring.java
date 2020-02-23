@@ -97,6 +97,11 @@ public class Coloring {
      * DawnBringer's 256-color Aurora palette, modified slightly to fit one transparent color by removing one gray.
      * Aurora is available in <a href="http://pixeljoint.com/forum/forum_posts.asp?TID=26080&KW=">this set of tools</a>
      * for a pixel art editor, but it is usable for lots of high-color purposes.
+     * <br>
+     * These colors all have names, which can be seen in the elements of {@link NamedColor#DAWNBRINGER_AURORA}
+     * or just <a href="https://i.imgur.com/2oChRYC.png">previewed here</a>. The linked image preview also shows
+     * the nearby lighter color and two darker colors on the same sphere as the main color; these nearby colors
+     * were calculated by {@link Colorizer#arbitraryLABColorizer(int[])}.
      */
     public static final int[] AURORA = {
             0x00000000, 0x010101FF, 0x131313FF, 0x252525FF, 0x373737FF, 0x494949FF, 0x5B5B5BFF, 0x6E6E6EFF,

@@ -30,6 +30,7 @@ public class AuroraNamedPreview extends ApplicationAdapter {
 		{4,4,4,4,4,0,0,2,1,0,0,4,4,4,4,4,},
 		{4,4,4,4,4,4,4,0,0,4,4,4,4,4,4,4,},
 	};
+	public static final int[][] SHAPE = ColorizerPreview.BALL;
 	private Pixmap cubePix;
 	private Texture[] cubeTextures;
 	private Colorizer colorizer;
@@ -58,13 +59,13 @@ public class AuroraNamedPreview extends ApplicationAdapter {
 		for (int i = 1; i < palette.length; i++) {
 			for (int x = 0; x < 16; x++) {
 				for (int y = 0; y < 16; y++) {
-					if(CUBE[y][x] != 4)
-						cubePix.drawPixel(x, y, colorizer.dimmer(CUBE[y][x], (byte)i));
+					if(SHAPE[y][x] != 4)
+						cubePix.drawPixel(x, y, colorizer.dimmer(SHAPE[y][x], (byte)i));
 				}
 			}
 			cubeTextures[i-1].draw(cubePix, 0, 0);
-			batch.draw(cubeTextures[i-1], ((i-1) % 12) * 150, ((i - 1) / 12) * 40 + 4, 32, 32);
-			font.draw(batch, names[i].name.substring(7), ((i-1) % 12) * 150 + 40, ((i - 1) / 12) * 40 + 36);
+			batch.draw(cubeTextures[i-1], ((i-1) % 12) * 130, (22 - (i - 1) / 12) * 20 + 2, 16, 16);
+			font.draw(batch, names[i].name.substring(7), ((i-1) % 12) * 130 + 20, (22 - (i - 1) / 12) * 20 + 16);
 		}
 		batch.end();
 	}
@@ -75,7 +76,7 @@ public class AuroraNamedPreview extends ApplicationAdapter {
 	public static void main(String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setTitle("Palette Reducer");
-		config.setWindowedMode(12 * 150, 22 * 40);
+		config.setWindowedMode(12 * 130, 23 * 20);
 		config.setIdleFPS(10);
 		config.useVsync(true);
 		
