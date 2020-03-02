@@ -8,6 +8,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -117,10 +118,12 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 	};
 
-	private static final Comparator<Integer> similarityComparator = new Comparator<Integer>() {
+	private static final Comparator<Integer> lightnessComparator = new Comparator<Integer>() {
 		public int compare (Integer o1, Integer o2) {
+			if(o1 == 0) return -1;
+			if(o2 == 0) return 1;
 //			return (int)Math.signum(CIELABConverter.differenceLAB(o1, o2) - 50);
-			return (int)Math.signum((hue(o1) - hue(o2)) + (roughBrightness(o1) - roughBrightness(o2)) * 0x1.810102p-13f);
+			return Integer.compare(roughBrightness(o1), roughBrightness(o2));
 		}
 	};
 
@@ -180,6 +183,41 @@ public class ColorizerPreview extends ApplicationAdapter {
 		return palette;
 	}
 
+	public int[] distribute(int[] palette) {
+		mixingPalette.clear();
+		int count = palette.length - 1;
+		for (int i = 0; i < palette.length; i++) {
+			if (palette[i] == 0)
+			{
+				mixingPalette.add(0, 0);
+				count--;
+				continue;
+			}
+			mixingPalette.add(palette[i]);
+		}
+		Collections.sort(mixingPalette, lightnessComparator);
+		float lightness = 0f, inc = 1f / count;
+		int rgba;
+		Color color = new Color();
+		for (int i = 0; i < palette.length; i++) {
+			if((rgba = mixingPalette.get(i)) == 0)
+			{
+				continue;
+			}
+			color.set(rgba);
+			float hue = NamedColor.hue(color);
+			float sat = NamedColor.saturation(color);
+			color.fromHsv(hue * 360f, sat, (float)Math.cbrt(lightness));
+			lightness += inc;
+			mixingPalette.set(i, Color.rgba8888(color));
+		}
+		Collections.sort(mixingPalette, hueComparator);
+		for (int i = 0; i < palette.length; i++) {
+			palette[i] = mixingPalette.get(i);
+		}
+		return palette;
+	}
+
 	public void loadPalette(String name) {
 		try {
 			String text = Gdx.files.absolute(name).readString();
@@ -204,10 +242,11 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 		for (int i = 0; i < labs.size(); i++) {
 			for (int j = i + 1; j < labs.size(); j++) {
-				if(CIELABConverter.delta(labs.get(i), labs.get(j), 1.0, 1.0, 1.0) <= 150)
+				if(CIELABConverter.delta(labs.get(i), labs.get(j), 4.0, 1.0, 1.0) <= 100)
 				{
 					removalSet.add(i);
 					removalSet.add(j);
+					System.out.printf("Combined 0x%08X and 0x%08X\n", mixingPalette.get(i), mixingPalette.get(j));
 					mixingPalette.add(Coloring.mixEvenly(mixingPalette.get(i), mixingPalette.get(j)));
 				}
 			}
@@ -244,7 +283,12 @@ public class ColorizerPreview extends ApplicationAdapter {
 	}
 	
 	public void create () {
+		palette = Coloring.AURORA_MOD;
 		mixingPalette = new ArrayList<>(256);
+		for (int i = 1; i < 256; i++) {
+			mixingPalette.add(palette[i]);
+		}
+		mixPalette();
 //		mixingPalette = IntArray.with(
 //			0x060608ff, 0x141013ff, 0x3b1725ff, 0x73172dff, 0xb4202aff, 0xdf3e23ff, 0xfa6a0aff, 0xf9a31bff,
 //			0xffd541ff, 0xfffc40ff, 0xd6f264ff, 0x9cdb43ff, 0x59c135ff, 0x14a02eff, 0x1a7a3eff, 0x24523bff,
@@ -332,6 +376,10 @@ public class ColorizerPreview extends ApplicationAdapter {
 					break;
 				case Input.Keys.J:
 					modify(palette, 0f, 0f, 0.1f);
+					colorizer = Colorizer.arbitraryLABColorizer(palette);
+					break;
+				case Input.Keys.D:
+					distribute(palette);
 					colorizer = Colorizer.arbitraryLABColorizer(palette);
 					break;
 				case Input.Keys.L:						
