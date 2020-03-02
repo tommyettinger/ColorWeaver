@@ -69,6 +69,15 @@ public class ColorizerPreview extends ApplicationAdapter {
 	private ArrayList<Integer> mixingPalette;
 	private int[] palette;
 	private MutantBatch batch;
+	private long state = 1234567898765431L;
+	private float nextCurvedFloat ()
+	{
+		return (((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 42)
+		+ ((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 42)
+		+ ((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 42)
+		+ ((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 42)) * 0x1p-24f;
+	}
+
 
 	private static float hue(final int color) {
 		final float r = (color >>> 24       ) * 0x1.010102p-8f;
@@ -136,10 +145,33 @@ public class ColorizerPreview extends ApplicationAdapter {
 				continue;
 			}
 			count = centroids[3][i];
+			if(count == 0) continue;
 			mix = MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10
 				| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5 | MathUtils
 				.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
 			mixingPalette.add(CIELABConverter.puff(mix));
+		}
+		Collections.sort(mixingPalette, hueComparator);
+		palette = new int[mixingPalette.size()];
+		for (int i = 0; i < palette.length; i++) {
+			palette[i] = mixingPalette.get(i);
+		}
+		return palette;
+	}
+
+	public int[] modify(int[] palette, float saturation, float brightness, float jiggle) {
+		mixingPalette.clear();
+		for (int i = 0; i < palette.length; i++) {
+			if (palette[i] == 0)
+			{
+				mixingPalette.add(0, 0);
+				continue;
+			}
+			float c = FloatColorTools.floatGet(palette[i]);
+			int ic = FloatColorTools.floatToInt(FloatColorTools.toEditedFloat(c, nextCurvedFloat() * jiggle, saturation + nextCurvedFloat() * jiggle,
+				brightness + nextCurvedFloat() * jiggle, 0f));
+			//System.out.printf("0x%08X -> 0x%08X\n", palette[i], ic);
+			mixingPalette.add(ic);
 		}
 		Collections.sort(mixingPalette, hueComparator);
 		for (int i = 0; i < palette.length; i++) {
@@ -282,9 +314,31 @@ public class ColorizerPreview extends ApplicationAdapter {
 				case Input.Keys.S:
 					SHAPE = (SHAPE == CUBE) ? BALL : CUBE;
 					break;
-				default:
-					lloyd(palette);
+				case Input.Keys.LEFT:
+					modify(palette, -0.1f, 0f, 0f);
 					colorizer = Colorizer.arbitraryLABColorizer(palette);
+					break;
+				case Input.Keys.RIGHT:
+					modify(palette, 0.1f, 0f, 0f);
+					colorizer = Colorizer.arbitraryLABColorizer(palette);
+					break;
+				case Input.Keys.UP:
+					modify(palette, 0f, 0.1f, 0f);
+					colorizer = Colorizer.arbitraryLABColorizer(palette);
+					break;
+				case Input.Keys.DOWN:
+					modify(palette, 0f, -0.1f, 0f);
+					colorizer = Colorizer.arbitraryLABColorizer(palette);
+					break;
+				case Input.Keys.J:
+					modify(palette, 0f, 0f, 0.1f);
+					colorizer = Colorizer.arbitraryLABColorizer(palette);
+					break;
+				case Input.Keys.L:						
+					palette = lloyd(palette);
+					colorizer = Colorizer.arbitraryLABColorizer(palette);
+					break;
+				default:
 					StringBuilder sb = new StringBuilder(palette.length * 12);
 					StringKit.appendHex(sb.append("0x"), palette[0]);
 					for (int i = 1; i < palette.length; i++) {
@@ -295,8 +349,8 @@ public class ColorizerPreview extends ApplicationAdapter {
 					}
 					System.out.println(sb);
 					System.out.println(palette.length + " colors used.");
-					Gdx.graphics.requestRendering();
 				}
+				Gdx.graphics.requestRendering();
 				return true;
 			}
 		});
