@@ -50,34 +50,35 @@ public class Palettizer extends ApplicationAdapter {
 
     public void load(String name) {
         try {
-            final String suffix = "_RelaxedRoll64";
+            final String suffix = "_DB16";
             //// loads a file by its full path, which we get via drag+drop
             Pixmap pm = new Pixmap(Gdx.files.absolute(name));
 //            reducer.analyze(pm, 1600, 32);
             String subname = name.substring(Math.max(name.lastIndexOf('/'), name.lastIndexOf('\\')) + 1, name.lastIndexOf('.'));
             pm = (reducer.reduceWithNoise(pm));
             png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinbergHu"+suffix+".png"), pm, false);
-            pm = (reducer.reduceFloydSteinberg(new Pixmap(Gdx.files.absolute(name))));
-            FileHandle next = Gdx.files.local(subname + "_FloydSteinberg"+suffix+".png");
-            png8.writePrecisely(next, pm, false);
 //            pm = reducer.reduceBurkes(new Pixmap(Gdx.files.absolute(name)));
 //            png8.writePrecisely(Gdx.files.local(subname + "_Burkes"+suffix+".png"), pm, false);
 //            pm = reducer.reduce(new Pixmap(Gdx.files.absolute(name)));
 //            png8.writePrecisely(Gdx.files.local(subname + "_SierraLite"+suffix+".png"), pm, false);
-//            pm = reducer.reduceSolid(new Pixmap(Gdx.files.absolute(name)));
-//            png8.writePrecisely(Gdx.files.local(subname + "_Solid"+suffix+".png"), pm, false);
+            pm = reducer.reduceSolid(new Pixmap(Gdx.files.absolute(name)));
+            png8.writePrecisely(Gdx.files.local(subname + "_Solid"+suffix+".png"), pm, false);
 //            pm = reducer.reduceWithRoberts(new Pixmap(Gdx.files.absolute(name)));
 //            png8.writePrecisely(Gdx.files.local(subname + "_Roberts"+suffix+".png"), pm, false);
 //            pm = reducer.reduceRobertsMul(new Pixmap(Gdx.files.absolute(name)));
 //            png8.writePrecisely(Gdx.files.local(subname + "_RobertsMul"+suffix+".png"), pm, false);
 //            pm = reducer.reduceRobertsEdit(new Pixmap(Gdx.files.absolute(name)));
 //            png8.writePrecisely(Gdx.files.local(subname + "_RobertsEdit"+suffix+".png"), pm, false);
-//            pm = reducer.reduceShaderMimic(new Pixmap(Gdx.files.absolute(name)));
+            pm = reducer.reduceShaderMimic(new Pixmap(Gdx.files.absolute(name)));
+            png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic"+suffix+".png"), pm, false);
 //            FileHandle next = Gdx.files.local(subname + "_ShaderMimic"+suffix+".png");
 //            png8.writePrecisely(next, pm, reducer.paletteArray, false, 0);
 //            int[] hsp = Arrays.copyOf(reducer.paletteArray, 256);
 //            PaletteReducer.hueShiftPalette(hsp);
 //            PNG8.swapPalette(next, Gdx.files.local(subname + "_ShaderMimicHSP"+suffix+".png"), hsp);
+            pm = (reducer.reduceFloydSteinberg(new Pixmap(Gdx.files.absolute(name))));
+            FileHandle next = Gdx.files.local(subname + "_FloydSteinberg"+suffix+".png");
+            png8.writePrecisely(next, pm, false);
             screenTexture = new Texture(next);
         } catch (IOException ignored) {
         }
@@ -88,13 +89,14 @@ public class Palettizer extends ApplicationAdapter {
         font = new BitmapFont();
         batch = new SpriteBatch();
         eq = new ColorEqualizer();
-        reducer = //Colorizer.SmashColorizer.getReducer(); 
+        reducer = new PaletteReducer(Coloring.DB16, PaletteReducer.labMetric); 
+            //Colorizer.SmashColorizer.getReducer(); 
 //                new PaletteReducer(); 
                 //new PaletteReducer(Colorizer.JudgeBonusPalette);
 //                Coloring.FLESURRECT_REDUCER;
                 //Colorizer.AuroraColorizer.getReducer();
                 //Colorizer.RinsedColorizer.getReducer();
-                 new PaletteReducer(Coloring.RELAXED_ROLL);
+//                 new PaletteReducer(Coloring.RELAXED_ROLL);
 //                 new PaletteReducer(Coloring.DB16, PaletteReducer.labMetric);
 //                 new PaletteReducer(Coloring.DB32);
         reducer.setDitherStrength(1f);

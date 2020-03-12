@@ -309,7 +309,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
 //        }
         
-        PALETTE = Coloring.AURORA;
+        PALETTE = Coloring.FLESURRECT_LLOYD;
 //        PALETTE = Coloring.SHELTZY32;
         
 //        PALETTE = new int[17];
@@ -354,7 +354,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        }
 //        PALETTE = Colorizer.CurveballBonusPalette;
         PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE, cm);
+        png8.palette = new PaletteReducer(PALETTE, PaletteReducer.labMetric);
 //        Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
 //        for (int i = 1; i < 64; i++) {
 //            pix.drawPixel(i-1, 0, PALETTE[i << 2 | 2]);
@@ -374,7 +374,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         }
         pix.drawPixel(255, 0, 0);
         try {
-            png8.writePrecisely(Gdx.files.local("DB_Aurora_Custom.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("FlesurrectLloyd.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -391,7 +391,7 @@ public class PaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("DB_Aurora_Custom_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("FlesurrectLloyd_GLSL.png"), p2, false);
 //            png8.writePrecisely(Gdx.files.local("Uniform"+PALETTE.length+"_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
@@ -406,7 +406,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //            }
 //        }
 //        PaletteReducer.print(data);
-        //Gdx.app.exit();
+        Gdx.app.exit();
     }
 
     /**

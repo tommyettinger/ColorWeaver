@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static colorweaver.PaletteReducer.labMetric;
+import static colorweaver.PaletteReducer.experimentalMetric;
 
 /**
  * Created by Tommy Ettinger on 1/30/2020.
@@ -88,7 +88,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		final float max = Math.max(Math.max(r, g), b);   //Max value of RGB
 		final float delta = max - min;                   //Delta RGB value
 
-		if ( delta < 0.125f )                     //This is mostly gray, not much chroma...
+		if ( delta < 0.1625f )                     //This is mostly gray, not much chroma...
 		{
 			return -100 + max * 0.01f;
 		}
@@ -128,7 +128,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	};
 
 	public int[] lloyd(int[] palette) {
-		PaletteReducer pr = new PaletteReducer(palette, labMetric);
+		PaletteReducer pr = new PaletteReducer(palette, experimentalMetric);
 		int[][] centroids = new int[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index, mix;
@@ -242,7 +242,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 		for (int i = 0; i < labs.size(); i++) {
 			for (int j = i + 1; j < labs.size(); j++) {
-				if(CIELABConverter.delta(labs.get(i), labs.get(j), 4.0, 1.0, 1.0) <= 100)
+				if((labs.get(i).alpha > 0.0 && labs.get(j).alpha > 0.0) && CIELABConverter.delta(labs.get(i), labs.get(j), 4.0, 1.0, 1.0) <= 100)
 				{
 					removalSet.add(i);
 					removalSet.add(j);
@@ -283,9 +283,9 @@ public class ColorizerPreview extends ApplicationAdapter {
 	}
 	
 	public void create () {
-		palette = Coloring.AURORA_MOD;
+		palette = Coloring.UNSEVEN;
 		mixingPalette = new ArrayList<>(256);
-		for (int i = 1; i < 256; i++) {
+		for (int i = 0; i < 256; i++) {
 			mixingPalette.add(palette[i]);
 		}
 		mixPalette();
@@ -412,6 +412,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 		for (int i = 0; i < palette.length; i++) {
+			if(palette[i] == 0) continue;
 			for (int x = 0; x < 16; x++) {
 				for (int y = 0; y < 16; y++) {						
 					cubePix.drawPixel(x, y, colorizer.dimmer(SHAPE[y][x] & 3, (byte)i));
@@ -437,6 +438,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			@Override
 			public void filesDropped(String[] files) {
 				if (files != null && files.length > 0) {
+					app.mixingPalette.add(0);
 					for (int i = 0; i < files.length; i++) {
 						if (files[i].endsWith(".hex"))
 							app.loadPalette(files[i]);

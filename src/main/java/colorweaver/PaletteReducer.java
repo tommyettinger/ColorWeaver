@@ -145,7 +145,8 @@ public class PaletteReducer {
             A -= 500.0 * (x - y);
             B -= 200.0 * (y - z);
 
-            return L * L * 400.0 + A * A * 25.0 + B * B * 10.0;
+//            return L * L * 400.0 + A * A * 25.0 + B * B * 10.0;
+            return (L * L * 11.0 + A * A * 1.6 + B * B);
         }
         @Override
         public double difference(final int rgba1, final int r2, final int g2, final int b2)
@@ -193,7 +194,8 @@ public class PaletteReducer {
             A -= 500.0 * (x - y);
             B -= 200.0 * (y - z);
 
-            return L * L * 190.0 + A * A * 25.0 + B * B * 10.0;
+//            return L * L * 190.0 + A * A * 25.0 + B * B * 10.0;
+            return (L * L * 11.0 + A * A * 1.6 + B * B);
         }
         @Override
         public double difference(final int r1, final int g1, final int b1, final int r2, final int g2, final int b2) {
@@ -240,7 +242,8 @@ public class PaletteReducer {
             B -= 200.0 * (y - z);
 
             //return L * L * 190 + A * A * 25 + B * B * 10;
-            return L * L * 190.0 + A * A * 25.0 + B * B * 10.0;
+//            return L * L * 190.0 + A * A * 25.0 + B * B * 10.0;
+            return (L * L * 11.0 + A * A * 1.6 + B * B);
         }
 
     }
@@ -400,68 +403,39 @@ public class PaletteReducer {
     }
 
 
-    public static class YCwCmColorMetric implements ColorMetric {
+    public static class ExperimentalMetric implements ColorMetric {
         public static final double[] yLUT = new double[2041], cLUT = new double[511];
         static {
             for (int i = 1; i < 2041; i++) {
-                yLUT[i] = Math.cbrt(i / 2041.0) * 1163.73;
+                yLUT[i] = Math.cbrt(i / 2041.0);
             }
             for (int i = 1; i < 256; i++) {
-                cLUT[255 - i] = -(cLUT[255 + i] = Math.pow(i / 257.0, 0.625) * 179.293);
+                cLUT[255 - i] = -(cLUT[255 + i] = i * 0x1p-8);//Math.pow(i / 257.0, 0.75));
             }
         }
-        /**
-         * Color difference metric (squared) using YCwCm color space with cube-root Y; returns large numbers even for smallish differences.
-         * If this returns 250 or more, the colors may be perceptibly different; 500 or more almost guarantees it.
-         *
-         * @param rgba1 an RGBA8888 color as an int
-         * @param rgba2 an RGBA8888 color as an int
-         * @return the difference between the given colors, as a positive double
-         */
         @Override
-        public double difference(final int rgba1, final int rgba2)
-        {
-            if(((rgba1 ^ rgba2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
-            final int r1 = (rgba1 >>> 24);
-            final int g1 = (rgba1 >>> 16 & 0xFF);
-            final int b1 = (rgba1 >>> 8 & 0xFF);
-            final int r2 = (rgba2 >>> 24);
-            final int g2 = (rgba2 >>> 16 & 0xFF);
-            final int b2 = (rgba2 >>> 8 & 0xFF);
-            
-            final double y = yLUT[r1 * 3 + g1 * 4 + b1] - yLUT[r2 * 3 + g2 * 4 + b2];
-            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 1.5;
-            final double cm = cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2];
-            return y * y + cw * cw + cm * cm;
-            
-        }
-        @Override
-        public double difference(final int rgba1, final int r2, final int g2, final int b2)
-        {
-            if((rgba1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
-            final int r1 = (rgba1 >>> 24);
-            final int g1 = (rgba1 >>> 16 & 0xFF);
-            final int b1 = (rgba1 >>> 8 & 0xFF);
-
-            final double y = yLUT[r1 * 3 + g1 * 4 + b1] - yLUT[r2 * 3 + g2 * 4 + b2];
-            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 1.5;
-            final double cm = cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2];
-            return y * y + cw * cw + cm * cm;
-        }
-        @Override
-        public double difference(final int r1, final int g1, final int b1, final int r2, final int g2, final int b2) {
-            final double y = yLUT[r1 * 3 + g1 * 4 + b1] - yLUT[r2 * 3 + g2 * 4 + b2];
-            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]) * 1.5;
-            final double cm = cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2];
-            return y * y + cw * cw + cm * cm;
+        public double difference(int color1, int color2) {
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
         }
 
+        @Override
+        public double difference(int color1, int r2, int g2, int b2) {
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        @Override
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            final double y = yLUT[r1 * 3 + g1 * 4 + b1] - yLUT[r2 * 3 + g2 * 4 + b2];
+            final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]);
+            final double cm = (cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2]) * (cw * 1.25 + 2.0) * (cw * 1.25 + 2.0);
+            return y * y * 20.0 + cw * cw + cm * cm;
+        }
     }
 
     public static final BasicColorMetric basicMetric = new BasicColorMetric(); // has no state, should be fine static
     public static final LABEuclideanColorMetric labMetric = new LABEuclideanColorMetric();
     public static final LABRoughColorMetric labRoughMetric = new LABRoughColorMetric();
-    public static final YCwCmColorMetric ycwcmMetric = new YCwCmColorMetric();
+    public static final ExperimentalMetric experimentalMetric = new ExperimentalMetric();
     public byte[] paletteMapping;
     public final int[] paletteArray = new int[256];
     ByteArray curErrorRedBytes, nextErrorRedBytes, curErrorGreenBytes, nextErrorGreenBytes, curErrorBlueBytes, nextErrorBlueBytes;
