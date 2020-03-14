@@ -44,8 +44,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
     private ColorEqualizer eq;
     private ColorblindnessAdapter cba;
     
-    public static boolean equalize = true;
-    public static boolean equalizeCB = true;
+    public static boolean equalize = false;
+    public static boolean equalizeCB = false;
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -284,7 +284,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.EQUALS:
                         palette = (UIUtils.shift())
                             ? new Texture(Gdx.files.local("palettes/Uniform216_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                            : new Texture(Gdx.files.local("palettes/Quack64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                            : new Texture(Gdx.files.local("palettes/Cyanstar37_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.BACKSPACE:
                         palette = new Texture(Gdx.files.local("palettes/BW_GLSL.png"), Pixmap.Format.RGBA8888, false);

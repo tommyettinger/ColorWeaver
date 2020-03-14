@@ -238,6 +238,22 @@ public class Coloring {
     };
 
     /**
+     * A really nice low-mid-saturation palette with 36 colors, plus fully transparent; based on Greenstar32
+     * by Starhouse. Some small changes were made to Greenstar32 to improve its coverage of blue, purple,
+     * and green, including adding 4 colors (as well as transparent). Greenstar32 is one of the few palettes
+     * of its size that can color-reduce skin-tone-centric paintings like the Mona Lisa without imposing
+     * obvious dithering, though it does so by reducing maximum saturation. Cyanstar37 can do this too.
+     */
+    public static final int[] CYANSTAR37 = new int[]{
+        0x00000000,
+        0x635C5AFF,0x312E2FFF,0xFFEDD4FF,0x15111BFF,0x3D291DFF,0x6672BFFF,0x60434FFF,0x7A949CFF,
+        0x7AB366FF,0xA24D72FF,0x9A76BFFF,0x3D4186FF,0xF7DFAAFF,0x7A9EDFFF,0x396A76FF,0x15452DFF,
+        0x925EA2FF,0x62966AFF,0x8EAFA6FF,0x81776BFF,0xC37C6BFF,0x557A41FF,0xBBD18AFF,0x355525FF,
+        0xC6B5A5FF,0x9A765EFF,0xC38E92FF,0x45644FFF,0x5A2D5EFF,0x766E4DFF,0xC7A2CFFF,0xF8CF8EFF,
+        0xE1AD56FF,0xE3A6BBFF,0xDD997EFF,0xE9B58CFF
+    };
+
+    /**
      * @param name Name of a color
      * @return Retrieves color as an int from RINSED_MAP, or 0 if the name isn't found
      */
