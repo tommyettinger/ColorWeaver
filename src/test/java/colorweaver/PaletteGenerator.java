@@ -374,7 +374,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         }
         pix.drawPixel(255, 0, 0);
         try {
-            png8.writePrecisely(Gdx.files.local("FlesurrectLloyd.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Quack64.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -391,7 +391,7 @@ public class PaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("FlesurrectLloyd_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("Quack64_GLSL.png"), p2, false);
 //            png8.writePrecisely(Gdx.files.local("Uniform"+PALETTE.length+"_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();

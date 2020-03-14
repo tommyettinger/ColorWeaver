@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static colorweaver.PaletteReducer.experimentalMetric;
+import static colorweaver.PaletteReducer.basicMetric;
 
 /**
  * Created by Tommy Ettinger on 1/30/2020.
@@ -128,16 +128,16 @@ public class ColorizerPreview extends ApplicationAdapter {
 	};
 
 	public int[] lloyd(int[] palette) {
-		PaletteReducer pr = new PaletteReducer(palette, experimentalMetric);
-		int[][] centroids = new int[4][palette.length];
+		PaletteReducer pr = new PaletteReducer(palette, basicMetric);
+		float[][] centroids = new float[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index, mix;
 		float count;
 		for (int i = 0; i < 0x8000; i++) {
 			index = pm[i] & 0xFF;
-			centroids[0][index] += i >>> 10;
-			centroids[1][index] += i >>> 5 & 0x1F;
-			centroids[2][index] += i & 0x1F;
+			centroids[0][index] += (i >>> 10);
+			centroids[1][index] += (i >>> 5 & 0x1F);
+			centroids[2][index] += (i & 0x1F);
 			centroids[3][index]++;
 		}
 		mixingPalette.clear();
@@ -150,8 +150,8 @@ public class ColorizerPreview extends ApplicationAdapter {
 			count = centroids[3][i];
 			if(count == 0) continue;
 			mix = MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10
-				| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5 | MathUtils
-				.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
+				| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5 
+				| MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
 			mixingPalette.add(CIELABConverter.puff(mix));
 		}
 		Collections.sort(mixingPalette, hueComparator);
@@ -161,7 +161,28 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 		return palette;
 	}
-
+	private int[] emphasize (int[] palette) {
+		int rd = 1, gd = 1, bd = 1;
+		for (int i = 0; i < palette.length; i++) {
+			int color = palette[i];
+			if((color & 0x80) == 0)
+				continue;
+			rd = Math.max(Math.abs((color >>> 23 & 0x1FE) - 255), rd);
+			gd = Math.max(Math.abs((color >>> 15 & 0x1FE) - 255), gd);
+			bd = Math.max(Math.abs((color >>> 7  & 0x1FE) - 255), bd);
+		}
+		for (int i = 0; i < palette.length; i++) {
+			int color = palette[i];
+			if((color & 0x80) == 0)
+				continue;
+			int r = ((color >>> 23 & 0x1FE) - 255) * 255 / rd + 255 >>> 1;
+			int g = ((color >>> 15 & 0x1FE) - 255) * 255 / gd + 255 >>> 1;
+			int b = ((color >>> 7  & 0x1FE) - 255) * 255 / bd + 255 >>> 1;
+			palette[i] = r << 24 | g << 16 | b << 8 | 0xFF;
+		}
+		return palette;
+	}
+	
 	public int[] modify(int[] palette, float saturation, float brightness, float jiggle) {
 		mixingPalette.clear();
 		for (int i = 0; i < palette.length; i++) {
@@ -283,9 +304,9 @@ public class ColorizerPreview extends ApplicationAdapter {
 	}
 	
 	public void create () {
-		palette = Coloring.UNSEVEN;
+		palette = Coloring.FLESURRECT;
 		mixingPalette = new ArrayList<>(256);
-		for (int i = 0; i < 256; i++) {
+		for (int i = 0; i < palette.length; i++) {
 			mixingPalette.add(palette[i]);
 		}
 		mixPalette();
@@ -379,11 +400,15 @@ public class ColorizerPreview extends ApplicationAdapter {
 					colorizer = Colorizer.arbitraryLABColorizer(palette);
 					break;
 				case Input.Keys.D:
-					distribute(palette);
+				    palette = distribute(palette);
 					colorizer = Colorizer.arbitraryLABColorizer(palette);
 					break;
-				case Input.Keys.L:						
+				case Input.Keys.L:
 					palette = lloyd(palette);
+					colorizer = Colorizer.arbitraryLABColorizer(palette);
+					break;
+				case Input.Keys.E:
+					palette = emphasize(palette);
 					colorizer = Colorizer.arbitraryLABColorizer(palette);
 					break;
 				default:
