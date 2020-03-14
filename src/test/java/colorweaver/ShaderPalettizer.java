@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.utils.UIUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -36,6 +37,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
     private ShaderProgram defaultShader;
     private ShaderProgram shader, shader2, shaderCB;
     private Texture palette;
+    private FileHandle[] lospec;
+    private int lospecIndex = 0;
     private Vector3 add, mul;
 
     private ColorEqualizer eq;
@@ -72,21 +75,21 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if(!file.exists())
             return;
         if(screenTexture != null) screenTexture.dispose();
-        ShaderPalettizer.equalize = equalize;
-        if(equalize)
-        {
-            if(equalizeCB = !equalizeCB)
-            {
-                screenTexture = new Texture(cba.processRoughness(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
-                batch.setShader(shaderCB);
-            }
-            else
-            {
-                screenTexture = new Texture(cba.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
-                batch.setShader(defaultShader);
-            }
-        }
-        else
+//        ShaderPalettizer.equalize = equalize;
+//        if(equalize)
+//        {
+//            if(equalizeCB = !equalizeCB)
+//            {
+//                screenTexture = new Texture(cba.processRoughness(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+//                batch.setShader(shaderCB);
+//            }
+//            else
+//            {
+//                screenTexture = new Texture(cba.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
+//                batch.setShader(defaultShader);
+//            }
+//        }
+//        else
             screenTexture = new Texture(file);
         screenTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         Gdx.graphics.setWindowedMode(screenTexture.getWidth() * 2, screenTexture.getHeight());
@@ -99,6 +102,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
         startTime = TimeUtils.millis();
         eq = new ColorEqualizer();
         cba = new ColorblindnessAdapter();
+        lospec = Gdx.files.local("palettes/gen/").list("_GLSL.png");
         palette = new Texture(Gdx.files.local("palettes/DB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
         palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         font = new BitmapFont();
@@ -190,7 +194,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                     case Input.Keys.NUM_1:
                     case Input.Keys.NUMPAD_1:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
                                 ? new Texture(Gdx.files.local("palettes/DB16_GLSL.png"), Pixmap.Format.RGBA8888, false)
 //                                : new Texture(Gdx.files.local("DB22LAB_GLSL.png"), Pixmap.Format.RGBA8888, false);
                                 : new Texture(Gdx.files.local("palettes/DB8_GLSL.png"), Pixmap.Format.RGBA8888, false);
@@ -198,7 +202,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                     case Input.Keys.NUM_2:
                     case Input.Keys.NUMPAD_2:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
 //                                ? new Texture(Gdx.files.local("palettes/Smash256_GLSL.png"), Pixmap.Format.RGBA8888, false)
                                 ? new Texture(Gdx.files.local("palettes/DB32_GLSL.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/DB_Iso22_GLSL.png"), Pixmap.Format.RGBA8888, false);
@@ -208,7 +212,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                     case Input.Keys.NUM_3:
                     case Input.Keys.NUMPAD_3:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
                                 ? new Texture(Gdx.files.local("palettes/UnsevenLloyd_GLSL.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/FlesurrectLloydC_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                                ? new Texture(Gdx.files.local("palettes/Smith256_GLSL_HS.png"), Pixmap.Format.RGBA8888, false)
@@ -218,27 +222,27 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                     case Input.Keys.NUM_4:
                     case Input.Keys.NUMPAD_4:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
                                 ? new Texture(Gdx.files.local("palettes/AuroraRelaxed_GLSL.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/DB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_5:
                     case Input.Keys.NUMPAD_5:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
                                 ? new Texture(Gdx.files.local("palettes/Ward_GLSL.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_6:
                     case Input.Keys.NUMPAD_6:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
                                 ? new Texture(Gdx.files.local("palettes/WardBonus_GLSL.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.NUM_7:
                     case Input.Keys.NUMPAD_7:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
                                 ? new Texture(Gdx.files.local("palettes/Sheltzy32_GLSL.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/Vinik24_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL_HS.png"), Pixmap.Format.RGBA8888, false);
@@ -246,7 +250,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                     case Input.Keys.NUM_8:
                     case Input.Keys.NUMPAD_8:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
                                 ? new Texture(Gdx.files.local("palettes/Lawn64_GLSL.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/LawnBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                                : new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
@@ -257,7 +261,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                     case Input.Keys.NUM_9:
                     case Input.Keys.NUMPAD_9:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
                                 ? new Texture(Gdx.files.local("palettes/Lawn256_GLSL_HS.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/Lawn256_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Laser64Bonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
@@ -266,42 +270,51 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                     case Input.Keys.NUM_0:
                     case Input.Keys.NUMPAD_0:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
                                 ? new Texture(Gdx.files.local("palettes/Tincture256_GLSL_HS.png"), Pixmap.Format.RGBA8888, false)
                                 : new Texture(Gdx.files.local("palettes/Tincture256_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/CIELAB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
 //                        palette = new Texture(Gdx.files.local("palettes/Uniform216_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.MINUS:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
                             ? new Texture(Gdx.files.local("palettes/GBGreen16_GLSL.png"), Pixmap.Format.RGBA8888, false)
                             : new Texture(Gdx.files.local("palettes/GBGreen_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.EQUALS:
-                        palette = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+                        palette = (UIUtils.shift())
                             ? new Texture(Gdx.files.local("palettes/Uniform216_GLSL.png"), Pixmap.Format.RGBA8888, false)
                             : new Texture(Gdx.files.local("palettes/Quack64_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.BACKSPACE:
                         palette = new Texture(Gdx.files.local("palettes/BW_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
+                case Input.Keys.ENTER:
+                    palette = new Texture(lospec[lospecIndex], Pixmap.Format.RGBA8888, false);
+                    break;
+                case Input.Keys.LEFT_BRACKET:
+                    palette = new Texture(lospec[lospecIndex = (lospecIndex - 1 + lospec.length) % lospec.length], Pixmap.Format.RGBA8888, false);
+                    break;
+                case Input.Keys.RIGHT_BRACKET:
+                    palette = new Texture(lospec[lospecIndex = (lospecIndex + 1) % lospec.length], Pixmap.Format.RGBA8888, false);
+                    break;
                     case Input.Keys.M: // Mona Lisa
-                        load("samples/Mona_Lisa.jpg", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
+                        load("samples/Mona_Lisa.jpg", UIUtils.shift());
                         break;
                     case Input.Keys.S: //Sierra Nevada
-                        load("samples/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
+                        load("samples/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg", UIUtils.shift());
                         break;
                     case Input.Keys.B: // Biva
-                        load("samples/Painting_by_Henri_Biva.jpg", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
+                        load("samples/Painting_by_Henri_Biva.jpg", UIUtils.shift());
                         break;
                     case Input.Keys.C: // Color Guard
-                        load("samples/Color_Guard.png", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
+                        load("samples/Color_Guard.png", UIUtils.shift());
                         break;
                     case Input.Keys.F: // lower-color palette
-                        load("samples/Flesurrect_Spaceships.png", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
+                        load("samples/Flesurrect_Spaceships.png", UIUtils.shift());
                         break;
                     case Input.Keys.A: // higher-color palette
-                        load("samples/Aurora_Spaceships.png", Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT));
+                        load("samples/Aurora_Spaceships.png", UIUtils.shift());
                         break;
 //                    case Input.Keys.D: // dither/disable
 //                        if(!batch.getShader().equals(shader))
@@ -316,7 +329,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
 //                        }
 //                        break;
                     case Input.Keys.SPACE:
-                        if((Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)))
+                        if((UIUtils.shift()))
                         {
                             batch.setShader(shader2);
                         }
@@ -351,7 +364,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
         lastProcessedTime = TimeUtils.millis();
         Vector3 changing;
         // holding shift will change multipliers, otherwise it affects addends
-        if(input.isKeyPressed(Input.Keys.SHIFT_LEFT) || input.isKeyPressed(Input.Keys.SHIFT_RIGHT))
+        if(UIUtils.shift())
             changing = mul;
         else
             changing = add;
