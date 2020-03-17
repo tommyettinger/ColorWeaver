@@ -1,5 +1,6 @@
 package colorweaver;
 
+import colorweaver.tools.TrigTools;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
@@ -1870,7 +1871,8 @@ public class PaletteReducer {
         int color, used;
         float pos;
         float adj;
-        final float strength = 0x1.4p-10f * ditherStrength;
+//        final float strength = 0x1.4p-10f * ditherStrength;
+        final float strength = ditherStrength;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1881,15 +1883,21 @@ public class PaletteReducer {
                     int rr = ((color >>> 24)       );
                     int gg = ((color >>> 16) & 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);
-                    float len = (rr * 5 + gg * 9 + bb * 2) * strength + 1f;
+                    //float len = (rr * 5 + gg * 9 + bb * 2) * strength + 1f;
                     //adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * len - len * 0.5;
+                    //adj = asin(fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * 0.875 
+                    //         - fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) * 0.5);
                     used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF];
                     pos = (px * 0.06711056f + y * 0.00583715f);
                     pos -= (int)pos;
                     pos *= 52.9829189f;
-                    adj = (pos - (int)pos) * len - len * 0.5f;
+                    pos -= (int)pos;
+                    pos *= 0.875f;
+                    adj = (px * 0.7548776662466927f + y * 0.5698402909980532f);
+                    adj -= (int)adj;
+                    adj = TrigTools.asin((pos - adj) * strength);
                     rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF); //  * 17 >> 4
                     gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF); //  * 23 >> 4
                     bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF); // * 5 >> 4
