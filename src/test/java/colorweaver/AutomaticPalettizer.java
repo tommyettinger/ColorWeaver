@@ -101,9 +101,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
 //            pm = reducer.reduce(new Pixmap(sample));
 //            png8.writePrecisely(Gdx.files.local(subname + "_SierraLite"+suffix+".png"), pm, false);
-
-                    pm = reducer.reduceSolid(new Pixmap(sample));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
+////good
+//                    pm = reducer.reduceSolid(new Pixmap(sample));
+//                    png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
 
 //            pm = reducer.reduceWithRoberts(new Pixmap(sample));
 //            png8.writePrecisely(Gdx.files.local(subname + "_Roberts"+suffix+".png"), pm, false);
@@ -113,12 +113,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
 //            pm = reducer.reduceRobertsEdit(new Pixmap(sample));
 //            png8.writePrecisely(Gdx.files.local(subname + "_RobertsEdit"+suffix+".png"), pm, false);
-
+////good
                     pm = reducer.reduceShaderMimic(new Pixmap(sample));
                     png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
-
-                    pm = (reducer.reduceFloydSteinberg(new Pixmap(sample)));
-                    png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
+////good
+//                    pm = (reducer.reduceFloydSteinberg(new Pixmap(sample)));
+//                    png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

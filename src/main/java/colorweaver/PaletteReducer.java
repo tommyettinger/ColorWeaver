@@ -1872,7 +1872,7 @@ public class PaletteReducer {
         float pos;
         float adj;
 //        final float strength = 0x1.4p-10f * ditherStrength;
-        final float strength = ditherStrength;
+        final float strength = ditherStrength * 1.8f;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1897,7 +1897,7 @@ public class PaletteReducer {
                     pos *= 0.875f;
                     adj = (px * 0.7548776662466927f + y * 0.5698402909980532f);
                     adj -= (int)adj;
-                    adj = TrigTools.asin((pos - adj) * strength);
+                    adj = TrigTools.asin((pos - adj * 0.3125f) * strength) * 1.25f;
                     rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF); //  * 17 >> 4
                     gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF); //  * 23 >> 4
                     bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF); // * 5 >> 4
