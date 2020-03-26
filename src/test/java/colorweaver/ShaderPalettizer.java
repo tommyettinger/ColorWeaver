@@ -283,7 +283,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                     case Input.Keys.EQUALS:
                         palette = (UIUtils.shift())
-                            ? new Texture(Gdx.files.local("palettes/Uniform216_GLSL.png"), Pixmap.Format.RGBA8888, false)
+                            ? new Texture(Gdx.files.local("palettes/Azurestar33_GLSL.png"), Pixmap.Format.RGBA8888, false)
                             : new Texture(Gdx.files.local("palettes/Cyanstar37_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                     case Input.Keys.BACKSPACE:

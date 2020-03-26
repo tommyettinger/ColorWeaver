@@ -309,7 +309,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
 //        }
         
-        PALETTE = Coloring.CYANSTAR37;
+        PALETTE = Coloring.AZURESTAR33;
 //        PALETTE = Coloring.SHELTZY32;
         
 //        PALETTE = new int[17];
@@ -374,7 +374,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         }
         pix.drawPixel(255, 0, 0);
         try {
-            png8.writePrecisely(Gdx.files.local("Cyanstar37.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Azurestar33.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -391,7 +391,7 @@ public class PaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("Cyanstar37_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("Azurestar33_GLSL.png"), p2, false);
 //            png8.writePrecisely(Gdx.files.local("Uniform"+PALETTE.length+"_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
