@@ -1872,7 +1872,7 @@ public class PaletteReducer {
         float pos;
         float adj;
 //        final float strength = 0x1.4p-10f * ditherStrength;
-        final float strength = ditherStrength * 1.8f;
+        final float strength = ditherStrength * 4f;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1887,6 +1887,7 @@ public class PaletteReducer {
                     //adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * len - len * 0.5;
                     //adj = asin(fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * 0.875 
                     //         - fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) * 0.5);
+                    //adj = 2.0 * sin(fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * 1.44 - 0.72);
                     used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF];
@@ -1894,10 +1895,11 @@ public class PaletteReducer {
                     pos -= (int)pos;
                     pos *= 52.9829189f;
                     pos -= (int)pos;
-                    pos *= 0.875f;
-                    adj = (px * 0.7548776662466927f + y * 0.5698402909980532f);
-                    adj -= (int)adj;
-                    adj = TrigTools.asin((pos - adj * 0.3125f) * strength) * 1.25f;
+                    adj = TrigTools.sin(pos * 1.44f - 0.72f) * strength;
+//                    pos *= 0.875f;
+//                    adj = (px * 0.7548776662466927f + y * 0.5698402909980532f);
+//                    adj -= (int)adj;
+//                    adj = TrigTools.asin((pos - adj * 0.3125f) * strength) * 1.25f;
                     rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF); //  * 17 >> 4
                     gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF); //  * 23 >> 4
                     bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF); // * 5 >> 4
