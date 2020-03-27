@@ -301,10 +301,20 @@ public class ColorizerPreview extends ApplicationAdapter {
 		for (int i = 0; i < palette.length; i++) {
 			cubeTextures[i] = new Texture(16, 16, Pixmap.Format.RGBA8888);
 		}
+		int idx = 0;
+		if(palette[0] == 0)
+		{
+			System.out.println("\n0x00, 0x00, 0x00, 0x00,");
+			idx++;
+		}
+		for (; idx < palette.length; idx++) {
+			System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte)idx, -2), colorizer.colorize((byte)idx, -1), idx, colorizer.colorize((byte)idx, 1));
+		}
+
 	}
 	
 	public void create () {
-		palette = Coloring.CYANSTAR37;
+		palette = Coloring.AZURESTAR33;
 		mixingPalette = new ArrayList<>(256);
 		for (int i = 0; i < palette.length; i++) {
 			mixingPalette.add(palette[i]);

@@ -5,6 +5,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 
 import java.io.IOException;
@@ -352,23 +353,43 @@ public class PaletteGenerator extends ApplicationAdapter {
 //            pix.setColor(PALETTE[i]);
 //            pix.fillRectangle((i & 15) << 3, (i & -16) >>> 1, 8, 8);
 //        }
-//        PALETTE = Colorizer.CurveballBonusPalette;
+
         PNG8 png8 = new PNG8();
         png8.palette = new PaletteReducer(PALETTE, PaletteReducer.labMetric);
-//        Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
-//        for (int i = 1; i < 64; i++) {
+        Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
+
+        //// for palettes that are fairly small (64 or less) and don't have bonus info.
+        //// Meant initially for Azurestar33, which is very desaturated, so saturation may need tweaks for other palettes.
+        Color color = new Color();
+        for (int i = 1; i < 64 && i < PALETTE.length; i++) {
+            Color.rgba8888ToColor(color, PALETTE[i]);
+            float hue = NamedColor.hue(color) * 360f;
+            float sat = NamedColor.saturation(color);
+            float val = NamedColor.value(color);
+            pix.drawPixel(i-1, 0, Color.rgba8888(color.fromHsv(hue, sat * 2f, val * 1.125f)));
+            pix.drawPixel(i+63, 0, PALETTE[i]);
+            pix.drawPixel(i+127, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.25f, val * 0.75f)));
+            pix.drawPixel(i+191, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.875f, val * 1.3f)));
+        }
+        pix.drawPixel(255, 0, 0);
+
+        //// for Bonus palettes that store edits to their typically 64 colors in 4 chunks.
+//        for (int i = 1; i < 64 && i < PALETTE.length; i++) {
 //            pix.drawPixel(i-1, 0, PALETTE[i << 2 | 2]);
 //            pix.drawPixel(i+63, 0, PALETTE[i << 2]);
 //            pix.drawPixel(i+127, 0, PALETTE[i << 2 | 1]);
 //            pix.drawPixel(i+191, 0, PALETTE[i << 2 | 3]);
 //        }
-        //pix.drawPixel(255, 0, 0);
-//        try {
-//            png8.writePrecisely(Gdx.files.local("GBGreenMagicaVoxel.png"), pix, false);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
+//        pix.drawPixel(255, 0, 0);
+        
+        //// Used for either of the above.
+        try {
+            png8.writePrecisely(Gdx.files.local("AzureStar_MV.png"), pix, false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        pix.setColor(0);
+        pix.fill();
         for (int i = 1; i < PALETTE.length; i++) {
             pix.drawPixel(i-1, 0, PALETTE[i]);
         }
