@@ -1,6 +1,5 @@
 package colorweaver;
 
-import colorweaver.tools.TrigTools;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
@@ -10,7 +9,11 @@ import com.badlogic.gdx.utils.IntIntMap;
 import com.badlogic.gdx.utils.NumberUtils;
 
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Random;
 
 /**
  * Data that can be used to limit the colors present in a Pixmap or other image, here with the goal of using 256 or less
@@ -1870,9 +1873,9 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used;
         float pos;
-        float adj;
+        double adj;
 //        final float strength = 0x1.4p-10f * ditherStrength;
-        final float strength = ditherStrength * 4f;
+        final float strength = ditherStrength * 3.25f;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1895,7 +1898,9 @@ public class PaletteReducer {
                     pos -= (int)pos;
                     pos *= 52.9829189f;
                     pos -= (int)pos;
-                    adj = TrigTools.sin(pos * 1.44f - 0.72f) * strength;
+                    adj = (Math.sqrt(pos) * pos - 0.3125) * strength;
+//                    adj = TrigTools.sin(pos * 1.44f - 0.72f) * strength;
+                    
 //                    pos *= 0.875f;
 //                    adj = (px * 0.7548776662466927f + y * 0.5698402909980532f);
 //                    adj -= (int)adj;
