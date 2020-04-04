@@ -26,6 +26,7 @@ public class Palettizer extends ApplicationAdapter {
     protected PaletteReducer reducer;
     protected PNG8 png8;
     protected ColorEqualizer eq;
+    private int[] palette;
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -50,7 +51,7 @@ public class Palettizer extends ApplicationAdapter {
 
     public void load(String name) {
         try {
-            final String suffix = "_DB16";
+            final String suffix = "_Azurestar";
             //// loads a file by its full path, which we get via drag+drop
             Pixmap pm;
 //            reducer.analyze(pm, 1600, 32);
@@ -65,7 +66,7 @@ public class Palettizer extends ApplicationAdapter {
 //            png8.writePrecisely(Gdx.files.local(subname + "_SierraLite"+suffix+".png"), pm, false);
             
             pm = reducer.reduceSolid(new Pixmap(Gdx.files.absolute(name)));
-            png8.writePrecisely(Gdx.files.local(subname + "_Solid"+suffix+".png"), pm, false);
+            png8.writePrecisely(Gdx.files.local(subname + "_Solid"+suffix+".png"), pm, palette, false, 1);
             
 //            pm = reducer.reduceWithRoberts(new Pixmap(Gdx.files.absolute(name)));
 //            png8.writePrecisely(Gdx.files.local(subname + "_Roberts"+suffix+".png"), pm, false);
@@ -77,7 +78,7 @@ public class Palettizer extends ApplicationAdapter {
 //            png8.writePrecisely(Gdx.files.local(subname + "_RobertsEdit"+suffix+".png"), pm, false);
             
             pm = reducer.reduceShaderMimic(new Pixmap(Gdx.files.absolute(name)));
-            png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic"+suffix+".png"), pm, false);
+            png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic"+suffix+".png"), pm, palette, false, 1);
 //            FileHandle next = Gdx.files.local(subname + "_ShaderMimic"+suffix+".png");
 //            png8.writePrecisely(next, pm, reducer.paletteArray, false, 0);
 //            int[] hsp = Arrays.copyOf(reducer.paletteArray, 256);
@@ -85,7 +86,7 @@ public class Palettizer extends ApplicationAdapter {
 //            PNG8.swapPalette(next, Gdx.files.local(subname + "_ShaderMimicHSP"+suffix+".png"), hsp);
             pm = (reducer.reduceFloydSteinberg(new Pixmap(Gdx.files.absolute(name))));
             FileHandle next = Gdx.files.local(subname + "_FloydSteinberg"+suffix+".png");
-            png8.writePrecisely(next, pm, false);
+            png8.writePrecisely(next, pm, palette, false, 1);
             screenTexture = new Texture(next);
         } catch (IOException ignored) {
         }
@@ -96,7 +97,8 @@ public class Palettizer extends ApplicationAdapter {
         font = new BitmapFont();
         batch = new SpriteBatch();
         eq = new ColorEqualizer();
-        reducer = new PaletteReducer(Coloring.DB16, PaletteReducer.labMetric); 
+        palette = Coloring.AZURESTAR33;
+        reducer = new PaletteReducer(Coloring.AZURESTAR33, PaletteReducer.labMetric); 
             //Colorizer.SmashColorizer.getReducer(); 
 //                new PaletteReducer(); 
                 //new PaletteReducer(Colorizer.JudgeBonusPalette);
@@ -117,9 +119,10 @@ public class Palettizer extends ApplicationAdapter {
         Gdx.input.setInputProcessor(inputProcessor());
 
         // if you don't have these files on this absolute path, that's fine, and they will be ignored
-        load("D:/Painting_by_Henri_Biva.jpg");
-        load("D:/Mona_Lisa.jpg");
-        load("D:/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg");
+//        load("D:/Painting_by_Henri_Biva.jpg");
+//        load("D:/Mona_Lisa.jpg");
+//        load("D:/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg");
+        load("D:/Dawnlike.png");
     }
 
 

@@ -361,15 +361,17 @@ public class PaletteGenerator extends ApplicationAdapter {
         //// for palettes that are fairly small (64 or less) and don't have bonus info.
         //// Meant initially for Azurestar33, which is very desaturated, so saturation may need tweaks for other palettes.
         Color color = new Color();
-        for (int i = 1; i < 64 && i < PALETTE.length; i++) {
+        for (int i = 1; i < 33 && i < PALETTE.length; i++) {
             Color.rgba8888ToColor(color, PALETTE[i]);
             float hue = NamedColor.hue(color) * 360f;
             float sat = NamedColor.saturation(color);
             float val = NamedColor.value(color);
-            pix.drawPixel(i-1, 0, Color.rgba8888(color.fromHsv(hue, sat * 2f, val * 1.125f)));
-            pix.drawPixel(i+63, 0, PALETTE[i]);
-            pix.drawPixel(i+127, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.25f, val * 0.75f)));
-            pix.drawPixel(i+191, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.875f, val * 1.3f)));
+            pix.drawPixel(i-1, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.75f, val)));
+            pix.drawPixel(i+62, 0, PALETTE[i]);
+            pix.drawPixel(i+126, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.875f, val * 1.25f)));
+            pix.drawPixel(i+158, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.25f, val * 1.25f)));
+            pix.drawPixel(i+190, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.925f, val * 0.75f)));
+            pix.drawPixel(i+222, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.3f, val * 0.75f)));
         }
         pix.drawPixel(255, 0, 0);
 
