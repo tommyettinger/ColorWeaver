@@ -532,8 +532,8 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 	{
 		final double[][] labs = new double[3][0x8000];
 		double r, g, b, x, y, z, L, A, B;
-		double[] minA = new double[20], maxA = new double[20], minB = new double[20], maxB = new double[20];
-		int[][][] grids = new int[20][5][5];
+//		double[] minA = new double[20], maxA = new double[20], minB = new double[20], maxB = new double[20];
+//		int[][][] grids = new int[20][5][5];
 		for (int ri = 0; ri < 32; ri++) {
 			r = ri / 31.0;
 			r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
