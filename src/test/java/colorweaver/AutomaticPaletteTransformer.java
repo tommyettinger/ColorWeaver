@@ -92,7 +92,8 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
         Gdx.files.local("palettes/gen/").mkdirs();
         Gdx.files.local("palettes/gen/hex/").mkdirs();
-        for(FileHandle hex : hexes) {
+//        for(FileHandle hex : hexes) {
+        FileHandle hex = Gdx.files.local("palettes/hex/gb-16.hex");{
             String name = hex.nameWithoutExtension().toLowerCase();
             loadPalette(name);
             StringBuilder sb = new StringBuilder((1 + 12 * 8) * (PALETTE.length + 7 >>> 3));
