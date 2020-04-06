@@ -26,22 +26,22 @@ public class HexGenerator extends ApplicationAdapter {
     @Override
     public void create() {
         palette = new int[32];
-        double hueAngle = 0.0, sat;
+        double hueAngle = 0.15, sat;
         for (int i = 0; i < 6; i++) {
-            sat = TrigTools.sin_((i / 5.0) * 2.0) * 15.0;
-            palette[1 + i] = CIELABConverter.rgba8888((i / 5.0) * 100.0, TrigTools.cos_(hueAngle) * sat, TrigTools.sin_(hueAngle) * sat * 1.6);
+            sat = TrigTools.sin_((i / 5.0) * 2.0) * 11.0;
+            palette[1 + i] = CIELABConverter.rgba8888((i / 5.0) * 100.0, TrigTools.cos_(hueAngle) * sat, TrigTools.sin_(hueAngle) * sat * 1.5);
             hueAngle += 0.6180339887498949;
         }
         for (int i = 1; i < 26; i++) {
-            sat = TrigTools.sin_(((i + 5) / 36.0) * 0.5) * 30.0;
-            palette[6 + i] = CIELABConverter.rgba8888(((i+2) / 30.0) * 100.0, TrigTools.cos_(hueAngle) * sat, TrigTools.sin_(hueAngle) * sat * 1.6);
+            sat = TrigTools.sin_(((i + 5) / 36.0) * 0.5) * 32.0;
+            palette[6 + i] = CIELABConverter.rgba8888(Math.pow((i+2) / 30.0, 0.75) * 100.0, TrigTools.cos_(hueAngle) * sat, TrigTools.sin_(hueAngle) * sat * 1.5);
             hueAngle += 0.6180339887498949;
         }
         StringBuilder sb = new StringBuilder(palette.length * 7);
         for (int i = 1; i < palette.length; i++) {
             sb.append(String.format("%06x\n", palette[i] >>> 8));
         }
-        Gdx.files.local("palettes/hex/spire-31.hex").writeString(sb.toString(), false);
+        Gdx.files.local("palettes/hex/sprout-31.hex").writeString(sb.toString(), false);
         System.out.println("new int[] {");
         for (int i = 0; i < palette.length; i++) {
             System.out.print("0x" + StringKit.hex(palette[i]) + ", ");
