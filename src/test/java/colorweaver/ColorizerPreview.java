@@ -314,7 +314,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	}
 	
 	public void create () {
-		palette = Coloring.AZURESTAR33;
+		palette = Coloring.SPLAT32;
 		mixingPalette = new ArrayList<>(256);
 		for (int i = 0; i < palette.length; i++) {
 			mixingPalette.add(palette[i]);
