@@ -77,7 +77,33 @@ public class PaletteGenerator extends ApplicationAdapter {
     {
         return ((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L & 0x1FFFFFFFFFFFFFL) * 0x1p-53;
     }
-    
+
+    private final double[][] lab15 = CIELABConverter.makeLAB15();
+    private final PaletteReducer.ColorMetric cm = new PaletteReducer.ColorMetric(){
+        @Override
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        @Override
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        @Override
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
+                indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
+            final double
+                L = lab15[0][indexA] - lab15[0][indexB],
+                A = lab15[1][indexA] - lab15[1][indexB],
+                B = lab15[2][indexA] - lab15[2][indexB];
+            return L * L * 11.0 + A * A * 1.6 + B * B;
+        }
+    };
+
     public void create() {
 //        final float[] hues = {0.0f, 0.07179487f, 0.07749468f, 0.098445594f, 0.09782606f, 0.14184391f, 0.16522992f,
 //                0.20281118f, 0.20285714f, 0.21867621f, 0.25163394f, 0.3141666f, 0.3715499f, 0.37061405f, 0.44054055f,
@@ -276,29 +302,6 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        Gdx.files.local("DawnBringer_Aurora_Official.hex").writeString(sbs, false);
 //        sb.setLength(0);
 
-        final double[][] lab15 = CIELABConverter.makeLAB15();
-        PaletteReducer.ColorMetric cm = new PaletteReducer.ColorMetric(){
-            @Override
-            public double difference(int color1, int color2) {
-                return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
-            }
-
-            @Override
-            public double difference(int color1, int r2, int g2, int b2) {
-                return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
-            }
-
-            @Override
-            public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-                int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
-                        indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
-                final double
-                        L = lab15[0][indexA] - lab15[0][indexB],
-                        A = lab15[1][indexA] - lab15[1][indexB],
-                        B = lab15[2][indexA] - lab15[2][indexB];
-                return L * L * 170.0 + A * A * 25.0 + B * B * 25.0;
-            }
-        };
 //        PALETTE = Coloring.SMASH256;
 //        PaletteReducer pr = new PaletteReducer(PALETTE, PaletteReducer.labRoughMetric);
 //        for (int i = 1; i < Coloring.GRAY8.length; i++) {
@@ -310,7 +313,8 @@ public class PaletteGenerator extends ApplicationAdapter {
 //            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
 //        }
         
-        PALETTE = Coloring.AZURESTAR33;
+        PALETTE = Coloring.SPLAT32;
+//        PALETTE = Coloring.AZURESTAR33;
 //        PALETTE = Coloring.SHELTZY32;
         
 //        PALETTE = new int[17];
@@ -355,23 +359,41 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        }
 
         PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE, PaletteReducer.labMetric);
+        png8.palette = new PaletteReducer(PALETTE, cm);
         Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
 
         //// for palettes that are fairly small (64 or less) and don't have bonus info.
         //// Meant initially for Azurestar33, which is very desaturated, so saturation may need tweaks for other palettes.
+//        Color color = new Color();
+//        for (int i = 1; i < 33 && i < PALETTE.length; i++) {
+//            Color.rgba8888ToColor(color, PALETTE[i]);
+//            float hue = NamedColor.hue(color) * 360f;
+//            float sat = NamedColor.saturation(color);
+//            float val = NamedColor.value(color);
+//            pix.drawPixel(i-1, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.75f, val)));
+//            pix.drawPixel(i+62, 0, PALETTE[i]);
+//            pix.drawPixel(i+126, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.875f, val * 1.25f)));
+//            pix.drawPixel(i+158, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.25f, val * 1.25f)));
+//            pix.drawPixel(i+190, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.925f, val * 0.75f)));
+//            pix.drawPixel(i+222, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.3f, val * 0.75f)));
+//        }
+//        pix.drawPixel(255, 0, 0);
+//        
+        //// meant for Splat32
         Color color = new Color();
-        for (int i = 1; i < 33 && i < PALETTE.length; i++) {
+        for (int i = 1; i < 32 && i < PALETTE.length; i++) {
             Color.rgba8888ToColor(color, PALETTE[i]);
             float hue = NamedColor.hue(color) * 360f;
             float sat = NamedColor.saturation(color);
             float val = NamedColor.value(color);
             pix.drawPixel(i-1, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.75f, val)));
-            pix.drawPixel(i+62, 0, PALETTE[i]);
-            pix.drawPixel(i+126, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.875f, val * 1.25f)));
-            pix.drawPixel(i+158, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.25f, val * 1.25f)));
-            pix.drawPixel(i+190, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.925f, val * 0.75f)));
-            pix.drawPixel(i+222, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.3f, val * 0.75f)));
+            pix.drawPixel(i-1+32, 0, PALETTE[i]);
+            pix.drawPixel(i-1+64, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.875f, val * 1.25f)));
+            pix.drawPixel(i-1+96, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.25f, val * 1.25f)));
+            pix.drawPixel(i-1+128, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.925f, val * 0.75f)));
+            pix.drawPixel(i-1+160, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.3f, val * 0.75f)));
+            pix.drawPixel(i-1+192, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.75f, val * 0.6f)));
+            pix.drawPixel(i-1+224, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.45f, val * 1.35f)));
         }
         pix.drawPixel(255, 0, 0);
 
@@ -386,7 +408,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         
         //// Used for either of the above.
         try {
-            png8.writePrecisely(Gdx.files.local("AzureStar_MV.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Splat32_MV.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -397,7 +419,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         }
         pix.drawPixel(255, 0, 0);
         try {
-            png8.writePrecisely(Gdx.files.local("Azurestar33.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Splat32.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -414,7 +436,7 @@ public class PaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("Azurestar33_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("Splat32_GLSL.png"), p2, false);
 //            png8.writePrecisely(Gdx.files.local("Uniform"+PALETTE.length+"_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
