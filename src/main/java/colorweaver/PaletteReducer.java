@@ -1213,7 +1213,8 @@ public class PaletteReducer {
     }
 
     /**
-     * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can.
+     * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can
+     * using Floyd-Steinberg (this merely delegates to {@link #reduceFloydSteinberg(Pixmap)}).
      * If you want to reduce the colors in a Pixmap based on what it currently contains, call
      * {@link #analyze(Pixmap)} with {@code pixmap} as its argument, then call this method with the same
      * Pixmap. You may instead want to use a known palette instead of one computed from a Pixmap;
@@ -1225,89 +1226,7 @@ public class PaletteReducer {
      * @return the given Pixmap, for chaining
      */
     public Pixmap reduce (Pixmap pixmap) {
-        boolean hasTransparent = (paletteArray[0] == 0);
-        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
-        byte[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
-        if (curErrorRedBytes == null) {
-            curErrorRed = (curErrorRedBytes = new ByteArray(lineLen)).items;
-            nextErrorRed = (nextErrorRedBytes = new ByteArray(lineLen)).items;
-            curErrorGreen = (curErrorGreenBytes = new ByteArray(lineLen)).items;
-            nextErrorGreen = (nextErrorGreenBytes = new ByteArray(lineLen)).items;
-            curErrorBlue = (curErrorBlueBytes = new ByteArray(lineLen)).items;
-            nextErrorBlue = (nextErrorBlueBytes = new ByteArray(lineLen)).items;
-        } else {
-            curErrorRed = curErrorRedBytes.ensureCapacity(lineLen);
-            nextErrorRed = nextErrorRedBytes.ensureCapacity(lineLen);
-            curErrorGreen = curErrorGreenBytes.ensureCapacity(lineLen);
-            nextErrorGreen = nextErrorGreenBytes.ensureCapacity(lineLen);
-            curErrorBlue = curErrorBlueBytes.ensureCapacity(lineLen);
-            nextErrorBlue = nextErrorBlueBytes.ensureCapacity(lineLen);
-            for (int i = 0; i < lineLen; i++) {
-                nextErrorRed[i] = 0;
-                nextErrorGreen[i] = 0;
-                nextErrorBlue[i] = 0;
-            }
-
-        }
-        Pixmap.Blending blending = pixmap.getBlending();
-        pixmap.setBlending(Pixmap.Blending.None);
-        int color, used, rdiff, gdiff, bdiff;
-        byte er, eg, eb, paletteIndex;
-        for (int y = 0; y < h; y++) {
-            int ny = y + 1;
-            for (int i = 0; i < lineLen; i++) {
-                curErrorRed[i] = nextErrorRed[i];
-                curErrorGreen[i] = nextErrorGreen[i];
-                curErrorBlue[i] = nextErrorBlue[i];
-                nextErrorRed[i] = 0;
-                nextErrorGreen[i] = 0;
-                nextErrorBlue[i] = 0;
-            }
-            for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y) & 0xF8F8F880;
-                if ((color & 0x80) == 0 && hasTransparent)
-                    pixmap.drawPixel(px, y, 0);
-                else {
-                    er = curErrorRed[px];
-                    eg = curErrorGreen[px];
-                    eb = curErrorBlue[px];
-                    color |= (color >>> 5 & 0x07070700) | 0xFE;
-                    int rr = MathUtils.clamp(((color >>> 24)       ) + (er), 0, 0xFF);
-                    int gg = MathUtils.clamp(((color >>> 16) & 0xFF) + (eg), 0, 0xFF);
-                    int bb = MathUtils.clamp(((color >>> 8)  & 0xFF) + (eb), 0, 0xFF);
-                    paletteIndex =
-                            paletteMapping[((rr << 7) & 0x7C00)
-                                    | ((gg << 2) & 0x3E0)
-                                    | ((bb >>> 3))];
-                    used = paletteArray[paletteIndex & 0xFF];
-                    pixmap.drawPixel(px, y, used);
-                    rdiff = (color>>>24)-    (used>>>24);
-                    gdiff = (color>>>16&255)-(used>>>16&255);
-                    bdiff = (color>>>8&255)- (used>>>8&255);
-                    if(px < lineLen - 1)
-                    {
-                        curErrorRed[px+1]   += rdiff * ditherStrength;
-                        curErrorGreen[px+1] += gdiff * ditherStrength;
-                        curErrorBlue[px+1]  += bdiff * ditherStrength;
-                    }
-                    if(ny < h)
-                    {
-                        if(px > 0)
-                        {
-                            nextErrorRed[px-1]   += rdiff * halfDitherStrength;
-                            nextErrorGreen[px-1] += gdiff * halfDitherStrength;
-                            nextErrorBlue[px-1]  += bdiff * halfDitherStrength;
-                        }
-                        nextErrorRed[px]   += rdiff * halfDitherStrength;
-                        nextErrorGreen[px] += gdiff * halfDitherStrength;
-                        nextErrorBlue[px]  += bdiff * halfDitherStrength;
-                    }
-                }
-            }
-
-        }
-        pixmap.setBlending(blending);
-        return pixmap;
+        return reduceFloydSteinberg(pixmap);
     }
 
     /**
@@ -1349,16 +1268,15 @@ public class PaletteReducer {
 
     /**
      * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can using
-     * Burkes dithering instead of the Sierra Lite dithering that {@link #reduce(Pixmap)} uses.
+     * Burkes dithering instead of the Floyd-Steinberg dithering that {@link #reduce(Pixmap)} uses.
      * If you want to reduce the colors in a Pixmap based on what it currently contains, call
      * {@link #analyze(Pixmap)} with {@code pixmap} as its argument, then call this method with the same
      * Pixmap. You may instead want to use a known palette instead of one computed from a Pixmap;
      * {@link #exact(int[])} is the tool for that job.
      * <p>
      * This method is not incredibly fast because of the extra calculations it has to do for dithering, but if you can
-     * compute the PaletteReducer once and reuse it, that will save some time. Burkes dithering causes error to be
-     * propagated to more than twice as many pixels as Sierra Lite (7 instead of 3), but both only affect one row ahead
-     * of the pixel that is currently being dithered. For small images, the time spent dithering should be negligible.
+     * compute the PaletteReducer once and reuse it, that will save some time. Burkes dithering probably takes about as
+     * much time as Floyd-Steinberg, and has pretty close quality.
      * @param pixmap a Pixmap that will be modified in place
      * @return the given Pixmap, for chaining
      */
@@ -1627,6 +1545,104 @@ public class PaletteReducer {
         return pixmap;
     }
     /**
+     * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can using
+     * Sierra Lite dithering instead of the Floyd-Steinberg dithering that {@link #reduce(Pixmap)} uses.
+     * If you want to reduce the colors in a Pixmap based on what it currently contains, call
+     * {@link #analyze(Pixmap)} with {@code pixmap} as its argument, then call this method with the same
+     * Pixmap. You may instead want to use a known palette instead of one computed from a Pixmap;
+     * {@link #exact(int[])} is the tool for that job.
+     * <p>
+     * This method is meant to be a little faster than Floyd-Steinberg, but the quality isn't quite as good sometimes.
+     * @param pixmap a Pixmap that will be modified in place
+     * @return the given Pixmap, for chaining
+     */
+    public Pixmap reduceSierraLite (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        byte[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedBytes == null) {
+            curErrorRed = (curErrorRedBytes = new ByteArray(lineLen)).items;
+            nextErrorRed = (nextErrorRedBytes = new ByteArray(lineLen)).items;
+            curErrorGreen = (curErrorGreenBytes = new ByteArray(lineLen)).items;
+            nextErrorGreen = (nextErrorGreenBytes = new ByteArray(lineLen)).items;
+            curErrorBlue = (curErrorBlueBytes = new ByteArray(lineLen)).items;
+            nextErrorBlue = (nextErrorBlueBytes = new ByteArray(lineLen)).items;
+        } else {
+            curErrorRed = curErrorRedBytes.ensureCapacity(lineLen);
+            nextErrorRed = nextErrorRedBytes.ensureCapacity(lineLen);
+            curErrorGreen = curErrorGreenBytes.ensureCapacity(lineLen);
+            nextErrorGreen = nextErrorGreenBytes.ensureCapacity(lineLen);
+            curErrorBlue = curErrorBlueBytes.ensureCapacity(lineLen);
+            nextErrorBlue = nextErrorBlueBytes.ensureCapacity(lineLen);
+            for (int i = 0; i < lineLen; i++) {
+                nextErrorRed[i] = 0;
+                nextErrorGreen[i] = 0;
+                nextErrorBlue[i] = 0;
+            }
+
+        }
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used, rdiff, gdiff, bdiff;
+        byte er, eg, eb, paletteIndex;
+        for (int y = 0; y < h; y++) {
+            int ny = y + 1;
+            for (int i = 0; i < lineLen; i++) {
+                curErrorRed[i] = nextErrorRed[i];
+                curErrorGreen[i] = nextErrorGreen[i];
+                curErrorBlue[i] = nextErrorBlue[i];
+                nextErrorRed[i] = 0;
+                nextErrorGreen[i] = 0;
+                nextErrorBlue[i] = 0;
+            }
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    er = curErrorRed[px];
+                    eg = curErrorGreen[px];
+                    eb = curErrorBlue[px];
+                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+                    int rr = MathUtils.clamp(((color >>> 24)       ) + (er), 0, 0xFF);
+                    int gg = MathUtils.clamp(((color >>> 16) & 0xFF) + (eg), 0, 0xFF);
+                    int bb = MathUtils.clamp(((color >>> 8)  & 0xFF) + (eb), 0, 0xFF);
+                    paletteIndex =
+                        paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))];
+                    used = paletteArray[paletteIndex & 0xFF];
+                    pixmap.drawPixel(px, y, used);
+                    rdiff = (color>>>24)-    (used>>>24);
+                    gdiff = (color>>>16&255)-(used>>>16&255);
+                    bdiff = (color>>>8&255)- (used>>>8&255);
+                    if(px < lineLen - 1)
+                    {
+                        curErrorRed[px+1]   += rdiff * ditherStrength;
+                        curErrorGreen[px+1] += gdiff * ditherStrength;
+                        curErrorBlue[px+1]  += bdiff * ditherStrength;
+                    }
+                    if(ny < h)
+                    {
+                        if(px > 0)
+                        {
+                            nextErrorRed[px-1]   += rdiff * halfDitherStrength;
+                            nextErrorGreen[px-1] += gdiff * halfDitherStrength;
+                            nextErrorBlue[px-1]  += bdiff * halfDitherStrength;
+                        }
+                        nextErrorRed[px]   += rdiff * halfDitherStrength;
+                        nextErrorGreen[px] += gdiff * halfDitherStrength;
+                        nextErrorBlue[px]  += bdiff * halfDitherStrength;
+                    }
+                }
+            }
+
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    /**
      * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can using the
      * commonly-used Floyd-Steinberg dithering. If you want to reduce the colors in a Pixmap based on what it currently
      * contains, call {@link #analyze(Pixmap)} with {@code pixmap} as its argument, then call this method with the same
@@ -1886,14 +1902,14 @@ public class PaletteReducer {
                     int rr = ((color >>> 24)       );
                     int gg = ((color >>> 16) & 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);
+                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                        | ((gg << 2) & 0x3E0)
+                        | ((bb >>> 3))] & 0xFF];
                     //float len = (rr * 5 + gg * 9 + bb * 2) * strength + 1f;
                     //adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * len - len * 0.5;
                     //adj = asin(fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * 0.875 
                     //         - fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) * 0.5);
                     //adj = 2.0 * sin(fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * 1.44 - 0.72);
-                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
-                            | ((gg << 2) & 0x3E0)
-                            | ((bb >>> 3))] & 0xFF];
                     pos = (px * 0.06711056f + y * 0.00583715f);
                     pos -= (int)pos;
                     pos *= 52.9829189f;
@@ -1905,12 +1921,82 @@ public class PaletteReducer {
 //                    adj = (px * 0.7548776662466927f + y * 0.5698402909980532f);
 //                    adj -= (int)adj;
 //                    adj = TrigTools.asin((pos - adj * 0.3125f) * strength) * 1.25f;
-                    rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF); //  * 17 >> 4
-                    gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF); //  * 23 >> 4
-                    bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF); // * 5 >> 4
+                    rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
+                    gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
+                    bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF);
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reduceTrueBlue (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used;
+        float adj, strength = ditherStrength / 130f;
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+                    int rr = ((color >>> 24)       );
+                    int gg = ((color >>> 16) & 0xFF);
+                    int bb = ((color >>> 8)  & 0xFF);
+                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                        | ((gg << 2) & 0x3E0)
+                        | ((bb >>> 3))] & 0xFF];
+                    adj = (BlueNoise.get(px, y, BlueNoise.ALT_NOISE[1]) + 13f) * strength;
+                    rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
+                    gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
+                    bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF);
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                        | ((gg << 2) & 0x3E0)
+                        | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reduceChosenBlue (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used;
+        float adj, strength = ditherStrength / 75f;
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+                    int rr = ((color >>> 24)       );
+                    int gg = ((color >>> 16) & 0xFF);
+                    int bb = ((color >>> 8)  & 0xFF);
+                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                        | ((gg << 2) & 0x3E0)
+                        | ((bb >>> 3))] & 0xFF];
+                    adj = (BlueNoise.getSeeded(px, y, 1111111) + (px + y & 1) * 42f) * strength;
+                    rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
+                    gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
+                    bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF);
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                        | ((gg << 2) & 0x3E0)
+                        | ((bb >>> 3))] & 0xFF]);
                 }
             }
 

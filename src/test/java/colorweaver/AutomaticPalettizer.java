@@ -79,8 +79,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             }
         });
         Gdx.files.local("samples/reduced/").mkdirs();
-//        for(FileHandle hex : hexes) {
-        FileHandle hex = Gdx.files.local("palettes/hex/splat-31.hex");{
+        for(FileHandle hex : hexes) {
+//        FileHandle hex = Gdx.files.local("palettes/hex/splat-31.hex");{
             String name = hex.nameWithoutExtension().toLowerCase(), suffix = '_' + name;
             loadPalette(name);
             Gdx.files.local("samples/reduced/" + name).mkdirs();
@@ -98,9 +98,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
 //            pm = reducer.reduceBurkes(new Pixmap(sample));
 //            png8.writePrecisely(Gdx.files.local(subname + "_Burkes"+suffix+".png"), pm, false);
-
-//            pm = reducer.reduce(new Pixmap(sample));
-//            png8.writePrecisely(Gdx.files.local(subname + "_SierraLite"+suffix+".png"), pm, false);
+////good?
+                    pm = (reducer.reduceSierraLite(new Pixmap(sample)));
+                    png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
 ////good
                     pm = reducer.reduceSolid(new Pixmap(sample));
                     png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
@@ -119,6 +119,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 ////good
                     pm = (reducer.reduceFloydSteinberg(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
+////good?
+                    pm = (reducer.reduceTrueBlue(new Pixmap(sample)));
+                    png8.writePrecisely(Gdx.files.local(subname + "_Blue" + suffix + ".png"), pm, PALETTE, false, 0);
+////good?
+                    pm = (reducer.reduceChosenBlue(new Pixmap(sample)));
+                    png8.writePrecisely(Gdx.files.local(subname + "_Bluish" + suffix + ".png"), pm, PALETTE, false, 0);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
