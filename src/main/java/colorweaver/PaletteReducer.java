@@ -1976,7 +1976,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used;
-        double adj, strength = ditherStrength / 8.0;
+        double adj, strength = Math.sqrt(ditherStrength) * 0.125;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1990,7 +1990,7 @@ public class PaletteReducer {
                     used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                         | ((gg << 2) & 0x3E0)
                         | ((bb >>> 3))] & 0xFF];
-                    adj = 0.95 - Math.pow(BlueNoise.getSeeded(px, y, 1111111) + 128, 0.625) * strength;
+                    adj = 0.9375 - Math.pow(BlueNoise.getSeeded(px, y, 1111111) + 128, 0.625) * strength;
 //                    adj = (BlueNoise.getSeeded(px, y, 1111111) + ((px + y & 1) - 0.3125f) * 32f) * strength;
                     rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
                     gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
