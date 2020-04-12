@@ -1,5 +1,6 @@
 package colorweaver;
 
+import colorweaver.tools.TrigTools;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
@@ -1935,13 +1936,22 @@ public class PaletteReducer {
         return pixmap;
     }
 
+    /**
+     * A blue-noise-based dither that uses a tiling 64x64 noise texture to add error to an image;
+     * this does use {@link TrigTools#acos_(float)} to bias results toward the original color.
+     * <br>
+     * There are times to use {@link #reduceBluish(Pixmap)} and times to use this; each palette and
+     * source image will have different qualities of result.
+     * @param pixmap will be modified in-place and returned
+     * @return pixmap, after modifications
+     */
     public Pixmap reduceTrueBlue (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used;
-        float adj, strength = ditherStrength / 85f;
+        float adj, strength = ditherStrength * 8;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1955,7 +1965,7 @@ public class PaletteReducer {
                     used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                         | ((gg << 2) & 0x3E0)
                         | ((bb >>> 3))] & 0xFF];
-                    adj = (BlueNoise.get(px, y, BlueNoise.ALT_NOISE[1]) + 13f) * strength;
+                    adj = (TrigTools.acos_((BlueNoise.get(px, y, BlueNoise.ALT_NOISE[1]) + 0.5f) * 0.00784313725490196f) - 0.25f) * strength;
                     rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
                     gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
                     bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF);
@@ -1970,7 +1980,31 @@ public class PaletteReducer {
         return pixmap;
     }
 
-    public Pixmap reduceChosenBlue (Pixmap pixmap) {
+    /**
+     * A different kind of blue-noise-based dither; does not diffuse error, and uses a non-repeating blue noise pattern
+     * (that isn't quite as strongly measurable as blue noise as what {@link #reduceTrueBlue(Pixmap)} uses). This pattern
+     * can be seeded to produce different dithers for otherwise identical inputs; see {@link #reduceBluish(Pixmap, int)}.
+     * <br>
+     * There are times to use {@link #reduceTrueBlue(Pixmap)} and times to use this; each palette and
+     * source image will have different qualities of result.
+     * @param pixmap will be modified in-place and returned
+     * @return pixmap, after modifications
+     */
+    public Pixmap reduceBluish (Pixmap pixmap) {
+        return reduceBluish(pixmap, 1111111);
+    }
+    /**
+     * A different kind of blue-noise-based dither; does not diffuse error, and uses a non-repeating blue noise pattern
+     * (that isn't quite as strongly measurable as blue noise as what {@link #reduceTrueBlue(Pixmap)} uses). This pattern
+     * can be seeded to produce different dithers for otherwise identical inputs; the seed can be any int.
+     * <br>
+     * There are times to use {@link #reduceTrueBlue(Pixmap)} and times to use this; each palette and
+     * source image will have different qualities of result.
+     * @param pixmap will be modified in-place and returned
+     * @param seed any int; will be used to change the dither pattern
+     * @return pixmap, after modifications
+     */
+    public Pixmap reduceBluish (Pixmap pixmap, int seed) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
@@ -1990,7 +2024,7 @@ public class PaletteReducer {
                     used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                         | ((gg << 2) & 0x3E0)
                         | ((bb >>> 3))] & 0xFF];
-                    adj = 0.9375 - Math.pow(BlueNoise.getSeeded(px, y, 1111111) + 128, 0.625) * strength;
+                    adj = 0.9375 - Math.pow(BlueNoise.getSeeded(px, y, seed) + 128, 0.625) * strength;
 //                    adj = (BlueNoise.getSeeded(px, y, 1111111) + ((px + y & 1) - 0.3125f) * 32f) * strength;
                     rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
                     gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
