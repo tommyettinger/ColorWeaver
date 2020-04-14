@@ -79,9 +79,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             }
         });
         Gdx.files.local("samples/reduced/").mkdirs();
-        for(FileHandle hex : hexes) {
+//        for(FileHandle hex : hexes) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
-//        FileHandle hex = Gdx.files.local("palettes/hex/gb-4.hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/splat-31.hex");{
             String name = hex.nameWithoutExtension().toLowerCase(), suffix = '_' + name;
             loadPalette(name);
             Gdx.files.local("samples/reduced/" + name).mkdirs();
@@ -95,6 +95,19 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                 for(FileHandle sample : samples) {
                     reducer.setDitherStrength(1f);
                     String subname = "samples/reduced/" + name + "/" + sample.nameWithoutExtension();
+
+////good enough
+                    pm = (reducer.reduceSierraLite(new Pixmap(sample)));
+                    png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
+////good
+                    pm = reducer.reduceSolid(new Pixmap(sample));
+                    png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
+////good
+                    pm = reducer.reduceShaderMimic(new Pixmap(sample));
+                    png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
+////good
+                    pm = (reducer.reduceFloydSteinberg(new Pixmap(sample)));
+                    png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
 ////good?
                     pm = (reducer.reduceTrueBlue(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_Blue" + suffix + ".png"), pm, PALETTE, false, 0);
@@ -104,26 +117,13 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
                     reducer.setDitherStrength(0.5f);
                     subname = "samples/reduced/" + name + "/" + sample.nameWithoutExtension() + "_half";
-//            pm = (reducer.reduceWithNoise(new Pixmap(sample)));
-//            png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinbergHu"+suffix+".png"), pm, false);
 
-//            pm = reducer.reduceBurkes(new Pixmap(sample));
-//            png8.writePrecisely(Gdx.files.local(subname + "_Burkes"+suffix+".png"), pm, false);
 ////good enough
                     pm = (reducer.reduceSierraLite(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
 ////good
 //                    pm = reducer.reduceSolid(new Pixmap(sample));
 //                    png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
-
-//            pm = reducer.reduceWithRoberts(new Pixmap(sample));
-//            png8.writePrecisely(Gdx.files.local(subname + "_Roberts"+suffix+".png"), pm, false);
-
-//            pm = reducer.reduceRobertsMul(new Pixmap(sample));
-//            png8.writePrecisely(Gdx.files.local(subname + "_RobertsMul"+suffix+".png"), pm, false);
-
-//            pm = reducer.reduceRobertsEdit(new Pixmap(sample));
-//            png8.writePrecisely(Gdx.files.local(subname + "_RobertsEdit"+suffix+".png"), pm, false);
 ////good
                     pm = reducer.reduceShaderMimic(new Pixmap(sample));
                     png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
@@ -139,26 +139,13 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
                     reducer.setDitherStrength(0.25f);
                     subname = "samples/reduced/" + name + "/" + sample.nameWithoutExtension() + "_quarter";
-//            pm = (reducer.reduceWithNoise(new Pixmap(sample)));
-//            png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinbergHu"+suffix+".png"), pm, false);
 
-//            pm = reducer.reduceBurkes(new Pixmap(sample));
-//            png8.writePrecisely(Gdx.files.local(subname + "_Burkes"+suffix+".png"), pm, false);
 ////good enough
                     pm = (reducer.reduceSierraLite(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
 ////good
 //                    pm = reducer.reduceSolid(new Pixmap(sample));
 //                    png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
-
-//            pm = reducer.reduceWithRoberts(new Pixmap(sample));
-//            png8.writePrecisely(Gdx.files.local(subname + "_Roberts"+suffix+".png"), pm, false);
-
-//            pm = reducer.reduceRobertsMul(new Pixmap(sample));
-//            png8.writePrecisely(Gdx.files.local(subname + "_RobertsMul"+suffix+".png"), pm, false);
-
-//            pm = reducer.reduceRobertsEdit(new Pixmap(sample));
-//            png8.writePrecisely(Gdx.files.local(subname + "_RobertsEdit"+suffix+".png"), pm, false);
 ////good
                     pm = reducer.reduceShaderMimic(new Pixmap(sample));
                     png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
