@@ -24,28 +24,6 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
         config.setResizable(true);
         new Lwjgl3Application(new AutomaticPaletteTransformer(), config);
     }
-
-    private static float hue(int rgba) {
-        final float r = (rgba >>> 24 & 255) * 0.003921569f, g = (rgba >>> 16 & 255) * 0.003921569f,
-                b = (rgba >>> 8 & 255) * 0.003921569f;//, a = (e >>> 24 & 254) / 254f;
-        final float min = Math.min(Math.min(r, g), b);   //Min. value of RGB
-        final float max = Math.max(Math.max(r, g), b);   //Max value of RGB
-        final float delta = max - min;                           //Delta RGB value
-
-        if (delta < 0.0001f)                     //This is a gray, no chroma...
-        {
-            return 0f;
-        } else                                    //Chromatic data...
-        {
-            final float rDelta = (((max - r) / 6f) + (delta * 0.5f)) / delta;
-            final float gDelta = (((max - g) / 6f) + (delta * 0.5f)) / delta;
-            final float bDelta = (((max - b) / 6f) + (delta * 0.5f)) / delta;
-
-            if (r == max) return (1f + bDelta - gDelta) % 1f;
-            else if (g == max) return ((4f / 3f) + rDelta - bDelta) % 1f;
-            else return ((5f / 3f) + gDelta - rDelta) % 1f;
-        }
-    }
     
     private int[] PALETTE;
     private final double[][] lab15 = CIELABConverter.makeLAB15();
@@ -68,7 +46,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
                 L = lab15[0][indexA] - lab15[0][indexB],
                 A = lab15[1][indexA] - lab15[1][indexB],
                 B = lab15[2][indexA] - lab15[2][indexB];
-            return L * L * 11.0 + A * A * 1.6 + B * B;
+            return L * L * 11.0 + A * A * 0.625 + B * B;
         }
     };
     public void loadPalette(String name) {
@@ -93,7 +71,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
         Gdx.files.local("palettes/gen/").mkdirs();
         Gdx.files.local("palettes/gen/hex/").mkdirs();
 //        for(FileHandle hex : hexes) {
-        FileHandle hex = Gdx.files.local("palettes/hex/splat-31.hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/splay-31.hex");{
             String name = hex.nameWithoutExtension().toLowerCase();
             loadPalette(name);
             StringBuilder sb = new StringBuilder((1 + 12 * 8) * (PALETTE.length + 7 >>> 3));

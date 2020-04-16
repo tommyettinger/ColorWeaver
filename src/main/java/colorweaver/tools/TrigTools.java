@@ -319,10 +319,10 @@ public class TrigTools {
     public static float sin_(float turns)
     {
         turns *= 4f;
-        final long floor = (turns >= 0.0 ? (long) turns : (long) turns - 1L) & -2L;
+        final int floor = (turns >= 0.0 ? (int) turns : (int) turns - 1) & -2;
         turns -= floor;
         turns *= 2f - turns;
-        return turns * (-0.775f - 0.225f * turns) * ((floor & 2L) - 1L);
+        return turns * (-0.775f - 0.225f * turns) * ((floor & 2) - 1);
     }
 
     /**
@@ -351,10 +351,10 @@ public class TrigTools {
     public static float cos_(float turns)
     {
         turns = turns * 4f + 1f;
-        final long floor = (turns >= 0.0 ? (long) turns : (long) turns - 1L) & -2L;
+        final int floor = (turns >= 0.0 ? (int) turns : (int) turns - 1) & -2;
         turns -= floor;
         turns *= 2f - turns;
-        return turns * (-0.775f - 0.225f * turns) * ((floor & 2L) - 1L);
+        return turns * (-0.775f - 0.225f * turns) * ((floor & 2) - 1);
     }
 
     /**
@@ -695,5 +695,116 @@ if y < 0 then r := -r
                     r = (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a) * 0.15915494309189535f;
             return (n < 0.0f) ? 0.5f - r : r;
         }
+    }
+
+    /**
+     * Sine-quadrilateral, for doing operations like trigonometric sine but on a square. Angles are in quarter-turns
+     * where a full rotation takes 4 quarters. The square here has a "radius" of 1, so really a side length of 2, and is
+     * centered on (0,0). Giving the angle (in quarters) 0 to cosq and sinq gives the point (1,1). This method can range
+     * between -1.0 and 1.0, inclusive.
+     * @param quarters quarter-turn measurement for the angle
+     * @return sine-like double between -1.0 and 1.0
+     */
+    public static double sinq(double quarters)
+    {
+        int floor = (quarters >= 0f ? (int) quarters : (int) quarters - 1);
+        quarters -= floor;
+        return (((floor & 2) - 1 & -(floor & 1)) << 1) * quarters + 1 - (floor & 2);
+    }
+
+    /**
+     * Cosine-quadrilateral, for doing operations like trigonometric cosine but on a square. Angles are in quarter-turns
+     * where a full rotation takes 4 quarters. The square here has a "radius" of 1, so really a side length of 2, and is
+     * centered on (0,0). Giving the angle (in quarters) 0 to cosq and sinq gives the point (1,1). This method can range
+     * between -1.0 and 1.0, inclusive.
+     * @param quarters quarter-turn measurement for the angle
+     * @return cosine-like double between -1.0 and 1.0
+     */
+    public static double cosq(double quarters)
+    {
+        int floor = (++quarters >= 0f ? (int) quarters : (int) quarters - 1);
+        quarters -= floor;
+        return (((floor & 2) - 1 & -(floor & 1)) << 1) * quarters + 1 - (floor & 2);
+    }
+
+    /**
+     * Sine-quadrilateral, for doing operations like trigonometric sine but on a square. Angles are in quarter-turns
+     * where a full rotation takes 4 quarters. The square here has a "radius" of 1, so really a side length of 2, and is
+     * centered on (0,0). Giving the angle (in quarters) 0 to cosq and sinq gives the point (1,1). This method can range
+     * between -1.0 and 1.0, inclusive.
+     * @param quarters quarter-turn measurement for the angle
+     * @return sine-like float between -1.0 and 1.0
+     */
+    public static float sinq(float quarters)
+    {
+        int floor = (quarters >= 0f ? (int) quarters : (int) quarters - 1);
+        quarters -= floor;
+        return (((floor & 2) - 1 & -(floor & 1)) << 1) * quarters + 1 - (floor & 2);
+    }
+
+    /**
+     * Cosine-quadrilateral, for doing operations like trigonometric cosine but on a square. Angles are in quarter-turns
+     * where a full rotation takes 4 quarters. The square here has a "radius" of 1, so really a side length of 2, and is
+     * centered on (0,0). Giving the angle (in quarters) 0 to cosq and sinq gives the point (1,1). This method can range
+     * between -1.0 and 1.0, inclusive.
+     * @param quarters quarter-turn measurement for the angle
+     * @return cosine-like float between -1.0 and 1.0
+     */
+    public static float cosq(float quarters)
+    {
+        int floor = (++quarters >= 0f ? (int) quarters : (int) quarters - 1);
+        quarters -= floor;
+        return (((floor & 2) - 1 & -(floor & 1)) << 1) * quarters + 1 - (floor & 2);
+    }
+    /**
+     * Limited-use; takes any double and produces a double in the -1.0 to 1.0 range, with similar inputs producing
+     * close to a consistent rate of up and down through the range. This is meant for noise, where it may be useful to
+     * limit the amount of change between nearby points' noise values and prevent sudden "jumps" in noise value. An
+     * input of any even number should produce something very close to -1.0, any odd number should produce something
+     * very close to 1.0, and any number halfway between two incremental integers (like 8.5 or -10.5) should produce
+     * 0.0 or a very small fraction.
+     * @param value any double
+     * @return a double from -1.0 (inclusive) to 1.0 (inclusive)
+     */
+    public static double zigzag(double value)
+    {
+        long floor = (value >= 0.0 ? (long) value : (long) value - 1L);
+        value -= floor;
+        floor = (-(floor & 1L) | 1L);
+        return value * (floor << 1) - floor;
+    }
+
+    /**
+     * Limited-use; takes any float and produces a float in the -1f to 1f range, with similar inputs producing
+     * close to a consistent rate of up and down through the range. This is meant for noise, where it may be useful to
+     * limit the amount of change between nearby points' noise values and prevent sudden "jumps" in noise value. An
+     * input of any even number should produce something very close to -1f, any odd number should produce something
+     * very close to 1f, and any number halfway between two incremental integers (like 8.5f or -10.5f) should produce
+     * 0f or a very small fraction.
+     * @param value any float
+     * @return a float from -1f (inclusive) to 1f (inclusive)
+     */
+    public static float zigzag(float value)
+    {
+        int floor = (value >= 0f ? (int) value : (int) value - 1);
+        value -= floor;
+        floor = (-(floor & 1) | 1);
+        return value * (floor << 1) - floor;
+    }
+    public static float cosRoot_(float turns)
+    {
+        turns = turns * 4f + 1f;
+        final int floor = (turns >= 0.0 ? (int) turns : (int) turns - 1) & -2;
+        turns -= floor;
+        turns *= 2f - turns;
+        return (float)Math.sqrt(turns * (0.775f + 0.225f * turns)) * (1 - (floor & 2));
+    }
+    public static float sinRoot_(float turns)
+    {
+        turns *= 4f;
+        final int floor = (turns >= 0.0 ? (int) turns : (int) turns - 1) & -2;
+        turns -= floor;
+        turns *= 2f - turns;
+        return (float)Math.sqrt(turns * (0.775f + 0.225f * turns)) * (1 - (floor & 2));
     }
 }
