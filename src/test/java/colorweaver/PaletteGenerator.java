@@ -313,7 +313,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
 //        }
         
-        PALETTE = Coloring.SPLAT32;
+        PALETTE = Coloring.SPLAY32;
 //        PALETTE = Coloring.AZURESTAR33;
 //        PALETTE = Coloring.SHELTZY32;
         
@@ -379,7 +379,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        }
 //        pix.drawPixel(255, 0, 0);
 //        
-        //// meant for Splat32
+        //// meant for Splay32
         Color color = new Color();
         for (int i = 1; i < 32 && i < PALETTE.length; i++) {
             Color.rgba8888ToColor(color, PALETTE[i]);
@@ -408,7 +408,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         
         //// Used for either of the above.
         try {
-            png8.writePrecisely(Gdx.files.local("Splat32_MV.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Splay32_MV.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -419,7 +419,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         }
         pix.drawPixel(255, 0, 0);
         try {
-            png8.writePrecisely(Gdx.files.local("Splat32.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Splay32.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -436,7 +436,7 @@ public class PaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("Splat32_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("Splay32_GLSL.png"), p2, false);
 //            png8.writePrecisely(Gdx.files.local("Uniform"+PALETTE.length+"_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();

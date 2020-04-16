@@ -46,19 +46,19 @@ public class HexGenerator extends ApplicationAdapter {
             NamedColor.RED_PIGMENT,
             NamedColor.AURORA_LIGHT_SKIN_7,
             NamedColor.AURORA_PENCIL_YELLOW,
-            NamedColor.AURORA_APPLE_GREEN,
+            NamedColor.AURORA_FERN_GREEN,
             NamedColor.CW_FLUSH_SAPPHIRE,
             NamedColor.AURORA_TYRIAN_PURPLE
         };
 
         for (int i = 0; i < 7; i++) {
-            palette[i+1] = getInt(FloatColorTools.floatGetHSV(0.5f, (float)Math.sqrt(i / 6f) * 0.2f * (i + 1 & 1), (float)Math.pow((i+1f) / 7.5f, 0.75), 1f));
+            palette[i+1] = getInt(FloatColorTools.floatGetHSV(0.5f, (float)Math.sqrt(i / 6f) * 0.2f * (i & 1), (float)Math.pow((i+1f) / 7.5f, 0.75), 1f));
         }
         for (int i = 0; i < 6; i++) {
-            palette[i+8]    = getInt(FloatColorTools.floatGetHSV(outer[i].hue() /* + 0.06f */, 0.35f, 0.4f, 1f));
-            palette[i+8+6]  = getInt(FloatColorTools.floatGetHSV(outer[i].hue() /* + 0.02f */, 0.2f, 0.6f, 1f));
+            palette[i+8]    = getInt(FloatColorTools.floatGetHSV(outer[i].hue() /* + 0.06f */, 0.425f, 0.4f, 1f));
+            palette[i+8+6]  = getInt(FloatColorTools.floatGetHSV(outer[i].hue() /* + 0.02f */, 0.25f, 0.6f, 1f));
             palette[i+8+12] = getInt(FloatColorTools.floatGetHSV(outer[i].hue() /* - 0.02f */, 0.6f, 0.75f, 1f));
-            palette[i+8+18] = getInt(FloatColorTools.floatGetHSV(outer[i].hue() /* - 0.06f */, 0.45f, 0.9f, 1f));
+            palette[i+8+18] = getInt(FloatColorTools.floatGetHSV(outer[i].hue() /* - 0.06f */, 0.475f, 0.9f, 1f));
         }
         
 //        float hueAngle = 0.1f, sat;
