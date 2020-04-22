@@ -5,6 +5,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 
 import java.io.IOException;
@@ -312,7 +313,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
 //        }
         
-        PALETTE = Coloring.SPLAY32;
+        PALETTE = Coloring.ZIGGURAT64;
 //        PALETTE = Coloring.AZURESTAR33;
 //        PALETTE = Coloring.SHELTZY32;
         
@@ -377,6 +378,18 @@ public class PaletteGenerator extends ApplicationAdapter {
 //            pix.drawPixel(i+222, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.3f, val * 0.75f)));
 //        }
 //        pix.drawPixel(255, 0, 0);
+        Color color = new Color();
+        for (int i = 1; i < 33 && i < PALETTE.length; i++) {
+            Color.rgba8888ToColor(color, PALETTE[i]);
+            float hue = NamedColor.hue(color) * 360f;
+            float sat = NamedColor.saturation(color);
+            float val = NamedColor.value(color);
+            pix.drawPixel(i-1, 0, PALETTE[i]);
+            pix.drawPixel(i+63, 0, Color.rgba8888(color.fromHsv(hue, sat * 0.875f, val * 0.875f)));
+            pix.drawPixel(i+127, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.25f, val * 1.25f)));
+            pix.drawPixel(i+191, 0, Color.rgba8888(color.fromHsv(hue, sat * 1.125f, val * 0.75f)));
+        }
+        pix.drawPixel(255, 0, 0);
 //        
 //        //// meant for Splay32
 //        Color color = new Color();
@@ -396,14 +409,14 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        }
 //        pix.drawPixel(255, 0, 0);
 
-        //// for Bonus palettes that store edits to their typically 64 colors in 4 chunks.
-        for (int i = 1; i < 64 && i < PALETTE.length; i++) {
-            pix.drawPixel(i-1, 0, PALETTE[i << 2 | 2]);
-            pix.drawPixel(i+63, 0, PALETTE[i << 2]);
-            pix.drawPixel(i+127, 0, PALETTE[i << 2 | 1]);
-            pix.drawPixel(i+191, 0, PALETTE[i << 2 | 3]);
-        }
-        pix.drawPixel(255, 0, 0);
+//        //// for Bonus palettes that store edits to their typically 64 colors in 4 chunks.
+//        for (int i = 1; i < 64 && i < PALETTE.length; i++) {
+//            pix.drawPixel(i-1, 0, PALETTE[i << 2 | 2]);
+//            pix.drawPixel(i+63, 0, PALETTE[i << 2]);
+//            pix.drawPixel(i+127, 0, PALETTE[i << 2 | 1]);
+//            pix.drawPixel(i+191, 0, PALETTE[i << 2 | 3]);
+//        }
+//        pix.drawPixel(255, 0, 0);
         
         //// Used for either of the above.
         try {
