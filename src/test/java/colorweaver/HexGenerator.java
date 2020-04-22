@@ -8,6 +8,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 
+import static colorweaver.FloatColorTools.floatGetHSV;
 import static colorweaver.tools.TrigTools.cos_;
 import static colorweaver.tools.TrigTools.sin_;
 
@@ -23,7 +24,7 @@ public class HexGenerator extends ApplicationAdapter {
         config.setResizable(false);
         new Lwjgl3Application(new HexGenerator(), config);
         AutomaticPaletteTransformer.main(arg);
-        AutomaticPalettizer.main(arg);
+        AutomaticPalettizer.main(arg); 
     }
 
     private static float cosMaybe(float angle){
@@ -38,27 +39,43 @@ public class HexGenerator extends ApplicationAdapter {
         final int c = FloatColorTools.floatToInt(color);
         return c | (c >>> 7 & 1);
     }
+    public static float lerpHue (float from, float to, float progress) {
+        to += 1.5f - from;
+        to -= 0.5f + (int)to;
+        from += to * progress + 1f;
+        return from - (int)from;
+    }
 
     @Override
     public void create() {
-        palette = new int[32];
-        NamedColor[] outer = new NamedColor[]{
-            NamedColor.RED_PIGMENT,
-            NamedColor.AURORA_LIGHT_SKIN_7,
-            NamedColor.AURORA_PENCIL_YELLOW,
-            NamedColor.AURORA_FERN_GREEN,
-            NamedColor.CW_FLUSH_SAPPHIRE,
-            NamedColor.AURORA_TYRIAN_PURPLE
+        palette = new int[64];
+        float[] outer = {
+            0.96f,//NamedColor.AURORA_CARMINE.hue(),
+            0.015f,//NamedColor.AURORA_LIGHT_SKIN_6.hue(),
+            0.013f,//NamedColor.ORANGE.hue(),
+            NamedColor.CW_LIGHT_YELLOW.hue(),
+            NamedColor.CW_GREEN.hue(),
+            NamedColor.CW_LIGHT_CYAN.hue(),
+            NamedColor.CW_SAPPHIRE.hue(),
+            NamedColor.CW_PURPLE.hue()
         };
 
         for (int i = 0; i < 7; i++) {
-            palette[i+1] = getInt(FloatColorTools.floatGetHSV(0.5f, (float)Math.sqrt(i / 6f) * 0.2f * (i & 1), (float)Math.pow((i+1f) / 7.5f, 0.75), 1f));
+            palette[i+1] = getInt(floatGetHSV(0.078f, 0.05f, (i+0.5f)/7f, 1f));
         }
-        for (int i = 0; i < 6; i++) {
-            palette[i+8]    = getInt(FloatColorTools.floatGetHSV(outer[i].hue() /* + 0.06f */, 0.425f, 0.4f, 1f));
-            palette[i+8+6]  = getInt(FloatColorTools.floatGetHSV(outer[i].hue() /* + 0.02f */, 0.25f, 0.6f, 1f));
-            palette[i+8+12] = getInt(FloatColorTools.floatGetHSV(outer[i].hue() /* - 0.02f */, 0.6f, 0.75f, 1f));
-            palette[i+8+18] = getInt(FloatColorTools.floatGetHSV(outer[i].hue() /* - 0.06f */, 0.475f, 0.9f, 1f));
+        for (int i = 0; i < 8; i++) {
+            float sm = 1.0625f, vm = (9.5f + ((i & 3))) * 0.1f;
+            if(i <= 1 || i == 4) sm -= 0.09375f;
+            if(i == 7 || i == 5) sm -= 0.125f;
+            if(i == 6) vm = 0.9875f;
+            if(i == 7) vm = 0.9375f;
+            palette[i+8]    = getInt(floatGetHSV(outer[i], sm * 0.375f, vm * 0.25f, 1f));
+            palette[i+8+8]  = getInt(floatGetHSV(outer[i], sm * 0.3f, vm * 0.4f, 1f));
+            palette[i+8+16] = getInt(floatGetHSV(outer[i], sm * 0.45f, vm * 0.55f, 1f));
+            palette[i+8+24] = getInt(floatGetHSV(outer[i], sm * 0.55f, vm * 0.75f, 1f));
+            palette[i+8+32] = getInt(floatGetHSV(outer[i], sm * 0.4f, vm * 0.9f, 1f));
+            palette[i+8+40] = getInt(floatGetHSV(lerpHue(outer[i], outer[i+1 & 7], 0.4f), sm * 0.5f, vm * 0.475f, 1f));
+            palette[i+8+48] = getInt(floatGetHSV(lerpHue(outer[i], outer[i-1 & 7], 0.4f), sm * 0.35f, vm * 0.65f, 1f));
         }
         
 //        float hueAngle = 0.1f, sat;
@@ -91,7 +108,7 @@ public class HexGenerator extends ApplicationAdapter {
         for (int i = 1; i < palette.length; i++) {
             sb.append(String.format("%06x\n", palette[i] >>> 8));
         }
-        Gdx.files.local("palettes/hex/splay-31.hex").writeString(sb.toString(), false);
+        Gdx.files.local("palettes/hex/ziggurat-63.hex").writeString(sb.toString(), false);
         System.out.println("new int[] {");
         for (int i = 0; i < palette.length; i++) {
             System.out.print("0x" + StringKit.hex(palette[i]) + ", ");

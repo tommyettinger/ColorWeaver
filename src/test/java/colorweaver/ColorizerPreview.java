@@ -314,7 +314,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	}
 	
 	public void create () {
-		palette = Coloring.SPLAY32;
+		palette = Coloring.ZIGGURAT64;
 		mixingPalette = new ArrayList<>(256);
 		for (int i = 0; i < palette.length; i++) {
 			mixingPalette.add(palette[i]);

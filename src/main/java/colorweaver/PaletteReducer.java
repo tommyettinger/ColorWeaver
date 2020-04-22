@@ -9,12 +9,14 @@ import com.badlogic.gdx.utils.ByteArray;
 import com.badlogic.gdx.utils.IntIntMap;
 import com.badlogic.gdx.utils.NumberUtils;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Random;
+
+import static colorweaver.tools.TrigTools.acos_;
 
 /**
  * Data that can be used to limit the colors present in a Pixmap or other image, here with the goal of using 256 or less
@@ -961,13 +963,8 @@ public class PaletteReducer {
             int color = palette[i];
             if((color & 0x80) != 0)
                 paletteArray[i] = color;
-        }
-        try {
-            paletteMapping = preload.getBytes("ISO-8859-1"); // don't use StandardCharsets; not supported on GWT
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            paletteMapping = new byte[0x8000];
-        }
+        }         
+        paletteMapping = preload.getBytes(StandardCharsets.ISO_8859_1);
     }
 
     /**
@@ -1965,7 +1962,7 @@ public class PaletteReducer {
                     used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                         | ((gg << 2) & 0x3E0)
                         | ((bb >>> 3))] & 0xFF];
-                    adj = (TrigTools.acos_((BlueNoise.get(px, y, BlueNoise.ALT_NOISE[1]) + 0.5f) * 0.00784313725490196f) - 0.25f) * strength;
+                    adj = (acos_((BlueNoise.get(px, y, BlueNoise.ALT_NOISE[1]) + 0.5f) * 0.00784313725490196f) - 0.25f) * strength;
                     rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
                     gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
                     bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF);
