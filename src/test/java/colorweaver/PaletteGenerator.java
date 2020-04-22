@@ -379,7 +379,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        }
 //        pix.drawPixel(255, 0, 0);
         Color color = new Color();
-        for (int i = 1; i < 33 && i < PALETTE.length; i++) {
+        for (int i = 1; i < PALETTE.length; i++) {
             Color.rgba8888ToColor(color, PALETTE[i]);
             float hue = NamedColor.hue(color) * 360f;
             float sat = NamedColor.saturation(color);
