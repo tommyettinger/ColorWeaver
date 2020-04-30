@@ -28,31 +28,31 @@ public class AutomaticPalettizer extends ApplicationAdapter {
     }
     
     private int[] PALETTE;
-    private final double[][] lab15 = CIELABConverter.makeLAB15();
-    private final PaletteReducer.ColorMetric cm = new PaletteReducer.ColorMetric(){
-        @Override
-        public double difference(int color1, int color2) {
-            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
-            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
-        }
-
-        @Override
-        public double difference(int color1, int r2, int g2, int b2) {
-            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
-            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
-        }
-
-        @Override
-        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-            int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
-                indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
-            final double
-                L = lab15[0][indexA] - lab15[0][indexB],
-                A = lab15[1][indexA] - lab15[1][indexB],
-                B = lab15[2][indexA] - lab15[2][indexB];
-            return L * L * 11.0 + A * A * 1.6 + B * B;
-        }
-    };
+//    private final double[][] lab15 = CIELABConverter.makeLAB15();
+//    private final PaletteReducer.ColorMetric cm = new PaletteReducer.ColorMetric(){
+//        @Override
+//        public double difference(int color1, int color2) {
+//            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+//            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+//        }
+//
+//        @Override
+//        public double difference(int color1, int r2, int g2, int b2) {
+//            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+//            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+//        }
+//
+//        @Override
+//        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+//            int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
+//                indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
+//            final double
+//                L = lab15[0][indexA] - lab15[0][indexB],
+//                A = lab15[1][indexA] - lab15[1][indexB],
+//                B = lab15[2][indexA] - lab15[2][indexB];
+//            return L * L * 11.0 + A * A * 1.6 + B * B;
+//        }
+//    };
     public void loadPalette(String name) {
         try {
             String text = Gdx.files.local("palettes/hex/" + name + ".hex").readString();
@@ -81,13 +81,13 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         });
 //        for(FileHandle hex : hexes) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
-        FileHandle hex = Gdx.files.local("palettes/hex/ziggurat-63.hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/dawnvinja-63.hex");{
             String name = hex.nameWithoutExtension().toLowerCase(), suffix = "_" + name;
             loadPalette(name);
             Gdx.files.local(targetDir + name).mkdirs();
             PNG8 png8 = new PNG8();
             png8.setFlipY(false);
-            PaletteReducer reducer = new PaletteReducer(PALETTE, cm);
+            PaletteReducer reducer = new PaletteReducer(PALETTE, PaletteReducer.labQuickMetric);
             png8.palette = reducer;
             try {
                 Pixmap pm;

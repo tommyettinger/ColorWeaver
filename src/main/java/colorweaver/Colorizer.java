@@ -5628,7 +5628,7 @@ public abstract class Colorizer extends Dimmer implements IColorizer {
         }
     };
 
-    public static final Colorizer SmashColorizer = new Colorizer(new PaletteReducer(Coloring.SMASH256, PaletteReducer.labRoughMetric)) {
+    public static final Colorizer SmashColorizer = new Colorizer(new PaletteReducer(Coloring.SMASH256)) {
         private final byte[] primary = {
                 reducer.reduceIndex(0xFF0000FF),reducer.reduceIndex(0xFFFF00FF),
                 reducer.reduceIndex(0x00FF00FF),reducer.reduceIndex(0x00FFFFFF),

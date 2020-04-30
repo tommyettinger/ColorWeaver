@@ -99,11 +99,11 @@ public class PaletteReducer {
 
     public static class LABEuclideanColorMetric implements ColorMetric {
         
-        private static final double[] lut = new double[256];
+        public static final double[] LUT = new double[256];
         static {
             for (int i = 0; i < 256; i++) {
                 final double r = i / 255.0;
-                lut[i] = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
+                LUT[i] = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
             }
         }
         
@@ -121,9 +121,9 @@ public class PaletteReducer {
             if(((rgba1 ^ rgba2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
             double x, y, z, r, g, b;
 
-            r = lut[(rgba1 >>> 24)];
-            g = lut[(rgba1 >>> 16 & 0xFF)];
-            b = lut[(rgba1 >>> 8 & 0xFF)];
+            r = LUT[(rgba1 >>> 24)];
+            g = LUT[(rgba1 >>> 16 & 0xFF)];
+            b = LUT[(rgba1 >>> 8 & 0xFF)];
 
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
@@ -137,9 +137,9 @@ public class PaletteReducer {
             double A = 500.0 * (x - y);
             double B = 200.0 * (y - z);
 
-            r = lut[(rgba2 >>> 24)];
-            g = lut[(rgba2 >>> 16 & 0xFF)];
-            b = lut[(rgba2 >>> 8 & 0xFF)];
+            r = LUT[(rgba2 >>> 24)];
+            g = LUT[(rgba2 >>> 16 & 0xFF)];
+            b = LUT[(rgba2 >>> 8 & 0xFF)];
             
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
@@ -162,9 +162,9 @@ public class PaletteReducer {
             if((rgba1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
             double x, y, z, r, g, b;
 
-            r = lut[(rgba1 >>> 24)];
-            g = lut[(rgba1 >>> 16 & 0xFF)];
-            b = lut[(rgba1 >>> 8 & 0xFF)];
+            r = LUT[(rgba1 >>> 24)];
+            g = LUT[(rgba1 >>> 16 & 0xFF)];
+            b = LUT[(rgba1 >>> 8 & 0xFF)];
 
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
@@ -178,9 +178,9 @@ public class PaletteReducer {
             double A = 500.0 * (x - y);
             double B = 200.0 * (y - z);
 
-            r = lut[r2];
-            g = lut[g2];
-            b = lut[b2];
+            r = LUT[r2];
+            g = LUT[g2];
+            b = LUT[b2];
             
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
@@ -201,9 +201,9 @@ public class PaletteReducer {
         public double difference(final int r1, final int g1, final int b1, final int r2, final int g2, final int b2) {
             double x, y, z, r, g, b;
 
-            r = lut[r1];
-            g = lut[g1];
-            b = lut[b1];
+            r = LUT[r1];
+            g = LUT[g1];
+            b = LUT[b1];
 
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
@@ -217,9 +217,9 @@ public class PaletteReducer {
             double A = 500.0 * (x - y);
             double B = 200.0 * (y - z);
 
-            r = lut[r2];
-            g = lut[g2];
-            b = lut[b2];
+            r = LUT[r2];
+            g = LUT[g2];
+            b = LUT[b2];
 
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
@@ -423,6 +423,30 @@ public class PaletteReducer {
             return y * y * 8 + cw * cw + cm * cm;
         }
     }
+    public static final double[][] lab15 = CIELABConverter.makeLAB15();
+    public static final ColorMetric labQuickMetric = new ColorMetric(){
+        @Override
+        public double difference(int color1, int color2) {
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        @Override
+        public double difference(int color1, int r2, int g2, int b2) {
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        @Override
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
+                    indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
+            final double
+                    L = lab15[0][indexA] - lab15[0][indexB],
+                    A = lab15[1][indexA] - lab15[1][indexB],
+                    B = lab15[2][indexA] - lab15[2][indexB];
+            return L * L * 7 + A * A + B * B;
+//            return L * L * 11.0 + A * A * 0.625 + B * B;
+        }
+    };
 
     public static final BasicColorMetric basicMetric = new BasicColorMetric(); // has no state, should be fine static
     public static final LABEuclideanColorMetric labMetric = new LABEuclideanColorMetric();

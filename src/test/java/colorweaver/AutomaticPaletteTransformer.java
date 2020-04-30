@@ -26,29 +26,6 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
     }
     
     private int[] PALETTE;
-    private final double[][] lab15 = CIELABConverter.makeLAB15();
-    private final PaletteReducer.ColorMetric cm = new PaletteReducer.ColorMetric(){
-        @Override
-        public double difference(int color1, int color2) {
-            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
-        }
-
-        @Override
-        public double difference(int color1, int r2, int g2, int b2) {
-            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
-        }
-
-        @Override
-        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-            int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
-                indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
-            final double
-                L = lab15[0][indexA] - lab15[0][indexB],
-                A = lab15[1][indexA] - lab15[1][indexB],
-                B = lab15[2][indexA] - lab15[2][indexB];
-            return L * L * 11.0 + A * A * 0.625 + B * B;
-        }
-    };
     public void loadPalette(String name) {
         try {
             String text = Gdx.files.local("palettes/hex/" + name + ".hex").readString();
@@ -68,10 +45,9 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
 
     public void create() {
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
-        Gdx.files.local("palettes/gen/").mkdirs();
         Gdx.files.local("palettes/gen/hex/").mkdirs();
 //        for(FileHandle hex : hexes) {
-        FileHandle hex = Gdx.files.local("palettes/hex/ziggurat-63.hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/dawnvinja-63.hex");{
             String name = hex.nameWithoutExtension().toLowerCase();
             loadPalette(name);
             StringBuilder sb = new StringBuilder((1 + 12 * 8) * (PALETTE.length + 7 >>> 3));
@@ -85,7 +61,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
             sb.setLength(0);
 
             PNG8 png8 = new PNG8();
-            png8.palette = new PaletteReducer(PALETTE, cm);
+            png8.palette = new PaletteReducer(PALETTE, PaletteReducer.labQuickMetric);
             Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
             for (int i = 1; i < PALETTE.length; i++) {
                 pix.drawPixel(i - 1, 0, PALETTE[i]);

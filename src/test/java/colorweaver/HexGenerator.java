@@ -81,6 +81,8 @@ public class HexGenerator extends ApplicationAdapter {
             palette[i+8+48] = getInt(floatGetHSV(lerpHue(outer[i], outer[i-1 & 7], 0.4f), sm * 0.35f, vm * 0.65f, 1f));
         }
         
+        palette = Coloring.DAWNVINJA_EDIT;
+        
 //        float hueAngle = 0.1f, sat;
 //        //0.7548776662466927, 0.5698402909980532,   0.6180339887498949
 //        for (int i = 0; i < 6; i++) {
@@ -111,7 +113,7 @@ public class HexGenerator extends ApplicationAdapter {
         for (int i = 1; i < palette.length; i++) {
             sb.append(String.format("%06x\n", palette[i] >>> 8));
         }
-        Gdx.files.local("palettes/hex/ziggurat-63.hex").writeString(sb.toString(), false);
+        Gdx.files.local("palettes/hex/dawnvinja-63.hex").writeString(sb.toString(), false);
         System.out.println("new int[] {");
         for (int i = 0; i < palette.length; i++) {
             System.out.print("0x" + StringKit.hex(palette[i]) + ", ");
