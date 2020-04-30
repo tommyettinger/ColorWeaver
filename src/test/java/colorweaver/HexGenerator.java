@@ -44,6 +44,9 @@ public class HexGenerator extends ApplicationAdapter {
         to -= 0.5f + (int)to;
         from += to * progress + 1f;
         return from - (int)from;
+        /*
+        fract((fract(to + 0.5 - from) - 0.5) * progress + from)
+         */
     }
 
     @Override

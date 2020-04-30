@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static colorweaver.PaletteReducer.basicMetric;
+import static colorweaver.PaletteReducer.labMetric;
 
 /**
  * Created by Tommy Ettinger on 1/30/2020.
@@ -128,7 +128,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	};
 
 	public int[] lloyd(int[] palette) {
-		PaletteReducer pr = new PaletteReducer(palette, basicMetric);
+		PaletteReducer pr = new PaletteReducer(palette, labMetric);
 		float[][] centroids = new float[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index, mix;

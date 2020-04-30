@@ -98,6 +98,15 @@ public class PaletteReducer {
     }
 
     public static class LABEuclideanColorMetric implements ColorMetric {
+        
+        private static final double[] lut = new double[256];
+        static {
+            for (int i = 0; i < 256; i++) {
+                final double r = i / 255.0;
+                lut[i] = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
+            }
+        }
+        
         /**
          * Color difference metric (squared) using L*A*B color space; returns large numbers even for smallish differences.
          * If this returns 250 or more, the colors may be perceptibly different; 500 or more almost guarantees it.
@@ -112,13 +121,9 @@ public class PaletteReducer {
             if(((rgba1 ^ rgba2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
             double x, y, z, r, g, b;
 
-            r = (rgba1 >>> 24) / 255.0;
-            g = (rgba1 >>> 16 & 0xFF) / 255.0;
-            b = (rgba1 >>> 8 & 0xFF) / 255.0;
-
-            r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
-            g = ((g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92);
-            b = ((b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92);
+            r = lut[(rgba1 >>> 24)];
+            g = lut[(rgba1 >>> 16 & 0xFF)];
+            b = lut[(rgba1 >>> 8 & 0xFF)];
 
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
@@ -132,14 +137,10 @@ public class PaletteReducer {
             double A = 500.0 * (x - y);
             double B = 200.0 * (y - z);
 
-            r = (rgba2 >>> 24) / 255.0;
-            g = (rgba2 >>> 16 & 0xFF) / 255.0;
-            b = (rgba2 >>> 8 & 0xFF) / 255.0;
-
-            r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
-            g = ((g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92);
-            b = ((b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92);
-
+            r = lut[(rgba2 >>> 24)];
+            g = lut[(rgba2 >>> 16 & 0xFF)];
+            b = lut[(rgba2 >>> 8 & 0xFF)];
+            
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
             z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.088840; // 0.82521;
@@ -161,13 +162,9 @@ public class PaletteReducer {
             if((rgba1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
             double x, y, z, r, g, b;
 
-            r = (rgba1 >>> 24) / 255.0;
-            g = (rgba1 >>> 16 & 0xFF) / 255.0;
-            b = (rgba1 >>> 8 & 0xFF) / 255.0;
-
-            r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
-            g = ((g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92);
-            b = ((b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92);
+            r = lut[(rgba1 >>> 24)];
+            g = lut[(rgba1 >>> 16 & 0xFF)];
+            b = lut[(rgba1 >>> 8 & 0xFF)];
 
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
@@ -181,14 +178,10 @@ public class PaletteReducer {
             double A = 500.0 * (x - y);
             double B = 200.0 * (y - z);
 
-            r = r2 / 255.0;
-            g = g2 / 255.0;
-            b = b2 / 255.0;
-
-            r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
-            g = ((g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92);
-            b = ((b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92);
-
+            r = lut[r2];
+            g = lut[g2];
+            b = lut[b2];
+            
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
             z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.088840; // 0.82521;
@@ -208,13 +201,9 @@ public class PaletteReducer {
         public double difference(final int r1, final int g1, final int b1, final int r2, final int g2, final int b2) {
             double x, y, z, r, g, b;
 
-            r = r1 / 255.0;
-            g = g1 / 255.0;
-            b = b1 / 255.0;
-
-            r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
-            g = ((g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92);
-            b = ((b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92);
+            r = lut[r1];
+            g = lut[g1];
+            b = lut[b1];
 
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
@@ -228,13 +217,9 @@ public class PaletteReducer {
             double A = 500.0 * (x - y);
             double B = 200.0 * (y - z);
 
-            r = r2 / 255.0;
-            g = g2 / 255.0;
-            b = b2 / 255.0;
-
-            r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
-            g = ((g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92);
-            b = ((b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92);
+            r = lut[r2];
+            g = lut[g2];
+            b = lut[b2];
 
             x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.950489; // 0.96422;
             y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.000000; // 1.00000;
@@ -417,7 +402,7 @@ public class PaletteReducer {
                 yLUT[i] = Math.cbrt(i / 2041.0);
             }
             for (int i = 1; i < 256; i++) {
-                cLUT[255 - i] = -(cLUT[255 + i] = i * 0x1p-8);//Math.pow(i / 257.0, 0.75));
+                cLUT[255 - i] = -(cLUT[255 + i] = Math.pow(i * 0x1p-8, 0.875));//Math.pow(i / 257.0, 0.75));
             }
         }
         @Override
@@ -432,10 +417,10 @@ public class PaletteReducer {
 
         @Override
         public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-            final double y = yLUT[r1 * 3 + g1 * 4 + b1] - yLUT[r2 * 3 + g2 * 4 + b2];
+            final double y = yLUT[r1 * 6 + g1 * 9 + b1 >>> 1] - yLUT[r2 * 6 + g2 * 9 + b2 >>> 1];
             final double cw = (cLUT[255 + r1 - b1] - cLUT[255 + r2 - b2]);
-            final double cm = (cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2]) * (cw * 1.25 + 2.0) * (cw * 1.25 + 2.0);
-            return y * y * 20.0 + cw * cw + cm * cm;
+            final double cm = (cLUT[255 + g1 - b1] - cLUT[255 + g2 - b2]);
+            return y * y * 8 + cw * cw + cm * cm;
         }
     }
 
