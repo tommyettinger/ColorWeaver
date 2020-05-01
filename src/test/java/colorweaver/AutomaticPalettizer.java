@@ -81,7 +81,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         });
 //        for(FileHandle hex : hexes) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
-        FileHandle hex = Gdx.files.local("palettes/hex/dawnvinja-63.hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
             String name = hex.nameWithoutExtension().toLowerCase(), suffix = "_" + name;
             loadPalette(name);
             Gdx.files.local(targetDir + name).mkdirs();
