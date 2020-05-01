@@ -8,13 +8,12 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 
-import static colorweaver.FloatColorTools.floatGetHSV;
 import static colorweaver.tools.TrigTools.cos_;
 import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "dawnplumnik-63";
+    public static final String NAME = "websafe-216";
     
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -52,37 +51,44 @@ public class HexGenerator extends ApplicationAdapter {
 
     @Override
     public void create() {
-        palette = new int[64];
-        float[] outer = {
-            0.96f,//NamedColor.AURORA_CARMINE.hue(),
-            0.015f,//NamedColor.AURORA_LIGHT_SKIN_6.hue(),
-            0.013f,//NamedColor.ORANGE.hue(),
-            NamedColor.CW_LIGHT_YELLOW.hue(),
-            NamedColor.CW_GREEN.hue(),
-            NamedColor.CW_LIGHT_CYAN.hue(),
-            NamedColor.CW_SAPPHIRE.hue(),
-            NamedColor.CW_PURPLE.hue()
-        };
-
-        for (int i = 0; i < 7; i++) {
-            palette[i+1] = getInt(floatGetHSV(0.078f, 0.05f, (i+0.5f)/7f, 1f));
+//        palette = new int[64];
+//        float[] outer = {
+//            0.96f,//NamedColor.AURORA_CARMINE.hue(),
+//            0.015f,//NamedColor.AURORA_LIGHT_SKIN_6.hue(),
+//            0.013f,//NamedColor.ORANGE.hue(),
+//            NamedColor.CW_LIGHT_YELLOW.hue(),
+//            NamedColor.CW_GREEN.hue(),
+//            NamedColor.CW_LIGHT_CYAN.hue(),
+//            NamedColor.CW_SAPPHIRE.hue(),
+//            NamedColor.CW_PURPLE.hue()
+//        };
+//
+//        for (int i = 0; i < 7; i++) {
+//            palette[i+1] = getInt(floatGetHSV(0.078f, 0.05f, (i+0.5f)/7f, 1f));
+//        }
+//        for (int i = 0; i < 8; i++) {
+//            float sm = 1.0625f, vm = (9.5f + ((i & 3))) * 0.1f;
+//            if(i <= 1 || i == 4) sm -= 0.09375f;
+//            if(i == 7 || i == 5) sm -= 0.125f;
+//            if(i == 6) vm = 0.9875f;
+//            if(i == 7) vm = 0.9375f;
+//            palette[i+8]    = getInt(floatGetHSV(outer[i], sm * 0.375f, vm * 0.25f, 1f));
+//            palette[i+8+8]  = getInt(floatGetHSV(outer[i], sm * 0.3f, vm * 0.4f, 1f));
+//            palette[i+8+16] = getInt(floatGetHSV(outer[i], sm * 0.45f, vm * 0.55f, 1f));
+//            palette[i+8+24] = getInt(floatGetHSV(outer[i], sm * 0.55f, vm * 0.75f, 1f));
+//            palette[i+8+32] = getInt(floatGetHSV(outer[i], sm * 0.4f, vm * 0.9f, 1f));
+//            palette[i+8+40] = getInt(floatGetHSV(lerpHue(outer[i], outer[i+1 & 7], 0.4f), sm * 0.5f, vm * 0.475f, 1f));
+//            palette[i+8+48] = getInt(floatGetHSV(lerpHue(outer[i], outer[i-1 & 7], 0.4f), sm * 0.35f, vm * 0.65f, 1f));
+//        }
+        palette = new int[217];
+        for (int r = 0, i = 1; r < 6; r++) {
+            for (int g = 0; g < 6; g++) {
+                for (int b = 0; b < 6; b++) {
+                    palette[i++] = (r * 0x330000 | g * 0x3300 | b * 0x33) << 8 | 0xFF;
+                }
+            }
         }
-        for (int i = 0; i < 8; i++) {
-            float sm = 1.0625f, vm = (9.5f + ((i & 3))) * 0.1f;
-            if(i <= 1 || i == 4) sm -= 0.09375f;
-            if(i == 7 || i == 5) sm -= 0.125f;
-            if(i == 6) vm = 0.9875f;
-            if(i == 7) vm = 0.9375f;
-            palette[i+8]    = getInt(floatGetHSV(outer[i], sm * 0.375f, vm * 0.25f, 1f));
-            palette[i+8+8]  = getInt(floatGetHSV(outer[i], sm * 0.3f, vm * 0.4f, 1f));
-            palette[i+8+16] = getInt(floatGetHSV(outer[i], sm * 0.45f, vm * 0.55f, 1f));
-            palette[i+8+24] = getInt(floatGetHSV(outer[i], sm * 0.55f, vm * 0.75f, 1f));
-            palette[i+8+32] = getInt(floatGetHSV(outer[i], sm * 0.4f, vm * 0.9f, 1f));
-            palette[i+8+40] = getInt(floatGetHSV(lerpHue(outer[i], outer[i+1 & 7], 0.4f), sm * 0.5f, vm * 0.475f, 1f));
-            palette[i+8+48] = getInt(floatGetHSV(lerpHue(outer[i], outer[i-1 & 7], 0.4f), sm * 0.35f, vm * 0.65f, 1f));
-        }
-        
-        palette = Coloring.DAWNPLUMNIK;
+//        palette = Coloring.DAWNPLUMNIK;
         
 //        float hueAngle = 0.1f, sat;
 //        //0.7548776662466927, 0.5698402909980532,   0.6180339887498949
