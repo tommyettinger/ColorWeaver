@@ -13,7 +13,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "websafe-216";
+    public static final String NAME = "manos-64";
     
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -80,15 +80,16 @@ public class HexGenerator extends ApplicationAdapter {
 //            palette[i+8+40] = getInt(floatGetHSV(lerpHue(outer[i], outer[i+1 & 7], 0.4f), sm * 0.5f, vm * 0.475f, 1f));
 //            palette[i+8+48] = getInt(floatGetHSV(lerpHue(outer[i], outer[i-1 & 7], 0.4f), sm * 0.35f, vm * 0.65f, 1f));
 //        }
-        palette = new int[217];
-        for (int r = 0, i = 1; r < 6; r++) {
-            for (int g = 0; g < 6; g++) {
-                for (int b = 0; b < 6; b++) {
-                    palette[i++] = (r * 0x330000 | g * 0x3300 | b * 0x33) << 8 | 0xFF;
-                }
-            }
-        }
-//        palette = Coloring.DAWNPLUMNIK;
+        
+//        palette = new int[217];
+//        for (int r = 0, i = 1; r < 6; r++) {
+//            for (int g = 0; g < 6; g++) {
+//                for (int b = 0; b < 6; b++) {
+//                    palette[i++] = (r * 0x330000 | g * 0x3300 | b * 0x33) << 8 | 0xFF;
+//                }
+//            }
+//        }
+        palette = Coloring.MANOS64;
         
 //        float hueAngle = 0.1f, sat;
 //        //0.7548776662466927, 0.5698402909980532,   0.6180339887498949

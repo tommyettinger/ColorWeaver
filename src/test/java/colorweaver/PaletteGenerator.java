@@ -313,7 +313,8 @@ public class PaletteGenerator extends ApplicationAdapter {
 //            PALETTE[pr.reduceIndex(color) & 0xFF] = color;
 //        }
         
-        PALETTE = Coloring.ZIGGURAT64;
+        PALETTE = Coloring.DAWNPLUMNIK;
+//        PALETTE = Coloring.ZIGGURAT64;
 //        PALETTE = Coloring.AZURESTAR33;
 //        PALETTE = Coloring.SHELTZY32;
         
@@ -420,7 +421,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         
         //// Used for either of the above.
         try {
-            png8.writePrecisely(Gdx.files.local("Ziggurat64_MV.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Dawnplumnik64_MV.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -431,7 +432,7 @@ public class PaletteGenerator extends ApplicationAdapter {
         }
         pix.drawPixel(255, 0, 0);
         try {
-            png8.writePrecisely(Gdx.files.local("Ziggurat64.png"), pix, false);
+            png8.writePrecisely(Gdx.files.local("Dawnplumnik64.png"), pix, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -448,7 +449,7 @@ public class PaletteGenerator extends ApplicationAdapter {
             }
         }
         try {
-            png8.writePrecisely(Gdx.files.local("Ziggurat64_GLSL.png"), p2, false);
+            png8.writePrecisely(Gdx.files.local("Dawnplumnik64_GLSL.png"), p2, false);
 //            png8.writePrecisely(Gdx.files.local("Uniform"+PALETTE.length+"_GLSL.png"), p2, false);
         } catch (IOException e) {
             e.printStackTrace();
