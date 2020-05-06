@@ -2010,9 +2010,9 @@ public class Coloring {
             0x2910DEFF, 0x29189CFF, 0x21105AFF, 0x6329E7FF, 0x9C84CEFF, 0xCEADE7FF, 0x9C29B5FF, 0x6B1873FF, 0xD631DEFF, 0xE773D6FF, 0xA52973FF, 0xE7298CFF, 0x4A1029FF, 0x845A6BFF, 0xD66B7BFF, 0xB52131FF,
     };
     /**
-     * Manually-edited version of the 64-color {@link #DAWNPLUMNIK} palette; has better gray, orange, yellow, and brown
-     * coverage, and reduced cyan coverage (which was very heavy originally).
-     * <a href="https://i.imgur.com/XaSUN1k.png">Image preview</a>.
+     * Manually-edited version of the 64-color Dawnplumnik palette, which was made by combining DawnBringer's Iso22
+     * bman4750's Super Plum 21, and Vinik's Vinik24. Has better gray, orange, yellow, and brown coverage, and reduced
+     * cyan coverage (which was very heavy originally). <a href="https://i.imgur.com/XaSUN1k.png">Image preview</a>.
      */
     public static final int[] MANOS64 = {
             0x00000000, 0x19092DFF, 0x213118FF, 0x314A29FF, 0x8C847BFF, 0x6E868EFF, 0x9CA59CFF, 0xAFC7CFFF,
