@@ -173,9 +173,9 @@ public class ColorizerPreview extends ApplicationAdapter {
 		for (int i = 0; i < 0x8000; i++) {
 			index = pm[i] & 0xFF;
 			mix = CIELABConverter.shrink(palette[index]);
-			centroids[0][index] += PaletteReducer.lab15[0][mix];
-			centroids[1][index] += PaletteReducer.lab15[1][mix];
-			centroids[2][index] += PaletteReducer.lab15[2][mix];
+			centroids[0][index] += PaletteReducer.labs[0][mix];
+			centroids[1][index] += PaletteReducer.labs[1][mix];
+			centroids[2][index] += PaletteReducer.labs[2][mix];
 			centroids[3][index]++;
 		}
 		state = Arrays.hashCode(palette);

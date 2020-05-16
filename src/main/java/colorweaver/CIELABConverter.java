@@ -530,10 +530,12 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 	}
 	public static double[][] makeLAB15()
 	{
-		final double[][] labs = new double[3][0x8000];
-		double r, g, b, x, y, z, L, A, B;
 //		double[] minA = new double[20], maxA = new double[20], minB = new double[20], maxB = new double[20];
 //		int[][][] grids = new int[20][5][5];
+
+
+		final double[][] labs = new double[3][0x8000];
+		double r, g, b, x, y, z;
 		for (int ri = 0; ri < 32; ri++) {
 			r = ri / 31.0;
 			r = ((r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92);
@@ -559,9 +561,9 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 					y = (y > 0.008856) ? Math.cbrt(y) : (7.787037037037037 * y) + 0.13793103448275862;
 					z = (z > 0.008856) ? Math.cbrt(z) : (7.787037037037037 * z) + 0.13793103448275862;
 
-					labs[0][idx] = L = (116.0 * y) - 16.0;
-					labs[1][idx] = A = 500.0 * (x - y);
-					labs[2][idx] = B = 200.0 * (y - z);
+					labs[0][idx] = (116.0 * y) - 16.0;
+					labs[1][idx] = 500.0 * (x - y);
+					labs[2][idx] = 200.0 * (y - z);
 //					int l = (int)(L * 0.19 + 0.5); // was 1.0 / 11.111
 //					minA[l] = Math.min(minA[l], A);
 //					maxA[l] = Math.max(maxA[l], A);

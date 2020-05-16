@@ -21,8 +21,8 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
     }
 
     public void create() {
-        PaletteReducer reducer = new PaletteReducer(Coloring.MANOS64, PaletteReducer.labQuickMetric);
-        generatePreloadCode(reducer.paletteMapping, "ManosPreload.txt");
+        PaletteReducer reducer = new PaletteReducer(Coloring.AURORA, PaletteReducer.labQuickMetric);
+        generatePreloadCode(reducer.paletteMapping, "AuroraPreload.txt");
         Gdx.app.exit();
     }
     /**
