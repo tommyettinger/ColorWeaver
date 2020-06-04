@@ -2,6 +2,7 @@ package colorweaver;
 
 import com.badlogic.gdx.math.MathUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 /**
@@ -5309,7 +5310,7 @@ public abstract class Colorizer extends Dimmer implements IColorizer {
             }
         };
     }
-    public static final Colorizer RinsedColorizer = new Colorizer(new PaletteReducer(Coloring.RINSED,
+    public static final Colorizer RinsedColorizer = new Colorizer(new PaletteReducer(Coloring.RINSED, (
             "\027\027\027\02777·¿¿¿¿¿¾¾ÞÞÝÝÝÝÝÝÝÜÜÜÜÜÜÛÛÛ\027\027\027777·¿¿¿¿¿¾¾¾½ÝÝÝÝÝÝÝÜÜÜÜÜÜÛÛÛ\027\027\02777··¿¿¿¿¿¾¾¾½ÝÝÝÝÝÝÝÜÜÜÜÜÜÛÛÛ7777¯¿¿¿¿¾¾¾¾½½ÝÝÝÝÝÝÜÜÜÜÜÜÛÛÛ"+
                     "¯¯¿¿¾¾¾¾½½½½ÝÝÝÝÜÜÜÜÜÜÜÛÛÛ¯¯§§¾¾¾¾½½½½ÝÝÝÝÜÜÜÜÜÜÜÛÛÛ¯¯§®¾¾¾¾½½½½½¼¼¼¼ÜÜÜÜÜÜÛÛÛ§§®¦¾¾½½½½½¼¼¼¼¼ÜÜÜÜÜÜÛÛÛ"+
                     "®®¦¦¾­½½½½½¼¼¼¼¼¼»ÜÜÜÛÛÛÛ¦¦¦¦¦­­­½½½¼¼¼¼¼¼»»»»»»ÛÛÛ¦¦¦¥¥­­½½½¼¼¼¼¼¼»»»»»»ÛÛÛ¥¥¥¥¥¥­½½«¼¼¼¼¼»»»»»»»ºÛÛ"+
@@ -5566,6 +5567,7 @@ public abstract class Colorizer extends Dimmer implements IColorizer {
                     "sssssssssJJJIIIIúúúúúúééééééééàèsssssssssIIIIIIIIúúúúùùùùùùùàààèssssssssIIIIIIIIIIBùùùùùùùùùààèèssssssssIIIIIIIIIIAAùùùùùùùàààèè"+
                     "rrrrrrrrIIIIIIIIIAAAAAAùùùàààèèèrrrrrrrrrIIIIIIIAAAAAAAA ðððèèèèrrrrrrrrrrIIIIIHAAAAAAA  ððððøøørrrrrrrrrHHHHHHHHAAAAA   ððððøøø"+
                     "rrrrrrrqqqHHHHHHH``````  ððððøøørrrrqqqqqqHHHHHhh@`````ppXXXXX\020\020rqqqqqqqqqqHHHhhh@@@``pppXXXXX\020\020qqqqqqqqqqqHhhhhh@@@@pppppXXX\020\020\020"
+    ).getBytes(StandardCharsets.ISO_8859_1)
     )) {
         private final byte[] primary = {
                 28, 36, 44, 52, 60, 68, 76, 84, 92, 100, 108, 116, 124, -124, -116, -108, -100, -92, -84, -76, -68, -52, -44, -36, -28, -20, -12, -4

@@ -13,7 +13,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "manos-64";
+    public static final String NAME = "joel-16";
     
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -89,8 +89,11 @@ public class HexGenerator extends ApplicationAdapter {
 //                }
 //            }
 //        }
-        palette = Coloring.MANOS64;
-        
+//        palette = Coloring.MANOS64;
+        palette = new int[] {0x080000FF,0x201A0BFF,0x432817FF,0x492910FF,
+                0x234309FF,0x5D4F1EFF,0x9C6B20FF,0xA9220FFF,
+                0x2B347CFF,0x2B7409FF,0xD0CA40FF,0xE8A077FF,
+                0x6A94ABFF,0xD5C4B3FF,0xFCE76EFF,0xFCFAE2FF };
 //        float hueAngle = 0.1f, sat;
 //        //0.7548776662466927, 0.5698402909980532,   0.6180339887498949
 //        for (int i = 0; i < 6; i++) {

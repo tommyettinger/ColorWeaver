@@ -1,5 +1,6 @@
 package colorweaver;
 
+import colorweaver.tools.IntSort;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
@@ -1731,7 +1732,7 @@ public class PaletteReducer {
                     used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                         | ((gg << 2) & 0x3E0)
                         | ((bb >>> 3))] & 0xFF];
-                    adj = (acos_((BlueNoise.get(px, y, BlueNoise.ALT_NOISE[1]) + 0.5f) * 0.00784313725490196f) - 0.25f) * strength;
+                    adj = (acos_((BlueNoise.get(px, y) + 0.5f) * 0.00784313725490196f) - 0.25f) * strength;
                     rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
                     gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
                     bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF);
@@ -1801,6 +1802,64 @@ public class PaletteReducer {
                 }
             }
 
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+    
+    private static final int[] thresholdMatrix = {
+            0,48,12,60, 3,51,15,63,
+            32,16,44,28,35,19,47,31,
+            8,56, 4,52,11,59, 7,55,
+            40,24,36,20,43,27,39,23,
+            2,50,14,62, 1,49,13,61,
+            34,18,46,30,33,17,45,29,
+            10,58, 6,54, 9,57, 5,53,
+            42,26,38,22,41,25,37,21
+    };
+    
+    private final int[] candidates = new int[64];
+    
+    private static final IntSort.IntComparator lumaComparator = new IntSort.IntComparator() {
+        @Override
+        public int compare(int left, int right) {
+            return (int)((labs[0][CIELABConverter.shrink(left)] - labs[0][CIELABConverter.shrink(right)]) * 1E4);
+        }
+    };
+
+    public Pixmap reduceKnoll (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used, cr, cg, cb;
+        final float errorMul = ditherStrength * 0.2f;
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int er = 0, eg = 0, eb = 0;
+                    cr = (color >>> 24);
+                    cg = (color >>> 16 & 0xFF);
+                    cb = (color >>> 8 & 0xFF);
+                    for (int i = 0; i < 64; i++) {
+                        int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
+                        int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
+                        int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
+                        candidates[i] = used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                                | ((gg << 2) & 0x3E0)
+                                | ((bb >>> 3))] & 0xFF];
+                        er += cr - (used >>> 24);
+                        eg += cg - (used >>> 16 & 0xFF);
+                        eb += cb - (used >>> 8 & 0xFF);
+                    }
+                    IntSort.sort(candidates, lumaComparator);
+                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[((px & 7) | (y & 7) << 3)]]);
+                    // ^ (y * 0x91E10DA5 & px * 0xC13FA9A9) >>> 31
+                }
+            }
         }
         pixmap.setBlending(blending);
         return pixmap;
