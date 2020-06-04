@@ -81,6 +81,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         });
         for(FileHandle hex : hexes) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
             String name = hex.nameWithoutExtension().toLowerCase(), suffix = "_" + name;
@@ -115,9 +116,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //////good
 //                    pm = (reducer.reduceBluish(new Pixmap(sample)));
 //                    png8.writePrecisely(Gdx.files.local(subname + "_Bluish" + suffix + ".png"), pm, PALETTE, false, 0);
+//////???
+//                    pm = (reducer.reduceKnoll(new Pixmap(sample)));
+//                    png8.writePrecisely(Gdx.files.local(subname + "_Knoll" + suffix + ".png"), pm, PALETTE, false, 0);
 ////???
-                    pm = (reducer.reduceKnoll(new Pixmap(sample)));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Knoll" + suffix + ".png"), pm, PALETTE, false, 0);
+                    pm = (reducer.reduceKnollRoberts(new Pixmap(sample)));
+                    png8.writePrecisely(Gdx.files.local(subname + "_KR" + suffix + ".png"), pm, PALETTE, false, 0);
 
                     reducer.setDitherStrength(0.5f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
@@ -137,9 +141,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //////good?
 //                    pm = (reducer.reduceBluish(new Pixmap(sample)));
 //                    png8.writePrecisely(Gdx.files.local(subname + "_Bluish" + suffix + ".png"), pm, PALETTE, false, 0);
+//////???
+//                    pm = (reducer.reduceKnoll(new Pixmap(sample)));
+//                    png8.writePrecisely(Gdx.files.local(subname + "_Knoll" + suffix + ".png"), pm, PALETTE, false, 0);
 ////???
-                    pm = (reducer.reduceKnoll(new Pixmap(sample)));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Knoll" + suffix + ".png"), pm, PALETTE, false, 0);
+                    pm = (reducer.reduceKnollRoberts(new Pixmap(sample)));
+                    png8.writePrecisely(Gdx.files.local(subname + "_KR" + suffix + ".png"), pm, PALETTE, false, 0);
 
                     reducer.setDitherStrength(0.25f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_quarter";
@@ -159,9 +166,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 ////good?
 //                    pm = (reducer.reduceBluish(new Pixmap(sample)));
 //                    png8.writePrecisely(Gdx.files.local(subname + "_Bluish" + suffix + ".png"), pm, PALETTE, false, 0);
+//////???
+//                    pm = (reducer.reduceKnoll(new Pixmap(sample)));
+//                    png8.writePrecisely(Gdx.files.local(subname + "_Knoll" + suffix + ".png"), pm, PALETTE, false, 0);
 ////???
-                    pm = (reducer.reduceKnoll(new Pixmap(sample)));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Knoll" + suffix + ".png"), pm, PALETTE, false, 0);
+                    pm = (reducer.reduceKnollRoberts(new Pixmap(sample)));
+                    png8.writePrecisely(Gdx.files.local(subname + "_KR" + suffix + ".png"), pm, PALETTE, false, 0);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
