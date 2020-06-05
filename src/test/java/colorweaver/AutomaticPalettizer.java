@@ -79,6 +79,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                 return !pathname.isDirectory();
             }
         });
+        PaletteReducer reducer = new PaletteReducer();
         for(FileHandle hex : hexes) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
@@ -89,7 +90,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             Gdx.files.local(targetDir + name).mkdirs();
             PNG8 png8 = new PNG8();
             png8.setFlipY(false);
-            PaletteReducer reducer = new PaletteReducer(PALETTE, PaletteReducer.labQuickMetric);
+            reducer.exact(PALETTE, PaletteReducer.labQuickMetric);
             png8.palette = reducer;
             try {
                 Pixmap pm;
@@ -177,6 +178,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                 e.printStackTrace();
             }
         }
+
         Gdx.app.exit();
     }
 }

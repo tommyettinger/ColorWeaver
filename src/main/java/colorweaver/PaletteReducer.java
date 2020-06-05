@@ -1,6 +1,5 @@
 package colorweaver;
 
-import colorweaver.tools.IntSort;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
@@ -1806,30 +1805,101 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
-    
+
+    /**
+     * Given by Joel Yliluoma in a dithering article. 
+     */
     private static final int[] thresholdMatrix = {
             0,  12,   3,  15,
             8,   4,  11,   7,
             2,  14,   1,  13,
             10,  6,   9,   5,
-//            0,48,12,60, 3,51,15,63,
-//            32,16,44,28,35,19,47,31,
-//            8,56, 4,52,11,59, 7,55,
-//            40,24,36,20,43,27,39,23,
-//            2,50,14,62, 1,49,13,61,
-//            34,18,46,30,33,17,45,29,
-//            10,58, 6,54, 9,57, 5,53,
-//            42,26,38,22,41,25,37,21,
     };
     
     private final int[] candidates = new int[16];
-    
-    private static final IntSort.IntComparator lumaComparator = new IntSort.IntComparator() {
-        @Override
-        public int compare(int left, int right) {
-            return (int)((labs[0][CIELABConverter.shrink(left)] - labs[0][CIELABConverter.shrink(right)]) * 1E4);
+
+    /**
+     * Compares items in i16 by their luma, looking up items by the indices a and b, and swaps the two given indices if
+     * the item at a has higher luma than the item at b.
+     * @param ints an int array than must be able to take a and b as indices; may be modified in place
+     * @param a an index into ints
+     * @param b an index into ints
+     */
+    private void compareSwap(final int[] ints, final int a, final int b) {
+        if(labs[0][CIELABConverter.shrink(ints[a])] > labs[0][CIELABConverter.shrink(ints[b])]) {
+            final int t = ints[a];
+            ints[a] = ints[b];
+            ints[b] = t;
         }
-    };
+    }
+
+    /**
+     * Sorting network, found by http://pages.ripco.net/~jgamble/nw.html , considered the best known for length 16.
+     * @param i16 a 16-element array that will be sorted in-place by {@link #compareSwap(int[], int, int)}
+     */
+    private void sort16(final int[] i16)
+    {
+        compareSwap(i16, 0, 1);
+        compareSwap(i16, 2, 3);
+        compareSwap(i16, 4, 5);
+        compareSwap(i16, 6, 7);
+        compareSwap(i16, 8, 9);
+        compareSwap(i16, 10, 11);
+        compareSwap(i16, 12, 13);
+        compareSwap(i16, 14, 15);
+        compareSwap(i16, 0, 2);
+        compareSwap(i16, 4, 6);
+        compareSwap(i16, 8, 10);
+        compareSwap(i16, 12, 14);
+        compareSwap(i16, 1, 3);
+        compareSwap(i16, 5, 7);
+        compareSwap(i16, 9, 11);
+        compareSwap(i16, 13, 15);
+        compareSwap(i16, 0, 4);
+        compareSwap(i16, 8, 12);
+        compareSwap(i16, 1, 5);
+        compareSwap(i16, 9, 13);
+        compareSwap(i16, 2, 6);
+        compareSwap(i16, 10, 14);
+        compareSwap(i16, 3, 7);
+        compareSwap(i16, 11, 15);
+        compareSwap(i16, 0, 8);
+        compareSwap(i16, 1, 9);
+        compareSwap(i16, 2, 10);
+        compareSwap(i16, 3, 11);
+        compareSwap(i16, 4, 12);
+        compareSwap(i16, 5, 13);
+        compareSwap(i16, 6, 14);
+        compareSwap(i16, 7, 15);
+        compareSwap(i16, 5, 10);
+        compareSwap(i16, 6, 9);
+        compareSwap(i16, 3, 12);
+        compareSwap(i16, 13, 14);
+        compareSwap(i16, 7, 11);
+        compareSwap(i16, 1, 2);
+        compareSwap(i16, 4, 8);
+        compareSwap(i16, 1, 4);
+        compareSwap(i16, 7, 13);
+        compareSwap(i16, 2, 8);
+        compareSwap(i16, 11, 14);
+        compareSwap(i16, 2, 4);
+        compareSwap(i16, 5, 6);
+        compareSwap(i16, 9, 10);
+        compareSwap(i16, 11, 13);
+        compareSwap(i16, 3, 8);
+        compareSwap(i16, 7, 12);
+        compareSwap(i16, 6, 8);
+        compareSwap(i16, 10, 12);
+        compareSwap(i16, 3, 5);
+        compareSwap(i16, 7, 9);
+        compareSwap(i16, 3, 4);
+        compareSwap(i16, 5, 6);
+        compareSwap(i16, 7, 8);
+        compareSwap(i16, 9, 10);
+        compareSwap(i16, 11, 12);
+        compareSwap(i16, 6, 7);
+        compareSwap(i16, 8, 9);
+    }
 
     public Pixmap reduceKnoll (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
@@ -1859,7 +1929,7 @@ public class PaletteReducer {
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
                     }
-                    IntSort.sort(candidates, lumaComparator);
+                    sort16(candidates);
                     pixmap.drawPixel(px, y, candidates[thresholdMatrix[((px & 3) | (y & 3) << 2)]]);
                 }
             }
@@ -1868,7 +1938,7 @@ public class PaletteReducer {
         return pixmap;
     }
 
-    public Pixmap reduceKnollRoberts (Pixmap pixmap) {
+    public Pixmap reduceKnollRoberts (Pixmap pixmap) { 
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
@@ -1896,7 +1966,7 @@ public class PaletteReducer {
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
                     }
-                    IntSort.sort(candidates, lumaComparator);
+                    sort16(candidates);
                     pixmap.drawPixel(px, y, candidates[thresholdMatrix[
                             ((int) (px * 0x0.C13FA9A902A6328Fp3f + y * 0x0.91E10DA5C79E7B1Dp2f) & 3) ^
                                     ((px & 3) | (y & 3) << 2)
