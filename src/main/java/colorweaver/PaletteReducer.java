@@ -1808,17 +1808,21 @@ public class PaletteReducer {
     }
     
     private static final int[] thresholdMatrix = {
-            0,48,12,60, 3,51,15,63,
-            32,16,44,28,35,19,47,31,
-            8,56, 4,52,11,59, 7,55,
-            40,24,36,20,43,27,39,23,
-            2,50,14,62, 1,49,13,61,
-            34,18,46,30,33,17,45,29,
-            10,58, 6,54, 9,57, 5,53,
-            42,26,38,22,41,25,37,21
+            0,  12,   3,  15,
+            8,   4,  11,   7,
+            2,  14,   1,  13,
+            10,  6,   9,   5,
+//            0,48,12,60, 3,51,15,63,
+//            32,16,44,28,35,19,47,31,
+//            8,56, 4,52,11,59, 7,55,
+//            40,24,36,20,43,27,39,23,
+//            2,50,14,62, 1,49,13,61,
+//            34,18,46,30,33,17,45,29,
+//            10,58, 6,54, 9,57, 5,53,
+//            42,26,38,22,41,25,37,21,
     };
     
-    private final int[] candidates = new int[64];
+    private final int[] candidates = new int[16];
     
     private static final IntSort.IntComparator lumaComparator = new IntSort.IntComparator() {
         @Override
@@ -1833,7 +1837,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb;
-        final float errorMul = ditherStrength * 0.2f;
+        final float errorMul = ditherStrength * 0.5f;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -1844,7 +1848,7 @@ public class PaletteReducer {
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
-                    for (int i = 0; i < 64; i++) {
+                    for (int i = 0; i < candidates.length; i++) {
                         int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
                         int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
                         int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
@@ -1856,7 +1860,7 @@ public class PaletteReducer {
                         eb += cb - (used >>> 8 & 0xFF);
                     }
                     IntSort.sort(candidates, lumaComparator);
-                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[((px & 7) | (y & 7) << 3)]]);
+                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[((px & 3) | (y & 3) << 2)]]);
                 }
             }
         }
@@ -1870,7 +1874,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb;
-        final float errorMul = ditherStrength * 0.0625f;
+        final float errorMul = ditherStrength * 0.375f;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -1881,7 +1885,7 @@ public class PaletteReducer {
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
-                    for (int i = 0; i < 64; i++) {
+                    for (int i = 0; i < candidates.length; i++) {
                         int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
                         int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
                         int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
@@ -1894,8 +1898,8 @@ public class PaletteReducer {
                     }
                     IntSort.sort(candidates, lumaComparator);
                     pixmap.drawPixel(px, y, candidates[thresholdMatrix[
-                            ((int) (px * 0x0.C13FA9A902A6328Fp3f + y * 0x0.91E10DA5C79E7B1Dp3f) & 7) ^
-                                    ((px & 7) | (y & 7) << 3)
+                            ((int) (px * 0x0.C13FA9A902A6328Fp3f + y * 0x0.91E10DA5C79E7B1Dp2f) & 3) ^
+                                    ((px & 3) | (y & 3) << 2)
                             ]]);
                 }
             }
