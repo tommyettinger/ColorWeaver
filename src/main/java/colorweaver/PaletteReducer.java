@@ -387,7 +387,24 @@ public class PaletteReducer {
 
     }
 
+    /**
+     * Converts an RGBA8888 int color to the RGB555 format used by {@link #labs} to look up colors.
+     * @param color an RGBA8888 int color
+     * @return an RGB555 int color
+     */
+    public static int shrink(final int color)
+    {
+        return (color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F);
+    }
 
+    /**
+     * Stores CIE L*A*B* components for 32768 colors (the full RGB555 range). The first sub-array stores luma (ranging
+     * from 0 to 100), the second sub-array stores A chroma (representing red for positive values and green for
+     * negative, very roughly, with a strange range of about -120 to 120), and the third sub-array stores B chroma
+     * (representing yellow for positive values and blue for negative values, very roughly, with a strange range of
+     * about -120 to 120). Inside each array are 32768 double values, storing the L, A, or B for the RGB555 color at
+     * that index. You can convert a (normal) RGBA8888 color to RGB555 with {@link #shrink(int)}.
+     */
     public static final double[][] labs = new double[3][0x8000];
     static {
         double r, g, b, x, y, z;
@@ -1807,7 +1824,7 @@ public class PaletteReducer {
     }
 
     /**
-     * Given by Joel Yliluoma in a dithering article. 
+     * Given by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
      */
     private static final int[] thresholdMatrix = {
             0,  12,   3,  15,
@@ -1819,14 +1836,17 @@ public class PaletteReducer {
     private final int[] candidates = new int[16];
 
     /**
-     * Compares items in i16 by their luma, looking up items by the indices a and b, and swaps the two given indices if
-     * the item at a has higher luma than the item at b.
+     * Compares items in ints by their luma, looking up items by the indices a and b, and swaps the two given indices if
+     * the item at a has higher luma than the item at b. This is protected rather than private because it's more likely
+     * that this would be desirable to override than a method that uses it, like {@link #reduceKnoll(Pixmap)}. Uses
+     * {@link #labs} to look up fairly-accurate luma for the given colors in {@code ints} (that contains RGBA8888 colors
+     * while labs uses RGB555, so {@link #shrink(int)} is used to convert).
      * @param ints an int array than must be able to take a and b as indices; may be modified in place
      * @param a an index into ints
      * @param b an index into ints
      */
-    private void compareSwap(final int[] ints, final int a, final int b) {
-        if(labs[0][CIELABConverter.shrink(ints[a])] > labs[0][CIELABConverter.shrink(ints[b])]) {
+    protected void compareSwap(final int[] ints, final int a, final int b) {
+        if(labs[0][shrink(ints[a])] > labs[0][shrink(ints[b])]) {
             final int t = ints[a];
             ints[a] = ints[b];
             ints[b] = t;
@@ -1901,6 +1921,18 @@ public class PaletteReducer {
         compareSwap(i16, 8, 9);
     }
 
+    /**
+     * Reduces a Pixmap to the palette this knows by using Thomas Knoll's pattern dither, which is out-of-patent since
+     * late 2019. The output this produces is very dependent on the palette and this PaletteReducer's dither strength,
+     * which can be set with {@link #setDitherStrength(float)}. At close-up zooms, a strong grid pattern will be visible
+     * on most dithered output (like needlepoint). The algorithm was described in detail by Joel Yliluoma in
+     * <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">this dithering article</a>; Yliluoma used an 8x8
+     * threshold matrix because at the time 4x4 was still covered by the patent, but using 4x4 allows a much faster
+     * sorting step (this uses a sorting network, which works well for small input sizes like 16 items).
+     * @see #reduceKnollRoberts(Pixmap) An alternative that uses a similar pattern but skews it to obscure the grid
+     * @param pixmap a Pixmap that will be modified
+     * @return {@code pixmap}, after modifications
+     */
     public Pixmap reduceKnoll (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
@@ -1938,6 +1970,19 @@ public class PaletteReducer {
         return pixmap;
     }
 
+    /**
+     * Reduces a Pixmap to the palette this knows by using a skewed version of Thomas Knoll's pattern dither, which is
+     * out-of-patent since late 2019, using the harmonious numbers rediscovered by Martin Roberts to handle the skew.
+     * The output this produces is very dependent on the palette and this PaletteReducer's dither strength, which can be
+     * set with {@link #setDitherStrength(float)}. A diagonal striping can be visible on many outputs this produces;
+     * this artifact can be mitigated by changing dither strength. The algorithm was described in detail by Joel
+     * Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">this dithering article</a>; Yliluoma used an
+     * 8x8 threshold matrix because at the time 4x4 was still covered by the patent, but using 4x4 allows a much faster
+     * sorting step (this uses a sorting network, which works well for small input sizes like 16 items).
+     * @see #reduceKnoll(Pixmap) An alternative that uses a similar pattern but has a more obvious grid
+     * @param pixmap a Pixmap that will be modified
+     * @return {@code pixmap}, after modifications
+     */
     public Pixmap reduceKnollRoberts (Pixmap pixmap) { 
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
