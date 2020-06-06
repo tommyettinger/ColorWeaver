@@ -472,6 +472,7 @@ public class PaletteReducer {
     public static final LABRoughColorMetric labRoughMetric = new LABRoughColorMetric();
     public byte[] paletteMapping;
     public final int[] paletteArray = new int[256];
+    final int[] gammaArray = new int[256];
     ByteArray curErrorRedBytes, nextErrorRedBytes, curErrorGreenBytes, nextErrorGreenBytes, curErrorBlueBytes, nextErrorBlueBytes;
     float ditherStrength = 0.5f, halfDitherStrength = 0.25f;
 
@@ -1822,6 +1823,17 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+    
+    void computePaletteGamma(double gamma){
+        for (int i = 0; i < paletteArray.length; i++) {
+            int color = paletteArray[i];
+            double r = Math.pow((color >>> 24) / 255.0, gamma);
+            double g = Math.pow((color >>> 16 & 0xFF) / 255.0, gamma);
+            double b = Math.pow((color >>>  8 & 0xFF) / 255.0, gamma);
+            int a = color & 0xFF;
+            gammaArray[i] = (int)(r * 255.999) << 24 | (int)(g * 255.999) << 16 | (int)(b * 255.999) << 8 | a;
+        }
+    }
 
     /**
      * Given by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
@@ -1938,8 +1950,9 @@ public class PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color, used, cr, cg, cb;
+        int color, used, cr, cg, cb, usedIndex;
         final float errorMul = ditherStrength * 0.5f;
+        computePaletteGamma(2.0 - ditherStrength * 1.666);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -1954,9 +1967,11 @@ public class PaletteReducer {
                         int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
                         int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
                         int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
-                        candidates[i] = used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                        usedIndex = paletteMapping[((rr << 7) & 0x7C00)
                                 | ((gg << 2) & 0x3E0)
-                                | ((bb >>> 3))] & 0xFF];
+                                | ((bb >>> 3))] & 0xFF;
+                        candidates[i] = paletteArray[usedIndex];
+                        used = gammaArray[usedIndex];
                         er += cr - (used >>> 24);
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
@@ -1988,8 +2003,9 @@ public class PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color, used, cr, cg, cb;
+        int color, used, cr, cg, cb, usedIndex;
         final float errorMul = ditherStrength * 0.375f;
+        computePaletteGamma(2.0 - ditherStrength * 1.666);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -2004,9 +2020,11 @@ public class PaletteReducer {
                         int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
                         int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
                         int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
-                        candidates[i] = used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                        usedIndex = paletteMapping[((rr << 7) & 0x7C00)
                                 | ((gg << 2) & 0x3E0)
-                                | ((bb >>> 3))] & 0xFF];
+                                | ((bb >>> 3))] & 0xFF;
+                        candidates[i] = paletteArray[usedIndex];
+                        used = gammaArray[usedIndex];
                         er += cr - (used >>> 24);
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
