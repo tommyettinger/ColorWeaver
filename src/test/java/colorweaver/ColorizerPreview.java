@@ -312,7 +312,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 		for (int i = 0; i < labs.size(); i++) {
 			for (int j = i + 1; j < labs.size(); j++) {
-				if((labs.get(i).alpha > 0.0 && labs.get(j).alpha > 0.0) && CIELABConverter.delta(labs.get(i), labs.get(j), 4.0, 1.0, 1.0) <= 100)
+				if((labs.get(i).alpha > 0.0 && labs.get(j).alpha > 0.0) && CIELABConverter.delta(labs.get(i), labs.get(j), 1.0, 1.5, 1.5) <= 100)
 				{
 					removalSet.add(i);
 					removalSet.add(j);
@@ -327,7 +327,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			mixingPalette.remove(removalIndices.get(i));
 		}
 		
-		Collections.sort(mixingPalette, hueComparator);
+//		Collections.sort(mixingPalette, hueComparator);
 		
 		palette = new int[mixingPalette.size()];
 		for (int i = 0; i < palette.length; i++) {
@@ -363,7 +363,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	}
 	
 	public void create () {
-		palette = Coloring.MANOS64;
+		palette = Coloring.MANOSSUS256;
 //		palette = new int[]{
 //				0x00000000, 0x1A1621FE, 0x202920FE, 0x38391AFE, 0x2F4A4AFE, 0x3B455AFE, 0x335A33FE, 0x636363FE, 0x734F6DFE, 0x94837FFE, 0x9C9C9CFE, 0xAD85A8FE, 0xD6D6D6FE, 0xDEC7C0FE, 0xE7E7E7FE, 0xE1DBE7FE,
 //				0xF7F7F7FE, 0x632A2AFE, 0xEF554FFE, 0xBD4B45FE, 0xE79888FE, 0xE78546FE, 0x84583BFE, 0xAD7B43FE, 0xE7A857FE, 0xD6C695FE, 0xDECB55FE, 0x9C964FFE, 0xDCEF5FFE, 0x9CB54DFE, 0xD9EFBAFE, 0xA2DE65FE,

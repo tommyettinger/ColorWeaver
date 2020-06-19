@@ -664,6 +664,18 @@ public class PaletteReducer {
     public void exact(int[] rgbaPalette) {
         exact(rgbaPalette, labQuickMetric);
     }
+
+    /**
+     * Builds the palette information this PNG8 stores from the RGBA8888 ints in {@code rgbaPalette}, up to 256 colors.
+     * Alpha is not preserved except for the first item in rgbaPalette, and only if it is {@code 0} (fully transparent
+     * black); otherwise all items are treated as opaque. If rgbaPalette is null, empty, or only has one color, then
+     * this defaults to DawnBringer's Aurora palette with 256 hand-chosen colors (including transparent).
+     *
+     * @param rgbaPalette an array of RGBA8888 ints; all will be used up to 256 items or the length of the array
+     */
+    public void exact(int[] rgbaPalette, int limit) {
+        exact(rgbaPalette, limit, labQuickMetric);
+    }
     /**
      * Builds the palette information this PNG8 stores from the RGBA8888 ints in {@code rgbaPalette}, up to 256 colors.
      * Alpha is not preserved except for the first item in rgbaPalette, and only if it is {@code 0} (fully transparent
@@ -674,13 +686,25 @@ public class PaletteReducer {
      * @param metric      should usually be {@link #labQuickMetric}, which is fast and high-quality
      */
     public void exact(int[] rgbaPalette, ColorMetric metric) {
-        if (rgbaPalette == null || rgbaPalette.length < 2) {
+        exact(rgbaPalette, 256, metric);
+    }
+    /**
+     * Builds the palette information this PNG8 stores from the RGBA8888 ints in {@code rgbaPalette}, up to 256 colors.
+     * Alpha is not preserved except for the first item in rgbaPalette, and only if it is {@code 0} (fully transparent
+     * black); otherwise all items are treated as opaque. If rgbaPalette is null, empty, or only has one color, then
+     * this defaults to DawnBringer's Aurora palette with 256 hand-chosen colors (including transparent).
+     *
+     * @param rgbaPalette an array of RGBA8888 ints; all will be used up to 256 items or the length of the array
+     * @param metric      should usually be {@link #labQuickMetric}, which is fast and high-quality
+     */
+    public void exact(int[] rgbaPalette, int limit, ColorMetric metric) {
+        if (rgbaPalette == null || rgbaPalette.length < 2 || limit < 2) {
             exact(Coloring.AURORA, ENCODED_AURORA);
             return;
         }
         Arrays.fill(paletteArray, 0);
         Arrays.fill(paletteMapping, (byte) 0);
-        final int plen = Math.min(256, rgbaPalette.length);
+        final int plen = Math.min(Math.min(256, limit), rgbaPalette.length);
         int color, c2;
         double dist;
         for (int i = 0; i < plen; i++) {

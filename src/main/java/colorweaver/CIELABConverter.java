@@ -461,12 +461,12 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 
 	public static double delta(final Lab lab1, final Lab lab2, final double biasL, final double biasA, final double biasB)
 	{
-		final double purpleAdjustment = (Math.max(0.0, lab1.A - lab1.B * 2.5 - 50) * (lab1.A + lab1.B + lab1.L * 0.5)
-			- Math.max(0.0, lab2.A - lab2.B * 2.5 - 50) * (lab2.A + lab2.B + lab2.L * 0.5)) * 0.1;
+//		final double purpleAdjustment = (Math.max(0.0, lab1.A - lab1.B * 2.5 - 50) * (lab1.A + lab1.B + lab1.L * 0.5)
+//			- Math.max(0.0, lab2.A - lab2.B * 2.5 - 50) * (lab2.A + lab2.B + lab2.L * 0.5)) * 0.1;
 		return (lab1.L - lab2.L) * (lab1.L - lab2.L) * 11.0 * biasL +
 			(lab1.A - lab2.A) * (lab1.A - lab2.A) * biasA * 1.6 +
 			(lab1.B - lab2.B) * (lab1.B - lab2.B) * biasB
-			+ purpleAdjustment * purpleAdjustment
+//			+ purpleAdjustment * purpleAdjustment
 			;
 	}
 
@@ -637,10 +637,9 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 		System.exit(0);
 	}
 	
-	public static int puff(int small)
+	public static int puff(final int small)
 	{
-		int r = small & 0x7C00, g = small & 0x3E0, b = small & 0x1F;
-		return (r << 17 & 0xF8000000) | (r << 12 & 0x07000000) | ((g << 14 & 0xF80000) | (g << 9 & 0x070000)) | (b << 11 & 0xF800) | (b << 6 & 0x0700) | 0xFF;
+		return (small << 17 & 0xF8000000) | (small << 12 & 0x07000000) | (small << 14 & 0xF80000) | (small << 9 & 0x070000) | (small << 11 & 0xF800) | (small << 6 & 0x0700) | 0xFF;
 	}
 
 	public static int shrink(int r, int g, int b)

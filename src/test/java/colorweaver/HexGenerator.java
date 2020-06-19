@@ -4,10 +4,11 @@ import colorweaver.tools.StringKit;
 import colorweaver.tools.TrigTools;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.IntArray;
+
+import java.util.ArrayList;
 
 import static colorweaver.tools.TrigTools.cos_;
 import static colorweaver.tools.TrigTools.sin_;
@@ -23,7 +24,7 @@ public class HexGenerator extends ApplicationAdapter {
         config.setIdleFPS(10);
         config.useVsync(true);
         config.setResizable(false);
-        new Lwjgl3Application(new HexGenerator(), config);
+//        new Lwjgl3Application(new HexGenerator(), config);
         AutomaticPaletteTransformer.main(arg);
         AutomaticPalettizer.main(arg); 
     }
@@ -100,36 +101,63 @@ public class HexGenerator extends ApplicationAdapter {
         System.arraycopy(Coloring.MANOS64, 0, palette, 0, 64);
         PaletteReducer reducer = new PaletteReducer(Coloring.MANOS64);
         long state = 98765432123456789L;
-        IntArray colors = new IntArray(512);
-        OUTER:
-        for (int t = 0; t < 128; t++) {
-            for (int x = 63; x >= 0; x--) {
-                for (int y = 63; y >= 0; y--) {
-                    for (int z = 63; z >= 0; z--) {
-                        if (BlueNoise.get(x, y, z) == t)
-                        // && (state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >= 0x4000000000000000L
-                        {
-                            int color = (x << 2 | x >>> 4) << 24 | (y << 2 | y >>> 4) << 16 | (z << 2 | z >>> 4) << 8 | 255;
+        IntArray colors = new IntArray(256);
+        colors.addAll(Coloring.MANOS64);
+//        OUTER:
+//        for (int t = 0; t < 128; t++) {
+//            System.out.println("Running with target " + t);
+//            for (int x = 63; x >= 0; x--) {
+//                for (int y = 63; y >= 0; y--) {
+//                    for (int z = 63; z >= 0; z--) {
+//                        if (BlueNoise.get(x, y, z) == t)
+//                        // && (state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >= 0x4000000000000000L
+//                        {
+//                            int color = (x << 2 | x >>> 4) << 24 | (y << 2 | y >>> 4) << 16 | (z << 2 | z >>> 4) << 8 | 255;
+//                            int found = reducer.reduceSingle(color);
+//                            if (CIELABConverter.differenceLAB(color, found) > 400)
+//                                colors.add(color);
+//                            if(colors.size >= 512)
+//                                break OUTER;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+        int[] items = colors.items;
+        for (int i = 1; i < 5000; i++) {
+            int r = (int)(i * 0xD1B54A32D192ED03L >>> 56), g = (int)(i * 0xABC98388FB8FAC03L >>> 56), b = (int)(i * 0x8CB92BA72F3D8DD7L >>> 56),
+                    color = r << 24 | g << 16 | b << 8 | 0xFF;
                             int found = reducer.reduceSingle(color);
-                            if (PaletteReducer.difference(color, found) > 400)
+                            if (CIELABConverter.differenceLAB(color, found) > 400)
+                            {
                                 colors.add(color);
-                            if(colors.size >= 512)
-                                break OUTER;
-                        }
-                    }
+                                reducer.exact(items, colors.size);
+                            }
+                            if(colors.size >= 256)
+                                break;
+        }
+        if(colors.size < 256)
+            System.out.println("UH-OH, colors.size is " + colors.size);
+//        for (int i = colors.size - 1; i >= 0; i--) {
+//            int ii = (int) (((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >>> 32) * i >>> 32);
+//            int temp = items[i];
+//            items[i] = items[ii];
+//            items[ii] = temp;
+//        }
+        System.arraycopy(items, 64, palette, 64, 192);
+
+        ArrayList<CIELABConverter.Lab> labs = new ArrayList<>(256);
+        for (int i = 0; i < 256; i++) {
+            labs.add(new CIELABConverter.Lab(palette[i]));
+        }
+        for (int i = 0; i < labs.size(); i++) {
+            for (int j = i + 1; j < labs.size(); j++) {
+                if((labs.get(i).alpha > 0.0 && labs.get(j).alpha > 0.0) && CIELABConverter.delta(labs.get(i), labs.get(j)) <= 100)
+                {
+                    System.out.printf("Combined 0x%08X and 0x%08X\n", palette[i], palette[j]);
                 }
             }
         }
-        if(colors.size < 192)
-            System.out.println("UH-OH, colors.size is " + colors.size);
-        int[] items = colors.items;
-        for (int i = colors.size - 1; i >= 0; i--) {
-            int ii = (int) (((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >>> 32) * i >>> 32);
-            int temp = items[i];
-            items[i] = items[ii];
-            items[ii] = temp;
-        }
-        System.arraycopy(items, 0, palette, 64, 192);
 
 
 //        float hueAngle = 0.1f, sat;
