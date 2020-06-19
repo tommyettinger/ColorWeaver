@@ -7,13 +7,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.IntArray;
 
 import static colorweaver.tools.TrigTools.cos_;
 import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "joel-16";
+    public static final String NAME = "manossus-256";
     
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -89,11 +90,48 @@ public class HexGenerator extends ApplicationAdapter {
 //                }
 //            }
 //        }
+//        palette = new int[] {0x080000FF,0x201A0BFF,0x432817FF,0x492910FF,
+//                0x234309FF,0x5D4F1EFF,0x9C6B20FF,0xA9220FFF,
+//                0x2B347CFF,0x2B7409FF,0xD0CA40FF,0xE8A077FF,
+//                0x6A94ABFF,0xD5C4B3FF,0xFCE76EFF,0xFCFAE2FF };
+
 //        palette = Coloring.MANOS64;
-        palette = new int[] {0x080000FF,0x201A0BFF,0x432817FF,0x492910FF,
-                0x234309FF,0x5D4F1EFF,0x9C6B20FF,0xA9220FFF,
-                0x2B347CFF,0x2B7409FF,0xD0CA40FF,0xE8A077FF,
-                0x6A94ABFF,0xD5C4B3FF,0xFCE76EFF,0xFCFAE2FF };
+        palette = new int[256];
+        System.arraycopy(Coloring.MANOS64, 0, palette, 0, 64);
+        PaletteReducer reducer = new PaletteReducer(Coloring.MANOS64);
+        long state = 98765432123456789L;
+        IntArray colors = new IntArray(512);
+        OUTER:
+        for (int t = 0; t < 128; t++) {
+            for (int x = 63; x >= 0; x--) {
+                for (int y = 63; y >= 0; y--) {
+                    for (int z = 63; z >= 0; z--) {
+                        if (BlueNoise.get(x, y, z) == t)
+                        // && (state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >= 0x4000000000000000L
+                        {
+                            int color = (x << 2 | x >>> 4) << 24 | (y << 2 | y >>> 4) << 16 | (z << 2 | z >>> 4) << 8 | 255;
+                            int found = reducer.reduceSingle(color);
+                            if (PaletteReducer.difference(color, found) > 400)
+                                colors.add(color);
+                            if(colors.size >= 512)
+                                break OUTER;
+                        }
+                    }
+                }
+            }
+        }
+        if(colors.size < 192)
+            System.out.println("UH-OH, colors.size is " + colors.size);
+        int[] items = colors.items;
+        for (int i = colors.size - 1; i >= 0; i--) {
+            int ii = (int) (((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >>> 32) * i >>> 32);
+            int temp = items[i];
+            items[i] = items[ii];
+            items[ii] = temp;
+        }
+        System.arraycopy(items, 0, palette, 64, 192);
+
+
 //        float hueAngle = 0.1f, sat;
 //        //0.7548776662466927, 0.5698402909980532,   0.6180339887498949
 //        for (int i = 0; i < 6; i++) {
