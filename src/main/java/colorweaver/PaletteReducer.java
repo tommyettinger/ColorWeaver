@@ -2004,7 +2004,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
-        final float errorMul = ditherStrength * 0.375f;
+        final float errorMul = ditherStrength * 0.3f;
         computePaletteGamma(2.0 - ditherStrength * 1.666);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
@@ -2031,7 +2031,7 @@ public class PaletteReducer {
                     }
                     sort16(candidates);
                     pixmap.drawPixel(px, y, candidates[thresholdMatrix[
-                            ((int) (px * 0x0.C13FA9A902A6328Fp3f + y * 0x0.91E10DA5C79E7B1Dp2f) & 3) ^
+                            ((int) (px * 0x0.C13FA9A902A6328Fp3 + y * 0x1.9E3779B97F4A7C15p2) & 3) ^
                                     ((px & 3) | (y & 3) << 2)
                             ]]);
                 }
@@ -2040,6 +2040,70 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+    
+//    /**
+//     * Reduces a Pixmap to the palette this knows by using a skewed version of Thomas Knoll's pattern dither, which is
+//     * out-of-patent since late 2019, using golden-ratio-based values to handle the skew.
+//     * The output this produces is very dependent on the palette and this PaletteReducer's dither strength, which can be
+//     * set with {@link #setDitherStrength(float)}.
+//     * The algorithm was described in detail by Joel
+//     * Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">this dithering article</a>; Yliluoma used an
+//     * 8x8 threshold matrix because at the time 4x4 was still covered by the patent, but using 4x4 allows a much faster
+//     * sorting step (this uses a sorting network, which works well for small input sizes like 16 items).
+//     * @see #reduceKnoll(Pixmap) An alternative that uses a similar pattern but has a more obvious grid
+//     * @param pixmap a Pixmap that will be modified
+//     * @return {@code pixmap}, after modifications
+//     */
+//    public Pixmap reduceKnollGolden (Pixmap pixmap) { 
+//        boolean hasTransparent = (paletteArray[0] == 0);
+//        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+//        Pixmap.Blending blending = pixmap.getBlending();
+//        pixmap.setBlending(Pixmap.Blending.None);
+//        int color, used, cr, cg, cb, usedIndex;
+//        final float errorMul = ditherStrength * 0.6180339887498949f * 0.5f;
+//        computePaletteGamma(2.0 - ditherStrength * 1.666);
+//        for (int y = 0; y < h; y++) {
+//            for (int px = 0; px < lineLen; px++) {
+//                color = pixmap.getPixel(px, y);
+//                if ((color & 0x80) == 0 && hasTransparent)
+//                    pixmap.drawPixel(px, y, 0);
+//                else {
+//                    int er = 0, eg = 0, eb = 0;
+//                    cr = (color >>> 24);
+//                    cg = (color >>> 16 & 0xFF);
+//                    cb = (color >>> 8 & 0xFF);
+//                    for (int i = 0; i < candidates.length; i++) {
+//                        int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
+//                        int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
+//                        int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
+//                        usedIndex = paletteMapping[((rr << 7) & 0x7C00)
+//                                | ((gg << 2) & 0x3E0)
+//                                | ((bb >>> 3))] & 0xFF;
+//                        candidates[i] = paletteArray[usedIndex];
+//                        used = gammaArray[usedIndex];
+//                        er += cr - (used >>> 24);
+//                        eg += cg - (used >>> 16 & 0xFF);
+//                        eb += cb - (used >>> 8 & 0xFF);
+//                    }
+//                    sort16(candidates);
+////                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[
+////                            ((int) (px * 6.180339887498949 + y * 0.6180339887498949 * 6.180339887498949) & 3) ^
+////                                    ((px & 3) | (y & 3) << 2)
+////                            ]]);
+////                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[
+////                            ((int) (TrigTools.cos(px + y * 0.6180339887498949) * 4.0) & 3) ^
+////                                    ((px & 3) | (y & 3) << 2)
+////                            ]]);
+//                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[
+//                            ((int) (px * 0x0.C13FA9A902A6328Fp3 + y * 0x1.9E3779B97F4A7C15p2) & 3) ^
+//                                    ((px & 3) | (y & 3) << 2)
+//                            ]]);
+//                }
+//            }
+//        }
+//        pixmap.setBlending(blending);
+//        return pixmap;
+//    }
 
     /**
      * Retrieves a random non-0 color index for the palette this would reduce to, with a higher likelihood for colors
