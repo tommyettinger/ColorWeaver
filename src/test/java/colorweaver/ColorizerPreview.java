@@ -113,7 +113,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			(color >>>  8 & 0xFF));
 	}
 
-	private static final Comparator<Integer> hueComparator = new Comparator<Integer>() {
+	public static final Comparator<Integer> hueComparator = new Comparator<Integer>() {
 		public int compare (Integer o1, Integer o2) {
 			return Float.compare(hue(o1), hue(o2));
 		}
@@ -327,7 +327,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			mixingPalette.remove(removalIndices.get(i));
 		}
 		
-//		Collections.sort(mixingPalette, hueComparator);
+		mixingPalette.subList(64, 256).sort(hueComparator);
 		
 		palette = new int[mixingPalette.size()];
 		for (int i = 0; i < palette.length; i++) {

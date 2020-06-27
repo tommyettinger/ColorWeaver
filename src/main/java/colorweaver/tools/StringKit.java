@@ -330,29 +330,38 @@ public class StringKit {
             mask16 = "0000000000000000",
             mask8 = "00000000";
 
+    private static final StringBuilder hexBuilder = new StringBuilder(16).append("0000000000000000");
     public static String hex(long number) {
-        String h = Long.toHexString(number);
-        return mask16.substring(0, 16 - h.length()) + h;
+        for (int i = 0; i < 16; i++) {
+            hexBuilder.setCharAt(15 - i, hexDigits[(int)(number >> (i << 2) & 15)]);
+        }
+        return hexBuilder.toString();
     }
 
     public static String hex(int number) {
-        String h = Integer.toHexString(number);
-        return mask8.substring(0, 8 - h.length()) + h;
+        for (int i = 0; i < 8; i++) {
+            hexBuilder.setCharAt(7 - i, hexDigits[(number >> (i << 2) & 15)]);
+        }
+        return hexBuilder.substring(0, 8);
     }
-
     public static String hex(short number) {
-        String h = Integer.toHexString(number & 0xffff);
-        return mask8.substring(4, 8 - h.length()) + h;
+        for (int i = 0; i < 4; i++) {
+            hexBuilder.setCharAt(3 - i, hexDigits[(number >> (i << 2) & 15)]);
+        }
+        return hexBuilder.substring(0, 4);
     }
 
     public static String hex(char number) {
-        String h = Integer.toHexString(number & 0xffff);
-        return mask8.substring(4, 8 - h.length()) + h;
+        for (int i = 0; i < 4; i++) {
+            hexBuilder.setCharAt(3 - i, hexDigits[(number >> (i << 2) & 15)]);
+        }
+        return hexBuilder.substring(0, 4);
     }
 
     public static String hex(byte number) {
-        String h = Integer.toHexString(number & 0xff);
-        return mask8.substring(6, 8 - h.length()) + h;
+        hexBuilder.setCharAt(0, hexDigits[(number >> 4 & 15)]);
+        hexBuilder.setCharAt(1, hexDigits[(number & 15)]);
+        return hexBuilder.substring(0, 2);
     }
 
     public static String hex(long[] numbers) {
@@ -360,7 +369,7 @@ public class StringKit {
         if (numbers == null || (len = numbers.length) <= 0) return "";
         StringBuilder sb = new StringBuilder(numbers.length << 4);
         for (int i = 0; i < len; i++) {
-            sb.append(hex(numbers[i]));
+            appendHex(sb, numbers[i]);
         }
         return sb.toString();
     }
@@ -370,7 +379,7 @@ public class StringKit {
         if (numbers == null || (len = numbers.length) <= 0) return "";
         StringBuilder sb = new StringBuilder(numbers.length << 3);
         for (int i = 0; i < len; i++) {
-            sb.append(hex(numbers[i]));
+            appendHex(sb, numbers[i]);
         }
         return sb.toString();
     }
@@ -380,7 +389,7 @@ public class StringKit {
         if (numbers == null || (len = numbers.length) <= 0) return "";
         StringBuilder sb = new StringBuilder(numbers.length << 2);
         for (int i = 0; i < len; i++) {
-            sb.append(hex(numbers[i]));
+            appendHex(sb, numbers[i]);
         }
         return sb.toString();
     }
@@ -390,7 +399,7 @@ public class StringKit {
         if (numbers == null || (len = numbers.length) <= 0) return "";
         StringBuilder sb = new StringBuilder(numbers.length << 2);
         for (int i = 0; i < len; i++) {
-            sb.append(hex(numbers[i]));
+            appendHex(sb, numbers[i]);
         }
         return sb.toString();
     }
@@ -400,7 +409,7 @@ public class StringKit {
         if (numbers == null || (len = numbers.length) <= 0) return "";
         StringBuilder sb = new StringBuilder(numbers.length << 1);
         for (int i = 0; i < len; i++) {
-            sb.append(hex(numbers[i]));
+            appendHex(sb, numbers[i]);
         }
         return sb.toString();
     }

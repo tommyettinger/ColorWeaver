@@ -51,7 +51,7 @@ public class Palettizer extends ApplicationAdapter {
 
     public void load(String name) {
         try {
-            final String suffix = "_Vinik24";
+            final String suffix = "_Gray4";
             //// loads a file by its full path, which we get via drag+drop
             Pixmap pm;
 //            reducer.analyze(pm, 1600, 32);
@@ -85,6 +85,10 @@ public class Palettizer extends ApplicationAdapter {
 
             pm = reducer.reduceShaderMimic(new Pixmap(Gdx.files.absolute(name)));
             png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic"+suffix+".png"), pm, palette, false, 1);
+
+            pm = reducer.reduceKnollRoberts(new Pixmap(Gdx.files.absolute(name)));
+            png8.writePrecisely(Gdx.files.local(subname + "_KR_G"+suffix+".png"), pm, palette, false, 1);
+            
 //            FileHandle next = Gdx.files.local(subname + "_ShaderMimic"+suffix+".png");
 //            png8.writePrecisely(next, pm, reducer.paletteArray, false, 0);
 //            int[] hsp = Arrays.copyOf(reducer.paletteArray, 256);
@@ -103,10 +107,13 @@ public class Palettizer extends ApplicationAdapter {
         font = new BitmapFont();
         batch = new SpriteBatch();
         eq = new ColorEqualizer();
-        palette = new int[]{0x00000000,
-            0x000000FF, 0x6F6776FF, 0x9A9A97FF, 0xC5CCB8FF, 0x8B5580FF, 0xC38890FF, 0xA593A5FF, 0x666092FF,
+        palette = Coloring.GB;
+        /*
+                    0x000000FF, 0x6F6776FF, 0x9A9A97FF, 0xC5CCB8FF, 0x8B5580FF, 0xC38890FF, 0xA593A5FF, 0x666092FF,
             0x9A4F50FF, 0xC28D75FF, 0x7CA1C0FF, 0x416AA3FF, 0x8D6268FF, 0xBE955CFF, 0x68ACA9FF, 0x387080FF,
-            0x6E6962FF, 0x93A167FF, 0x6EAA78FF, 0x557064FF, 0x9D9F7FFF, 0x7E9E99FF, 0x5D6872FF, 0x433455FF,};
+            0x6E6962FF, 0x93A167FF, 0x6EAA78FF, 0x557064FF, 0x9D9F7FFF, 0x7E9E99FF, 0x5D6872FF, 0x433455FF,
+
+         */
             reducer = new PaletteReducer(palette, PaletteReducer.labMetric); 
             //Colorizer.SmashColorizer.getReducer(); 
 //                new PaletteReducer(); 
@@ -117,7 +124,7 @@ public class Palettizer extends ApplicationAdapter {
 //                 new PaletteReducer(Coloring.RELAXED_ROLL);
 //                 new PaletteReducer(Coloring.DB16, PaletteReducer.labMetric);
 //                 new PaletteReducer(Coloring.DB32);
-        reducer.setDitherStrength(1f);
+        reducer.setDitherStrength(0.5f);
         png8 = new PNG8();
         png8.palette = reducer;
         png8.setFlipY(false);
@@ -131,7 +138,7 @@ public class Palettizer extends ApplicationAdapter {
 //        load("D:/Painting_by_Henri_Biva.jpg");
 //        load("D:/Mona_Lisa.jpg");
 //        load("D:/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg");
-        load("D:/Dawnlike.png");
+        load("D:/Satchmo_baby_face.png");
         Gdx.app.exit();
     }
 
