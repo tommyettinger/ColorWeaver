@@ -21,13 +21,13 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
     }
 
     public void create() {
-        PaletteReducer reducer = new PaletteReducer(Coloring.AURORA, PaletteReducer.labQuickMetric);
+        PaletteReducer reducer = new PaletteReducer(Coloring.AURORA, PaletteReducer.rgbEasyMetric);
         generatePreloadCode(reducer.paletteMapping, "AuroraPreload.txt");
         Gdx.app.exit();
     }
     /**
      * Given a byte array, this writes a file containing a code snippet that can be pasted into Java code as the preload
-     * data used by {@link PaletteReducer#exact(int[], String)}; this is almost never needed by external code. When 
+     * data used by {@link PaletteReducer#exact(int[], byte[])}; this is almost never needed by external code. When 
      * using this for preload data, the byte array should be {@link PaletteReducer#paletteMapping}.
      * @param data the bytes to use as preload data, usually {@link PaletteReducer#paletteMapping}
      */
@@ -36,7 +36,7 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
     }
     /**
      * Given a byte array, this appends to a file called {@code filename} containing a code snippet that can be pasted
-     * into Java code as the preload data used by {@link PaletteReducer#exact(int[], String)}; this is almost never
+     * into Java code as the preload data used by {@link PaletteReducer#exact(int[], byte[])}; this is almost never
      * needed by external code. When using this for preload data, the byte array should be
      * {@link PaletteReducer#paletteMapping}.
      * @param data the bytes to use as preload data, usually {@link PaletteReducer#paletteMapping}

@@ -533,7 +533,7 @@ public class PaletteReducer {
      * for more info).
      *
      * @param rgbaPalette an array of RGBA8888 ints to use as a palette
-     * @param metric      should usually be {@link #labQuickMetric}, which is fast and high-quality
+     * @param metric      should usually be {@link #labQuickMetric}, which is usually high-quality, or {@link #rgbEasyMetric}, which handles gradients better
      */
     public PaletteReducer(int[] rgbaPalette, ColorMetric metric) {
         paletteMapping = new byte[0x8000];
@@ -683,7 +683,7 @@ public class PaletteReducer {
      * @param rgbaPalette an array of RGBA8888 ints; all will be used up to 256 items or the length of the array
      */
     public void exact(int[] rgbaPalette) {
-        exact(rgbaPalette, labQuickMetric);
+        exact(rgbaPalette, rgbEasyMetric);
     }
 
     /**
@@ -695,7 +695,7 @@ public class PaletteReducer {
      * @param rgbaPalette an array of RGBA8888 ints; all will be used up to 256 items or the length of the array
      */
     public void exact(int[] rgbaPalette, int limit) {
-        exact(rgbaPalette, limit, labQuickMetric);
+        exact(rgbaPalette, limit, rgbEasyMetric);
     }
     /**
      * Builds the palette information this PNG8 stores from the RGBA8888 ints in {@code rgbaPalette}, up to 256 colors.
@@ -704,7 +704,7 @@ public class PaletteReducer {
      * this defaults to DawnBringer's Aurora palette with 256 hand-chosen colors (including transparent).
      *
      * @param rgbaPalette an array of RGBA8888 ints; all will be used up to 256 items or the length of the array
-     * @param metric      should usually be {@link #labQuickMetric}, which is fast and high-quality
+     * @param metric      should usually be {@link #labQuickMetric}, which is usually high-quality, or {@link #rgbEasyMetric}, which handles gradients better
      */
     public void exact(int[] rgbaPalette, ColorMetric metric) {
         exact(rgbaPalette, 256, metric);
@@ -716,7 +716,7 @@ public class PaletteReducer {
      * this defaults to DawnBringer's Aurora palette with 256 hand-chosen colors (including transparent).
      *
      * @param rgbaPalette an array of RGBA8888 ints; all will be used up to 256 items or the length of the array
-     * @param metric      should usually be {@link #labQuickMetric}, which is fast and high-quality
+     * @param metric      should usually be {@link #labQuickMetric}, which is usually high-quality, or {@link #rgbEasyMetric}, which handles gradients better
      */
     public void exact(int[] rgbaPalette, int limit, ColorMetric metric) {
         if (rgbaPalette == null || rgbaPalette.length < 2 || limit < 2) {
@@ -787,7 +787,7 @@ public class PaletteReducer {
      * @param colorPalette an array of Color objects; all will be used up to 256 items or the length of the array
      */
     public void exact(Color[] colorPalette) {
-        exact(colorPalette, 256, labQuickMetric);
+        exact(colorPalette, 256, rgbEasyMetric);
     }
 
     /**
@@ -799,7 +799,7 @@ public class PaletteReducer {
      * transparent).
      *
      * @param colorPalette an array of Color objects; all will be used up to 256 items or the length of the array
-     * @param metric       should usually be {@link #labQuickMetric}, which is fast and high-quality
+     * @param metric      should usually be {@link #labQuickMetric}, which is usually high-quality, or {@link #rgbEasyMetric}, which handles gradients better
      */
     public void exact(Color[] colorPalette, ColorMetric metric) {
         exact(colorPalette, 256, metric);
@@ -817,7 +817,7 @@ public class PaletteReducer {
      * @param limit        a limit on how many Color items to use from colorPalette; useful if colorPalette is from an Array
      */
     public void exact(Color[] colorPalette, int limit) {
-        exact(colorPalette, limit, labQuickMetric);
+        exact(colorPalette, limit, rgbEasyMetric);
     }
 
     /**
@@ -830,7 +830,7 @@ public class PaletteReducer {
      *
      * @param colorPalette an array of Color objects; all will be used up to 256 items, limit, or the length of the array
      * @param limit        a limit on how many Color items to use from colorPalette; useful if colorPalette is from an Array
-     * @param metric       should usually be {@link #labQuickMetric}, which is fast and high-quality
+     * @param metric      should usually be {@link #labQuickMetric}, which is usually high-quality, or {@link #rgbEasyMetric}, which handles gradients better
      */
     public void exact(Color[] colorPalette, int limit, ColorMetric metric) {
         if (colorPalette == null || colorPalette.length < 2 || limit < 2) {

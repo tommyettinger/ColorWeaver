@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static colorweaver.PaletteReducer.labQuickMetric;
+import static colorweaver.PaletteReducer.rgbEasyMetric;
 
 /**
  * Created by Tommy Ettinger on 1/30/2020.
@@ -130,7 +130,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 
 	public int[] lloyd(int[] palette) {
 		CIELABConverter.makeLAB15();
-		PaletteReducer pr = new PaletteReducer(palette, labQuickMetric);
+		PaletteReducer pr = new PaletteReducer(palette, rgbEasyMetric);
 		float[][] centroids = new float[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index, mix;
@@ -165,7 +165,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	}
 
 	public int[] lloydCentral(int[] palette) {
-		PaletteReducer pr = new PaletteReducer(palette, labQuickMetric);
+		PaletteReducer pr = new PaletteReducer(palette, rgbEasyMetric);
 		float[][] centroids = new float[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index, mix;
