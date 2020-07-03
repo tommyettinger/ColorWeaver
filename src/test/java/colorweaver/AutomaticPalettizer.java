@@ -93,7 +93,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             Gdx.files.local(targetDir + name).mkdirs();
             PNG8 png8 = new PNG8();
             png8.setFlipY(false);
-            reducer.exact(PALETTE, PaletteReducer.labQuickMetric);
+            reducer.exact(PALETTE, PaletteReducer.rgbEasyMetric);
             png8.palette = reducer;
             try {
                 Pixmap pm;
@@ -126,7 +126,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //???
                     pm = (reducer.reduceKnollRoberts(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_KR_G" + suffix + ".png"), pm, PALETTE, false, 0);
-
+                    
                     reducer.setDitherStrength(0.5f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
 
@@ -176,6 +176,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //???
                     pm = (reducer.reduceKnollRoberts(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_KR_G" + suffix + ".png"), pm, PALETTE, false, 0);
+                    
                 }
             } catch (IOException e) {
                 e.printStackTrace();

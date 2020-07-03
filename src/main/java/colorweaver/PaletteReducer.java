@@ -467,6 +467,27 @@ public class PaletteReducer {
         }
     };
 
+    public static final ColorMetric rgbEasyMetric = new ColorMetric(){
+        @Override
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        @Override
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        @Override
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            //return Math.sqrt((r1 - r2) * (r1 - r2) + (g1 - g2) * (g1 - g2) + (b1 - b2) * (b1 - b2));
+            return Math.sqrt(Math.pow(Math.abs(r1 - r2), 3.6) + Math.pow(Math.abs(g1 - g2), 4.0) + Math.pow(Math.abs(b1 - b2), 3.2));
+
+        }
+    };
+
     public static final BasicColorMetric basicMetric = new BasicColorMetric(); // has no state, should be fine static
     public static final LABEuclideanColorMetric labMetric = new LABEuclideanColorMetric();
     public static final LABRoughColorMetric labRoughMetric = new LABRoughColorMetric();
