@@ -7,17 +7,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.utils.IntArray;
 
 import java.util.ArrayList;
 
-import static colorweaver.ColorizerPreview.hueComparator;
 import static colorweaver.tools.TrigTools.cos_;
 import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "manossus-256";
+    public static final String NAME = "grayfull-256";
     
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -99,46 +97,50 @@ public class HexGenerator extends ApplicationAdapter {
 //                0x6A94ABFF,0xD5C4B3FF,0xFCE76EFF,0xFCFAE2FF };
 
 //        palette = Coloring.MANOSSUS256;
-        palette = new int[256];
-        System.arraycopy(Coloring.MANOS64, 0, palette, 0, 64);
-        PaletteReducer reducer = new PaletteReducer(Coloring.MANOS64);
-        long state = 98765432123456789L;
-        IntArray colors = new IntArray(256);
-        colors.addAll(Coloring.MANOS64);
-        int[] items = colors.items;
-
-        for (int i = 1; i < 14; i++) {
-            int color = i * 0x12121200 + 0x111111FF;
-            int found = reducer.reduceSingle(color);
-            if (CIELABConverter.differenceLAB(color, found, 1.0, 1.5, 1.5) > 300)
-            {
-                colors.add(color);
-                reducer.exact(items, colors.size);
-            }
-        }
-        for (int i = 1; i < 5000; i++) {
-            int r = (int)(i * 0xD1B54A32D192ED03L >>> 56), g = (int)(i * 0xABC98388FB8FAC03L >>> 56), b = (int)(i * 0x8CB92BA72F3D8DD7L >>> 56),
-                    color = r << 24 | g << 16 | b << 8 | 0xFF;
-                            int found = reducer.reduceSingle(color);
-                            if (CIELABConverter.differenceLAB(color, found, 1.0, 1.5, 1.5) > 300)
-                            {
-                                colors.add(color);
-                                reducer.exact(items, colors.size);
-                            }
-                            if(colors.size >= 256)
-                                break;
-        }
-        if(colors.size < 256)
-            System.out.println("UH-OH, colors.size is " + colors.size);
-
-        System.arraycopy(items, 64, palette, 64, 192);
-        
+//        palette = new int[256];
+//        System.arraycopy(Coloring.MANOS64, 0, palette, 0, 64);
+//        PaletteReducer reducer = new PaletteReducer(Coloring.MANOS64);
+//        long state = 98765432123456789L;
+//        IntArray colors = new IntArray(256);
+//        colors.addAll(Coloring.MANOS64);
+//        int[] items = colors.items;
+//
+//        for (int i = 1; i < 14; i++) {
+//            int color = i * 0x12121200 + 0x111111FF;
+//            int found = reducer.reduceSingle(color);
+//            if (CIELABConverter.differenceLAB(color, found, 1.0, 1.5, 1.5) > 300)
+//            {
+//                colors.add(color);
+//                reducer.exact(items, colors.size);
+//            }
+//        }
+//        for (int i = 1; i < 5000; i++) {
+//            int r = (int)(i * 0xD1B54A32D192ED03L >>> 56), g = (int)(i * 0xABC98388FB8FAC03L >>> 56), b = (int)(i * 0x8CB92BA72F3D8DD7L >>> 56),
+//                    color = r << 24 | g << 16 | b << 8 | 0xFF;
+//                            int found = reducer.reduceSingle(color);
+//                            if (CIELABConverter.differenceLAB(color, found, 1.0, 1.5, 1.5) > 300)
+//                            {
+//                                colors.add(color);
+//                                reducer.exact(items, colors.size);
+//                            }
+//                            if(colors.size >= 256)
+//                                break;
+//        }
+//        if(colors.size < 256)
+//            System.out.println("UH-OH, colors.size is " + colors.size);
+//
+//        System.arraycopy(items, 64, palette, 64, 192);
+//        
+//        ArrayList<Integer> mixingPalette = new ArrayList<>(256);
+//        for (int i = 0; i < palette.length; i++) {
+//            mixingPalette.add(palette[i]);
+//        }
+//
+//        mixingPalette.subList(64, 256).sort(hueComparator);
         ArrayList<Integer> mixingPalette = new ArrayList<>(256);
-        for (int i = 0; i < palette.length; i++) {
-            mixingPalette.add(palette[i]);
+        for (int i = 0; i < 256; i++) {
+            mixingPalette.add(i * 0x01010100 | 0xFF);
         }
-
-        mixingPalette.subList(64, 256).sort(hueComparator);
 
 //        float hueAngle = 0.1f, sat;
 //        //0.7548776662466927, 0.5698402909980532,   0.6180339887498949
@@ -166,7 +168,7 @@ public class HexGenerator extends ApplicationAdapter {
 //            palette[12 + i] = Color.rgba8888(NamedColor.ycwcm((float)Math.pow((i+4f) / 28.0f, 0.625), cosMaybe(hueAngle) * sat, sinMaybe(hueAngle) * sat, 1f));
 //            hueAngle += 0.6180339887498949;
 //        }
-        StringBuilder sb = new StringBuilder(palette.length * 7);
+        StringBuilder sb = new StringBuilder(mixingPalette.size() * 7);
         for (int i = 1; i < mixingPalette.size(); i++) {
             sb.append(String.format("%06x\n", mixingPalette.get(i) >>> 8));
         }
