@@ -92,6 +92,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             loadPalette(name);
             Gdx.files.local(targetDir + name).mkdirs();
             PNG8 png8 = new PNG8();
+            png8.setCompression(7);
             png8.setFlipY(false);
             reducer.exact(PALETTE, PaletteReducer.rgbEasyMetric);
             png8.palette = reducer;

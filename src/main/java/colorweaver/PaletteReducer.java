@@ -483,8 +483,7 @@ public class PaletteReducer {
         @Override
         public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
             //return Math.sqrt((r1 - r2) * (r1 - r2) + (g1 - g2) * (g1 - g2) + (b1 - b2) * (b1 - b2));
-            return Math.sqrt(Math.pow(Math.abs(r1 - r2), 3.6) + Math.pow(Math.abs(g1 - g2), 4.0) + Math.pow(Math.abs(b1 - b2), 3.2));
-
+            return Math.sqrt(Math.pow(Math.abs(r1 - r2), 3.7) + Math.pow(Math.abs(g1 - g2), 4.0) + Math.pow(Math.abs(b1 - b2), 3.3));
         }
     };
 

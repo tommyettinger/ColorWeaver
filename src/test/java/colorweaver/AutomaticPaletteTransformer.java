@@ -61,6 +61,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
             sb.setLength(0);
 
             PNG8 png8 = new PNG8();
+            png8.setCompression(7);
             png8.palette = new PaletteReducer(PALETTE, PaletteReducer.rgbEasyMetric);
             Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
             for (int i = 1; i < PALETTE.length; i++) {
