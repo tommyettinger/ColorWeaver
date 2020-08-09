@@ -1896,29 +1896,16 @@ public class PaletteReducer {
 
     /**
      * A different kind of blue-noise-based dither; does not diffuse error, and uses a non-repeating blue noise pattern
-     * (that isn't quite as strongly measurable as blue noise as what {@link #reduceTrueBlue(Pixmap)} uses). This pattern
-     * can be seeded to produce different dithers for otherwise identical inputs; see {@link #reduceBluish(Pixmap, int)}.
+     * (the same type as what {@link #reduceTrueBlue(Pixmap)} uses) as well as a checkerboard pattern, but only applies
+     * these noisy patterns when there's error matching a color from the image to a color in the palette.
      * <br>
      * There are times to use {@link #reduceTrueBlue(Pixmap)} and times to use this; each palette and
-     * source image will have different qualities of result.
+     * source image will have different qualities of result. {@link #reduceTrueBlue(Pixmap)} will add splotches of
+     * different lightness even in areas where a color would be matched exactly; this method shouldn't do that.
      * @param pixmap will be modified in-place and returned
      * @return pixmap, after modifications
      */
     public Pixmap reduceBluish (Pixmap pixmap) {
-        return reduceBluish(pixmap, 1111111);
-    }
-    /**
-     * A different kind of blue-noise-based dither; does not diffuse error, and uses a non-repeating blue noise pattern
-     * (that isn't quite as strongly measurable as blue noise as what {@link #reduceTrueBlue(Pixmap)} uses). This pattern
-     * can be seeded to produce different dithers for otherwise identical inputs; the seed can be any int.
-     * <br>
-     * There are times to use {@link #reduceTrueBlue(Pixmap)} and times to use this; each palette and
-     * source image will have different qualities of result.
-     * @param pixmap will be modified in-place and returned
-     * @param seed any int; will be used to change the dither pattern
-     * @return pixmap, after modifications
-     */
-    public Pixmap reduceBluish (Pixmap pixmap, int seed) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
@@ -1938,8 +1925,9 @@ public class PaletteReducer {
                     used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                         | ((gg << 2) & 0x3E0)
                         | ((bb >>> 3))] & 0xFF];
-                    adj = Math.cbrt((BlueNoise.get(px, y, BlueNoise.ALT_NOISE[1]) + 0.5f) * 0.00784313725490196f) * strength;
-//                    adj = (BlueNoise.getSeeded(px, y, 1111111) + ((px + y & 1) - 0.3125f) * 32f) * strength;
+                    adj = ((BlueNoise.get(px, y) + 0.5f) * 0.008f); // slightly outside -1 to 1 range, should be +/- 1.02
+                    adj *= adj * adj * strength;
+                    adj += (px + y & 1) - 0.5f; // makes a checkerboard pattern of +0.5 and -0.5
                     rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
                     gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
                     bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF);
@@ -1953,6 +1941,52 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+//    /**
+//     * A different kind of blue-noise-based dither; does not diffuse error, and uses a non-repeating blue noise pattern
+//     * (that isn't quite as strongly measurable as blue noise as what {@link #reduceTrueBlue(Pixmap)} uses). This pattern
+//     * can be seeded to produce different dithers for otherwise identical inputs; the seed can be any int.
+//     * <br>
+//     * There are times to use {@link #reduceTrueBlue(Pixmap)} and times to use this; each palette and
+//     * source image will have different qualities of result.
+//     * @param pixmap will be modified in-place and returned
+//     * @param seed any int; will be used to change the dither pattern
+//     * @return pixmap, after modifications
+//     */
+//    public Pixmap reduceBluish (Pixmap pixmap, int seed) {
+//        boolean hasTransparent = (paletteArray[0] == 0);
+//        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+//        Pixmap.Blending blending = pixmap.getBlending();
+//        pixmap.setBlending(Pixmap.Blending.None);
+//        int color, used;
+//        double adj, strength = ditherStrength;
+//        for (int y = 0; y < h; y++) {
+//            for (int px = 0; px < lineLen; px++) {
+//                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+//                if ((color & 0x80) == 0 && hasTransparent)
+//                    pixmap.drawPixel(px, y, 0);
+//                else {
+//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+//                    int rr = ((color >>> 24)       );
+//                    int gg = ((color >>> 16) & 0xFF);
+//                    int bb = ((color >>> 8)  & 0xFF);
+//                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+//                        | ((gg << 2) & 0x3E0)
+//                        | ((bb >>> 3))] & 0xFF];
+//                    adj = Math.cbrt((BlueNoise.get(px, y, BlueNoise.ALT_NOISE[1]) + 0.5f) * 0.00784313725490196f) * strength;
+////                    adj = (BlueNoise.getSeeded(px, y, 1111111) + ((px + y & 1) - 0.3125f) * 32f) * strength;
+//                    rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
+//                    gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
+//                    bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF);
+//                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+//                        | ((gg << 2) & 0x3E0)
+//                        | ((bb >>> 3))] & 0xFF]);
+//                }
+//            }
+//
+//        }
+//        pixmap.setBlending(blending);
+//        return pixmap;
+//    }
     
     void computePaletteGamma(double gamma){
         for (int i = 0; i < paletteArray.length; i++) {

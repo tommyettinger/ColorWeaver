@@ -83,7 +83,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        int i = 0;
         for(FileHandle hex : hexes) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
-//        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
 //            if(i++ > 6) break;
@@ -116,12 +116,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //////good
 //                    pm = (reducer.reduceFloydSteinberg(new Pixmap(sample)));
 //                    png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
-////good
-                    pm = (reducer.reduceTrueBlue(new Pixmap(sample)));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Blue" + suffix + ".png"), pm, PALETTE, false, 0);
 //////good
-//                    pm = (reducer.reduceBluish(new Pixmap(sample)));
-//                    png8.writePrecisely(Gdx.files.local(subname + "_Bluish" + suffix + ".png"), pm, PALETTE, false, 0);
+//                    pm = (reducer.reduceTrueBlue(new Pixmap(sample)));
+//                    png8.writePrecisely(Gdx.files.local(subname + "_Blue" + suffix + ".png"), pm, PALETTE, false, 0);
+////good
+                    pm = (reducer.reduceBluish(new Pixmap(sample)));
+                    png8.writePrecisely(Gdx.files.local(subname + "_Bluish" + suffix + ".png"), pm, PALETTE, false, 0);
 ////???
 //                    pm = (reducer.reduceKnoll(new Pixmap(sample)));
 //                    png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
@@ -141,12 +141,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //////good
 //                    pm = (reducer.reduceFloydSteinberg(new Pixmap(sample)));
 //                    png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
-////good?
-                    pm = (reducer.reduceTrueBlue(new Pixmap(sample)));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Blue" + suffix + ".png"), pm, PALETTE, false, 0);
 //////good?
-//                    pm = (reducer.reduceBluish(new Pixmap(sample)));
-//                    png8.writePrecisely(Gdx.files.local(subname + "_Bluish" + suffix + ".png"), pm, PALETTE, false, 0);
+//                    pm = (reducer.reduceTrueBlue(new Pixmap(sample)));
+//                    png8.writePrecisely(Gdx.files.local(subname + "_Blue" + suffix + ".png"), pm, PALETTE, false, 0);
+////good?
+                    pm = (reducer.reduceBluish(new Pixmap(sample)));
+                    png8.writePrecisely(Gdx.files.local(subname + "_Bluish" + suffix + ".png"), pm, PALETTE, false, 0);
 ////???
 //                    pm = (reducer.reduceKnoll(new Pixmap(sample)));
 //                    png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
@@ -166,12 +166,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //////good
 //                    pm = (reducer.reduceFloydSteinberg(new Pixmap(sample)));
 //                    png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
-////good?
-                    pm = (reducer.reduceTrueBlue(new Pixmap(sample)));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Blue" + suffix + ".png"), pm, PALETTE, false, 0);
-////good?
-//                    pm = (reducer.reduceBluish(new Pixmap(sample)));
-//                    png8.writePrecisely(Gdx.files.local(subname + "_Bluish" + suffix + ".png"), pm, PALETTE, false, 0);
+//////good?
+//                    pm = (reducer.reduceTrueBlue(new Pixmap(sample)));
+//                    png8.writePrecisely(Gdx.files.local(subname + "_Blue" + suffix + ".png"), pm, PALETTE, false, 0);
+//good?
+                    pm = (reducer.reduceBluish(new Pixmap(sample)));
+                    png8.writePrecisely(Gdx.files.local(subname + "_Bluish" + suffix + ".png"), pm, PALETTE, false, 0);
 //////???
 //                    pm = (reducer.reduceKnoll(new Pixmap(sample)));
 //                    png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
