@@ -631,12 +631,6 @@ Delta CMC = sqrt( xSL ^ 2 + xSC ^ 2 + xSH ^ 2 )
 		return labs;
 	}
 	
-	public static void main(String[] args)
-	{
-		makeLAB15();
-		System.exit(0);
-	}
-	
 	public static int puff(final int small)
 	{
 		return (small << 17 & 0xF8000000) | (small << 12 & 0x07000000) | (small << 14 & 0xF80000) | (small << 9 & 0x070000) | (small << 11 & 0xF800) | (small << 6 & 0x0700) | 0xFF;
