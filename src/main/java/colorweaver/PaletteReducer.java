@@ -21,6 +21,8 @@ import java.util.*;
  * Created by Tommy Ettinger on 6/23/2018.
  */
 public class PaletteReducer {
+    
+    public static final double GAMMA = 2.2;
 
     public interface ColorMetric{
         double difference(final int color1, int color2);
@@ -773,21 +775,21 @@ public class PaletteReducer {
                 paletteArray[i] = color;
             }
         }
-        computePaletteGamma(2.2);
+        computePaletteGamma(GAMMA);
         for(int i = 0; i < plen; i++){
         color = gammaArray[i];
         paletteMapping[(color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F)] = (byte) i;
     }
         int rr, gg, bb;
         for (int r = 0; r < 32; r++) {
-            rr = (int)(255 * Math.pow(r * 0.03225806451612903, 0.454545) + 0.5);
+            rr = (int)(255 * Math.pow(r * 0.03225806451612903, GAMMA) + 0.5);
 //            rr = (r << 3 | r >>> 2);
             for (int g = 0; g < 32; g++) {
-                gg = (int)(255 * Math.pow(g * 0.03225806451612903, 0.454545) + 0.5);
+                gg = (int)(255 * Math.pow(g * 0.03225806451612903, GAMMA) + 0.5);
                 for (int b = 0; b < 32; b++) {
                     c2 = r << 10 | g << 5 | b;
                     if (paletteMapping[c2] == 0) {
-                        bb = (int)(255 * Math.pow(b * 0.03225806451612903, 0.454545) + 0.5);
+                        bb = (int)(255 * Math.pow(b * 0.03225806451612903, GAMMA) + 0.5);
                         dist = 0x7FFFFFFF;
                         for (int i = 1; i < plen; i++) {
                             if (dist > (dist = Math.min(dist, metric.difference(gammaArray[i], rr, gg, bb))))
@@ -817,7 +819,7 @@ public class PaletteReducer {
             if((color & 0x80) != 0)
                 paletteArray[i] = color;
         }
-        computePaletteGamma(2.2);
+        computePaletteGamma(GAMMA);
         paletteMapping = preload;
     }
 
@@ -892,21 +894,21 @@ public class PaletteReducer {
             if((color & 0xFF) != 0) 
                 paletteArray[i] = color;
         }
-        computePaletteGamma(2.2);
+        computePaletteGamma(GAMMA);
         for(int i = 0; i < plen; i++){
             color = gammaArray[i];
             paletteMapping[(color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F)] = (byte) i;
         }
         int rr, gg, bb;
         for (int r = 0; r < 32; r++) {
-            rr = (int)(255 * Math.pow(r * 0.03225806451612903, 0.454545) + 0.5);
+            rr = (int)(255 * Math.pow(r * 0.03225806451612903, GAMMA) + 0.5);
 //            rr = (r << 3 | r >>> 2);
             for (int g = 0; g < 32; g++) {
-                gg = (int)(255 * Math.pow(g * 0.03225806451612903, 0.454545) + 0.5);
+                gg = (int)(255 * Math.pow(g * 0.03225806451612903, GAMMA) + 0.5);
                 for (int b = 0; b < 32; b++) {
                     c2 = r << 10 | g << 5 | b;
                     if (paletteMapping[c2] == 0) {
-                        bb = (int)(255 * Math.pow(b * 0.03225806451612903, 0.454545) + 0.5);
+                        bb = (int)(255 * Math.pow(b * 0.03225806451612903, GAMMA) + 0.5);
                         dist = 0x7FFFFFFF;
                         for (int i = 1; i < plen; i++) {
                             if (dist > (dist = Math.min(dist, metric.difference(gammaArray[i], rr, gg, bb))))
@@ -1045,13 +1047,13 @@ public class PaletteReducer {
         int c2, rr, gg, bb;
         double dist;
         for (int r = 0; r < 32; r++) {
-            rr = (int)(255 * Math.pow(r * 0.03225806451612903, 0.454545) + 0.5);
+            rr = (int)(255 * Math.pow(r * 0.03225806451612903, GAMMA) + 0.5);
             for (int g = 0; g < 32; g++) {
-                gg = (int)(255 * Math.pow(g * 0.03225806451612903, 0.454545) + 0.5);
+                gg = (int)(255 * Math.pow(g * 0.03225806451612903, GAMMA) + 0.5);
                 for (int b = 0; b < 32; b++) {
-                    bb = (int)(255 * Math.pow(b * 0.03225806451612903, 0.454545) + 0.5);
-                    c2 = (rr << 7 & 0x7C00) | (gg << 2 & 0x3E0) | bb >>> 3;
+                    c2 = r << 10 | g << 5 | b;
                     if (paletteMapping[c2] == 0) {
+                        bb = (int)(255 * Math.pow(b * 0.03225806451612903, GAMMA) + 0.5);
                         dist = Double.POSITIVE_INFINITY;
                         for (int i = 1; i < limit; i++) {
                             if (dist > (dist = Math.min(dist, difference(gammaArray[i], rr, gg, bb))))
@@ -1669,7 +1671,7 @@ public class PaletteReducer {
                     int rr = ((color >>> 24)       );//MathUtils.clamp((int) (rr * (1f + adj)), 0, 0xFF);
                     int gg = ((color >>> 16) & 0xFF);//MathUtils.clamp((int) (gg * (1f + adj)), 0, 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);//MathUtils.clamp((int) (bb * (1f + adj)), 0, 0xFF);
-                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                    used = gammaArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF];
                     pos = (px * 0xC13FA9A902A6328FL - y * 0x91E10DA5C79E7B1DL);
@@ -1714,7 +1716,7 @@ public class PaletteReducer {
                     int rr = ((color >>> 24)       );//MathUtils.clamp((int) (rr * (1f + adj)), 0, 0xFF);
                     int gg = ((color >>> 16) & 0xFF);//MathUtils.clamp((int) (gg * (1f + adj)), 0, 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);//MathUtils.clamp((int) (bb * (1f + adj)), 0, 0xFF);
-                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                    used = gammaArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF];
                     pos = (px * (0xC13FA9A9 + y) + y * (0x91E10DA5 + px));
@@ -1764,7 +1766,7 @@ public class PaletteReducer {
                     int rr = ((color >>> 24)       );
                     int gg = ((color >>> 16) & 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);
-                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                    used = gammaArray[paletteMapping[((rr << 7) & 0x7C00)
                         | ((gg << 2) & 0x3E0)
                         | ((bb >>> 3))] & 0xFF];
                     //float len = (rr * 5 + gg * 9 + bb * 2) * strength + 1f;
@@ -1930,7 +1932,7 @@ public class PaletteReducer {
                     int rr = ((color >>> 24)       );
                     int gg = ((color >>> 16) & 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);
-                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                    used = gammaArray[paletteMapping[((rr << 7) & 0x7C00)
                         | ((gg << 2) & 0x3E0)
                         | ((bb >>> 3))] & 0xFF];
                     adj = ((BlueNoise.get(px, y) + 0.5f) * 0.008f); // slightly outside -1 to 1 range, should be +/- 1.02
@@ -2144,7 +2146,7 @@ public class PaletteReducer {
                                 | ((gg << 2) & 0x3E0)
                                 | ((bb >>> 3))] & 0xFF;
                         candidates[i] = used = paletteArray[usedIndex];
-//                        used = gammaArray[usedIndex];
+                        //used = gammaArray[usedIndex];
                         er += cr - (used >>> 24);
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
@@ -2198,7 +2200,7 @@ public class PaletteReducer {
                                 | ((gg << 2) & 0x3E0)
                                 | ((bb >>> 3))] & 0xFF;
                         candidates[i] = used = paletteArray[usedIndex];
-//                        used = gammaArray[usedIndex];
+                        //used = gammaArray[usedIndex];
                         er += cr - (used >>> 24);
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
