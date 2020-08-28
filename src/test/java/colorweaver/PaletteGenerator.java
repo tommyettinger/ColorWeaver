@@ -77,33 +77,7 @@ public class PaletteGenerator extends ApplicationAdapter {
     {
         return ((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L & 0x1FFFFFFFFFFFFFL) * 0x1p-53;
     }
-
-    private final double[][] lab15 = CIELABConverter.makeLAB15();
-    private final PaletteReducer.ColorMetric cm = new PaletteReducer.ColorMetric(){
-        @Override
-        public double difference(int color1, int color2) {
-            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
-            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
-        }
-
-        @Override
-        public double difference(int color1, int r2, int g2, int b2) {
-            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
-            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
-        }
-
-        @Override
-        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-            int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
-                indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
-            final double
-                L = lab15[0][indexA] - lab15[0][indexB],
-                A = lab15[1][indexA] - lab15[1][indexB],
-                B = lab15[2][indexA] - lab15[2][indexB];
-            return L * L * 11.0 + A * A * 1.6 + B * B;
-        }
-    };
-
+    
     public void create() {
 //        final float[] hues = {0.0f, 0.07179487f, 0.07749468f, 0.098445594f, 0.09782606f, 0.14184391f, 0.16522992f,
 //                0.20281118f, 0.20285714f, 0.21867621f, 0.25163394f, 0.3141666f, 0.3715499f, 0.37061405f, 0.44054055f,
@@ -360,7 +334,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        }
 
         PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE, cm);
+        png8.palette = new PaletteReducer(PALETTE, PaletteReducer.labQuickMetric);
         Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
 
         //// for palettes that are fairly small (64 or less) and don't have bonus info.

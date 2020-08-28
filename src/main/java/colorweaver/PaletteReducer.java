@@ -441,23 +441,16 @@ public class PaletteReducer {
 
 
     public static final ColorMetric labQuickMetric = new ColorMetric(){
-        @Override
         public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
             return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
         }
 
-        @Override
         public double difference(int color1, int r2, int g2, int b2) {
-            int indexA = (color1 >>> 17 & 0x7C00) | (color1 >>> 14 & 0x3E0) | (color1 >>> 11 & 0x1F),
-                    indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
-            final double
-                    L = labs[0][indexA] - labs[0][indexB],
-                    A = labs[1][indexA] - labs[1][indexB],
-                    B = labs[2][indexA] - labs[2][indexB];
-            return L * L * 7 + A * A + B * B;
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
         }
 
-        @Override
         public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
             int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
                     indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
@@ -465,8 +458,7 @@ public class PaletteReducer {
                     L = labs[0][indexA] - labs[0][indexB],
                     A = labs[1][indexA] - labs[1][indexB],
                     B = labs[2][indexA] - labs[2][indexB];
-            return L * L * 7 + A * A + B * B;
-//            return L * L * 11.0 + A * A * 0.625 + B * B;
+            return L * L * 11.0 + A * A * 1.6 + B * B;
         }
     };
     
@@ -779,21 +771,26 @@ public class PaletteReducer {
             color = rgbaPalette[i];
             if ((color & 0x80) != 0) {
                 paletteArray[i] = color;
-                paletteMapping[(color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F)] = (byte) i;
             }
         }
+        computePaletteGamma(2.2);
+        for(int i = 0; i < plen; i++){
+        color = gammaArray[i];
+        paletteMapping[(color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F)] = (byte) i;
+    }
         int rr, gg, bb;
         for (int r = 0; r < 32; r++) {
-            rr = (r << 3 | r >>> 2);
+            rr = (int)(255 * Math.pow(r * 0.03225806451612903, 0.454545) + 0.5);
+//            rr = (r << 3 | r >>> 2);
             for (int g = 0; g < 32; g++) {
-                gg = (g << 3 | g >>> 2);
+                gg = (int)(255 * Math.pow(g * 0.03225806451612903, 0.454545) + 0.5);
                 for (int b = 0; b < 32; b++) {
                     c2 = r << 10 | g << 5 | b;
                     if (paletteMapping[c2] == 0) {
-                        bb = (b << 3 | b >>> 2);
+                        bb = (int)(255 * Math.pow(b * 0.03225806451612903, 0.454545) + 0.5);
                         dist = 0x7FFFFFFF;
                         for (int i = 1; i < plen; i++) {
-                            if (dist > (dist = Math.min(dist, metric.difference(paletteArray[i], rr, gg, bb))))
+                            if (dist > (dist = Math.min(dist, metric.difference(gammaArray[i], rr, gg, bb))))
                                 paletteMapping[c2] = (byte) i;
                         }
                     }
@@ -819,7 +816,8 @@ public class PaletteReducer {
             int color = palette[i];
             if((color & 0x80) != 0)
                 paletteArray[i] = color;
-        }         
+        }
+        computePaletteGamma(2.2);
         paletteMapping = preload;
     }
 
@@ -891,27 +889,34 @@ public class PaletteReducer {
         double dist;
         for (int i = 0; i < plen; i++) {
             color = Color.rgba8888(colorPalette[i]);
-            paletteArray[i] = color;
+            if((color & 0xFF) != 0) 
+                paletteArray[i] = color;
+        }
+        computePaletteGamma(2.2);
+        for(int i = 0; i < plen; i++){
+            color = gammaArray[i];
             paletteMapping[(color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F)] = (byte) i;
         }
         int rr, gg, bb;
         for (int r = 0; r < 32; r++) {
-            rr = (r << 3 | r >>> 2);
+            rr = (int)(255 * Math.pow(r * 0.03225806451612903, 0.454545) + 0.5);
+//            rr = (r << 3 | r >>> 2);
             for (int g = 0; g < 32; g++) {
-                gg = (g << 3 | g >>> 2);
+                gg = (int)(255 * Math.pow(g * 0.03225806451612903, 0.454545) + 0.5);
                 for (int b = 0; b < 32; b++) {
                     c2 = r << 10 | g << 5 | b;
                     if (paletteMapping[c2] == 0) {
-                        bb = (b << 3 | b >>> 2);
+                        bb = (int)(255 * Math.pow(b * 0.03225806451612903, 0.454545) + 0.5);
                         dist = 0x7FFFFFFF;
                         for (int i = 1; i < plen; i++) {
-                            if (dist > (dist = Math.min(dist, metric.difference(paletteArray[i], rr, gg, bb))))
+                            if (dist > (dist = Math.min(dist, metric.difference(gammaArray[i], rr, gg, bb))))
                                 paletteMapping[c2] = (byte) i;
                         }
                     }
                 }
             }
         }
+
     }
     /**
      * Analyzes {@code pixmap} for color count and frequency, building a palette with at most 256 colors if there are
@@ -1037,16 +1042,19 @@ public class PaletteReducer {
                 i++;
             }
         }
-        int c2;
+        int c2, rr, gg, bb;
         double dist;
         for (int r = 0; r < 32; r++) {
+            rr = (int)(255 * Math.pow(r * 0.03225806451612903, 0.454545) + 0.5);
             for (int g = 0; g < 32; g++) {
+                gg = (int)(255 * Math.pow(g * 0.03225806451612903, 0.454545) + 0.5);
                 for (int b = 0; b < 32; b++) {
-                    c2 = r << 10 | g << 5 | b;
+                    bb = (int)(255 * Math.pow(b * 0.03225806451612903, 0.454545) + 0.5);
+                    c2 = (rr << 7 & 0x7C00) | (gg << 2 & 0x3E0) | bb >>> 3;
                     if (paletteMapping[c2] == 0) {
                         dist = Double.POSITIVE_INFINITY;
                         for (int i = 1; i < limit; i++) {
-                            if (dist > (dist = Math.min(dist, difference(reds[i], greens[i], blues[i], r, g, b))))
+                            if (dist > (dist = Math.min(dist, difference(gammaArray[i], rr, gg, bb))))
                                 paletteMapping[c2] = (byte) i;
                         }
                     }
@@ -2116,7 +2124,8 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
         final float errorMul = ditherStrength * 0.5f;
-        computePaletteGamma(2.0 - ditherStrength * 1.666);
+//        computePaletteGamma(2.2);
+//        computePaletteGamma(2.0 - ditherStrength * 1.666);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -2134,8 +2143,8 @@ public class PaletteReducer {
                         usedIndex = paletteMapping[((rr << 7) & 0x7C00)
                                 | ((gg << 2) & 0x3E0)
                                 | ((bb >>> 3))] & 0xFF;
-                        candidates[i] = paletteArray[usedIndex];
-                        used = gammaArray[usedIndex];
+                        candidates[i] = used = paletteArray[usedIndex];
+//                        used = gammaArray[usedIndex];
                         er += cr - (used >>> 24);
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
@@ -2169,7 +2178,8 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
         final float errorMul = ditherStrength * 0.3f;
-        computePaletteGamma(2.0 - ditherStrength * 1.666);
+//        computePaletteGamma(2.2);
+//        computePaletteGamma(2.0 - ditherStrength * 1.666);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -2187,8 +2197,8 @@ public class PaletteReducer {
                         usedIndex = paletteMapping[((rr << 7) & 0x7C00)
                                 | ((gg << 2) & 0x3E0)
                                 | ((bb >>> 3))] & 0xFF;
-                        candidates[i] = paletteArray[usedIndex];
-                        used = gammaArray[usedIndex];
+                        candidates[i] = used = paletteArray[usedIndex];
+//                        used = gammaArray[usedIndex];
                         er += cr - (used >>> 24);
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);

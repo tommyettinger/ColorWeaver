@@ -15,7 +15,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "grayfull-256";
+    public static final String NAME = "gb-4";
     
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
