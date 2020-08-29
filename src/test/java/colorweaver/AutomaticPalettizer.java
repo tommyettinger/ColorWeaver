@@ -71,7 +71,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
     }
 
     public void create() {
-        final String targetDir = "samples/reducedExperimental/"; //"otherSamples/reduced/"; //
+        final String targetDir = "samples/reducedExperimental2/"; //"otherSamples/reduced/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
         FileHandle[] samples = Gdx.files.local("samples/").list(new FileFilter() {
             @Override
