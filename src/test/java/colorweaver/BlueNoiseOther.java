@@ -5,8 +5,12 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.graphics.Pixmap;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
+
+import static colorweaver.PreloadCodeGenerator.generatePreloadCode;
 
 /**
  * Created by Tommy Ettinger on 1/21/2018.
@@ -36,6 +40,19 @@ public class BlueNoiseOther extends ApplicationAdapter {
     }
     public byte[][] bytes;
     public void create() {
+        Pixmap pix = new Pixmap(Gdx.files.internal("BlueTri.png"));
+        ByteBuffer l3a1 = pix.getPixels();
+        final int len = pix.getWidth() * pix.getHeight();
+        System.out.println("Original image has format " + pix.getFormat() + " and contains " + len + " pixels, " + l3a1.remaining() + " bytes.");
+        byte[] brights = new byte[len];
+        for (int i = 0; i < len; i++) {
+            brights[i] = l3a1.get(i);
+            brights[i] += -128;
+        }
+        generatePreloadCode(brights, "BlueNoiseTri.txt");
+        Gdx.app.exit();
+    }
+    public void createReshape() {
         bytes = BlueNoise.ALT_NOISE;
         int[] counts = new int[256], bestCounts = new int[256];
         byte[] tri = new byte[0x1000], choice = new byte[0x1000];
