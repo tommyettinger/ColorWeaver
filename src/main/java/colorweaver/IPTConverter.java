@@ -5,15 +5,15 @@ import com.badlogic.gdx.math.MathUtils;
 
 /**
  * A more perceptually-uniform color space than CIELAB while maybe being easier to compute.
- * This is a stripped-down and simplified version of IPT, a color space discovered by Ebner and Fairchild and described
+ * This is IPT, a color space discovered by Ebner and Fairchild and described
  * <a href="https://www.researchgate.net/publication/221677980_Development_and_Testing_of_a_Color_Space_IPT_with_Improved_Hue_Uniformity">in this dissertation</a>.
  * <br>
- * Massive credit to CypherCove for doing all of the code work here; formulas are taken from his Compressed LMS code: 
- * https://github.com/CypherCove/gdx-tween/blob/b9a14c3e1b7508d69912dc0e26ad94db768ac3e8/gdxtween/src/main/java/com/cyphercove/gdxtween/graphics/GtColor.java#L641
+ * Massive credit to CypherCove for doing all of the code work here; formulas are taken from 
+ * <a href="https://github.com/CypherCove/gdx-tween/blob/b9a14c3e1b7508d69912dc0e26ad94db768ac3e8/gdxtween/src/main/java/com/cyphercove/gdxtween/graphics/GtColor.java#L569-L647">his IPT code</a>.
  * Although there seems to be a patent filed by Kodak and related to IPT, none of the constants are the same between
  * this technique and the patent, so they probably describe unrelated methods.
  */
-public class SemiIPTConverter {
+public class IPTConverter {
 	public static class SemiIPT {
 		/**
 		 * Intensity; very accurate form of luminance.
@@ -48,12 +48,13 @@ public class SemiIPTConverter {
 		}
 
 		public SemiIPT(Color color){
-			double l = 0.313921 * color.r + 0.639468 * color.g + 0.0465970 * color.b;
-			double m = 0.151693 * color.r + 0.748209 * color.g + 0.1000044 * color.b;
-			double s = 0.017753 * color.r + 0.109468 * color.g + 0.8729690 * color.b;
-			i = Math.pow(l, 0.43);
-			p = Math.pow(m, 0.43);
-			t = Math.pow(s, 0.43);
+			double l = Math.pow(0.313921 * color.r + 0.639468 * color.g + 0.0465970 * color.b, 0.43);
+			double m = Math.pow(0.151693 * color.r + 0.748209 * color.g + 0.1000044 * color.b, 0.43);
+			double s = Math.pow(0.017700 * color.r + 0.109400 * color.g + 0.8729000 * color.b, 0.43);
+
+			i = 0.4000f * l + 0.4000f * m + 0.2000f * s;
+			p = 4.4550f * l - 4.8510f * m + 0.3960f * s;
+			t = 0.8056f * l + 0.3572f * m - 1.1628f * s;
 			a = color.a;
 		}
 
@@ -62,33 +63,39 @@ public class SemiIPTConverter {
 					g = (rgba >>> 16 & 0xFF) * 0x1.010101010101p-8,
 					b = (rgba >>> 8 & 0xFF) * 0x1.010101010101p-8;
 			a = (rgba & 0xFF) * 0x1.010101010101p-8;
-			double l = 0.313921 * r + 0.639468 * g + 0.0465970 * b;
-			double m = 0.151693 * r + 0.748209 * g + 0.1000044 * b;
-			double s = 0.017753 * r + 0.109468 * g + 0.8729690 * b;
-			i = Math.pow(l, 0.43);
-			p = Math.pow(m, 0.43);
-			t = Math.pow(s, 0.43); 
-		}
-		public Color intoColor(Color color){
+			double l = Math.pow(0.313921 * r + 0.639468 * g + 0.0465970 * b, 0.43);
+			double m = Math.pow(0.151693 * r + 0.748209 * g + 0.1000044 * b, 0.43);
+			double s = Math.pow(0.017700 * r + 0.109400 * g + 0.8729000 * b, 0.43);
 
-			float l = (float) Math.pow(i, 2.3256);
-			float m = (float) Math.pow(p, 2.3256);
-			float s = (float) Math.pow(t, 2.3256);
-			color.r = 5.432622f * l - 4.679100f * m + 0.246257f * s;
-			color.g = -1.10517f * l + 2.311198f * m - 0.205880f * s;
-			color.b = 0.028104f * l - 0.194660f * m + 1.166325f * s;
+			i = 0.4000f * l + 0.4000f * m + 0.2000f * s;
+			p = 4.4550f * l - 4.8510f * m + 0.3960f * s;
+			t = 0.8056f * l + 0.3572f * m - 1.1628f * s;
+		}
+		public Color intoColor(Color color) {
+			double lPrime = i + 0.097569 * p + 0.205226 * t;
+			double mPrime = i - 0.113880 * p + 0.133217 * t;
+			double sPrime = i + 0.032615 * p - 0.676890 * t;
+			float l = (float) Math.copySign(Math.pow(Math.abs(lPrime), 2.3256), lPrime);
+			float m = (float) Math.copySign(Math.pow(Math.abs(mPrime), 2.3256), mPrime);
+			float s = (float) Math.copySign(Math.pow(Math.abs(sPrime), 2.3256), sPrime);
+			color.r = 5.432622f * l - 4.6791f * m + 0.246257f * s;
+			color.g = -1.10517f * l + 2.311198f * m - 0.20588f * s;
+			color.b = 0.028104f * l - 0.19466f * m + 1.166325f * s;
 			color.a = (float) a;
 			return color.clamp();
 		}
 		public int rgba8888(){
 
-			double l = Math.pow(i, 2.3256);
-			double m = Math.pow(p, 2.3256);
-			double s = Math.pow(t, 2.3256);
-			int r = MathUtils.clamp((int) ((5.432622f * l - 4.679100f * m + 0.246257f * s) * 256.0 - 0.5), 0, 255);
-			int g = MathUtils.clamp((int) ((-1.10517f * l + 2.311198f * m - 0.205880f * s) * 256.0 - 0.5), 0, 255);
-			int b = MathUtils.clamp((int) ((0.028104f * l - 0.194660f * m + 1.166325f * s) * 256.0 - 0.5), 0, 255);
-			int a = (int) (this.a * 256.0 -0.5);
+			double lPrime = i + 0.097569 * p + 0.205226 * t;
+			double mPrime = i - 0.113880 * p + 0.133217 * t;
+			double sPrime = i + 0.032615 * p - 0.676890 * t;
+			double l = Math.copySign(Math.pow(Math.abs(lPrime), 2.3256), lPrime);
+			double m = Math.copySign(Math.pow(Math.abs(mPrime), 2.3256), mPrime);
+			double s = Math.copySign(Math.pow(Math.abs(sPrime), 2.3256), sPrime);
+			int r = MathUtils.clamp((int) ((5.432622 * l - 4.679100 * m + 0.246257 * s) * 255.99999), 0, 255);
+			int g = MathUtils.clamp((int) ((-1.10517 * l + 2.311198 * m - 0.205880 * s) * 255.99999), 0, 255);
+			int b = MathUtils.clamp((int) ((0.028104 * l - 0.194660 * m + 1.166325 * s) * 255.99999), 0, 255);
+			int a = (int) (this.a * 255.99999);
 			return r << 24 | g << 16 | b << 8 | a;
 		}
 	}
@@ -106,12 +113,14 @@ public class SemiIPTConverter {
 				for (int bi = 0; bi < 32; bi++) {
 					b = bi / 31.0;
 					int idx = ri << 10 | gi << 5 | bi;
-					double l = 0.313921 * r + 0.639468 * g + 0.0465970 * b;
-					double m = 0.151693 * r + 0.748209 * g + 0.1000044 * b;
-					double s = 0.017753 * r + 0.109468 * g + 0.8729690 * b;
-					ipts[0][idx] = i = Math.pow(l, 0.43);
-					ipts[1][idx] = p = Math.pow(m, 0.43);
-					ipts[2][idx] = t = Math.pow(s, 0.43);
+					double l = Math.pow(0.313921 * r + 0.639468 * g + 0.0465970 * b, 0.43);
+					double m = Math.pow(0.151693 * r + 0.748209 * g + 0.1000044 * b, 0.43);
+					double s = Math.pow(0.017700 * r + 0.109400 * g + 0.8729000 * b, 0.43);
+
+					ipts[0][idx] = i = 0.4000f * l + 0.4000f * m + 0.2000f * s;
+					ipts[1][idx] = p = 4.4550f * l - 4.8510f * m + 0.3960f * s;
+					ipts[2][idx] = t = 0.8056f * l + 0.3572f * m - 1.1628f * s;
+
 					int y = (int)(i * 20);
 					minP[y] = Math.min(minP[y], p);
 					maxP[y] = Math.max(maxP[y], p);
@@ -150,7 +159,7 @@ public class SemiIPTConverter {
 				i = ipt15[0][indexA] - ipt15[0][indexB],
 				p = ipt15[1][indexA] - ipt15[1][indexB],
 				t = ipt15[2][indexA] - ipt15[2][indexB];
-		return i * i * 7.0 + p * p + t * t;
+		return i * i * 25.0 + p * p * 4.0 + t * t;
 //		return L * L * 50.0 + A * A * 50.0 + B * B * 50.0;
 	}
 
