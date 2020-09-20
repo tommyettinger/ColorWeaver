@@ -517,6 +517,55 @@ public class PaletteReducer {
         }
     };
     
+    public static final double[][] lmss = new double[3][0x8000];
+    static {
+        double r, g, b;
+        int idx = 0;
+        for (int ri = 0; ri < 32; ri++) {
+            r = ri / 31.0;
+            for (int gi = 0; gi < 32; gi++) {
+                g = gi / 31.0;
+                for (int bi = 0; bi < 32; bi++) {
+                    b = bi / 31.0;
+//        for (int ri = 0; ri < 32; ri++) {
+//            r = Math.pow(ri / 31.0, 2.4);
+//            for (int gi = 0; gi < 32; gi++) {
+//                g = Math.pow(gi / 31.0, 2.4);
+//                for (int bi = 0; bi < 32; bi++) {
+//                    b = Math.pow(bi / 31.0, 2.4);
+
+                    lmss[0][idx] = Math.pow(0.313921 * r + 0.639468 * g + 0.0465970 * b, 0.43);
+                    lmss[1][idx] = Math.pow(0.151693 * r + 0.748209 * g + 0.1000044 * b, 0.43);
+                    lmss[2][idx] = Math.pow(0.017700 * r + 0.109400 * g + 0.8729000 * b, 0.43);
+                    
+                    idx++;
+                }
+            }
+        }
+    }
+
+    public static final ColorMetric lmsBadMetric = new ColorMetric(){
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
+                    indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
+            final double
+                    l = lmss[0][indexA] - lmss[0][indexB],
+                    m = lmss[1][indexA] - lmss[1][indexB],
+                    s = lmss[2][indexA] - lmss[2][indexB];
+            return l * l + m * m + s * s;
+        }
+    };
+    
     private static final double[] RGB_POWERS = new double[3 << 8];
     static {
         for (int i = 1; i < 256; i++) {
