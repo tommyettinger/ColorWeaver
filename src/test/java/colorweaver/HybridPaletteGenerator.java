@@ -62,9 +62,6 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
                 (3.0 - nextDouble() * nextDouble() - nextDouble() * nextDouble() - nextDouble() * nextDouble()));
 
     }
-    private static double difference(double y1, double w1, double m1, double y2, double w2, double m2) {
-        return (y1 - y2) * (y1 - y2) + ((w1 - w2) * (w1 - w2) + (m1 - m2) * (m1 - m2)) * 0.1625;
-    }
 
     public final int randomSign() {
         return (int)(((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 63 | 1L) & -(state & 1L));
@@ -399,7 +396,7 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
             alab = alabs[i] - 0.5;
             blab = blabs[i] - 0.5;
             for (int yy = y - 2, rr = rev - 2; yy > 0; rr--) {
-                if ((idx2 = paletteMapping[rr] & 255) != i && difference(lumas[idx2], alabs[idx2], blabs[idx2], yd, alab, blab) > THRESHOLD) {
+                if ((idx2 = paletteMapping[rr] & 255) != i && differenceLAB(lumas[idx2], alabs[idx2], blabs[idx2], yd, alab, blab) > THRESHOLD) {
                     ramps[i][2] = paletteMapping[rr];
                     rev = rr;
                     y = yy;
@@ -425,7 +422,7 @@ public class HybridPaletteGenerator extends ApplicationAdapter {
             }
             if (match >= 0) {
                 for (int yy = y - 3, rr = rev - 3; yy > 0; yy--, rr--) {
-                    if ((idx2 = paletteMapping[rr] & 255) != match && difference(lumas[idx2], alabs[idx2], blabs[idx2], yd, alab, blab) > THRESHOLD) {
+                    if ((idx2 = paletteMapping[rr] & 255) != match && differenceLAB(lumas[idx2], alabs[idx2], blabs[idx2], yd, alab, blab) > THRESHOLD) {
                         ramps[i][3] = paletteMapping[rr];
                         break;
                     }
