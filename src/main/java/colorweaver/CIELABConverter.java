@@ -10,7 +10,7 @@ import static colorweaver.tools.TrigTools.*;
 public class CIELABConverter {
 
 	protected static double a1Prime, a2Prime, CPrime1, CPrime2, barCPrime, barhPrime;
-	public CIELABConverter()
+	private CIELABConverter()
 	{
 	}
 
