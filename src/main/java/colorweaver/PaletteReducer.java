@@ -441,7 +441,6 @@ public class PaletteReducer {
         }
     }
 
-
     public static final ColorMetric labQuickMetric = new ColorMetric(){
         public double difference(int color1, int color2) {
             if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
@@ -461,6 +460,66 @@ public class PaletteReducer {
                     A = labs[1][indexA] - labs[1][indexB],
                     B = labs[2][indexA] - labs[2][indexB];
             return L * L * 11.0 + A * A * 1.6 + B * B;
+        }
+    };
+    
+    public static final double[][] ipts = new double[3][0x8000];
+    static {
+        double r, g, b;
+        int idx = 0;
+//        for (int ri = 0; ri < 32; ri++) {
+//            r = ri / 31.0;
+//            for (int gi = 0; gi < 32; gi++) {
+//                g = gi / 31.0;
+//                for (int bi = 0; bi < 32; bi++) {
+//                    b = bi / 31.0;
+        for (int ri = 0; ri < 32; ri++) {
+            r = Math.pow(ri / 31.0, 2.4);
+            for (int gi = 0; gi < 32; gi++) {
+                g = Math.pow(gi / 31.0, 2.4);
+                for (int bi = 0; bi < 32; bi++) {
+                    b = Math.pow(bi / 31.0, 2.4);
+                    
+
+                    double l = 0.313921 * r + 0.639468 * g + 0.0465970 * b;
+                    double m = 0.151693 * r + 0.748209 * g + 0.1000044 * b;
+                    double s = 0.017700 * r + 0.109400 * g + 0.8729000 * b;
+
+//                    double xD65 = 0.412391f * r + 0.357584f * g + 0.180481f * b;
+//                    double yD65 = 0.212639f * r + 0.715169f * g + 0.072192f * b;
+//                    double zD65 = 0.019331f * r + 0.119195f * g + 0.950532f * b;
+//                    double l = 0.4002f * xD65 + 0.7075f * yD65 - 0.0807f * zD65;
+//                    double m = -0.2280f * xD65 + 1.1500f * yD65 + 0.0612f * zD65;
+//                    double s = 0.9184f * zD65;
+                    
+                    ipts[0][idx] = Math.pow(l, 0.43);
+                    ipts[1][idx] = Math.pow(m, 0.43);
+                    ipts[2][idx] = Math.pow(s, 0.43);
+                    idx++;
+                }
+            }
+        }
+    }
+
+    public static final ColorMetric iptQuickMetric = new ColorMetric(){
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
+                    indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
+            final double
+                    i = ipts[0][indexA] - ipts[0][indexB],
+                    p = ipts[1][indexA] - ipts[1][indexB],
+                    t = ipts[2][indexA] - ipts[2][indexB];
+            return i * i * 7 + p * p + t * t;
         }
     };
     

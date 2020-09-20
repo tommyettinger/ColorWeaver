@@ -109,10 +109,6 @@ public class SemiIPTConverter {
 					double l = 0.313921 * r + 0.639468 * g + 0.0465970 * b;
 					double m = 0.151693 * r + 0.748209 * g + 0.1000044 * b;
 					double s = 0.017753 * r + 0.109468 * g + 0.8729690 * b;
-					
-					
-					
-
 					ipts[0][idx] = i = Math.pow(l, 0.43);
 					ipts[1][idx] = p = Math.pow(m, 0.43);
 					ipts[2][idx] = t = Math.pow(s, 0.43);
