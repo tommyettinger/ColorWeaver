@@ -467,34 +467,28 @@ public class PaletteReducer {
     static {
         double r, g, b;
         int idx = 0;
-//        for (int ri = 0; ri < 32; ri++) {
-//            r = ri / 31.0;
-//            for (int gi = 0; gi < 32; gi++) {
-//                g = gi / 31.0;
-//                for (int bi = 0; bi < 32; bi++) {
-//                    b = bi / 31.0;
         for (int ri = 0; ri < 32; ri++) {
-            r = Math.pow(ri / 31.0, 2.4);
+            r = ri / 31.0;
             for (int gi = 0; gi < 32; gi++) {
-                g = Math.pow(gi / 31.0, 2.4);
+                g = gi / 31.0;
                 for (int bi = 0; bi < 32; bi++) {
-                    b = Math.pow(bi / 31.0, 2.4);
+                    b = bi / 31.0;
+//        for (int ri = 0; ri < 32; ri++) {
+//            r = Math.pow(ri / 31.0, 2.4);
+//            for (int gi = 0; gi < 32; gi++) {
+//                g = Math.pow(gi / 31.0, 2.4);
+//                for (int bi = 0; bi < 32; bi++) {
+//                    b = Math.pow(bi / 31.0, 2.4);
                     
 
-                    double l = 0.313921 * r + 0.639468 * g + 0.0465970 * b;
-                    double m = 0.151693 * r + 0.748209 * g + 0.1000044 * b;
-                    double s = 0.017700 * r + 0.109400 * g + 0.8729000 * b;
+                    double l = Math.pow(0.313921 * r + 0.639468 * g + 0.0465970 * b, 0.43);
+                    double m = Math.pow(0.151693 * r + 0.748209 * g + 0.1000044 * b, 0.43);
+                    double s = Math.pow(0.017700 * r + 0.109400 * g + 0.8729000 * b, 0.43);
 
-//                    double xD65 = 0.412391f * r + 0.357584f * g + 0.180481f * b;
-//                    double yD65 = 0.212639f * r + 0.715169f * g + 0.072192f * b;
-//                    double zD65 = 0.019331f * r + 0.119195f * g + 0.950532f * b;
-//                    double l = 0.4002f * xD65 + 0.7075f * yD65 - 0.0807f * zD65;
-//                    double m = -0.2280f * xD65 + 1.1500f * yD65 + 0.0612f * zD65;
-//                    double s = 0.9184f * zD65;
+                    ipts[0][idx] = 0.4000f * l + 0.4000f * m + 0.2000f * s;
+                    ipts[1][idx] = 4.4550f * l - 4.8510f * m + 0.3960f * s;
+                    ipts[2][idx] = 0.8056f * l + 0.3572f * m - 1.1628f * s;
                     
-                    ipts[0][idx] = Math.pow(l, 0.43);
-                    ipts[1][idx] = Math.pow(m, 0.43);
-                    ipts[2][idx] = Math.pow(s, 0.43);
                     idx++;
                 }
             }
@@ -519,7 +513,7 @@ public class PaletteReducer {
                     i = ipts[0][indexA] - ipts[0][indexB],
                     p = ipts[1][indexA] - ipts[1][indexB],
                     t = ipts[2][indexA] - ipts[2][indexB];
-            return i * i * 7 + p * p + t * t;
+            return i * i * 25.0 + p * p * 4.0 + t * t;
         }
     };
     
