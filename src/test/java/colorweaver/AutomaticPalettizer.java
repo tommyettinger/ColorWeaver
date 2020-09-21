@@ -71,7 +71,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
     }
 
     public void create() {
-        final String targetDir = "samples/reducedExperimental2/"; //"otherSamples/reduced/"; //
+        final String targetDir = "samples/reduced/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
         FileHandle[] samples = Gdx.files.local("samples/").list(new FileFilter() {
             @Override
@@ -81,10 +81,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         });
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
-//        for(FileHandle hex : hexes) {
+        for(FileHandle hex : hexes) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //
 //            if(i++ > 6) break;
 
@@ -136,9 +136,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                     pm = (reducer.reduceSierraLite(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
 ////good
-                    pm = reducer.reduceSolid(new Pixmap(sample));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
-////good
                     pm = reducer.reduceShaderMimic(new Pixmap(sample));
                     png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
 ////good
@@ -164,9 +161,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 ////good enough
                     pm = (reducer.reduceSierraLite(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
-////good
-                    pm = reducer.reduceSolid(new Pixmap(sample));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
 ////good
                     pm = reducer.reduceShaderMimic(new Pixmap(sample));
                     png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
