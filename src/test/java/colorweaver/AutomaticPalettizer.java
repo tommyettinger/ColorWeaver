@@ -99,8 +99,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             png8.palette = reducer;
             try {
                 Pixmap pm;
-//                FileHandle sample = Gdx.files.local("samples/Portal_Companion_Cube.jpg"); {
-                for(FileHandle sample : samples) {
+                FileHandle sample = Gdx.files.local("samples/Mona_Lisa.jpg"); {
+//                for(FileHandle sample : samples) {
                     reducer.setDitherStrength(1f);
                     String subname = targetDir + name + "/" + sample.nameWithoutExtension();
 

@@ -581,8 +581,9 @@ public class PaletteReducer {
     public byte[] paletteMapping;
     public final int[] paletteArray = new int[256];
     final int[] gammaArray = new int[256];
+    public int colorCount;
     ByteArray curErrorRedBytes, nextErrorRedBytes, curErrorGreenBytes, nextErrorGreenBytes, curErrorBlueBytes, nextErrorBlueBytes;
-    float ditherStrength = 0.5f, halfDitherStrength = 0.25f;
+    double ditherStrength = 0.5f, populationBias = 0.5;
 
     /**
      * This stores a preload code for a PaletteReducer using {@link Coloring#AURORA} with {@link #rgbEasyMetric}. Using
@@ -813,6 +814,8 @@ public class PaletteReducer {
         Arrays.fill(paletteArray, 0);
         Arrays.fill(paletteMapping, (byte) 0);
         final int plen = Math.min(Math.min(256, limit), rgbaPalette.length);
+        colorCount = plen;
+        populationBias = 2.0-Math.exp(0.5/colorCount);
         int color, c2;
         double dist;
         for (int i = 0; i < plen; i++) {
@@ -861,6 +864,8 @@ public class PaletteReducer {
                 paletteArray[i] = color;
         }
         paletteMapping = preload;
+        colorCount = palette.length;
+        populationBias = 2.0-Math.exp(0.5/colorCount);
     }
 
     /**
@@ -927,6 +932,8 @@ public class PaletteReducer {
         Arrays.fill(paletteArray, 0);
         Arrays.fill(paletteMapping, (byte) 0);
         final int plen = Math.min(Math.min(256, colorPalette.length), limit);
+        colorCount = plen;
+        populationBias = 2.0-Math.exp(0.5/colorCount);
         int color, c2;
         double dist;
         for (int i = 0; i < plen; i++) {
@@ -1058,6 +1065,8 @@ public class PaletteReducer {
                 blues[i] = color & 31;
                 i++;
             }
+            colorCount = i;
+            populationBias = 2.0-Math.exp(0.5/colorCount);
         } else // reduce color count
         {
             int i = 1, c = 0;
@@ -1076,6 +1085,8 @@ public class PaletteReducer {
                 blues[i] = color & 31;
                 i++;
             }
+            colorCount = i;
+            populationBias = 2.0-Math.exp(0.5/colorCount);
         }
         int c2;
         double dist;
@@ -1103,7 +1114,6 @@ public class PaletteReducer {
      */
     public void setDitherStrength(float ditherStrength) {
         this.ditherStrength = 0.5f * ditherStrength;
-        this.halfDitherStrength = 0.25f * ditherStrength;
     }
 
     /**
@@ -1179,6 +1189,7 @@ public class PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         float r4, r2, r1, g4, g2, g1, b4, b2, b1;
         byte[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        float halfDitherStrength = (float) (ditherStrength * this.populationBias);
         if (curErrorRedBytes == null) {
             curErrorRed = (curErrorRedBytes = new ByteArray(lineLen)).items;
             nextErrorRed = (nextErrorRedBytes = new ByteArray(lineLen)).items;
@@ -1354,7 +1365,7 @@ public class PaletteReducer {
         byte er, eg, eb, paletteIndex;
         //float xir1, xir2, xig1, xig2, xib1, xib2, // would be used if random factors were per-channel
         // used now, where random factors are determined by whole colors as ints
-        float xi1, xi2, w1 = ditherStrength * 0.125f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float xi1, xi2, w1 = (float) (ditherStrength * populationBias * 0.25), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -1479,6 +1490,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, rdiff, gdiff, bdiff;
         byte er, eg, eb, paletteIndex;
+        double ditherStrength = this.ditherStrength * this.populationBias, halfDitherStrength = ditherStrength * 0.5;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -1578,7 +1590,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, rdiff, gdiff, bdiff;
         byte er, eg, eb, paletteIndex;
-        float w1 = halfDitherStrength * 0.125f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float w1 = (float)(ditherStrength * populationBias * 0.125), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -1682,7 +1694,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used;
-        float adj, str = ditherStrength * (256f / paletteArray.length) * 0x2.5p-27f;
+        float adj, str = (float) (ditherStrength * populationBias * 0x2.5p-27);
         long pos;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
@@ -1728,7 +1740,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used;
         int pos;
-        float adj, str = -0x3.Fp-20f * ditherStrength;
+        float adj, str = (float) (-0x3.Fp-20 * ditherStrength * populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1783,7 +1795,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used;
         float pos, adj;
-        final float strength = ditherStrength * 3.333f;
+        final float strength = (float) (ditherStrength * populationBias * 3.333);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1857,7 +1869,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        float adj, strength = ditherStrength * 64f;
+        float adj, strength = (float) (ditherStrength * populationBias * 64);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1941,7 +1953,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, bn;
-        float adj, strength = ditherStrength;
+        float adj, strength = (float) (ditherStrength * populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -2144,7 +2156,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
-        final float errorMul = ditherStrength * 0.5f;
+        final float errorMul = (float) (ditherStrength * populationBias);
         computePaletteGamma(2.0 - ditherStrength * 1.666);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
@@ -2197,7 +2209,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
-        final float errorMul = ditherStrength * 0.3f;
+        final float errorMul = (float) (ditherStrength * populationBias * 0.6);
         computePaletteGamma(2.0 - ditherStrength * 1.666);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {

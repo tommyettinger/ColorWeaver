@@ -851,7 +851,7 @@ public class PNG8 implements Disposable {
 
         int color, used, rdiff, gdiff, bdiff;
         byte er, eg, eb, paletteIndex;
-        float w1 = palette.ditherStrength * 0.125f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float w1 = (float)(palette.ditherStrength * palette.populationBias * 0.125), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < w; i++) {
