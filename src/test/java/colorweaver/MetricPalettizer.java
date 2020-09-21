@@ -79,7 +79,8 @@ public class MetricPalettizer extends ApplicationAdapter {
 //            }
 //        });
         PaletteReducer.ColorMetric[] metrics = {PaletteReducer.basicMetric, PaletteReducer.rgbEasyMetric, PaletteReducer.labQuickMetric, PaletteReducer.iptQuickMetric};
-        String[] metricNames = {"Basic/", "RGB/", "LAB/", "IPT/"};
+        String[] metricNames = {"IPT/"};
+//        String[] metricNames = {"Basic/", "RGB/", "LAB/", "IPT/"};
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
         for (int i = 0, metricsLength = metrics.length; i < metricsLength; i++) {
