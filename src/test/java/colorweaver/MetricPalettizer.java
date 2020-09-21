@@ -9,8 +9,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 
 /**
@@ -71,18 +69,22 @@ public class MetricPalettizer extends ApplicationAdapter {
     }
 
     public void create() {
-        final String targetDir = "samples/reducedMetric/"; //"otherSamples/reduced/"; //
+        final String targetDirRoot = "samples/reducedMetric/"; //"otherSamples/reduced/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
-        FileHandle[] samples = Gdx.files.local("samples/").list(new FileFilter() {
-            @Override
-            public boolean accept (File pathname) {
-                return !pathname.isDirectory();
-            }
-        });
+        FileHandle[] samples = {Gdx.files.local("samples/Cat_Portrait.png"), Gdx.files.local("samples/Mona_Lisa.jpg")};
+//                Gdx.files.local("samples/").list(new FileFilter() {
+//            @Override
+//            public boolean accept (File pathname) {
+//                return !pathname.isDirectory();
+//            }
+//        });
         PaletteReducer.ColorMetric[] metrics = {PaletteReducer.basicMetric, PaletteReducer.rgbEasyMetric, PaletteReducer.labQuickMetric, PaletteReducer.iptQuickMetric};
+        String[] metricNames = {"Basic/", "RGB/", "LAB/", "IPT/"};
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
-        for(PaletteReducer.ColorMetric metric : metrics) {
+        for (int i = 0, metricsLength = metrics.length; i < metricsLength; i++) {
+            PaletteReducer.ColorMetric metric = metrics[i];
+            final String targetDir = targetDirRoot + metricNames[i];
             for (FileHandle hex : hexes) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
@@ -110,7 +112,7 @@ public class MetricPalettizer extends ApplicationAdapter {
 //                        pm = reducer.reduceSolid(new Pixmap(sample));
 //                        png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
 
-                        
+
 //////good enough
 //                        pm = (reducer.reduceSierraLite(new Pixmap(sample)));
 //                        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
