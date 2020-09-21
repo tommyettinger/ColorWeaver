@@ -1869,7 +1869,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        float adj, strength = (float) (ditherStrength * populationBias * 64);
+        float adj, strength = (float) (ditherStrength * populationBias * populationBias * 64);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1877,6 +1877,7 @@ public class PaletteReducer {
                     pixmap.drawPixel(px, y, 0);
                 else {
                     color |= (color >>> 5 & 0x07070700) | 0xFE;
+//                    adj = ((PaletteReducer.RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
                     adj = ((BlueNoise.get(px, y) + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
                     adj *= adj * adj * strength;
                     int rr = MathUtils.clamp((int) (adj + ((color >>> 24)       )), 0, 255);
@@ -1952,8 +1953,9 @@ public class PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color, used, bn;
-        float adj, strength = (float) (ditherStrength * populationBias);
+        int color, used;
+        double pb = populationBias * populationBias;
+        float adj, strength = (float) (ditherStrength * pb * pb * 1.5);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1967,8 +1969,10 @@ public class PaletteReducer {
                     used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF];
-                    adj = ((PaletteReducer.RAW_BLUE_NOISE[bn = (px & 63) | (y & 63) << 6] + 0.5f) * 0.007843138f);
-                    adj += ((px + y & 1) - 0.5f) * (0.5f + PaletteReducer.RAW_BLUE_NOISE[bn * 0xDAB & 4095]) * -0x1.4p-10f;
+//                    adj = ((PaletteReducer.RAW_BLUE_NOISE[bn = (px & 63) | (y & 63) << 6] + 0.5f) * 0.01f); // 0.007843138f is 1f / 127.5f
+//                    adj += ((px + y & 1) - 0.5f) * (0.5f + PaletteReducer.RAW_BLUE_NOISE[bn * 0xDAB & 4095]) * -0x1p-9f;
+                    adj = ((BlueNoise.get(px, y) + 0.5f) * 0.007843138f); // 0.007843138f is 1f / 127.5f
+                    adj += ((px + y & 1) - 0.5f) * (0.5f + BlueNoise.get(px * 19, y * 23)) * -0x1.6p-10f;
                     adj *= strength;
                     rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
                     gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
