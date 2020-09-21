@@ -101,11 +101,10 @@ public class IPTConverter {
 	}
 	public static double[][] makeIPT15()
 	{
-		double[] minP = new double[20], maxP = new double[20], minT = new double[20], maxT = new double[20];
-
-
 		final double[][] ipts = new double[3][0x8000];
 		double r, g, b, i, p, t;
+		double[] minP = new double[20], maxP = new double[20], minT = new double[20], maxT = new double[20];
+		double minI = Double.MAX_VALUE, maxI = -Double.MAX_VALUE;
 		for (int ri = 0; ri < 32; ri++) {
 			r = ri / 31.0;
 			for (int gi = 0; gi < 32; gi++) {
@@ -115,22 +114,23 @@ public class IPTConverter {
 					int idx = ri << 10 | gi << 5 | bi;
 					double l = Math.pow(0.313921 * r + 0.639468 * g + 0.0465970 * b, 0.43);
 					double m = Math.pow(0.151693 * r + 0.748209 * g + 0.1000044 * b, 0.43);
-					double s = Math.pow(0.017700 * r + 0.109400 * g + 0.8729000 * b, 0.43);
-
+					double s = Math.pow(0.017753 * r + 0.109468 * g + 0.8729690 * b, 0.43);
+					
 					ipts[0][idx] = i = 0.4000f * l + 0.4000f * m + 0.2000f * s;
 					ipts[1][idx] = p = 4.4550f * l - 4.8510f * m + 0.3960f * s;
 					ipts[2][idx] = t = 0.8056f * l + 0.3572f * m - 1.1628f * s;
 
+					minI = Math.min(minI, i);
+					maxI = Math.max(maxI, i);
 					int y = (int)(i * 20);
 					minP[y] = Math.min(minP[y], p);
 					maxP[y] = Math.max(maxP[y], p);
 					minT[y] = Math.min(minT[y], t);
-					maxT[y] = Math.max(maxT[y], t);
-		
+					maxT[y] = Math.max(maxT[y], t);		
 				}
 			}
 		}
-
+		System.out.println("I ranges from " + minI + " to " + maxI);
 		for (int y = 0; y < 20; y++) {
 			System.out.println("At I " + (int)(y / 19.0) + ", P ranges from " + minP[y] + " to " + maxP[y]);
 			System.out.println("At I " + (int)(y / 19.0) + ", T ranges from " + minT[y] + " to " + maxT[y]);
@@ -159,7 +159,9 @@ public class IPTConverter {
 				i = ipt15[0][indexA] - ipt15[0][indexB],
 				p = ipt15[1][indexA] - ipt15[1][indexB],
 				t = ipt15[2][indexA] - ipt15[2][indexB];
-		return i * i * 25.0 + p * p * 4.0 + t * t;
+		return i * i * 16.0 + p * p * 9.0 + t * t * 9.0;
+
+//		return i * i * 25.0 + p * p * 4.0 + t * t;
 //		return L * L * 50.0 + A * A * 50.0 + B * B * 50.0;
 	}
 

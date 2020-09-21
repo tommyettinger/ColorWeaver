@@ -473,22 +473,15 @@ public class PaletteReducer {
                 g = gi / 31.0;
                 for (int bi = 0; bi < 32; bi++) {
                     b = bi / 31.0;
-//        for (int ri = 0; ri < 32; ri++) {
-//            r = Math.pow(ri / 31.0, 2.4);
-//            for (int gi = 0; gi < 32; gi++) {
-//                g = Math.pow(gi / 31.0, 2.4);
-//                for (int bi = 0; bi < 32; bi++) {
-//                    b = Math.pow(bi / 31.0, 2.4);
-                    
-
                     double l = Math.pow(0.313921 * r + 0.639468 * g + 0.0465970 * b, 0.43);
                     double m = Math.pow(0.151693 * r + 0.748209 * g + 0.1000044 * b, 0.43);
-                    double s = Math.pow(0.017700 * r + 0.109400 * g + 0.8729000 * b, 0.43);
+					double s = Math.pow(0.017753 * r + 0.109468 * g + 0.8729690 * b, 0.43);
+
 
                     ipts[0][idx] = 0.4000f * l + 0.4000f * m + 0.2000f * s;
                     ipts[1][idx] = 4.4550f * l - 4.8510f * m + 0.3960f * s;
                     ipts[2][idx] = 0.8056f * l + 0.3572f * m - 1.1628f * s;
-                    
+
                     idx++;
                 }
             }
@@ -513,7 +506,7 @@ public class PaletteReducer {
                     i = ipts[0][indexA] - ipts[0][indexB],
                     p = ipts[1][indexA] - ipts[1][indexB],
                     t = ipts[2][indexA] - ipts[2][indexB];
-            return i * i * 25.0 + p * p * 4.0 + t * t;
+            return i * i * 16.0 + p * p * 9.0 + t * t * 9.0;
         }
     };
     
