@@ -506,7 +506,7 @@ public class PaletteReducer {
                     i = ipts[0][indexA] - ipts[0][indexB],
                     p = ipts[1][indexA] - ipts[1][indexB],
                     t = ipts[2][indexA] - ipts[2][indexB];
-            return (i * i + p * p + t * t) * 1024.0;
+            return i * i * 4.0 + p * p * 2.0 + t * t;
 //            return i * i * 16.0 + p * p * 9.0 + t * t * 9.0;
         }
     };
@@ -816,7 +816,7 @@ public class PaletteReducer {
         Arrays.fill(paletteMapping, (byte) 0);
         final int plen = Math.min(Math.min(256, limit), rgbaPalette.length);
         colorCount = plen;
-        populationBias = 2.0-Math.exp(0.5/colorCount);
+        populationBias = Math.exp(-1.375/colorCount);
         int color, c2;
         double dist;
         for (int i = 0; i < plen; i++) {
@@ -866,7 +866,8 @@ public class PaletteReducer {
         }
         paletteMapping = preload;
         colorCount = palette.length;
-        populationBias = 2.0-Math.exp(0.5/colorCount);
+        
+        populationBias = Math.exp(-1.375/colorCount);
     }
 
     /**
@@ -934,7 +935,7 @@ public class PaletteReducer {
         Arrays.fill(paletteMapping, (byte) 0);
         final int plen = Math.min(Math.min(256, colorPalette.length), limit);
         colorCount = plen;
-        populationBias = 2.0-Math.exp(0.5/colorCount);
+        populationBias = Math.exp(-1.375/colorCount);
         int color, c2;
         double dist;
         for (int i = 0; i < plen; i++) {
@@ -1067,7 +1068,7 @@ public class PaletteReducer {
                 i++;
             }
             colorCount = i;
-            populationBias = 2.0-Math.exp(0.5/colorCount);
+            populationBias = Math.exp(-1.375/colorCount);
         } else // reduce color count
         {
             int i = 1, c = 0;
@@ -1087,7 +1088,7 @@ public class PaletteReducer {
                 i++;
             }
             colorCount = i;
-            populationBias = 2.0-Math.exp(0.5/colorCount);
+            populationBias = Math.exp(-1.375/colorCount);
         }
         int c2;
         double dist;
@@ -1870,7 +1871,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        float adj, strength = (float) (ditherStrength * populationBias * populationBias * 64);
+        float adj, strength = (float) (ditherStrength * populationBias * 128);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1955,8 +1956,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used;
-        double pb = populationBias * populationBias;
-        float adj, strength = (float) (ditherStrength * pb * pb * 1.5);
+        float adj, strength = (float) (ditherStrength * populationBias * 1.5);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;

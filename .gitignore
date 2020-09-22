@@ -240,3 +240,6 @@ target/
 
 GeneratedPalette.txt
 GeneratedPalette.png
+
+/samples/reduced/
+/samples/reducedMetric/
