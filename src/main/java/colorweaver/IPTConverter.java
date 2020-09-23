@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.MathUtils;
  * this technique and the patent, so they probably describe unrelated methods.
  */
 public class IPTConverter {
-	public static class SemiIPT {
+	public static class IPT {
 		/**
 		 * Intensity; very accurate form of luminance.
 		 */
@@ -32,22 +32,22 @@ public class IPTConverter {
 		 */
 		public double a;
 
-		public SemiIPT()
+		public IPT()
 		{
 			this(0.0, 0.0, 0.0, 1.0);
 		}
-		public SemiIPT(double i, double p, double t) {
+		public IPT(double i, double p, double t) {
 			this(i, p, t, 1.0);
 		}
 
-		public SemiIPT(double i, double p, double t, double a) {
+		public IPT(double i, double p, double t, double a) {
 			this.i = i;
 			this.p = p;
 			this.t = t;
 			this.a = a;
 		}
 
-		public SemiIPT(Color color){
+		public IPT(Color color){
 			double l = Math.pow(0.313921 * color.r + 0.639468 * color.g + 0.0465970 * color.b, 0.43);
 			double m = Math.pow(0.151693 * color.r + 0.748209 * color.g + 0.1000044 * color.b, 0.43);
 			double s = Math.pow(0.017700 * color.r + 0.109400 * color.g + 0.8729000 * color.b, 0.43);
@@ -58,7 +58,7 @@ public class IPTConverter {
 			a = color.a;
 		}
 
-		public SemiIPT(int rgba){
+		public IPT(int rgba){
 			double r = (rgba >>> 24) * 0x1.010101010101p-8,
 					g = (rgba >>> 16 & 0xFF) * 0x1.010101010101p-8,
 					b = (rgba >>> 8 & 0xFF) * 0x1.010101010101p-8;
@@ -71,6 +71,11 @@ public class IPTConverter {
 			p = 4.4550f * l - 4.8510f * m + 0.3960f * s;
 			t = 0.8056f * l + 0.3572f * m - 1.1628f * s;
 		}
+		// vec3 ipt = mat3(0.4000, 4.4550, 0.8056, 0.4000, 4.8510, 0.3572, 0.2000, 0.3960, 1.1628) * 
+		//      pow(mat3(0.313921, 0.151693, 0.017700, 0.639468, 0.748209, 0.109400, 0.0465970, 0.1000044, 0.8729000) * tgt.rgb, vec3(0.43));
+		// ipt = mat3(1.0, 1.0, 1.0, 0.097569, -0.113880, 0.032615, 0.205226, 0.133217, -0.676890) * ipt;
+		// tgt.rgb = mat3(5.432622, -1.10517, 0.028104, -4.67910, 2.311198, -0.19466, 0.246257, -0.20588, 1.166325) * 
+		//     pow(abs(ipt), 2.3256) * sign(ipt);
 		public Color intoColor(Color color) {
 			double lPrime = i + 0.097569 * p + 0.205226 * t;
 			double mPrime = i - 0.113880 * p + 0.133217 * t;
@@ -78,9 +83,9 @@ public class IPTConverter {
 			float l = (float) Math.copySign(Math.pow(Math.abs(lPrime), 2.3256), lPrime);
 			float m = (float) Math.copySign(Math.pow(Math.abs(mPrime), 2.3256), mPrime);
 			float s = (float) Math.copySign(Math.pow(Math.abs(sPrime), 2.3256), sPrime);
-			color.r = 5.432622f * l - 4.6791f * m + 0.246257f * s;
-			color.g = -1.10517f * l + 2.311198f * m - 0.20588f * s;
-			color.b = 0.028104f * l - 0.19466f * m + 1.166325f * s;
+			color.r = 5.432622f * l + -4.67910f * m + 0.246257f * s;
+			color.g = -1.10517f * l + 2.311198f * m + -0.20588f * s;
+			color.b = 0.028104f * l + -0.19466f * m + 1.166325f * s;
 			color.a = (float) a;
 			return color.clamp();
 		}
