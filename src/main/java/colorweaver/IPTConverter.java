@@ -52,9 +52,9 @@ public class IPTConverter {
 			double m = Math.pow(0.151693 * color.r + 0.748209 * color.g + 0.1000044 * color.b, 0.43);
 			double s = Math.pow(0.017700 * color.r + 0.109400 * color.g + 0.8729000 * color.b, 0.43);
 
-			i = 0.4000f * l + 0.4000f * m + 0.2000f * s;
-			p = 4.4550f * l - 4.8510f * m + 0.3960f * s;
-			t = 0.8056f * l + 0.3572f * m - 1.1628f * s;
+			i = 0.4000 * l + 0.4000 * m + 0.2000 * s;
+			p = 6.6825 * l - 7.2765 * m + 0.5940 * s;
+			t = 1.0741 * l + 0.4763 * m - 1.5504 * s;
 			a = color.a;
 		}
 
@@ -68,18 +68,18 @@ public class IPTConverter {
 			double s = Math.pow(0.017700 * r + 0.109400 * g + 0.8729000 * b, 0.43);
 
 			i = 0.4000f * l + 0.4000f * m + 0.2000f * s;
-			p = 4.4550f * l - 4.8510f * m + 0.3960f * s;
-			t = 0.8056f * l + 0.3572f * m - 1.1628f * s;
+			p = 6.6825 * l - 7.2765 * m + 0.5940 * s;
+			t = 1.0741 * l + 0.4763 * m - 1.5504 * s;
 		}
 		// vec3 ipt = mat3(0.4000, 4.4550, 0.8056, 0.4000, 4.8510, 0.3572, 0.2000, 0.3960, 1.1628) * 
 		//      pow(mat3(0.313921, 0.151693, 0.017700, 0.639468, 0.748209, 0.109400, 0.0465970, 0.1000044, 0.8729000) * tgt.rgb, vec3(0.43));
-		// ipt = mat3(1.0, 1.0, 1.0, 0.097569, -0.113880, 0.032615, 0.205226, 0.133217, -0.676890) * ipt;
+		// vec3 back = mat3(1.0, 1.0, 1.0, 0.06503950, -0.07591241, 0.02174116, 0.15391950, 0.09991275, -0.50766750) * ipt;
 		// tgt.rgb = mat3(5.432622, -1.10517, 0.028104, -4.67910, 2.311198, -0.19466, 0.246257, -0.20588, 1.166325) * 
-		//     pow(abs(ipt), 2.3256) * sign(ipt);
+		//     (pow(abs(back), vec3(2.3256)) * sign(back));
 		public Color intoColor(Color color) {
-			double lPrime = i + 0.097569 * p + 0.205226 * t;
-			double mPrime = i - 0.113880 * p + 0.133217 * t;
-			double sPrime = i + 0.032615 * p - 0.676890 * t;
+			double lPrime = i + 0.06503950 * p + 0.15391950 * t;
+			double mPrime = i - 0.07591241 * p + 0.09991275 * t;
+			double sPrime = i + 0.02174116 * p - 0.50766750 * t;
 			float l = (float) Math.copySign(Math.pow(Math.abs(lPrime), 2.3256), lPrime);
 			float m = (float) Math.copySign(Math.pow(Math.abs(mPrime), 2.3256), mPrime);
 			float s = (float) Math.copySign(Math.pow(Math.abs(sPrime), 2.3256), sPrime);
@@ -90,10 +90,9 @@ public class IPTConverter {
 			return color.clamp();
 		}
 		public int rgba8888(){
-
-			double lPrime = i + 0.097569 * p + 0.205226 * t;
-			double mPrime = i - 0.113880 * p + 0.133217 * t;
-			double sPrime = i + 0.032615 * p - 0.676890 * t;
+			double lPrime = i + 0.06503950 * p + 0.15391950 * t;
+			double mPrime = i - 0.07591241 * p + 0.09991275 * t;
+			double sPrime = i + 0.02174116 * p - 0.50766750 * t;
 			double l = Math.copySign(Math.pow(Math.abs(lPrime), 2.3256), lPrime);
 			double m = Math.copySign(Math.pow(Math.abs(mPrime), 2.3256), mPrime);
 			double s = Math.copySign(Math.pow(Math.abs(sPrime), 2.3256), sPrime);
@@ -120,10 +119,10 @@ public class IPTConverter {
 					double l = Math.pow(0.313921 * r + 0.639468 * g + 0.0465970 * b, 0.43);
 					double m = Math.pow(0.151693 * r + 0.748209 * g + 0.1000044 * b, 0.43);
 					double s = Math.pow(0.017753 * r + 0.109468 * g + 0.8729690 * b, 0.43);
-					
-					ipts[0][idx] = i = 0.4000f * l + 0.4000f * m + 0.2000f * s;
-					ipts[1][idx] = p = 4.4550f * l - 4.8510f * m + 0.3960f * s;
-					ipts[2][idx] = t = 0.8056f * l + 0.3572f * m - 1.1628f * s;
+
+					ipts[0][idx] = i = 0.4000 * l + 0.4000 * m + 0.2000 * s;
+					ipts[1][idx] = p = 6.6825 * l - 7.2765 * m + 0.5940 * s;
+					ipts[2][idx] = t = 1.0741 * l + 0.4763 * m - 1.5504 * s;
 
 					minI = Math.min(minI, i);
 					maxI = Math.max(maxI, i);
@@ -164,7 +163,7 @@ public class IPTConverter {
 				i = ipt15[0][indexA] - ipt15[0][indexB],
 				p = ipt15[1][indexA] - ipt15[1][indexB],
 				t = ipt15[2][indexA] - ipt15[2][indexB];
-		return i * i * 16.0 + p * p * 9.0 + t * t * 9.0;
+		return i * i * 4.0 + p * p * 1.5 + t * t;
 
 //		return i * i * 25.0 + p * p * 4.0 + t * t;
 //		return L * L * 50.0 + A * A * 50.0 + B * B * 50.0;

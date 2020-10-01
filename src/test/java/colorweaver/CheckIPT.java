@@ -12,8 +12,8 @@ public class CheckIPT {
 		{
 			IPTConverter.IPT ipt = new IPTConverter.IPT(color);
 			ipt.intoColor(t);
-			System.out.printf("%30s: R=%+1.3f,G=%+1.3f,B=%+1.3f -> I=%+1.3f,P=%+1.3f,T=%+1.3f -> R=%+1.3f,G=%+1.3f,B=%+1.3f\n",
-					color.name, color.r, color.g, color.b, ipt.i, ipt.p, ipt.t, t.r, t.g, t.b);
+			System.out.printf("%26s: R=%+1.3f,G=%+1.3f,B=%+1.3f -> I=%+1.3f,P=%+1.3f,T=%+1.3f -> R=%+1.3f,G=%+1.3f,B=%+1.3f => %1.3f\n",
+					color.name, color.r, color.g, color.b, ipt.i, ipt.p, ipt.t, t.r, t.g, t.b, Math.abs(t.r - color.r) + Math.abs(t.g - color.g) + Math.abs(t.b - color.b));
 		}
 	}
 }

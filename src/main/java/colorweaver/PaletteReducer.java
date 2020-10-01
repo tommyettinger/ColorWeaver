@@ -21,8 +21,6 @@ import java.util.*;
  * Created by Tommy Ettinger on 6/23/2018.
  */
 public class PaletteReducer {
-    
-    public static final double GAMMA = 2.2;
 
     public interface ColorMetric{
         double difference(final int color1, int color2);
@@ -582,8 +580,8 @@ public class PaletteReducer {
     public byte[] paletteMapping;
     public final int[] paletteArray = new int[256];
     final int[] gammaArray = new int[256];
-    public int colorCount;
     ByteArray curErrorRedBytes, nextErrorRedBytes, curErrorGreenBytes, nextErrorGreenBytes, curErrorBlueBytes, nextErrorBlueBytes;
+    public int colorCount;
     double ditherStrength = 0.5f, populationBias = 0.5;
 
     /**
@@ -866,7 +864,6 @@ public class PaletteReducer {
         }
         paletteMapping = preload;
         colorCount = palette.length;
-        
         populationBias = Math.exp(-1.375/colorCount);
     }
 
@@ -1544,7 +1541,6 @@ public class PaletteReducer {
                     }
                 }
             }
-
         }
         pixmap.setBlending(blending);
         return pixmap;

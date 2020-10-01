@@ -5,14 +5,9 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.ByteArray;
-import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.IntIntMap;
-import com.badlogic.gdx.utils.StreamUtils;
+import com.badlogic.gdx.utils.*;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.Deflater;
@@ -981,11 +976,11 @@ public class PNG8 implements Disposable {
      * @return
      * @throws IOException
      */
-    protected static LinkedHashMap<String, byte[]> readChunks(InputStream inStream) throws IOException {
+    protected static OrderedMap<String, byte[]> readChunks(InputStream inStream) throws IOException {
         DataInputStream in = new DataInputStream(inStream);
         if(in.readLong() != 0x89504e470d0a1a0aL)
             throw  new IOException("PNG signature not found!");
-        LinkedHashMap<String, byte[]> chunks = new LinkedHashMap<>(10);
+        OrderedMap<String, byte[]> chunks = new OrderedMap<>(10);
         boolean trucking = true;
         while (trucking) {
             try {
@@ -1016,17 +1011,17 @@ public class PNG8 implements Disposable {
      * @param outStream
      * @param chunks
      */
-    protected static void writeChunks(OutputStream outStream, LinkedHashMap<String, byte[]> chunks) {
+    protected static void writeChunks(OutputStream outStream, OrderedMap<String, byte[]> chunks) {
         DataOutputStream out = new DataOutputStream(outStream);
         CRC32 crc = new CRC32();
         try {
             out.writeLong(0x89504e470d0a1a0aL);
-            for (HashMap.Entry<String, byte[]> ent : chunks.entrySet()) {
-                out.writeInt(ent.getValue().length);
-                out.writeBytes(ent.getKey());
-                crc.update(ent.getKey().getBytes("UTF8"));
-                out.write(ent.getValue());
-                crc.update(ent.getValue());
+            for (ObjectMap.Entry<String, byte[]> ent : chunks.entries()) {
+                out.writeInt(ent.value.length);
+                out.writeBytes(ent.key);
+                crc.update(ent.key.getBytes("UTF8"));
+                out.write(ent.value);
+                crc.update(ent.value);
                 out.writeInt((int) crc.getValue());
                 crc.reset();
             }
@@ -1051,7 +1046,7 @@ public class PNG8 implements Disposable {
     {
         try {
             InputStream inputStream = input.read();
-            LinkedHashMap<String, byte[]> chunks = readChunks(inputStream);
+            OrderedMap<String, byte[]> chunks = readChunks(inputStream);
             byte[] pal = chunks.get("PLTE");
             if(pal == null)
             {
@@ -1083,7 +1078,7 @@ public class PNG8 implements Disposable {
     {
         try {
             InputStream inputStream = input.read();
-            LinkedHashMap<String, byte[]> chunks = readChunks(inputStream);
+            OrderedMap<String, byte[]> chunks = readChunks(inputStream);
             byte[] pal = chunks.get("PLTE");
             if(pal == null)
             {
