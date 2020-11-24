@@ -113,7 +113,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
            SpriteBatch.createDefaultShader();
         shader = new ShaderProgram(vertexShader, fragmentShaderRobertsLimited);
         if (!shader.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shader.getLog());
-        shader2 = new ShaderProgram(vertexShader, fragmentShaderRobertsWarmMild);
+        shader2 = new ShaderProgram(vertexShader, fragmentShader);
         if (!shader2.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shader2.getLog());
         shaderCB = 
            //defaultShader; 
@@ -147,15 +147,15 @@ public class ShaderPalettizer extends ApplicationAdapter {
                 palette.bind();
                 batch.begin();
                 sh.setUniformi("u_palette", 1);
-                //if(!batch.getShader().equals(defaultShader)) 
-                //{
+                if(!batch.getShader().equals(shader2))
+                {
 //                    shader.setUniformf("u_mul", 0.9f, 0.7f, 0.75f);
 //                    shader.setUniformf("u_add", 0.05f, 0.14f, 0.16f);
                     sh.setUniformf("u_mul", mul);
                     sh.setUniformf("u_add", add);
 //                    shader.setUniformf("u_mul", 1f, 0.8f, 0.85f);
 //                    shader.setUniformf("u_add", 0.1f, 0.95f, NumberTools.swayRandomized(12345, TimeUtils.timeSinceMillis(startTime) * 0x1p-9f) * 0.4f + 0.2f);
-                //}
+                }
 //                else batch.getShader().setUniformi("u_palette", 1);
 
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
