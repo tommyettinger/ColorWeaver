@@ -56,7 +56,8 @@ public class ShaderUtils {
 //                    "   adj = fract(vlachos - adj) * 2.0 - 1.0;\n" +
 //                    "   float adj = asin(fract(dot(vec2(171.0, 231.0), gl_FragCoord.xy) / 71.0) * 1.68 - 0.84);\n" +
 //                    "   float adj = asin(mix(vlachos, jimenez, checker) * 1.68 - 0.84);\n" + //1.68 - 0.84
-                    "   float adj = asin(jimenez * 1.68 - 0.84);\n" +
+//                    "   float adj = asin(jimenez * 1.68 - 0.84);\n" +
+                    "   float adj = jimenez * jimenez - 0.25;\n" +
                     "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
                     "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
                     "   gl_FragColor.a = v_color.a * tgt.a;\n" +
@@ -328,7 +329,8 @@ public class ShaderUtils {
           "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
 //          "   float adj = fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy));\n" + // Roberts
 //          "   float adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy)));\n" + // Jimenez
-          "   float adj = 2.0 * sin(fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * 1.44 - 0.72 );\n" +
+//          "   float adj = 2.0 * sin(fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * 1.44 - 0.72 );\n" +
+          "   float adj = sin(fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) * 2.0 - 1.0);\n" +
 //          "   float adj = 1.5 * sin(fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy)))   - fract(dot(vec2(0.7548776662466927, 0.5698402909980532), gl_FragCoord.xy)) * 0.6 );\n" +
           "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
           "   gl_FragColor.rgb = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
