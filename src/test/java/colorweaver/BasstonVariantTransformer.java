@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * Created by Tommy Ettinger on 1/21/2018.
  */
-public class AutomaticPaletteTransformer extends ApplicationAdapter {
+public class BasstonVariantTransformer extends ApplicationAdapter {
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -22,7 +22,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
         config.setWindowedMode(640, 320);
         config.setIdleFPS(10);
         config.setResizable(true);
-        new Lwjgl3Application(new AutomaticPaletteTransformer(), config);
+        new Lwjgl3Application(new BasstonVariantTransformer(), config);
     }
     
     private int[] PALETTE;
@@ -45,32 +45,33 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
 
     public void create() {
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
-        Gdx.files.local("palettes/gen/txt/").mkdirs();
-        Gdx.files.local("palettes/genEasy/").mkdirs();
-//        for(FileHandle hex : hexes) {
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
-            String name = hex.nameWithoutExtension().toLowerCase();
-            loadPalette(name);
-            StringBuilder sb = new StringBuilder((1 + 12 * 8) * (PALETTE.length + 7 >>> 3));
-            for (int i = 0; i < (PALETTE.length + 7 >>> 3); i++) {
-                for (int j = 0; j < 8 && (i << 3 | j) < PALETTE.length; j++) {
+        Gdx.files.local("palettes/genBasston/easy/").mkdirs();
+        Gdx.files.local("palettes/genBasston/txt/").mkdirs();
+        loadPalette("basston-255");
+        PNG8 png8 = new PNG8();
+        png8.setCompression(7);
+        png8.palette = new PaletteReducer();
+
+        for (int pl = 256; pl >= 3; pl--) {
+            String name = "basston-" + pl;
+            StringBuilder sb = new StringBuilder((1 + 12 * 8) * (pl + 7 >>> 3));
+            for (int i = 0; i < (pl + 7 >>> 3); i++) {
+                for (int j = 0; j < 8 && (i << 3 | j) < pl; j++) {
                     sb.append("0x").append(StringKit.hex(PALETTE[i << 3 | j]).toUpperCase()).append(", ");
                 }
                 sb.append('\n');
             }
-            Gdx.files.local("palettes/gen/txt/" + name + ".txt").writeString(sb.toString(), false);
+            Gdx.files.local("palettes/genBasston/txt/" + name + ".txt").writeString(sb.toString(), false);
             sb.setLength(0);
 
-            PNG8 png8 = new PNG8();
-            png8.setCompression(7);
-            png8.palette = new PaletteReducer(PALETTE, PaletteReducer.rgbEasyMetric);
+            png8.palette.exact(PALETTE, pl, PaletteReducer.rgbEasyMetric);
             Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
-            for (int i = 1; i < PALETTE.length; i++) {
+            for (int i = 1; i < pl; i++) {
                 pix.drawPixel(i - 1, 0, PALETTE[i]);
             }
             pix.drawPixel(255, 0, 0);
             try {
-                png8.writePrecisely(Gdx.files.local("palettes/genEasy/" + name + ".png"), pix, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genBasston/easy/" + name + ".png"), pix, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -84,7 +85,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
                 }
             }
             try {
-                png8.writePrecisely(Gdx.files.local("palettes/genEasy/" + name + "_GLSL.png"), p2, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genBasston/easy/" + name + "_GLSL.png"), p2, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
