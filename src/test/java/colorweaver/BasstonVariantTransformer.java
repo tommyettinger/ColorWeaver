@@ -45,15 +45,15 @@ public class BasstonVariantTransformer extends ApplicationAdapter {
 
     public void create() {
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
-        Gdx.files.local("palettes/genBasston/easy/").mkdirs();
-        Gdx.files.local("palettes/genBasston/txt/").mkdirs();
-        loadPalette("basston-255");
+        Gdx.files.local("palettes/genRando/easy/").mkdirs();
+        Gdx.files.local("palettes/genRando/txt/").mkdirs();
+        loadPalette("rando-255");
         PNG8 png8 = new PNG8();
         png8.setCompression(7);
         png8.palette = new PaletteReducer();
 
         for (int pl = 256; pl >= 3; pl--) {
-            String name = "basston-" + pl;
+            String name = "rando-" + pl;
             StringBuilder sb = new StringBuilder((1 + 12 * 8) * (pl + 7 >>> 3));
             for (int i = 0; i < (pl + 7 >>> 3); i++) {
                 for (int j = 0; j < 8 && (i << 3 | j) < pl; j++) {
@@ -61,7 +61,7 @@ public class BasstonVariantTransformer extends ApplicationAdapter {
                 }
                 sb.append('\n');
             }
-            Gdx.files.local("palettes/genBasston/txt/" + name + ".txt").writeString(sb.toString(), false);
+            Gdx.files.local("palettes/genRando/txt/" + name + ".txt").writeString(sb.toString(), false);
             sb.setLength(0);
 
             png8.palette.exact(PALETTE, pl, PaletteReducer.rgbEasyMetric);
@@ -71,7 +71,7 @@ public class BasstonVariantTransformer extends ApplicationAdapter {
             }
             pix.drawPixel(255, 0, 0);
             try {
-                png8.writePrecisely(Gdx.files.local("palettes/genBasston/easy/" + name + ".png"), pix, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genRando/easy/" + name + ".png"), pix, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -85,7 +85,7 @@ public class BasstonVariantTransformer extends ApplicationAdapter {
                 }
             }
             try {
-                png8.writePrecisely(Gdx.files.local("palettes/genBasston/easy/" + name + "_GLSL.png"), p2, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genRando/easy/" + name + "_GLSL.png"), p2, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
