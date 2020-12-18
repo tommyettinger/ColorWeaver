@@ -460,11 +460,32 @@ public class PaletteReducer {
             return L * L * 11.0 + A * A * 1.6 + B * B;
         }
     };
-    
-    public static final double[][] ipts = new double[3][0x8000];
+
+    public static final double[][] IPT = new double[3][0x8000];
+    public static final double[][] IPT_FLAT = new double[3][0x8000];
     static {
-        double l, m, s;
+        double r, g, b, l, m, s;
         int idx = 0;
+        for (int ri = 0; ri < 32; ri++) {
+            r = ri * ri * 0.0010405827263267429; // 1.0 / 31.0 / 31.0
+            for (int gi = 0; gi < 32; gi++) {
+                g = gi * gi * 0.0010405827263267429; // 1.0 / 31.0 / 31.0
+                for (int bi = 0; bi < 32; bi++) {
+                    b = bi * bi * 0.0010405827263267429; // 1.0 / 31.0 / 31.0
+
+                    l = Math.pow(0.313921 * r + 0.639468 * g + 0.0465970 * b, 0.43);
+                    m = Math.pow(0.151693 * r + 0.748209 * g + 0.1000044 * b, 0.43);
+                    s = Math.pow(0.017753 * r + 0.109468 * g + 0.8729690 * b, 0.43);
+
+                    IPT[0][idx] = 0.4000 * l + 0.4000 * m + 0.2000 * s;
+                    IPT[1][idx] = 4.4550 * l - 4.8510 * m + 0.3960 * s;
+                    IPT[2][idx] = 0.8056 * l + 0.3572 * m - 1.1628 * s;
+
+                    idx++;
+                }
+            }
+        }
+        idx = 0;
         for (int ri = 0; ri < 32; ri++) {
             for (int gi = 0; gi < 32; gi++) {
                 for (int bi = 0; bi < 32; bi++) {
@@ -472,9 +493,9 @@ public class PaletteReducer {
                     m = (0.004893322580645161) * ri + (0.024135774193548388) * gi + (0.003225948387096774) * bi;
                     s = (5.726774193548388E-4) * ri + (0.0035312258064516128) * gi + (0.028160290322580644) * bi;
 
-                    ipts[0][idx] = 0.4000 * l + 0.4000 * m + 0.2000 * s;
-                    ipts[1][idx] = 4.4550 * l - 4.8510 * m + 0.3960 * s;
-                    ipts[2][idx] = 0.8056 * l + 0.3572 * m - 1.1628 * s;
+                    IPT_FLAT[0][idx] = 0.4000 * l + 0.4000 * m + 0.2000 * s;
+                    IPT_FLAT[1][idx] = 4.4550 * l - 4.8510 * m + 0.3960 * s;
+                    IPT_FLAT[2][idx] = 0.8056 * l + 0.3572 * m - 1.1628 * s;
 
 
                     idx++;
@@ -498,14 +519,37 @@ public class PaletteReducer {
             int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
                     indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
             final double
-                    i = ipts[0][indexA] - ipts[0][indexB],
-                    p = ipts[1][indexA] - ipts[1][indexB],
-                    t = ipts[2][indexA] - ipts[2][indexB];
+                    i = IPT_FLAT[0][indexA] - IPT_FLAT[0][indexB],
+                    p = IPT_FLAT[1][indexA] - IPT_FLAT[1][indexB],
+                    t = IPT_FLAT[2][indexA] - IPT_FLAT[2][indexB];
             return (i * i * 3.0 + p * p + t * t) * 0x1p13;
 //            return i * i * 16.0 + p * p * 9.0 + t * t * 9.0;
         }
     };
     
+    public static final ColorMetric iptGoodMetric = new ColorMetric(){
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
+                    indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
+            final double
+                    i = IPT[0][indexA] - IPT[0][indexB],
+                    p = IPT[1][indexA] - IPT[1][indexB],
+                    t = IPT[2][indexA] - IPT[2][indexB];
+            return (i * i + p * p + t * t) * 0x1p13;
+//            return i * i * 16.0 + p * p * 9.0 + t * t * 9.0;
+        }
+    };
+
     private static final double[] RGB_POWERS = new double[3 << 8];
     static {
         for (int i = 1; i < 256; i++) {

@@ -71,7 +71,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
     }
 
     public void create() {
-        final String targetDir = "samples/reduced/"; //
+        final String targetDir = "samples/reducedGood/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
         FileHandle[] samples = Gdx.files.local("samples/").list(new FileFilter() {
             @Override
@@ -95,7 +95,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             PNG8 png8 = new PNG8();
             png8.setCompression(7);
             png8.setFlipY(false);
-            reducer.exact(PALETTE, PaletteReducer.rgbEasyMetric);
+            reducer.exact(PALETTE, PaletteReducer.iptGoodMetric);
             png8.palette = reducer;
             try {
                 Pixmap pm;
