@@ -53,6 +53,7 @@ public class HexGenerator extends ApplicationAdapter {
 
     @Override
     public void create() {
+        palette = Coloring.HALTONIC255;
 //        palette = new int[64];
 //        float[] outer = {
 //            0.96f,//NamedColor.AURORA_CARMINE.hue(),
@@ -131,16 +132,16 @@ public class HexGenerator extends ApplicationAdapter {
 //
 //        System.arraycopy(items, 64, palette, 64, 192);
 //        
-//        ArrayList<Integer> mixingPalette = new ArrayList<>(256);
-//        for (int i = 0; i < palette.length; i++) {
-//            mixingPalette.add(palette[i]);
-//        }
+        ArrayList<Integer> mixingPalette = new ArrayList<>(256);
+        for (int i = 0; i < palette.length; i++) {
+            mixingPalette.add(palette[i]);
+        }
 //
 //        mixingPalette.subList(64, 256).sort(hueComparator);
-        ArrayList<Integer> mixingPalette = new ArrayList<>(256);
-        for (int i = 0; i < 256; i++) {
-            mixingPalette.add(i * 0x01010100 | 0xFF);
-        }
+//        ArrayList<Integer> mixingPalette = new ArrayList<>(256);
+//        for (int i = 0; i < 256; i++) {
+//            mixingPalette.add(i * 0x01010100 | 0xFF);
+//        }
 
 //        float hueAngle = 0.1f, sat;
 //        //0.7548776662466927, 0.5698402909980532,   0.6180339887498949

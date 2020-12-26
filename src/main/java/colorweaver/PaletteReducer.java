@@ -546,7 +546,6 @@ public class PaletteReducer {
                     p = IPT[1][indexA] - IPT[1][indexB],
                     t = IPT[2][indexA] - IPT[2][indexB];
             return (i * i + p * p + t * t) * 0x1p13;
-//            return i * i * 16.0 + p * p * 9.0 + t * t * 9.0;
         }
     };
 
