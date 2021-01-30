@@ -46,9 +46,9 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
     public void create() {
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
         Gdx.files.local("palettes/gen/txt/").mkdirs();
-        Gdx.files.local("palettes/genGood/").mkdirs();
-        for(FileHandle hex : hexes) {
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        Gdx.files.local("palettes/genOk/").mkdirs();
+//        for(FileHandle hex : hexes) {
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
             String name = hex.nameWithoutExtension().toLowerCase();
             loadPalette(name);
             StringBuilder sb = new StringBuilder((1 + 12 * 8) * (PALETTE.length + 7 >>> 3));
@@ -63,14 +63,14 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
 
             PNG8 png8 = new PNG8();
             png8.setCompression(7);
-            png8.palette = new PaletteReducer(PALETTE, PaletteReducer.iptGoodMetric);
+            png8.palette = new PaletteReducer(PALETTE, PaletteReducer.oklabMetric);
             Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
             for (int i = 1; i < PALETTE.length; i++) {
                 pix.drawPixel(i - 1, 0, PALETTE[i]);
             }
             pix.drawPixel(255, 0, 0);
             try {
-                png8.writePrecisely(Gdx.files.local("palettes/genGood/" + name + ".png"), pix, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genOk/" + name + ".png"), pix, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -84,7 +84,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
                 }
             }
             try {
-                png8.writePrecisely(Gdx.files.local("palettes/genGood/" + name + "_GLSL.png"), p2, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genOk/" + name + "_GLSL.png"), p2, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }

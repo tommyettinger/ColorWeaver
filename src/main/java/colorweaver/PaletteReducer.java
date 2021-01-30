@@ -463,6 +463,7 @@ public class PaletteReducer {
 
     public static final double[][] IPT = new double[3][0x8000];
     public static final double[][] IPT_FLAT = new double[3][0x8000];
+    public static final double[][] OKLAB = new double[3][0x8000];
     static {
         double r, g, b, l, m, s;
         int idx = 0;
@@ -481,10 +482,19 @@ public class PaletteReducer {
                     IPT[1][idx] = 4.4550 * l - 4.8510 * m + 0.3960 * s;
                     IPT[2][idx] = 0.8056 * l + 0.3572 * m - 1.1628 * s;
 
+                    l = Math.cbrt(0.4121656120 * r + 0.5362752080 * g + 0.0514575653 * b);
+                    m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
+                    s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
+
+                    OKLAB[0][idx] = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+                    OKLAB[1][idx] = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+                    OKLAB[2][idx] = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+
                     idx++;
                 }
             }
         }
+
         idx = 0;
         for (int ri = 0; ri < 32; ri++) {
             for (int gi = 0; gi < 32; gi++) {
@@ -496,7 +506,6 @@ public class PaletteReducer {
                     IPT_FLAT[0][idx] = 0.4000 * l + 0.4000 * m + 0.2000 * s;
                     IPT_FLAT[1][idx] = 4.4550 * l - 4.8510 * m + 0.3960 * s;
                     IPT_FLAT[2][idx] = 0.8056 * l + 0.3572 * m - 1.1628 * s;
-
 
                     idx++;
                 }
@@ -546,6 +555,28 @@ public class PaletteReducer {
                     p = IPT[1][indexA] - IPT[1][indexB],
                     t = IPT[2][indexA] - IPT[2][indexB];
             return (i * i + p * p + t * t) * 0x1p13;
+        }
+    };
+
+    public static final ColorMetric oklabMetric = new ColorMetric(){
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
+                    indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
+            final double
+                    L = OKLAB[0][indexA] - OKLAB[0][indexB],
+                    A = OKLAB[1][indexA] - OKLAB[1][indexB],
+                    B = OKLAB[2][indexA] - OKLAB[2][indexB];
+            return (L * L + A * A + B * B) * 0x1.2p+14;
         }
     };
 
