@@ -71,7 +71,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
     }
 
     public void create() {
-        final String targetDir = "samples/reducedOk/"; //
+        final String targetDir = "samples/reducedGood/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
         FileHandle[] samples = Gdx.files.local("samples/").list(new FileFilter() {
             @Override
@@ -81,10 +81,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         });
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
-//        for(FileHandle hex : hexes) {
+        for(FileHandle hex : hexes) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //
 //            if(i++ > 6) break;
 
@@ -95,7 +95,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             PNG8 png8 = new PNG8();
             png8.setCompression(7);
             png8.setFlipY(false);
-            reducer.exact(PALETTE, PaletteReducer.oklabMetric);
+            reducer.exact(PALETTE, PaletteReducer.iptGoodMetric);
             png8.palette = reducer;
             try {
                 Pixmap pm;
