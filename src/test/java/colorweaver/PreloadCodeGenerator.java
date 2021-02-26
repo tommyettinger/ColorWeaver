@@ -21,8 +21,9 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
     }
 
     public void create() {
-        PaletteReducer reducer = new PaletteReducer(Coloring.AURORA, PaletteReducer.oklabMetric);
-        generatePreloadCode(reducer.paletteMapping, "AuroraPreload.txt");
+//        PaletteReducer reducer = new PaletteReducer(Coloring.AURORA, PaletteReducer.oklabMetric);
+//        generatePreloadCode(reducer.paletteMapping, "AuroraPreload.txt");
+        generatePreloadCode(Gdx.files.internal("OklabGamut.dat").readBytes(), "OklabGamut.txt");
 //        generatePreloadCode(Gdx.files.local("haltonic.txt").readBytes(), "HaltonicPreload.txt");
         Gdx.app.exit();
     }
@@ -75,7 +76,7 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
             } 
         }
         sb.append("\".getBytes(StandardCharsets.ISO_8859_1);\n");
-        Gdx.files.local(filename).writeString(sb.toString(), true, "ISO-8859-1");
+        Gdx.files.local(filename).writeString(sb.toString(), false, "ISO-8859-1");
         System.out.println("Wrote code snippet to " + filename);
     }
 }
