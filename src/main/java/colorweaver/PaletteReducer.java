@@ -2174,7 +2174,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, rdiff, gdiff, bdiff;
         byte er, eg, eb, paletteIndex;
-        float w1 = (float)(ditherStrength * populationBias * 0.140625), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float w1 = (float)(ditherStrength * populationBias * 0.15625), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -2191,7 +2191,7 @@ public class PaletteReducer {
                     pixmap.drawPixel(px, y, 0);
                 else {
                     double tbn = PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS[(px & 63) | ((y << 6) & 0xFC0)]
-                            * PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS[(y * 5 + 28 & 63) | ((px * 7 + 36 << 6) & 0xFC0)];
+                            ;//* PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS[(y * 5 + 28 & 63) | ((px * 7 + 36 << 6) & 0xFC0)];
                     er = (byte) (curErrorRed[px] * tbn);
                     eg = (byte) (curErrorGreen[px] * tbn);
                     eb = (byte) (curErrorBlue[px] * tbn);
