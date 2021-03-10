@@ -1555,7 +1555,7 @@ public class PaletteReducer {
         int color, used, rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        double ditherStrength = this.ditherStrength * this.populationBias, halfDitherStrength = ditherStrength * 0.5;
+        double ditherStrength = this.ditherStrength * this.populationBias * 1.5, halfDitherStrength = ditherStrength * 0.5;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -1654,7 +1654,7 @@ public class PaletteReducer {
         int color, used, rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float)(ditherStrength * populationBias * 0.25), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float w1 = (float)(ditherStrength * populationBias * 0.21875), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -2173,8 +2173,7 @@ public class PaletteReducer {
         int color, used, rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        //previously used: ditherStrength * populationBias * 0.15625
-        float w1 = (float)(ditherStrength * populationBias * 0.1875), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float w1 = (float)(ditherStrength * populationBias * 0.15625), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
