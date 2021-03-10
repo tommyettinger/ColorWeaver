@@ -805,7 +805,7 @@ public class PNG8 implements Disposable {
 
         final int w = pixmap.getWidth(), h = pixmap.getHeight();
         byte[] lineOut, curLine, prevLine;
-        byte[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
         if (lineOutBytes == null) {
             lineOut = (lineOutBytes = new ByteArray(w)).items;
             curLine = (curLineBytes = new ByteArray(w)).items;
@@ -819,21 +819,21 @@ public class PNG8 implements Disposable {
                 prevLine[i] = 0;
             }
         }
-        if(palette.curErrorRedBytes == null)
+        if(palette.curErrorRedFloats == null)
         {
-            curErrorRed = (palette.curErrorRedBytes = new ByteArray(w)).items;
-            nextErrorRed = (palette.nextErrorRedBytes = new ByteArray(w)).items;
-            curErrorGreen = (palette.curErrorGreenBytes = new ByteArray(w)).items;
-            nextErrorGreen = (palette.nextErrorGreenBytes = new ByteArray(w)).items;
-            curErrorBlue = (palette.curErrorBlueBytes = new ByteArray(w)).items;
-            nextErrorBlue = (palette.nextErrorBlueBytes = new ByteArray(w)).items;
+            curErrorRed = (palette.curErrorRedFloats = new FloatArray(w)).items;
+            nextErrorRed = (palette.nextErrorRedFloats = new FloatArray(w)).items;
+            curErrorGreen = (palette.curErrorGreenFloats = new FloatArray(w)).items;
+            nextErrorGreen = (palette.nextErrorGreenFloats = new FloatArray(w)).items;
+            curErrorBlue = (palette.curErrorBlueFloats = new FloatArray(w)).items;
+            nextErrorBlue = (palette.nextErrorBlueFloats = new FloatArray(w)).items;
         } else {
-            curErrorRed = palette.curErrorRedBytes.ensureCapacity(w);
-            nextErrorRed = palette.nextErrorRedBytes.ensureCapacity(w);
-            curErrorGreen = palette.curErrorGreenBytes.ensureCapacity(w);
-            nextErrorGreen = palette.nextErrorGreenBytes.ensureCapacity(w);
-            curErrorBlue = palette.curErrorBlueBytes.ensureCapacity(w);
-            nextErrorBlue = palette.nextErrorBlueBytes.ensureCapacity(w);
+            curErrorRed = palette.curErrorRedFloats.ensureCapacity(w);
+            nextErrorRed = palette.nextErrorRedFloats.ensureCapacity(w);
+            curErrorGreen = palette.curErrorGreenFloats.ensureCapacity(w);
+            nextErrorGreen = palette.nextErrorGreenFloats.ensureCapacity(w);
+            curErrorBlue = palette.curErrorBlueFloats.ensureCapacity(w);
+            nextErrorBlue = palette.nextErrorBlueFloats.ensureCapacity(w);
             for (int i = 0; i < w; i++) {
                 nextErrorRed[i] = 0;
                 nextErrorGreen[i] = 0;
@@ -845,7 +845,8 @@ public class PNG8 implements Disposable {
         lastLineLen = w;
 
         int color, used, rdiff, gdiff, bdiff;
-        byte er, eg, eb, paletteIndex;
+        float er, eg, eb;
+        byte paletteIndex;
         float w1 = (float)(palette.ditherStrength * palette.populationBias * 0.125), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
@@ -866,9 +867,9 @@ public class PNG8 implements Disposable {
                     eg = curErrorGreen[px];
                     eb = curErrorBlue[px];
                     color |= (color >>> 5 & 0x07070700) | 0xFE;
-                    int rr = MathUtils.clamp(((color >>> 24)       ) + (er), 0, 0xFF);
-                    int gg = MathUtils.clamp(((color >>> 16) & 0xFF) + (eg), 0, 0xFF);
-                    int bb = MathUtils.clamp(((color >>> 8)  & 0xFF) + (eb), 0, 0xFF);
+                    int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er), 0, 0xFF);
+                    int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg), 0, 0xFF);
+                    int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb), 0, 0xFF);
                     curLine[px] = paletteIndex =
                             paletteMapping[((rr << 7) & 0x7C00)
                                     | ((gg << 2) & 0x3E0)

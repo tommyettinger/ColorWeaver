@@ -646,7 +646,6 @@ public class PaletteReducer {
     public byte[] paletteMapping;
     public final int[] paletteArray = new int[256];
     final int[] gammaArray = new int[256];
-    ByteArray curErrorRedBytes, nextErrorRedBytes, curErrorGreenBytes, nextErrorGreenBytes, curErrorBlueBytes, nextErrorBlueBytes;
     FloatArray curErrorRedFloats, nextErrorRedFloats, curErrorGreenFloats, nextErrorGreenFloats, curErrorBlueFloats, nextErrorBlueFloats;
     public int colorCount;
     double ditherStrength = 0.5f, populationBias = 0.5;
@@ -1254,33 +1253,33 @@ public class PaletteReducer {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         float r4, r2, r1, g4, g2, g1, b4, b2, b1;
-        byte[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
-        float halfDitherStrength = (float) (ditherStrength * this.populationBias);
-        if (curErrorRedBytes == null) {
-            curErrorRed = (curErrorRedBytes = new ByteArray(lineLen)).items;
-            nextErrorRed = (nextErrorRedBytes = new ByteArray(lineLen)).items;
-            curErrorGreen = (curErrorGreenBytes = new ByteArray(lineLen)).items;
-            nextErrorGreen = (nextErrorGreenBytes = new ByteArray(lineLen)).items;
-            curErrorBlue = (curErrorBlueBytes = new ByteArray(lineLen)).items;
-            nextErrorBlue = (nextErrorBlueBytes = new ByteArray(lineLen)).items;
+        float halfDitherStrength = (float) (0.5 * ditherStrength * this.populationBias);
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedFloats == null) {
+            curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(lineLen)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(lineLen)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(lineLen)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(lineLen)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(lineLen)).items;
         } else {
-            curErrorRed = curErrorRedBytes.ensureCapacity(lineLen);
-            nextErrorRed = nextErrorRedBytes.ensureCapacity(lineLen);
-            curErrorGreen = curErrorGreenBytes.ensureCapacity(lineLen);
-            nextErrorGreen = nextErrorGreenBytes.ensureCapacity(lineLen);
-            curErrorBlue = curErrorBlueBytes.ensureCapacity(lineLen);
-            nextErrorBlue = nextErrorBlueBytes.ensureCapacity(lineLen);
+            curErrorRed = curErrorRedFloats.ensureCapacity(lineLen);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(lineLen);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(lineLen);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(lineLen);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(lineLen);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(lineLen);
             for (int i = 0; i < lineLen; i++) {
                 nextErrorRed[i] = 0;
                 nextErrorGreen[i] = 0;
                 nextErrorBlue[i] = 0;
             }
-
         }
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, rdiff, gdiff, bdiff;
-        byte er, eg, eb, paletteIndex;
+        float er, eg, eb;
+        byte paletteIndex;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -1300,9 +1299,9 @@ public class PaletteReducer {
                     eg = curErrorGreen[px];
                     eb = curErrorBlue[px];
                     color |= (color >>> 5 & 0x07070700) | 0xFE;
-                    int rr = MathUtils.clamp(((color >>> 24)       ) + (er), 0, 0xFF);
-                    int gg = MathUtils.clamp(((color >>> 16) & 0xFF) + (eg), 0, 0xFF);
-                    int bb = MathUtils.clamp(((color >>> 8)  & 0xFF) + (eb), 0, 0xFF);
+                    int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
+                    int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
+                    int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
                     paletteIndex =
                             paletteMapping[((rr << 7) & 0x7C00)
                                     | ((gg << 2) & 0x3E0)
@@ -1403,32 +1402,32 @@ public class PaletteReducer {
     public Pixmap reduceWithNoise (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
-        byte[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
-        if (curErrorRedBytes == null) {
-            curErrorRed = (curErrorRedBytes = new ByteArray(lineLen)).items;
-            nextErrorRed = (nextErrorRedBytes = new ByteArray(lineLen)).items;
-            curErrorGreen = (curErrorGreenBytes = new ByteArray(lineLen)).items;
-            nextErrorGreen = (nextErrorGreenBytes = new ByteArray(lineLen)).items;
-            curErrorBlue = (curErrorBlueBytes = new ByteArray(lineLen)).items;
-            nextErrorBlue = (nextErrorBlueBytes = new ByteArray(lineLen)).items;
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedFloats == null) {
+            curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(lineLen)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(lineLen)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(lineLen)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(lineLen)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(lineLen)).items;
         } else {
-            curErrorRed = curErrorRedBytes.ensureCapacity(lineLen);
-            nextErrorRed = nextErrorRedBytes.ensureCapacity(lineLen);
-            curErrorGreen = curErrorGreenBytes.ensureCapacity(lineLen);
-            nextErrorGreen = nextErrorGreenBytes.ensureCapacity(lineLen);
-            curErrorBlue = curErrorBlueBytes.ensureCapacity(lineLen);
-            nextErrorBlue = nextErrorBlueBytes.ensureCapacity(lineLen);
+            curErrorRed = curErrorRedFloats.ensureCapacity(lineLen);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(lineLen);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(lineLen);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(lineLen);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(lineLen);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(lineLen);
             for (int i = 0; i < lineLen; i++) {
                 nextErrorRed[i] = 0;
                 nextErrorGreen[i] = 0;
                 nextErrorBlue[i] = 0;
             }
-
         }
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, rdiff, gdiff, bdiff, state = 0xFEEDBEEF;
-        byte er, eg, eb, paletteIndex;
+        float er, eg, eb;
+        byte paletteIndex;
         //float xir1, xir2, xig1, xig2, xib1, xib2, // would be used if random factors were per-channel
         // used now, where random factors are determined by whole colors as ints
         float xi1, xi2, w1 = (float) (ditherStrength * populationBias * 0.25), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
@@ -1451,9 +1450,9 @@ public class PaletteReducer {
                     eg = curErrorGreen[px];
                     eb = curErrorBlue[px];
                     color |= (color >>> 5 & 0x07070700) | 0xFE;
-                    int rr = MathUtils.clamp(((color >>> 24)       ) + (er), 0, 0xFF);
-                    int gg = MathUtils.clamp(((color >>> 16) & 0xFF) + (eg), 0, 0xFF);
-                    int bb = MathUtils.clamp(((color >>> 8)  & 0xFF) + (eb), 0, 0xFF);
+                    int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
+                    int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
+                    int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
                     paletteIndex =
                             paletteMapping[((rr << 7) & 0x7C00)
                                     | ((gg << 2) & 0x3E0)
@@ -1530,32 +1529,32 @@ public class PaletteReducer {
     public Pixmap reduceSierraLite (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
-        byte[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
-        if (curErrorRedBytes == null) {
-            curErrorRed = (curErrorRedBytes = new ByteArray(lineLen)).items;
-            nextErrorRed = (nextErrorRedBytes = new ByteArray(lineLen)).items;
-            curErrorGreen = (curErrorGreenBytes = new ByteArray(lineLen)).items;
-            nextErrorGreen = (nextErrorGreenBytes = new ByteArray(lineLen)).items;
-            curErrorBlue = (curErrorBlueBytes = new ByteArray(lineLen)).items;
-            nextErrorBlue = (nextErrorBlueBytes = new ByteArray(lineLen)).items;
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedFloats == null) {
+            curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(lineLen)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(lineLen)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(lineLen)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(lineLen)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(lineLen)).items;
         } else {
-            curErrorRed = curErrorRedBytes.ensureCapacity(lineLen);
-            nextErrorRed = nextErrorRedBytes.ensureCapacity(lineLen);
-            curErrorGreen = curErrorGreenBytes.ensureCapacity(lineLen);
-            nextErrorGreen = nextErrorGreenBytes.ensureCapacity(lineLen);
-            curErrorBlue = curErrorBlueBytes.ensureCapacity(lineLen);
-            nextErrorBlue = nextErrorBlueBytes.ensureCapacity(lineLen);
+            curErrorRed = curErrorRedFloats.ensureCapacity(lineLen);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(lineLen);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(lineLen);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(lineLen);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(lineLen);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(lineLen);
             for (int i = 0; i < lineLen; i++) {
                 nextErrorRed[i] = 0;
                 nextErrorGreen[i] = 0;
                 nextErrorBlue[i] = 0;
             }
-
         }
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, rdiff, gdiff, bdiff;
-        byte er, eg, eb, paletteIndex;
+        float er, eg, eb;
+        byte paletteIndex;
         double ditherStrength = this.ditherStrength * this.populationBias, halfDitherStrength = ditherStrength * 0.5;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
@@ -1576,9 +1575,9 @@ public class PaletteReducer {
                     eg = curErrorGreen[px];
                     eb = curErrorBlue[px];
                     color |= (color >>> 5 & 0x07070700) | 0xFE;
-                    int rr = MathUtils.clamp(((color >>> 24)       ) + (er), 0, 0xFF);
-                    int gg = MathUtils.clamp(((color >>> 16) & 0xFF) + (eg), 0, 0xFF);
-                    int bb = MathUtils.clamp(((color >>> 8)  & 0xFF) + (eb), 0, 0xFF);
+                    int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
+                    int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
+                    int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
                     paletteIndex =
                             paletteMapping[((rr << 7) & 0x7C00)
                                     | ((gg << 2) & 0x3E0)
@@ -1629,33 +1628,33 @@ public class PaletteReducer {
     public Pixmap reduceFloydSteinberg (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
-        byte[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
-        if (curErrorRedBytes == null) {
-            curErrorRed = (curErrorRedBytes = new ByteArray(lineLen)).items;
-            nextErrorRed = (nextErrorRedBytes = new ByteArray(lineLen)).items;
-            curErrorGreen = (curErrorGreenBytes = new ByteArray(lineLen)).items;
-            nextErrorGreen = (nextErrorGreenBytes = new ByteArray(lineLen)).items;
-            curErrorBlue = (curErrorBlueBytes = new ByteArray(lineLen)).items;
-            nextErrorBlue = (nextErrorBlueBytes = new ByteArray(lineLen)).items;
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedFloats == null) {
+            curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(lineLen)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(lineLen)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(lineLen)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(lineLen)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(lineLen)).items;
         } else {
-            curErrorRed = curErrorRedBytes.ensureCapacity(lineLen);
-            nextErrorRed = nextErrorRedBytes.ensureCapacity(lineLen);
-            curErrorGreen = curErrorGreenBytes.ensureCapacity(lineLen);
-            nextErrorGreen = nextErrorGreenBytes.ensureCapacity(lineLen);
-            curErrorBlue = curErrorBlueBytes.ensureCapacity(lineLen);
-            nextErrorBlue = nextErrorBlueBytes.ensureCapacity(lineLen);
+            curErrorRed = curErrorRedFloats.ensureCapacity(lineLen);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(lineLen);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(lineLen);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(lineLen);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(lineLen);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(lineLen);
             for (int i = 0; i < lineLen; i++) {
                 nextErrorRed[i] = 0;
                 nextErrorGreen[i] = 0;
                 nextErrorBlue[i] = 0;
             }
-
         }
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, rdiff, gdiff, bdiff;
-        byte er, eg, eb, paletteIndex;
-        float w1 = (float)(ditherStrength * populationBias * 0.125), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float er, eg, eb;
+        byte paletteIndex;
+        float w1 = (float)(ditherStrength * populationBias * 0.25), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -1675,9 +1674,9 @@ public class PaletteReducer {
                     eg = curErrorGreen[px];
                     eb = curErrorBlue[px];
                     color |= (color >>> 5 & 0x07070700) | 0xFE;
-                    int rr = MathUtils.clamp(((color >>> 24)       ) + (er), 0, 0xFF);
-                    int gg = MathUtils.clamp(((color >>> 16) & 0xFF) + (eg), 0, 0xFF);
-                    int bb = MathUtils.clamp(((color >>> 8)  & 0xFF) + (eb), 0, 0xFF);
+                    int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
+                    int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
+                    int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
                     paletteIndex =
                             paletteMapping[((rr << 7) & 0x7C00)
                                     | ((gg << 2) & 0x3E0)
@@ -2168,15 +2167,14 @@ public class PaletteReducer {
                 nextErrorGreen[i] = 0;
                 nextErrorBlue[i] = 0;
             }
-
         }
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-//        float w1 = (float)(ditherStrength * 0.15625), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
-        float w1 = (float)(ditherStrength * populationBias * 0.15625), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        //previously used: ditherStrength * populationBias * 0.15625
+        float w1 = (float)(ditherStrength * populationBias * 0.1875), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -2201,100 +2199,6 @@ public class PaletteReducer {
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
                     int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
-                    paletteIndex =
-                            paletteMapping[((rr << 7) & 0x7C00)
-                                    | ((gg << 2) & 0x3E0)
-                                    | ((bb >>> 3))];
-                    used = paletteArray[paletteIndex & 0xFF];
-                    pixmap.drawPixel(px, y, used);
-                    rdiff = (color>>>24)-    (used>>>24);
-                    gdiff = (color>>>16&255)-(used>>>16&255);
-                    bdiff = (color>>>8&255)- (used>>>8&255);
-                    if(px < lineLen - 1)
-                    {
-                        curErrorRed[px+1]   += rdiff * w7;
-                        curErrorGreen[px+1] += gdiff * w7;
-                        curErrorBlue[px+1]  += bdiff * w7;
-                    }
-                    if(ny < h)
-                    {
-                        if(px > 0)
-                        {
-                            nextErrorRed[px-1]   += rdiff * w3;
-                            nextErrorGreen[px-1] += gdiff * w3;
-                            nextErrorBlue[px-1]  += bdiff * w3;
-                        }
-                        if(px < lineLen - 1)
-                        {
-                            nextErrorRed[px+1]   += rdiff * w1;
-                            nextErrorGreen[px+1] += gdiff * w1;
-                            nextErrorBlue[px+1]  += bdiff * w1;
-                        }
-                        nextErrorRed[px]   += rdiff * w5;
-                        nextErrorGreen[px] += gdiff * w5;
-                        nextErrorBlue[px]  += bdiff * w5;
-                    }
-                }
-            }
-        }
-        pixmap.setBlending(blending);
-        return pixmap;
-    }
-
-    public Pixmap reduceScatterInteger (Pixmap pixmap) {
-        boolean hasTransparent = (paletteArray[0] == 0);
-        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
-        byte[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
-        if (curErrorRedBytes == null) {
-            curErrorRed = (curErrorRedBytes = new ByteArray(lineLen)).items;
-            nextErrorRed = (nextErrorRedBytes = new ByteArray(lineLen)).items;
-            curErrorGreen = (curErrorGreenBytes = new ByteArray(lineLen)).items;
-            nextErrorGreen = (nextErrorGreenBytes = new ByteArray(lineLen)).items;
-            curErrorBlue = (curErrorBlueBytes = new ByteArray(lineLen)).items;
-            nextErrorBlue = (nextErrorBlueBytes = new ByteArray(lineLen)).items;
-        } else {
-            curErrorRed = curErrorRedBytes.ensureCapacity(lineLen);
-            nextErrorRed = nextErrorRedBytes.ensureCapacity(lineLen);
-            curErrorGreen = curErrorGreenBytes.ensureCapacity(lineLen);
-            nextErrorGreen = nextErrorGreenBytes.ensureCapacity(lineLen);
-            curErrorBlue = curErrorBlueBytes.ensureCapacity(lineLen);
-            nextErrorBlue = nextErrorBlueBytes.ensureCapacity(lineLen);
-            for (int i = 0; i < lineLen; i++) {
-                nextErrorRed[i] = 0;
-                nextErrorGreen[i] = 0;
-                nextErrorBlue[i] = 0;
-            }
-
-        }
-        Pixmap.Blending blending = pixmap.getBlending();
-        pixmap.setBlending(Pixmap.Blending.None);
-        int color, used, rdiff, gdiff, bdiff;
-        byte er, eg, eb, paletteIndex;
-        float w1 = (float)(ditherStrength * populationBias * 0.15625), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
-        for (int y = 0; y < h; y++) {
-            int ny = y + 1;
-            for (int i = 0; i < lineLen; i++) {
-                curErrorRed[i] = nextErrorRed[i];
-                curErrorGreen[i] = nextErrorGreen[i];
-                curErrorBlue[i] = nextErrorBlue[i];
-                nextErrorRed[i] = 0;
-                nextErrorGreen[i] = 0;
-                nextErrorBlue[i] = 0;
-            }
-            for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y) & 0xF8F8F880;
-                if ((color & 0x80) == 0 && hasTransparent)
-                    pixmap.drawPixel(px, y, 0);
-                else {
-                    double tbn = PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS[(px & 63) | ((y << 6) & 0xFC0)]
-                            ;//* PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS[(y * 5 + 28 & 63) | ((px * 7 + 36 << 6) & 0xFC0)];
-                    er = (byte) (curErrorRed[px] * tbn);
-                    eg = (byte) (curErrorGreen[px] * tbn);
-                    eb = (byte) (curErrorBlue[px] * tbn);
-                    color |= (color >>> 5 & 0x07070700) | 0xFF;
-                    int rr = MathUtils.clamp(((color >>> 24)       ) + (er), 0, 0xFF);
-                    int gg = MathUtils.clamp(((color >>> 16) & 0xFF) + (eg), 0, 0xFF);
-                    int bb = MathUtils.clamp(((color >>> 8)  & 0xFF) + (eb), 0, 0xFF);
                     paletteIndex =
                             paletteMapping[((rr << 7) & 0x7C00)
                                     | ((gg << 2) & 0x3E0)

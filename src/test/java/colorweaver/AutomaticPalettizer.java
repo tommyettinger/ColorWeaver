@@ -107,7 +107,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 ////good
                     pm = reducer.reduceSolid(new Pixmap(sample));
                     png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
-
 ////good enough
                     pm = (reducer.reduceSierraLite(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
@@ -135,9 +134,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 ////very good
                     pm = (reducer.reduceScatter(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
-////not as good
-                    pm = (reducer.reduceScatterInteger(new Pixmap(sample)));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Skitter" + suffix + ".png"), pm, PALETTE, false, 0);
 
                     reducer.setDitherStrength(0.5f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
@@ -169,9 +165,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 ////very good
                     pm = (reducer.reduceScatter(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
-////not as good
-                    pm = (reducer.reduceScatterInteger(new Pixmap(sample)));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Skitter" + suffix + ".png"), pm, PALETTE, false, 0);
 
 
 
@@ -205,9 +198,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 ////very good
                     pm = (reducer.reduceScatter(new Pixmap(sample)));
                     png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
-////not as good
-                    pm = (reducer.reduceScatterInteger(new Pixmap(sample)));
-                    png8.writePrecisely(Gdx.files.local(subname + "_Skitter" + suffix + ".png"), pm, PALETTE, false, 0);
 
 
                 }
