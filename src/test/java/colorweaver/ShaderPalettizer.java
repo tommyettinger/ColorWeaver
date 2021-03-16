@@ -35,7 +35,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
 
     private long startTime = 0L, lastProcessedTime = 0L;
     private ShaderProgram defaultShader;
-    private ShaderProgram shader, shader2, shaderCB;
+    private ShaderProgram shaderFlat, shaderStandard, shaderCB;
     private Texture palette;
     private FileHandle[] lospec;
     private int lospecIndex = 0;
@@ -75,21 +75,23 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if(!file.exists())
             return;
         if(screenTexture != null) screenTexture.dispose();
-//        ShaderPalettizer.equalize = equalize;
-//        if(equalize)
-//        {
-//            if(equalizeCB = !equalizeCB)
-//            {
-//                screenTexture = new Texture(cba.processRoughness(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
-//                batch.setShader(shaderCB);
-//            }
-//            else
-//            {
-//                screenTexture = new Texture(cba.process(new Pixmap(file)), Pixmap.Format.RGBA8888, false);
-//                batch.setShader(defaultShader);
-//            }
-//        }
-//        else
+        ShaderPalettizer.equalize = equalize;
+        if(equalize)
+        {
+            Pixmap pm = new Pixmap(file);
+            if(equalizeCB = !equalizeCB)
+            {
+                screenTexture = new Texture(cba.process(pm), Pixmap.Format.RGBA8888, false);
+                batch.setShader(shaderCB);
+            }
+            else
+            {
+                screenTexture = new Texture(cba.process(pm), Pixmap.Format.RGBA8888, false);
+                batch.setShader(defaultShader);
+            }
+            pm.dispose();
+        }
+        else
             screenTexture = new Texture(file);
         screenTexture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         Gdx.graphics.setWindowedMode(screenTexture.getWidth() * 2, screenTexture.getHeight());
@@ -102,8 +104,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
         startTime = TimeUtils.millis();
         eq = new ColorEqualizer();
         cba = new ColorblindnessAdapter();
-        lospec = Gdx.files.local("palettes/gen/").list("_GLSL.png");
-        palette = new Texture(Gdx.files.local("palettes/DB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
+        lospec = Gdx.files.local("palettes/genOk/").list("_GLSL.png");
+        palette = new Texture(Gdx.files.local("palettes/genOk/db-aurora-255_GLSL.png"), Pixmap.Format.RGBA8888, false);
         palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         font = new BitmapFont();
         add = new Vector3(0, 0, 0);
@@ -111,15 +113,15 @@ public class ShaderPalettizer extends ApplicationAdapter {
         defaultShader =
            //new ShaderProgram(vertexShader, fragmentShaderColorblind);
            SpriteBatch.createDefaultShader();
-        shader = new ShaderProgram(vertexShader, fragmentShaderRobertsLimited);
-        if (!shader.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shader.getLog());
-        shader2 = new ShaderProgram(vertexShader, fragmentShader);
-        if (!shader2.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shader2.getLog());
+        shaderFlat = new ShaderProgram(vertexShader, fragmentShaderNoDither);
+        if (!shaderFlat.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderFlat.getLog());
+        shaderStandard = new ShaderProgram(vertexShader, fragmentShader);
+        if (!shaderStandard.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderStandard.getLog());
         shaderCB = 
            //defaultShader; 
            new ShaderProgram(vertexShader, fragmentShaderColorblind);
         if (!shaderCB.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderCB.getLog());
-        batch = new SpriteBatch(1000, defaultShader);
+        batch = new SpriteBatch(1000, shaderStandard);
         screenView = new ScreenViewport();
         screenView.getCamera().position.set(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0);
         screenView.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -147,15 +149,15 @@ public class ShaderPalettizer extends ApplicationAdapter {
                 palette.bind();
                 batch.begin();
                 sh.setUniformi("u_palette", 1);
-                if(!batch.getShader().equals(shader2))
-                {
+//                if(!batch.getShader().equals(shaderStandard))
+//                {
+//                    sh.setUniformf("u_mul", mul);
+//                    sh.setUniformf("u_add", add);
+//                }
 //                    shader.setUniformf("u_mul", 0.9f, 0.7f, 0.75f);
 //                    shader.setUniformf("u_add", 0.05f, 0.14f, 0.16f);
-                    sh.setUniformf("u_mul", mul);
-                    sh.setUniformf("u_add", add);
 //                    shader.setUniformf("u_mul", 1f, 0.8f, 0.85f);
 //                    shader.setUniformf("u_add", 0.1f, 0.95f, NumberTools.swayRandomized(12345, TimeUtils.timeSinceMillis(startTime) * 0x1p-9f) * 0.4f + 0.2f);
-                }
 //                else batch.getShader().setUniformi("u_palette", 1);
 
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
@@ -331,11 +333,11 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.SPACE:
                         if((UIUtils.shift()))
                         {
-                            batch.setShader(shader2);
+                            batch.setShader(shaderFlat);
                         }
-                        else if(!batch.getShader().equals(shader))
+                        else if(!batch.getShader().equals(shaderStandard))
                         {
-                            batch.setShader(shader);
+                            batch.setShader(shaderStandard);
                         }
 //                        else if(batch.getShader().equals(shader))
 //                        {
@@ -349,9 +351,10 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         break;
                 }
                 palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-                Gdx.graphics.setTitle(((batch.getShader().equals(defaultShader)) ? "Full Color" : "Palette")
+                Gdx.graphics.setTitle(((batch.getShader().equals(defaultShader)) ? "Full Color" : "Palette "
+                        + lospec[lospecIndex].nameWithoutExtension())
                    + " with Equalize: " + (equalize ? (equalizeCB ? "COLORBLIND" : "STANDARD") : "OFF")
-                   + (batch.getShader().equals(shader2) ? " on linear mode" : " on asin mode"));
+                   + (batch.getShader().equals(shaderStandard) ? " on standard mode" : " on no-dither mode"));
                 return true;
             }
         };
