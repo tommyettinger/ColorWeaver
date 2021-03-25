@@ -374,8 +374,6 @@ public class ColorizerPreview extends ApplicationAdapter {
 	public void create () {
 		int[] haltonite = new int[]{
 				0x00000000,
-//				0x48384840, 0x50405040, 0x58485840, 0x60506040, 0x68586840, 0x70607040, 0x78687840,
-//				0x80708040, 0x88788840, 0x90809040, 0x98889840, 0xA070A040, 0xA860A840, 0xB050B040, 0xB840B840,
 				0x000000FF, 0x141414FF, 0x282828FF, 0x291710FF, 0x1E222AFF, 0x3B3B3BFF, 0x434531FF, 0x4F4F4FFF,
 				0x5C5C5CFF, 0x6A6A6AFF, 0x56626FFF, 0x787878FF, 0x878787FF, 0x999999FF, 0xAAAAAAFF, 0xBBBBBBFF,
 				0xC2BBA9FF, 0xCCCCCCFF, 0xDDDDDDFF, 0xEEEEEEFF, 0xFFFFFFFF, 0xE31515FF, 0x5B0606FF, 0xF23C37FF,
@@ -406,6 +404,9 @@ public class ColorizerPreview extends ApplicationAdapter {
 				0xD55193FF, 0xF095C2FF, 0x893A5FFF, 0xAB134FFF, 0xE83175FF, 0xF93E83FF, 0xB46D86FF, 0xA05B73FF,
 				0xE71A58FF, 0x22040DFF, 0xD27E96FF, 0xBC3E61FF, 0xD51144FF, 0xFE7B9AFF, 0xFE6885FF, 0xDF6A7FFF,
 				0x8C525CFF, 0xA83F4BFF, 0x76121CFF, 0xD34B57FF, 0xC21A26FF, 0x87353AFF, 0x981C20FF, 0xEA5A5EFF,
+
+//				0x48384840, 0x50405040, 0x58485840, 0x60506040, 0x68586840, 0x70607040, 0x78687840,
+//				0x80708040, 0x88788840, 0x90809040, 0x98889840, 0xA070A040, 0xA860A840, 0xB050B040, 0xB840B840,
 		};
 
 				int[] haltoniteBad = new int[]{
@@ -645,7 +646,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 				}
 			}
 			cubeTextures[i].draw(cubePix, 0, 0);
-			batch.draw(cubeTextures[i], (i & 15) << 4, 240 - (i & -16), 16, 16);
+			batch.draw(cubeTextures[i], (i - 1 & 15) << 4, 240 - (i - 1 & -16), 16, 16);
 		}
 		batch.end();
 	}
