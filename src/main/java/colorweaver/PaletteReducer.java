@@ -1558,7 +1558,7 @@ public class PaletteReducer {
         double rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        double ditherStrength = this.ditherStrength * this.populationBias * 64.0, halfDitherStrength = ditherStrength * 0.5;
+        double ditherStrength = this.ditherStrength * this.populationBias * 40.0, halfDitherStrength = ditherStrength * 0.5;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -1595,9 +1595,9 @@ public class PaletteReducer {
                     //rdiff = (color>>>24)-    (used>>>24)    ;
                     //gdiff = (color>>>16&255)-(used>>>16&255);
                     //bdiff = (color>>>8&255)- (used>>>8&255) ;
-                    rdiff = cbrt(0x0.Ep-8f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = cbrt(0x0.Ep-8f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = cbrt(0x0.Ep-8f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = cbrt(0x1.Ep-8f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = cbrt(0x1.Ep-8f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = cbrt(0x1.Ep-8f * ((color>>>8&255)- (used>>>8&255)) );
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * ditherStrength;
