@@ -9,8 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Collections;
 
-import static colorweaver.OtherMath.cbrt;
-
 /**
  * Data that can be used to limit the colors present in a Pixmap or other image, here with the goal of using 256 or less
  * colors in the image (for saving indexed-mode images).
@@ -1516,6 +1514,12 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+
+    private float cbrtShape(float x){
+        final int i = NumberUtils.floatToRawIntBits(x);
+        return NumberUtils.intBitsToFloat(((i & 0x7FFFFFFF) - 0x3F800000) / 3 + 0x3F800000 | (i & 0x80000000));
+    }
+
     /**
      * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can using
      * Sierra Lite dithering instead of the Floyd-Steinberg dithering that {@link #reduce(Pixmap)} uses.
@@ -1591,9 +1595,9 @@ public class PaletteReducer {
                     //rdiff = (color>>>24)-    (used>>>24)    ;
                     //gdiff = (color>>>16&255)-(used>>>16&255);
                     //bdiff = (color>>>8&255)- (used>>>8&255) ;
-                    rdiff = cbrt(0x1.Ep-8f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = cbrt(0x1.Ep-8f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = cbrt(0x1.Ep-8f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = cbrtShape(0x1.Ep-8f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = cbrtShape(0x1.Ep-8f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = cbrtShape(0x1.Ep-8f * ((color>>>8&255)- (used>>>8&255)) );
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * ditherStrength;
@@ -1691,9 +1695,9 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, y, used);
-                    rdiff = cbrt(0x1.Cp-8f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = cbrt(0x1.Cp-8f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = cbrt(0x1.Cp-8f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = cbrtShape(0x1.Cp-8f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = cbrtShape(0x1.Cp-8f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = cbrtShape(0x1.Cp-8f * ((color>>>8&255)- (used>>>8&255)) );
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * w7;
@@ -2178,10 +2182,11 @@ public class PaletteReducer {
         }
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color, used, rdiff, gdiff, bdiff;
+        int color, used;
+        float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float)(ditherStrength * populationBias * 0.15625), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float w1 = (float)(ditherStrength * populationBias * 4.0), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -2212,9 +2217,9 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, y, used);
-                    rdiff = (color>>>24)-    (used>>>24);
-                    gdiff = (color>>>16&255)-(used>>>16&255);
-                    bdiff = (color>>>8&255)- (used>>>8&255);
+                    rdiff = cbrtShape(0x1.Cp-8f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = cbrtShape(0x1.Cp-8f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = cbrtShape(0x1.Cp-8f * ((color>>>8&255)- (used>>>8&255)) );
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * w7;
