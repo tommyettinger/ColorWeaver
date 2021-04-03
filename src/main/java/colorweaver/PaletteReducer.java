@@ -1515,11 +1515,6 @@ public class PaletteReducer {
         return pixmap;
     }
 
-    private float cbrtShape(float x){
-        final int i = NumberUtils.floatToRawIntBits(x);
-        return NumberUtils.intBitsToFloat(((i & 0x7FFFFFFF) - 0x3F800000) / 3 + 0x3F800000 | (i & 0x80000000));
-    }
-
     /**
      * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can using
      * Sierra Lite dithering instead of the Floyd-Steinberg dithering that {@link #reduce(Pixmap)} uses.
@@ -1595,9 +1590,9 @@ public class PaletteReducer {
                     //rdiff = (color>>>24)-    (used>>>24)    ;
                     //gdiff = (color>>>16&255)-(used>>>16&255);
                     //bdiff = (color>>>8&255)- (used>>>8&255) ;
-                    rdiff = cbrtShape(0x1.Ep-8f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = cbrtShape(0x1.Ep-8f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = cbrtShape(0x1.Ep-8f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = OtherMath.cbrtShape(0x1.Ep-8f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = OtherMath.cbrtShape(0x1.Ep-8f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = OtherMath.cbrtShape(0x1.Ep-8f * ((color>>>8&255)- (used>>>8&255)) );
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * ditherStrength;
@@ -1695,9 +1690,9 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, y, used);
-                    rdiff = cbrtShape(0x1.Cp-8f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = cbrtShape(0x1.Cp-8f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = cbrtShape(0x1.Cp-8f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = OtherMath.cbrtShape(0x1.Cp-8f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = OtherMath.cbrtShape(0x1.Cp-8f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = OtherMath.cbrtShape(0x1.Cp-8f * ((color>>>8&255)- (used>>>8&255)) );
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * w7;
@@ -2217,9 +2212,9 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, y, used);
-                    rdiff = cbrtShape(0x1.Cp-8f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = cbrtShape(0x1.Cp-8f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = cbrtShape(0x1.Cp-8f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = OtherMath.cbrtShape(0x1.Cp-8f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = OtherMath.cbrtShape(0x1.Cp-8f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = OtherMath.cbrtShape(0x1.Cp-8f * ((color>>>8&255)- (used>>>8&255)) );
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * w7;
