@@ -15,7 +15,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "buzzer-240";
+    public static final String NAME = "hyper-8";
     
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -24,7 +24,7 @@ public class HexGenerator extends ApplicationAdapter {
         config.setIdleFPS(10);
         config.useVsync(true);
         config.setResizable(false);
-        new Lwjgl3Application(new HexGenerator(), config);
+//        new Lwjgl3Application(new HexGenerator(), config);
         AutomaticPaletteTransformer.main(arg);
         AutomaticPalettizer.main(arg);
     }
@@ -178,7 +178,10 @@ public class HexGenerator extends ApplicationAdapter {
 
 
         palette =
-                buzzer;
+                new int[]{
+                        0x00000000,
+                        0x000000FF, 0x0000FFFF, 0x00FF00FF, 0x00FFFFFF, 0xFF0000FF, 0xFF00FFFF, 0xFFFF00FF, 0xFFFFFFFF
+        };
 //                Coloring.HALTONIC255;
 //                new int[]
 //                { // halturvy
