@@ -87,7 +87,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/azurestar-32.hex");{
 
-//            if(i++ > 6) break;
+//            if(i++ > 12) break;
 
             String name = hex.nameWithoutExtension().toLowerCase(), suffix = "_" + name;
             System.out.println(name);

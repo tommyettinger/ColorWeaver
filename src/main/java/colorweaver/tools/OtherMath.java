@@ -1,4 +1,4 @@
-package colorweaver;
+package colorweaver.tools;
 
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.utils.NumberUtils;

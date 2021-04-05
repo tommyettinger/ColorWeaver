@@ -6,10 +6,14 @@ package colorweaver.tools;
  * that take input in turns or produce output in turns use a {@code _} suffix, like {@link #sin_(double)}, for turns to
  * never be returned as a negative value but for negative turn inputs to be accepted, and for the output type to match
  * the input type (float input gives float output, double input gives double output).
+ * <br>
  * Created by Tommy Ettinger on 8/6/2019.
  */
 public class TrigTools {
 
+    public static final float PI = 3.14159265358979323846f;
+    public static final float HALF_PI = 1.5707964f;
+    public static final float PI2 = 6.283185307179586f;
     /**
      * A fairly-close approximation of {@link Math#sin(double)} that can be significantly faster (between 8x and 80x
      * faster sin() calls in benchmarking; if you have access to libGDX you should consider its sometimes-more-precise
@@ -17,9 +21,8 @@ public class TrigTools {
      * lookup table, where libGDX's MathUtils does, applications that have a bottleneck on memory may perform better
      * with this method than with MathUtils. Takes the same arguments Math.sin() does, so one angle in radians,
      * which may technically be any double (but this will lose precision on fairly large doubles, such as those that are
-     * larger than {@link Long#MAX_VALUE}, because those doubles themselves will lose precision at that scale). This
-     * is closely related to a cubic sway, but the shape of the output when graphed is almost identical to
-     * sin(). The difference between the result of this method and {@link Math#sin(double)} should be under 0.0011 at
+     * larger than {@link Long#MAX_VALUE}, because those doubles themselves will lose precision at that scale). The
+     * difference between the result of this method and {@link Math#sin(double)} should be under 0.0011 at
      * all points between -pi and pi, with an average difference of about 0.0005; not all points have been checked for
      * potentially higher errors, though.
      * <br>
@@ -55,9 +58,8 @@ public class TrigTools {
      * lookup table, where libGDX's MathUtils does, applications that have a bottleneck on memory may perform better
      * with this method than with MathUtils. Takes the same arguments Math.cos() does, so one angle in radians,
      * which may technically be any double (but this will lose precision on fairly large doubles, such as those that are
-     * larger than {@link Long#MAX_VALUE}, because those doubles themselves will lose precision at that scale). This
-     * is closely related to a cubic sway, but the shape of the output when graphed is almost identical to
-     * cos(). The difference between the result of this method and {@link Math#cos(double)} should be under 0.0011 at
+     * larger than {@link Long#MAX_VALUE}, because those doubles themselves will lose precision at that scale). The
+     * difference between the result of this method and {@link Math#cos(double)} should be under 0.0011 at
      * all points between -pi and pi, with an average difference of about 0.0005; not all points have been checked for
      * potentially higher errors, though.
      * <br>
@@ -91,9 +93,8 @@ public class TrigTools {
      * lookup table, where libGDX's MathUtils does, applications that have a bottleneck on memory may perform better
      * with this method than with MathUtils. Takes the same arguments Math.sin() does, so one angle in radians,
      * which may technically be any float (but this will lose precision on fairly large floats, such as those that are
-     * larger than {@link Integer#MAX_VALUE}, because those floats themselves will lose precision at that scale). This
-     * is closely related to a cubic sway, but the shape of the output when graphed is almost identical to
-     * sin(). The difference between the result of this method and {@link Math#sin(double)} should be under 0.0011 at
+     * larger than {@link Integer#MAX_VALUE}, because those floats themselves will lose precision at that scale). The
+     * difference between the result of this method and {@link Math#sin(double)} should be under 0.0011 at
      * all points between -pi and pi, with an average difference of about 0.0005; not all points have been checked for
      * potentially higher errors, though.
      * <br>
@@ -128,9 +129,8 @@ public class TrigTools {
      * lookup table, where libGDX's MathUtils does, applications that have a bottleneck on memory may perform better
      * with this method than with MathUtils. Takes the same arguments Math.cos() does, so one angle in radians,
      * which may technically be any float (but this will lose precision on fairly large floats, such as those that are
-     * larger than {@link Integer#MAX_VALUE}, because those floats themselves will lose precision at that scale). This
-     * is closely related to a cubic sway, but the shape of the output when graphed is almost identical to
-     * cos(). The difference between the result of this method and {@link Math#cos(double)} should be under 0.0011 at
+     * larger than {@link Integer#MAX_VALUE}, because those floats themselves will lose precision at that scale). The
+     * difference between the result of this method and {@link Math#cos(double)} should be under 0.0011 at
      * all points between -pi and pi, with an average difference of about 0.0005; not all points have been checked for
      * potentially higher errors, though.
      * <br>
@@ -157,6 +157,7 @@ public class TrigTools {
         radians *= 2f - radians;
         return radians * (-0.775f - 0.225f * radians) * ((floor & 2) - 1);
     }
+
     /**
      * A fairly-close approximation of {@link Math#sin(double)} that can be significantly faster (between 8x and 80x
      * faster sin() calls in benchmarking, and both takes and returns floats; if you have access to libGDX, you should
@@ -164,9 +165,8 @@ public class TrigTools {
      * lookup table, where libGDX's MathUtils does, applications that have a bottleneck on memory may perform better
      * with this method than with MathUtils. Takes one angle in degrees,
      * which may technically be any float (but this will lose precision on fairly large floats, such as those that are
-     * larger than {@link Integer#MAX_VALUE}, because those floats themselves will lose precision at that scale). This
-     * is closely related to a cubic sway, but the shape of the output when graphed is almost identical to
-     * sin(). The difference between the result of this method and {@link Math#sin(double)} should be under 0.0011 at
+     * larger than {@link Integer#MAX_VALUE}, because those floats themselves will lose precision at that scale). The
+     * difference between the result of this method and {@link Math#sin(double)} should be under 0.0011 at
      * all points between -360 and 360, with an average difference of about 0.0005; not all points have been checked for
      * potentially higher errors, though.
      * <br>
@@ -201,9 +201,8 @@ public class TrigTools {
      * lookup table, where libGDX's MathUtils does, applications that have a bottleneck on memory may perform better
      * with this method than with MathUtils. Takes one angle in degrees,
      * which may technically be any float (but this will lose precision on fairly large floats, such as those that are
-     * larger than {@link Integer#MAX_VALUE}, because those floats themselves will lose precision at that scale). This
-     * is closely related to a cubic sway, but the shape of the output when graphed is almost identical to
-     * cos(). The difference between the result of this method and {@link Math#cos(double)} should be under 0.0011 at
+     * larger than {@link Integer#MAX_VALUE}, because those floats themselves will lose precision at that scale). The
+     * difference between the result of this method and {@link Math#cos(double)} should be under 0.0011 at
      * all points between -360 and 360, with an average difference of about 0.0005; not all points have been checked for
      * potentially higher errors, though.
      * <br>
@@ -319,10 +318,10 @@ public class TrigTools {
     public static float sin_(float turns)
     {
         turns *= 4f;
-        final int floor = (turns >= 0.0 ? (int) turns : (int) turns - 1) & -2;
+        final long floor = (turns >= 0.0 ? (long) turns : (long) turns - 1L) & -2L;
         turns -= floor;
         turns *= 2f - turns;
-        return turns * (-0.775f - 0.225f * turns) * ((floor & 2) - 1);
+        return turns * (-0.775f - 0.225f * turns) * ((floor & 2L) - 1L);
     }
 
     /**
@@ -351,276 +350,618 @@ public class TrigTools {
     public static float cos_(float turns)
     {
         turns = turns * 4f + 1f;
-        final int floor = (turns >= 0.0 ? (int) turns : (int) turns - 1) & -2;
+        final long floor = (turns >= 0.0 ? (long) turns : (long) turns - 1L) & -2L;
         turns -= floor;
         turns *= 2f - turns;
-        return turns * (-0.775f - 0.225f * turns) * ((floor & 2) - 1);
+        return turns * (-0.775f - 0.225f * turns) * ((floor & 2L) - 1L);
     }
 
     /**
-     * Close approximation of the frequently-used trigonometric method atan2, with higher precision than LibGDX's atan2
-     * approximation. Maximum error is below 0.001 radians.
+     * Arc tangent approximation with very low error, using an algorithm from the 1955 research study
+     * "Approximations for Digital Computers," by RAND Corporation (this is sheet 9's algorithm, which is the
+     * second-fastest and second-least precise). This method is usually much faster than {@link Math#atan(double)},
+     * but is somewhat less precise than Math's implementation.
+     * @param i an input to the inverse tangent function; any double is accepted
+     * @return an output from the inverse tangent function, from PI/-2.0 to PI/2.0 inclusive
+     */
+    public static double atan(final double i) {
+        final double n = Math.min(Math.abs(i), Double.MAX_VALUE);
+        final double c = (n - 1.0) / (n + 1.0);
+        final double c2 = c * c;
+        final double c3 = c * c2;
+        final double c5 = c3 * c2;
+        final double c7 = c5 * c2;
+        return Math.copySign(0.7853981633974483 +
+                (0.999215 * c - 0.3211819 * c3 + 0.1462766 * c5 - 0.0389929 * c7), i);
+    }
+
+    /**
+     * Arc tangent approximation with very low error, using an algorithm from the 1955 research study
+     * "Approximations for Digital Computers," by RAND Corporation (this is sheet 9's algorithm, which is the
+     * second-fastest and second-least precise). This method is usually much faster than {@link Math#atan(double)},
+     * but is somewhat less precise than Math's implementation.
+     * @param i an input to the inverse tangent function; any float is accepted
+     * @return an output from the inverse tangent function, from PI/-2.0 to PI/2.0 inclusive
+     */
+    public static float atan(final float i) {
+        final float n = Math.min(Math.abs(i), Float.MAX_VALUE);
+        final float c = (n - 1f) / (n + 1f);
+        final float c2 = c * c;
+        final float c3 = c * c2;
+        final float c5 = c3 * c2;
+        final float c7 = c5 * c2;
+        return Math.copySign(0.7853981633974483f +
+                (0.999215f * c - 0.3211819f * c3 + 0.1462766f * c5 - 0.0389929f * c7), i);
+    }
+
+
+    /**
+     * A variant on {@link #atan(double)} that does not tolerate infinite inputs, and is slightly faster.
+     * @param i any finite double
+     * @return an output from the inverse tangent function, from PI/-2.0 to PI/2.0 inclusive
+     */
+    private static double atn(final double i) {
+        final double n = Math.abs(i);
+        final double c = (n - 1.0) / (n + 1.0);
+        final double c2 = c * c;
+        final double c3 = c * c2;
+        final double c5 = c3 * c2;
+        final double c7 = c5 * c2;
+        return Math.copySign(0.7853981633974483 +
+                (0.999215 * c - 0.3211819 * c3 + 0.1462766 * c5 - 0.0389929 * c7), i);
+    }
+    /**
+     * A variant on {@link #atan(float)} that does not tolerate infinite inputs, and is slightly faster.
+     * @param i any finite float
+     * @return an output from the inverse tangent function, from PI/-2.0 to PI/2.0 inclusive
+     */
+    private static float atn(final float i) {
+        final float n = Math.abs(i);
+        final float c = (n - 1f) / (n + 1f);
+        final float c2 = c * c;
+        final float c3 = c * c2;
+        final float c5 = c3 * c2;
+        final float c7 = c5 * c2;
+        return Math.copySign(0.7853981633974483f +
+                (0.999215f * c - 0.3211819f * c3 + 0.1462766f * c5 - 0.0389929f * c7), i);
+    }
+
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2, with higher precision than libGDX's atan2
+     * approximation. Maximum error is below 0.00009 radians.
      * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in radians.
-     * It is about 5 times faster than {@link Math#atan2(double, double)} (roughly 17 ns instead of roughly 88 ns for
-     * Math, though the computer was under some load during testing). It is almost identical in speed to LibGDX'
-     * MathUtils approximation of the same method; MathUtils seems to have worse average error, though.
-     * Credit to StackExchange user njuffa, who gave
-     * <a href="https://math.stackexchange.com/a/1105038">this useful answer</a>. This method changed from an earlier
-     * technique that was twice as fast but had very poor quality, enough to be visually noticeable. See also
-     * {@link #atan2_(double, double)} if you don't want a mess converting to degrees or some other measurement, since
-     * that method returns an angle from 0.0 (equal to 0 degrees) to 1.0 (equal to 360 degrees).
+     * It is about 5 times faster than {@link Math#atan2(double, double)} (roughly 12 ns instead of roughly 62 ns for
+     * Math, on Java 8 HotSpot). It is slightly faster than libGDX' MathUtils approximation of the same method;
+     * MathUtils seems to have worse average error, though.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This
+     * is sheet 9's algorithm, which is the second-fastest and second-least precise. The algorithm on sheet 8 is faster,
+     * but only by a very small degree, and is considerably less precise. That study provides an {@link #atan(double)}
+     * method, and the small code to make that work as atan2() was worked out from Wikipedia.
+     * <br>
+     * See also {@link #atan2_(double, double)} if you don't want a mess converting to degrees or some other
+     * measurement, since that method returns an angle from 0f (equal to 0 degrees) to 1f (equal to 360 degrees). You
+     * can also use {@link #atan2Degrees(double, double)} or {@link #atan2Degrees360(double, double)} to produce a
+     * result in degrees, either from -180 to 180 or 0 to 360.
      * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
      * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
-     * @return the angle to the given point, in radians as a double
+     * @return the angle to the given point, in radians as a double; ranges from -PI to PI
      */
-    public static double atan2(final double y, final double x)
-    {
-        /*
-a := min (|x|, |y|) / max (|x|, |y|)
-s := a * a
-r := ((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a
-if |y| > |x| then r := 1.57079637 - r
-if x < 0 then r := 3.14159274 - r
-if y < 0 then r := -r
-         */
-        if(y == 0.0 && x >= 0.0) return 0.0;
-        final double ax = Math.abs(x), ay = Math.abs(y);
-        if(ax < ay)
-        {
-            final double a = ax / ay, s = a * a,
-                    r = 1.57079637 - (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a);
-            return (x < 0.0) ? (y < 0.0) ? -3.14159274 + r : 3.14159274 - r : (y < 0.0) ? -r : r;
+    public static double atan2(final double y, double x) {
+        double n = y / x;
+        if(n != n) n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if(n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if(x > 0)
+            return atn(n);
+        else if(x < 0) {
+            if(y >= 0)
+                return atn(n) + 3.14159265358979323846;
+            else
+                return atn(n) - 3.14159265358979323846;
         }
-        else {
-            final double a = ay / ax, s = a * a,
-                    r = (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a);
-            return (x < 0.0) ? (y < 0.0) ? -3.14159274 + r : 3.14159274 - r : (y < 0.0) ? -r : r;
-        }
+        else if(y > 0) return x + 1.5707963267948966;
+        else if(y < 0) return x - 1.5707963267948966;
+        else return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
     /**
-     * Close approximation of the frequently-used trigonometric method atan2, with higher precision than LibGDX's atan2
-     * approximation. Maximum error is below 0.001 radians.
+     * Close approximation of the frequently-used trigonometric method atan2, with higher precision than libGDX's atan2
+     * approximation. Maximum error is below 0.00009 radians.
      * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in radians.
-     * It is about 5 times faster than {@link Math#atan2(double, double)} (roughly 17 ns instead of roughly 88 ns for
-     * Math, though the computer was under some load during testing). It is almost identical in speed to LibGDX'
-     * MathUtils approximation of the same method; MathUtils seems to have worse average error, though.
-     * Credit to StackExchange user njuffa, who gave
-     * <a href="https://math.stackexchange.com/a/1105038">this useful answer</a>. This method changed from an earlier
-     * technique that was twice as fast but had very poor quality, enough to be visually noticeable. See also
-     * {@link #atan2_(float, float)} if you don't want a mess converting to degrees or some other measurement, since
-     * that method returns an angle from 0f (equal to 0 degrees) to 1f (equal to 360 degrees).
+     * It is about 5 times faster than {@link Math#atan2(double, double)} (roughly 12 ns instead of roughly 62 ns for
+     * Math, on Java 8 HotSpot). It is slightly faster than libGDX' MathUtils approximation of the same method;
+     * MathUtils seems to have worse average error, though.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This
+     * is sheet 9's algorithm, which is the second-fastest and second-least precise. The algorithm on sheet 8 is faster,
+     * but only by a very small degree, and is considerably less precise. That study provides an {@link #atan(float)}
+     * method, and the small code to make that work as atan2() was worked out from Wikipedia.
+     * <br>
+     * See also {@link #atan2_(float, float)} if you don't want a mess converting to degrees or some other measurement,
+     * since that method returns an angle from 0f (equal to 0 degrees) to 1f (equal to 360 degrees). You can also use
+     * {@link #atan2Degrees(float, float)} or {@link #atan2Degrees360(float, float)} to produce a result in degrees,
+     * either from -180 to 180 or 0 to 360.
      * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
      * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
-     * @return the angle to the given point, in radians as a float
+     * @return the angle to the given point, in radians as a float; ranges from -PI to PI
      */
-    public static float atan2(final float y, final float x)
-    {
-        /*
-a := min (|x|, |y|) / max (|x|, |y|)
-s := a * a
-r := ((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a
-if |y| > |x| then r := 1.57079637 - r
-if x < 0 then r := 3.14159274 - r
-if y < 0 then r := -r
-         */
-        if(y == 0f && x >= 0f) return 0f;
-        final float ax = Math.abs(x), ay = Math.abs(y);
-        if(ax < ay)
-        {
-            final float a = ax / ay, s = a * a,
-                    r = 1.57079637f - (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a);
-            return (x < 0f) ? (y < 0f) ? -3.14159274f + r : 3.14159274f - r : (y < 0f) ? -r : r;
+    public static float atan2(final float y, float x) {
+        float n = y / x;
+        if(n != n) n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if(n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if(x > 0)
+            return atn(n);
+        else if(x < 0) {
+            if(y >= 0)
+                return atn(n) + 3.14159265358979323846f;
+            else
+                return atn(n) - 3.14159265358979323846f;
         }
-        else {
-            final float a = ay / ax, s = a * a,
-                    r = (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a);
-            return (x < 0f) ? (y < 0f) ? -3.14159274f + r : 3.14159274f - r : (y < 0f) ? -r : r;
-        }
+        else if(y > 0) return x + 1.5707963267948966f;
+        else if(y < 0) return x - 1.5707963267948966f;
+        else return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
     /**
-     * Altered-range approximation of the frequently-used trigonometric method atan2, taking y and x positions as 
+     * This one's weird; unlike {@link #atan2_(double, double)}, it can return negative results.
+     * @param v any finite double
+     * @return between -0.25 and 0.25
+     */
+    private static double atn_(final double v) {
+        final double n = Math.abs(v);
+        final double c = (n - 1.0) / (n + 1.0);
+        final double c2 = c * c;
+        final double c3 = c * c2;
+        final double c5 = c3 * c2;
+        final double c7 = c5 * c2;
+        return Math.copySign(0.125 + 0.1590300064615682 * c - 0.051117687016646825 * c3 + 0.02328064394867594 * c5
+                - 0.006205912780487965 * c7, v);
+    }
+
+    /**
+     * This one's weird; unlike {@link #atan2_(float, float)}, it can return negative results.
+     * @param v any finite float
+     * @return between -0.25 and 0.25
+     */
+    private static float atn_(final float v) {
+        final float n = Math.abs(v);
+        final float c = (n - 1f) / (n + 1f);
+        final float c2 = c * c;
+        final float c3 = c * c2;
+        final float c5 = c3 * c2;
+        final float c7 = c5 * c2;
+        return Math.copySign(0.125f + 0.1590300064615682f * c - 0.051117687016646825f * c3 + 0.02328064394867594f * c5
+                - 0.006205912780487965f * c7, v);
+    }
+    /**
+     * Altered-range approximation of the frequently-used trigonometric method atan2, taking y and x positions as
      * doubles and returning an angle measured in turns from 0.0 to 1.0 (inclusive), with one cycle over the range
      * equivalent to 360 degrees or 2PI radians. You can multiply the angle by {@code 6.2831855f} to change to radians,
      * or by {@code 360f} to change to degrees. Takes y and x (in that unusual order) as doubles. Will never return a
      * negative number, which may help avoid costly floating-point modulus when you actually want a positive number.
-     * Credit to StackExchange user njuffa, who gave
-     * <a href="https://math.stackexchange.com/a/1105038">this useful answer</a>. Note that
-     * {@link #atan2(double, double)} returns an angle in radians and can return negative results, which may be fine for
-     * many tasks; these two methods are extremely close in implementation and speed.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This
+     * is sheet 9's algorithm, which is the second-fastest and second-least precise. The algorithm on sheet 8 is faster,
+     * but only by a very small degree, and is considerably less precise. That study provides an {@link #atan(float)}
+     * method, and the small code to make that work as atan2_() was worked out from Wikipedia.
+     * <br>
+     * Note that {@link #atan2(double, double)} returns an angle in radians and can return negative results, which may
+     * be fine for many tasks; these two methods are extremely close in implementation and speed. There are also
+     * {@link #atan2Degrees(double, double)} and {@link #atan2Degrees360(double, double)}, which provide an angle in
+     * degrees, either from -180 to 180 or 0 to 360.
      * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
      * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
      * @return the angle to the given point, as a double from 0.0 to 1.0, inclusive
      */
-    public static double atan2_(final double y, final double x)
-    {
-        if(y == 0.0 && x >= 0.0) return 0.0;
-        final double ax = Math.abs(x), ay = Math.abs(y);
-        if(ax < ay)
-        {
-            final double a = ax / ay, s = a * a,
-                    r = 0.25 - (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a) * 0.15915494309189535;
-            return (x < 0.0) ? (y < 0.0) ? 0.5 + r : 0.5 - r : (y < 0.0) ? 1.0 - r : r;
+    public static double atan2_(final double y, double x) {
+        double n = y / x;
+        if(n != n) n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if(n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if(x > 0) {
+            if(y >= 0)
+                return atn_(n);
+            else
+                return atn_(n) + 1.0;
         }
-        else {
-            final double a = ay / ax, s = a * a,
-                    r = (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a) * 0.15915494309189535;
-            return (x < 0.0) ? (y < 0.0) ? 0.5 + r : 0.5 - r : (y < 0.0) ? 1.0 - r : r;
+        else if(x < 0) {
+            return atn_(n) + 0.5;
         }
+        else if(y > 0) return x + 0.25;
+        else if(y < 0) return x + 0.75;
+        else return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
+
     /**
      * Altered-range approximation of the frequently-used trigonometric method atan2, taking y and x positions as floats
      * and returning an angle measured in turns from 0.0f to 1.0f, with one cycle over the range equivalent to 360
      * degrees or 2PI radians. You can multiply the angle by {@code 6.2831855f} to change to radians, or by {@code 360f}
      * to change to degrees. Takes y and x (in that unusual order) as floats. Will never return a negative number, which
      * may help avoid costly floating-point modulus when you actually want a positive number.
-     * Credit to StackExchange user njuffa, who gave
-     * <a href="https://math.stackexchange.com/a/1105038">this useful answer</a>. Note that
-     * {@link #atan2(float, float)} returns an angle in radians and can return negative results, which may be fine for
-     * many tasks; these two methods are extremely close in implementation and speed.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This
+     * is sheet 9's algorithm, which is the second-fastest and second-least precise. The algorithm on sheet 8 is faster,
+     * but only by a very small degree, and is considerably less precise. That study provides an {@link #atan(float)}
+     * method, and the small code to make that work as atan2_() was worked out from Wikipedia.
+     * <br>
+     * Note that {@link #atan2(float, float)} returns an angle in radians and can return negative results, which may
+     * be fine for many tasks; these two methods are extremely close in implementation and speed. There are also
+     * {@link #atan2Degrees(float, float)} and {@link #atan2Degrees360(float, float)}, which provide an angle in
+     * degrees, either from -180 to 180 or 0 to 360.
      * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
      * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
      * @return the angle to the given point, as a float from 0.0f to 1.0f, inclusive
      */
-    public static float atan2_(final float y, final float x)
-    {
-        if(y == 0.0 && x >= 0.0) return 0f;
-        final float ax = Math.abs(x), ay = Math.abs(y);
-        if(ax < ay)
-        {
-            final float a = ax / ay, s = a * a,
-                    r = 0.25f - (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a) * 0.15915494309189535f;
-            return (x < 0.0f) ? (y < 0.0f) ? 0.5f + r : 0.5f - r : (y < 0.0f) ? 1f - r : r;
+    public static float atan2_(final float y, float x) {
+        float n = y / x;
+        if(n != n) n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if(n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if(x > 0) {
+            if(y >= 0)
+                return atn_(n);
+            else
+                return atn_(n) + 1f;
         }
-        else {
-            final float a = ay / ax, s = a * a,
-                    r = (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a) * 0.15915494309189535f;
-            return (x < 0.0f) ? (y < 0.0f) ? 0.5f + r : 0.5f - r : (y < 0.0f) ? 1f - r : r;
+        else if(x < 0) {
+            return atn_(n) + 0.5f;
         }
+        else if(y > 0) return x + 0.25f;
+        else if(y < 0) return x + 0.75f;
+        else return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
     /**
-     * Arc sine approximation with very low error, based on a simplified version of {@link #atan2(double, double)}.
-     * This method is usually much faster than {@link Math#asin(double)}, but on some versions of OpenJ9 it is slower
-     * (while also being less precise than Math's implementation). Nightly builds of OpenJ9 have already fixed that
-     * performance regression, but not likely that the JDK's Math.asin() will speed up by 30x (Math.sin() has sped up,
-     * though). This method is very fast on HotSpot, and on OpenJ9 version 0.18.0 it should be fairly fast too.
-     * @param n an input to the inverse sine function, from -1 to 1 inclusive
+     * Arc tangent approximation measured in degrees, using an algorithm from the 1955 research study
+     * "Approximations for Digital Computers," by RAND Corporation (this is sheet 9's algorithm, which is the
+     * second-fastest and second-least precise). This method is usually much faster than {@link Math#atan(double)},
+     * but is somewhat less precise than Math's implementation. This implementation can return negative or positive
+     * results in degrees.
+     * @param i an input to the inverse tangent function; any double is accepted
+     * @return an output from the inverse tangent function in degrees, from -90 to 90 inclusive
+     */
+    public static double atanDegrees(final double i) {
+        final double n = Math.min(Math.abs(i), Double.MAX_VALUE);
+        final double c = (n - 1.0) / (n + 1.0);
+        final double c2 = c * c;
+        final double c3 = c * c2;
+        final double c5 = c3 * c2;
+        final double c7 = c5 * c2;
+        return Math.copySign(45.0 +
+                (57.25080271739779 * c - 18.402366944901082 * c3 + 8.381031432388337 * c5 - 2.2341286239715488 * c7), i);
+    }
+
+    /**
+     * Arc tangent approximation measured in degrees, using an algorithm from the 1955 research study
+     * "Approximations for Digital Computers," by RAND Corporation (this is sheet 9's algorithm, which is the
+     * second-fastest and second-least precise). This method is usually much faster than {@link Math#atan(double)},
+     * but is somewhat less precise than Math's implementation. This implementation can return negative or positive
+     * results in degrees.
+     * @param i an input to the inverse tangent function; any float is accepted
+     * @return an output from the inverse tangent function, from -90 to 90 inclusive
+     */
+    public static float atanDegrees(final float i) {
+        final float n = Math.min(Math.abs(i), Float.MAX_VALUE);
+        final float c = (n - 1f) / (n + 1f);
+        final float c2 = c * c;
+        final float c3 = c * c2;
+        final float c5 = c3 * c2;
+        final float c7 = c5 * c2;
+        return Math.copySign(45f +
+                (57.25080271739779f * c - 18.402366944901082f * c3 + 8.381031432388337f * c5 - 2.2341286239715488f * c7), i);
+    }
+    /**
+     * A variant on {@link #atanDegrees(double)} that does not tolerate infinite inputs, and is slightly faster.
+     * @param i any finite double
+     * @return an output from the inverse tangent function, from PI/-2.0 to PI/2.0 inclusive
+     */
+    private static double atnDegrees(final double i) {
+        final double n = Math.abs(i);
+        final double c = (n - 1.0) / (n + 1.0);
+        final double c2 = c * c;
+        final double c3 = c * c2;
+        final double c5 = c3 * c2;
+        final double c7 = c5 * c2;
+        return Math.copySign(45.0 +
+                (57.25080271739779 * c - 18.402366944901082 * c3 + 8.381031432388337 * c5 - 2.2341286239715488 * c7), i);
+    }
+    /**
+     * A variant on {@link #atan(float)} that does not tolerate infinite inputs, and is slightly faster.
+     * @param i any finite float
+     * @return an output from the inverse tangent function, from PI/-2.0 to PI/2.0 inclusive
+     */
+    private static float atnDegrees(final float i) {
+        final float n = Math.abs(i);
+        final float c = (n - 1f) / (n + 1f);
+        final float c2 = c * c;
+        final float c3 = c * c2;
+        final float c5 = c3 * c2;
+        final float c7 = c5 * c2;
+        return Math.copySign(45f +
+                (57.25080271739779f * c - 18.402366944901082f * c3 + 8.381031432388337f * c5 - 2.2341286239715488f * c7), i);
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2 measured in degrees, with higher precision
+     * than libGDX's atan2 approximation. The range for this is -180 to 180.
+     * Takes y and x (in that unusual order) as doubles, and returns the angle from the origin to that point in degrees.
+     * It is about 5 times faster than {@link Math#atan2(double, double)} (roughly 12 ns instead of roughly 62 ns for
+     * Math, on Java 8 HotSpot). It is slightly faster than libGDX' MathUtils approximation of the same method;
+     * MathUtils seems to have worse average error, as well.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This
+     * is sheet 9's algorithm, which is the second-fastest and second-least precise. The algorithm on sheet 8 is faster,
+     * but only by a very small degree, and is considerably less precise. That study provides an {@link #atan(double)}
+     * method, and the small code to make that work as atan2Degrees() was worked out from Wikipedia.
+     * <br>
+     * See also {@link #atan2_(double, double)} for a version that returns a measurement as a fraction of a turn, or
+     * {@link #atan2(double, double)} for the typical radians. You
+     * can also use {@link #atan2Degrees360(double, double)} to produce a result in degrees from 0 to 360.
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in radians as a double; ranges from -180 to 180
+     */
+    public static double atan2Degrees(final double y, double x) {
+        double n = y / x;
+        if(n != n) n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if(n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if(x > 0)
+            return atnDegrees(n);
+        else if(x < 0) {
+            if(y >= 0)
+                return atnDegrees(n) + 180.0;
+            else
+                return atnDegrees(n) - 180.0;
+        }
+        else if(y > 0) return x + 90.0;
+        else if(y < 0) return x - 90.0;
+        else return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Close approximation of the frequently-used trigonometric method atan2 measured in degrees, with higher precision
+     * than libGDX's atan2 approximation. The range for this is -180 to 180.
+     * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in degrees.
+     * It is about 5 times faster than {@link Math#atan2(double, double)} (roughly 12 ns instead of roughly 62 ns for
+     * Math, on Java 8 HotSpot). It is slightly faster than libGDX' MathUtils approximation of the same method;
+     * MathUtils seems to have worse average error, as well.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This
+     * is sheet 9's algorithm, which is the second-fastest and second-least precise. The algorithm on sheet 8 is faster,
+     * but only by a very small degree, and is considerably less precise. That study provides an {@link #atan(float)}
+     * method, and the small code to make that work as atan2Degrees() was worked out from Wikipedia.
+     * <br>
+     * See also {@link #atan2_(float, float)} for a version that returns a measurement as a fraction of a turn, or
+     * {@link #atan2(float, float)} for the typical radians. You
+     * can also use {@link #atan2Degrees360(float, float)} to produce a result in degrees from 0 to 360.
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, in radians as a float; ranges from -180 to 180
+     */
+    public static float atan2Degrees(final float y, float x) {
+        float n = y / x;
+        if(n != n) n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if(n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if(x > 0)
+            return atnDegrees(n);
+        else if(x < 0) {
+            if(y >= 0)
+                return atnDegrees(n) + 180f;
+            else
+                return atnDegrees(n) - 180f;
+        }
+        else if(y > 0) return x + 90f;
+        else if(y < 0) return x - 90f;
+        else return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * This one's weird; unlike {@link #atan2Degrees360(double, double)}, it can return negative results.
+     * @param v any finite double
+     * @return between -90 and 90
+     */
+    private static double atnDegrees360(final double v) {
+        final double n = Math.abs(v);
+        final double c = (n - 1.0) / (n + 1.0);
+        final double c2 = c * c;
+        final double c3 = c * c2;
+        final double c5 = c3 * c2;
+        final double c7 = c5 * c2;
+        return Math.copySign(45.0 + 57.25080232616455 * c - 18.402367325992856 * c3
+                + 8.381031821523338 * c5 - 2.2341286009756676 * c7, v);
+    }
+
+    /**
+     * This one's weird; unlike {@link #atan2Degrees360(float, float)}, it can return negative results.
+     * @param v any finite float
+     * @return between -90 and 90
+     */
+    private static float atnDegrees360(final float v) {
+        final float n = Math.abs(v);
+        final float c = (n - 1f) / (n + 1f);
+        final float c2 = c * c;
+        final float c3 = c * c2;
+        final float c5 = c3 * c2;
+        final float c7 = c5 * c2;
+        return Math.copySign(45f + 57.25080232616455f * c - 18.402367325992856f * c3
+                + 8.381031821523338f * c5 - 2.2341286009756676f * c7, v);
+    }
+    /**
+     * Altered-range approximation of the frequently-used trigonometric method atan2, taking y and x positions as
+     * doubles and returning an angle measured in turns from 0.0 to 360.0 (inclusive), with one cycle over the range
+     * equivalent to 2PI radians or 1 turn. Takes y and x (in that unusual order) as doubles. Will never return a
+     * negative number, which may help avoid costly floating-point modulus when you actually want a positive number.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This
+     * is sheet 9's algorithm, which is the second-fastest and second-least precise. The algorithm on sheet 8 is faster,
+     * but only by a very small degree, and is considerably less precise. That study provides an {@link #atan(double)}
+     * method, and the small code to make that work as atan2Degrees360() was worked out from Wikipedia.
+     * <br>
+     * See also {@link #atan2_(double, double)} for a version that returns a measurement as a fraction of a turn, or
+     * {@link #atan2(double, double)} for the typical radians. You
+     * can also use {@link #atan2Degrees(double, double)} to produce a result in degrees from -180 to 180.
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, as a double from 0.0 to 360.0, inclusive
+     */
+    public static double atan2Degrees360(final double y, double x) {
+        double n = y / x;
+        if(n != n) n = (y == x ? 1.0 : -1.0); // if both y and x are infinite, n would be NaN
+        else if(n - n != n - n) x = 0.0; // if n is infinite, y is infinitely larger than x.
+        if(x > 0) {
+            if(y >= 0)
+                return atnDegrees360(n);
+            else
+                return atnDegrees360(n) + 360.0;
+        }
+        else if(x < 0) {
+            return atnDegrees360(n) + 180.0;
+        }
+        else if(y > 0) return x + 90.0;
+        else if(y < 0) return x + 270.0;
+        else return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+    /**
+     * Altered-range approximation of the frequently-used trigonometric method atan2, taking y and x positions as
+     * floats and returning an angle measured in turns from 0.0 to 360.0 (inclusive), with one cycle over the range
+     * equivalent to 2PI radians or 1 turn. Takes y and x (in that unusual order) as floats. Will never return a
+     * negative number, which may help avoid costly floating-point modulus when you actually want a positive number.
+     * <br>
+     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This
+     * is sheet 9's algorithm, which is the second-fastest and second-least precise. The algorithm on sheet 8 is faster,
+     * but only by a very small degree, and is considerably less precise. That study provides an {@link #atan(float)}
+     * method, and the small code to make that work as atan2Degrees360() was worked out from Wikipedia.
+     * <br>
+     * See also {@link #atan2_(float, float)} for a version that returns a measurement as a fraction of a turn, or
+     * {@link #atan2(float, float)} for the typical radians. You
+     * can also use {@link #atan2Degrees(float, float)} to produce a result in degrees from -180 to 180.
+     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
+     * @return the angle to the given point, as a float from 0.0 to 360.0, inclusive
+     */
+    public static float atan2Degrees360(final float y, float x) {
+        float n = y / x;
+        if(n != n) n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
+        else if(n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
+        if(x > 0) {
+            if(y >= 0)
+                return atnDegrees360(n);
+            else
+                return atnDegrees360(n) + 360f;
+        }
+        else if(x < 0) {
+            return atnDegrees360(n) + 180f;
+        }
+        else if(y > 0) return x + 90f;
+        else if(y < 0) return x + 270f;
+        else return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
+    }
+
+
+    /**
+     * Arc sine approximation with very low error, using an algorithm from the 1955 research study
+     * "Approximations for Digital Computers," by RAND Corporation (this is sheet 35's algorithm, which is the fastest
+     * and least precise). This method is usually much faster than {@link Math#asin(double)}, but is somewhat less
+     * precise than Math's implementation. It is currently the same as libGDX's approximation in their MathUtils.
+     * @param x an input to the inverse sine function, from -1 to 1 inclusive
      * @return an output from the inverse sine function, from PI/-2.0 to PI/2.0 inclusive.
      */
-    public static float asin(final float n)
-    {
-        final float ax = (float) Math.sqrt(1f - n * n), ay = Math.abs(n);
-        if(ax < ay)
-        {
-            final float a = ax / ay, s = a * a,
-                    r = 1.57079637f - (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a);
-            return (n < 0f) ? -r : r;
+    public static float asin(final float x) {
+        final float x2 = x * x;
+        final float x3 = x * x2;
+        if (x >= 0f) {
+            return 1.5707963267948966f - (float) Math.sqrt(1f - x) *
+                    (1.5707288f - 0.2121144f * x + 0.0742610f * x2 - 0.0187293f * x3);
         }
         else {
-            final float a = ay / ax, s = a * a,
-                    r = (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a);
-            return (n < 0f) ? -r : r;
+            return -1.5707964f + (float) Math.sqrt(1f + x) *
+                    (1.5707288f + 0.2121144f * x + 0.0742610f * x2 + 0.0187293f * x3);
         }
     }
-    
     /**
-     * Arc sine approximation with very low error, based on a simplified version of {@link #atan2(float, float)}.
-     * This method is usually much faster than {@link Math#asin(double)}, but on some versions of OpenJ9 it is slower
-     * (while also being less precise than Math's implementation). Nightly builds of OpenJ9 have already fixed that
-     * performance regression, but not likely that the JDK's Math.asin() will speed up by 30x (Math.sin() has sped up,
-     * though). This method is very fast on HotSpot, and on OpenJ9 version 0.18.0 it should be fairly fast too.
-     * @param n an input to the inverse sine function, from -1 to 1 inclusive
+     * Arc cosine approximation with very low error, using an algorithm from the 1955 research study
+     * "Approximations for Digital Computers," by RAND Corporation (this is sheet 35's algorithm, which is the fastest
+     * and least precise). This method is usually much faster than {@link Math#acos(double)}, but is somewhat less
+     * precise than Math's implementation. It is currently the same as libGDX's approximation in their MathUtils.
+     * <br>
+     * Accuracy: absolute error 0.000028450, relative error -0.000000011, max error 0.000067548 .
+     * @param x an input to the inverse cosine function, from -1 to 1 inclusive
+     * @return an output from the inverse cosine function, from 0 to PI inclusive.
+     */
+    public static float acos(final float x) {
+        final float x2 = x * x;
+        final float x3 = x * x2;
+        if (x >= 0f) {
+            return (float) Math.sqrt(1f - x) * (1.5707288f - 0.2121144f * x + 0.0742610f * x2 - 0.0187293f * x3);
+        }
+        else {
+            return 3.14159265358979323846f - (float) Math.sqrt(1f + x) * (1.5707288f + 0.2121144f * x + 0.0742610f * x2 + 0.0187293f * x3);
+        }
+    }
+
+    /**
+     * Arc sine approximation with very low error, using an algorithm from the 1955 research study
+     * "Approximations for Digital Computers," by RAND Corporation (this is sheet 35's algorithm, which is the fastest
+     * and least precise). This method is usually much faster than {@link Math#asin(double)}, but is somewhat less
+     * precise than Math's implementation. It is currently the same as libGDX's approximation in their MathUtils, except
+     * that this takes a double and returns a double.
+     * <br>
+     * Accuracy: absolute error 0.000028447, relative error -0.000000033, max error 0.000067592 .
+     * @param x an input to the inverse sine function, from -1 to 1 inclusive
      * @return an output from the inverse sine function, from PI/-2.0 to PI/2.0 inclusive.
      */
-    public static double asin(final double n)
-    {
-        final double ax = Math.sqrt(1.0 - n * n), ay = Math.abs(n);
-        if(ax < ay)
-        {
-            final double a = ax / ay, s = a * a,
-                    r = 1.57079637 - (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a);
-            return (n < 0.0) ? -r : r;
+    public static double asin(final double x) {
+        final double x2 = x * x;
+        final double x3 = x * x2;
+        if (x >= 0.0) {
+            return 1.5707963267948966 - Math.sqrt(1.0 - x) *
+                    (1.5707288 - 0.2121144 * x + 0.0742610 * x2 - 0.0187293 * x3);
         }
         else {
-            final double a = ay / ax, s = a * a,
-                    r = (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a);
-            return (n < 0.0) ? -r : r;
+            return -1.5707963267948966 + Math.sqrt(1.0 + x) *
+                    (1.5707288 + 0.2121144 * x + 0.0742610 * x2 + 0.0187293 * x3);
         }
     }
     /**
-     * Arc cosine approximation with very low error, based on a simplified version of {@link #atan2(double, double)}.
-     * This method is usually much faster than {@link Math#acos(double)}, but on some versions of OpenJ9 it is slower
-     * (while also being less precise than Math's implementation). Nightly builds of OpenJ9 have already fixed that
-     * performance regression, but not likely that the JDK's Math.acos() will speed up by 30x (Math.cos() has sped up,
-     * though). This method is very fast on HotSpot, and on OpenJ9 version 0.18.0 it should be fairly fast too.
-     * @param n an input to the inverse cosine function, from -1 to 1 inclusive
+     * Arc cosine approximation with very low error, using an algorithm from the 1955 research study
+     * "Approximations for Digital Computers," by RAND Corporation (this is sheet 35's algorithm, which is the fastest
+     * and least precise). This method is usually much faster than {@link Math#acos(double)}, but is somewhat less
+     * precise than Math's implementation. It is currently the same as libGDX's approximation in their MathUtils, except
+     * that this takes a double and returns a double.
+     * <br>
+     * Accuracy: absolute error 0.000028450, relative error -0.000000011, max error 0.000067548 .
+     * @param x an input to the inverse cosine function, from -1 to 1 inclusive
      * @return an output from the inverse cosine function, from 0 to PI inclusive.
      */
-    public static double acos(final double n)
-    {
-        final double ax = Math.abs(n), ay = Math.sqrt(1.0 - n * n);
-        if(ax < ay)
-        {
-            final double a = ax / ay, s = a * a,
-                    r = 1.57079637 - (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a);
-            return (n < 0.0) ? Math.PI - r : r;
+    public static double acos(final double x) {
+        final double x2 = x * x;
+        final double x3 = x * x2;
+        if (x >= 0.0) {
+            return Math.sqrt(1.0 - x) * (1.5707288 - 0.2121144 * x + 0.0742610 * x2 - 0.0187293 * x3);
         }
         else {
-            final double a = ay / ax, s = a * a,
-                    r = (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a);
-            return (n < 0.0) ? Math.PI - r : r;
+            return 3.14159265358979323846 - Math.sqrt(1.0 + x) * (1.5707288 + 0.2121144 * x + 0.0742610 * x2 + 0.0187293 * x3);
         }
     }
-
-    /**
-     * Arc cosine approximation with very low error, based on a simplified version of {@link #atan2(float, float)}.
-     * This method is usually much faster than {@link Math#acos(double)}, but on some versions of OpenJ9 it is slower
-     * (while also being less precise than Math's implementation). Nightly builds of OpenJ9 have already fixed that
-     * performance regression, but not likely that the JDK's Math.acos() will speed up by 30x (Math.cos() has sped up,
-     * though). This method is very fast on HotSpot, and on OpenJ9 version 0.18.0 it should be fairly fast too.
-     * @param n an input to the inverse cosine function, from -1 to 1 inclusive
-     * @return an output from the inverse cosine function, from 0 to PI inclusive.
-     */
-    public static float acos(final float n)
-    {
-        final float ax = Math.abs(n), ay = (float) Math.sqrt(1f - n * n);
-        if(ax < ay)
-        {
-            final float a = ax / ay, s = a * a,
-                    r = 1.57079637f - (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a);
-            return (n < 0f) ? 3.14159265358979323846f - r : r;
-        }
-        else {
-            final float a = ay / ax, s = a * a,
-                    r = (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a);
-            return (n < 0.0) ? 3.14159265358979323846f - r : r;
-        }
-    }
-
     /**
      * Inverse sine function (arcsine) but with output measured in turns instead of radians. Possible results for this
      * range from 0.75 (inclusive) to 1.0 (exclusive), and continuing past that to 0.0 (inclusive) to 0.25 (inclusive).
      * <br>
-     * This method is extremely similar to the non-turn approximation.
-     * @param n a double from -1.0 to 1.0 (both inclusive), usually the output of sin_() or cos_()
+     * This method is extremely similar to the non-turn approximation, but it never returns a negative result.
+     * @param x a double from -1.0 to 1.0 (both inclusive), usually the output of sin_() or cos_()
      * @return one of the values that would produce {@code n} if it were passed to {@link #sin_(double)}
      */
-    public static double asin_(final double n)
+    public static double asin_(final double x)
     {
-        if(n == 0.0) return 0.0;
-        final double ax = Math.sqrt(1.0 - n * n), ay = Math.abs(n);
-        if(ax < ay)
-        {
-            final double a = ax / ay, s = a * a,
-                    r = 0.25 - (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a) * 0.15915494309189535;
-            return (n < 0.0) ? 1.0 - r : r;
+        final double x2 = x * x;
+        final double x3 = x * x2;
+        if (x >= 0.0) {
+            return 0.25 - Math.sqrt(1.0 - x) *
+                    (0.24998925277680106 - 0.033759055260971525 * x + 0.01181900522894724 * x2 - 0.0029808606756510357 * x3);
         }
         else {
-            final double a = ay / ax, s = a * a,
-                    r = (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a) * 0.15915494309189535;
-            return (n < 0.0) ? 1.0 - r : r;
+            return 0.75 + Math.sqrt(1.0 + x) *
+                    (0.24998925277680106 + 0.033759055260971525 * x + 0.01181900522894724 * x2 + 0.0029808606756510357 * x3);
         }
     }
     /**
@@ -628,22 +969,18 @@ if y < 0 then r := -r
      * range from 0.0 (inclusive) to 0.5 (inclusive).
      * <br>
      * This method is extremely similar to the non-turn approximation.
-     * @param n a double from -1.0 to 1.0 (both inclusive), usually the output of sin_() or cos_()
+     * @param x a double from -1.0 to 1.0 (both inclusive), usually the output of sin_() or cos_()
      * @return one of the values that would produce {@code n} if it were passed to {@link #cos_(double)}
      */
-    public static double acos_(final double n)
+    public static double acos_(final double x)
     {
-        final double ax = Math.abs(n), ay = Math.sqrt(1.0 - n * n);
-        if(ax < ay)
-        {
-            final double a = ax / ay, s = a * a,
-                    r = 0.25 - (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a) * 0.15915494309189535;
-            return (n < 0.0) ? 0.5 - r : r;
+        final double x2 = x * x;
+        final double x3 = x * x2;
+        if (x >= 0.0) {
+            return Math.sqrt(1.0 - x) * (0.24998925277680106 - 0.033759055260971525 * x + 0.01181900522894724 * x2 - 0.0029808606756510357 * x3);
         }
         else {
-            final double a = ay / ax, s = a * a,
-                    r = (((-0.0464964749 * s + 0.15931422) * s - 0.327622764) * s * a + a) * 0.15915494309189535;
-            return (n < 0.0) ? 0.5 - r : r;
+            return 0.5 - Math.sqrt(1.0 + x) * (0.24998925277680106 + 0.033759055260971525 * x + 0.01181900522894724 * x2 + 0.0029808606756510357 * x3);
         }
     }
 
@@ -653,24 +990,21 @@ if y < 0 then r := -r
      * range from 0.75f (inclusive) to 1.0f (exclusive), and continuing past that to 0.0f (inclusive) to 0.25f
      * (inclusive).
      * <br>
-     * This method is extremely similar to the non-turn approximation.
-     * @param n a float from -1.0f to 1.0f (both inclusive), usually the output of sin_() or cos_()
+     * This method is extremely similar to the non-turn approximation, but it never returns a negative result.
+     * @param x a float from -1.0f to 1.0f (both inclusive), usually the output of sin_() or cos_()
      * @return one of the values that would produce {@code n} if it were passed to {@link #sin_(float)}
      */
-    public static float asin_(final float n)
+    public static float asin_(final float x)
     {
-        if(n == 0.0f) return 0.0f;
-        final float ax = (float) Math.sqrt(1f - n * n), ay = Math.abs(n);
-        if(ax < ay)
-        {
-            final float a = ax / ay, s = a * a,
-                    r = 0.25f - (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a) * 0.15915494309189535f;
-            return (n < 0.0f) ? 1.0f - r : r;
+        final float x2 = x * x;
+        final float x3 = x * x2;
+        if (x >= 0f) {
+            return 0.25f - (float) Math.sqrt(1f - x) *
+                    (0.24998925277680106f - 0.033759055260971525f * x + 0.01181900522894724f * x2 - 0.0029808606756510357f * x3);
         }
         else {
-            final float a = ay / ax, s = a * a,
-                    r = (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a) * 0.15915494309189535f;
-            return (n < 0.0f) ? 1.0f - r : r;
+            return 0.75f + (float) Math.sqrt(1f + x) *
+                    (0.24998925277680106f + 0.033759055260971525f * x + 0.01181900522894724f * x2 + 0.0029808606756510357f * x3);
         }
     }
     /**
@@ -678,22 +1012,18 @@ if y < 0 then r := -r
      * range from 0.0f (inclusive) to 0.5f (inclusive).
      * <br>
      * This method is extremely similar to the non-turn approximation.
-     * @param n a float from -1.0f to 1.0f (both inclusive), usually the output of sin_() or cos_()
+     * @param x a float from -1.0f to 1.0f (both inclusive), usually the output of sin_() or cos_()
      * @return one of the values that would produce {@code n} if it were passed to {@link #cos_(float)}
      */
-    public static float acos_(final float n)
+    public static float acos_(final float x)
     {
-        final float ax = Math.abs(n), ay = (float) Math.sqrt(1f - n * n);
-        if(ax < ay)
-        {
-            final float a = ax / ay, s = a * a,
-                    r = 0.25f - (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a) * 0.15915494309189535f;
-            return (n < 0.0f) ? 0.5f - r : r;
+        final float x2 = x * x;
+        final float x3 = x * x2;
+        if (x >= 0f) {
+            return (float) Math.sqrt(1f - x) * (0.24998925277680106f - 0.033759055260971525f * x + 0.01181900522894724f * x2 - 0.0029808606756510357f * x3);
         }
         else {
-            final float a = ay / ax, s = a * a,
-                    r = (((-0.0464964749f * s + 0.15931422f) * s - 0.327622764f) * s * a + a) * 0.15915494309189535f;
-            return (n < 0.0f) ? 0.5f - r : r;
+            return 0.5f - (float) Math.sqrt(1f + x) * (0.24998925277680106f + 0.033759055260971525f * x + 0.01181900522894724f * x2 + 0.0029808606756510357f * x3);
         }
     }
 
