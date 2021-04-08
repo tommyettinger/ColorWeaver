@@ -135,6 +135,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                     pm.drawPixmap(sam, 0, 0);
                     pm = reducer.reduceKnoll(pm);
                     png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
+////unknown
+                    pm.drawPixmap(sam, 0, 0);
+                    pm = reducer.reduceKnollBlue(pm);
+                    png8.writePrecisely(Gdx.files.local(subname + "_KB" + suffix + ".png"), pm, PALETTE, false, 0);
 ////great
                     pm.drawPixmap(sam, 0, 0);
                     pm = reducer.reduceKnollRoberts(pm);
@@ -177,6 +181,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                     pm.drawPixmap(sam, 0, 0);
                     pm = reducer.reduceKnoll(pm);
                     png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
+////unknown
+                    pm.drawPixmap(sam, 0, 0);
+                    pm = reducer.reduceKnollBlue(pm);
+                    png8.writePrecisely(Gdx.files.local(subname + "_KB" + suffix + ".png"), pm, PALETTE, false, 0);
 ////great
                     pm.drawPixmap(sam, 0, 0);
                     pm = reducer.reduceKnollRoberts(pm);
@@ -219,6 +227,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                     pm.drawPixmap(sam, 0, 0);
                     pm = reducer.reduceKnoll(pm);
                     png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
+////unknown
+                    pm.drawPixmap(sam, 0, 0);
+                    pm = reducer.reduceKnollBlue(pm);
+                    png8.writePrecisely(Gdx.files.local(subname + "_KB" + suffix + ".png"), pm, PALETTE, false, 0);
 ////great
                     pm.drawPixmap(sam, 0, 0);
                     pm = reducer.reduceKnollRoberts(pm);
@@ -261,6 +273,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                     pm.drawPixmap(sam, 0, 0);
                     pm = reducer.reduceKnoll(pm);
                     png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
+////unknown
+                    pm.drawPixmap(sam, 0, 0);
+                    pm = reducer.reduceKnollBlue(pm);
+                    png8.writePrecisely(Gdx.files.local(subname + "_KB" + suffix + ".png"), pm, PALETTE, false, 0);
 ////great
                     pm.drawPixmap(sam, 0, 0);
                     pm = reducer.reduceKnollRoberts(pm);
@@ -303,6 +319,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                     pm.drawPixmap(sam, 0, 0);
                     pm = reducer.reduceKnoll(pm);
                     png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
+////unknown
+                    pm.drawPixmap(sam, 0, 0);
+                    pm = reducer.reduceKnollBlue(pm);
+                    png8.writePrecisely(Gdx.files.local(subname + "_KB" + suffix + ".png"), pm, PALETTE, false, 0);
 ////great
                     pm.drawPixmap(sam, 0, 0);
                     pm = reducer.reduceKnollRoberts(pm);
