@@ -21,10 +21,9 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
     }
 
     public void create() {
-        PaletteReducer reducer = new PaletteReducer(Coloring.HALTONITE240, PaletteReducer.oklabMetric);
-        generatePreloadCode(reducer.paletteMapping, "HaltonitePreload.txt");
+        PaletteReducer reducer = new PaletteReducer(Coloring.HALTONIC255, PaletteReducer.oklabMetric);
+        generatePreloadCode(reducer.paletteMapping, "HaltonicPreload.txt");
 //        generatePreloadCode(Gdx.files.internal("OklabGamut.dat").readBytes(), "OklabGamut.txt");
-//        generatePreloadCode(Gdx.files.local("haltonic.txt").readBytes(), "HaltonicPreload.txt");
         Gdx.app.exit();
     }
     /**
