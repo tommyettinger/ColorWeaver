@@ -40,6 +40,20 @@ public class BlueNoiseOther extends ApplicationAdapter {
     }
     public byte[][] bytes;
     public void create() {
+        for (int n = 0; n < 16; n++) {
+            Pixmap pix = new Pixmap(Gdx.files.internal("BlueWangTile_" + n + ".png"));
+            ByteBuffer buf = pix.getPixels();
+            final int len = pix.getWidth() * pix.getHeight();
+            byte[] brights = new byte[len];
+            for (int i = 0; i < len; i++) {
+                brights[i] = buf.get(i);
+                brights[i] += -128;
+            }
+            generatePreloadCode(brights, "BlueNoiseWangTile.txt");
+        }
+        Gdx.app.exit();
+    }
+    public void createOldTri() {
         for (int n = 0; n < 64; n++) {
             Pixmap pix = new Pixmap(Gdx.files.internal("BlueTri64_" + n + ".png"));
             ByteBuffer l3a1 = pix.getPixels();

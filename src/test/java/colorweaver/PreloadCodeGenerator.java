@@ -108,7 +108,7 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
             } 
         }
         sb.append("\".getBytes(StandardCharsets.ISO_8859_1);\n");
-        Gdx.files.local(filename).writeString(sb.toString(), false, "ISO-8859-1");
+        Gdx.files.local(filename).writeString(sb.toString(), true, "ISO-8859-1");
         System.out.println("Wrote code snippet to " + filename);
     }
 }
