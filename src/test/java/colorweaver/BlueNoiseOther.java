@@ -41,7 +41,7 @@ public class BlueNoiseOther extends ApplicationAdapter {
     public byte[][] bytes;
     public void create() {
         for (int n = 0; n < 64; n++) {
-            Pixmap pix = new Pixmap(Gdx.files.internal("BlueOmniTileMore_" + n + ".png"));
+            Pixmap pix = new Pixmap(Gdx.files.internal("BlueOmniTri_" + n + ".png"));
             ByteBuffer buf = pix.getPixels();
             final int len = pix.getWidth() * pix.getHeight();
             byte[] brights = new byte[len];
@@ -49,7 +49,7 @@ public class BlueNoiseOther extends ApplicationAdapter {
                 brights[i] = buf.get(i);
                 brights[i] += -128;
             }
-            generatePreloadCode(brights, "BlueNoiseOmniTile.txt");
+            generatePreloadCode(brights, "BlueNoiseOmniTri.txt");
         }
         Gdx.app.exit();
     }
