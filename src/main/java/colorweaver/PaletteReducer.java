@@ -582,6 +582,40 @@ public class PaletteReducer {
         }
     };
 
+    public static final ColorMetric oklabSlowMetric = new ColorMetric(){
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            double l = Math.cbrt(0.4121656120 * r1 + 0.5362752080 * g1 + 0.0514575653 * b1);
+            double m = Math.cbrt(0.2118591070 * r1 + 0.6807189584 * g1 + 0.1074065790 * b1);
+            double s = Math.cbrt(0.0883097947 * r1 + 0.2818474174 * g1 + 0.6302613616 * b1);
+
+            double L1 = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+            double A1 = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+            double B1 = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+
+            l = Math.cbrt(0.4121656120 * r2 + 0.5362752080 * g2 + 0.0514575653 * b2);
+            m = Math.cbrt(0.2118591070 * r2 + 0.6807189584 * g2 + 0.1074065790 * b2);
+            s = Math.cbrt(0.0883097947 * r2 + 0.2818474174 * g2 + 0.6302613616 * b2);
+
+            double L2 = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+            double A2 = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+            double B2 = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+
+            double L = L1 - L2, A = A1 - A2, B = B1 - B2;
+
+            return (L * L + A * A + B * B) * 0x1p+13;
+        }
+    };
+
     private static final double[] RGB_POWERS = new double[3 << 8];
     static {
         for (int i = 1; i < 256; i++) {
