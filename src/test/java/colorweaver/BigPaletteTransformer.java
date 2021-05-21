@@ -5,10 +5,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -118,7 +116,7 @@ public class BigPaletteTransformer extends ApplicationAdapter {
                         bb = (b << 2 | b >>> 4);
                         dist = 0x1e256;
                         for (int i = 1; i < plen; i++) {
-                            if (dist > (dist = Math.min(dist, PaletteReducer.oklabSlowMetric.difference(PALETTE[i], rr, gg, bb))))
+                            if (dist > (dist = Math.min(dist, PaletteReducer.oklabCarefulMetric.difference(PALETTE[i], rr, gg, bb))))
                                 paletteMapping[c2] = (short) i;
                         }
                     }

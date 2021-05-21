@@ -582,7 +582,7 @@ public class PaletteReducer {
         }
     };
 
-    public static final ColorMetric oklabSlowMetric = new ColorMetric(){
+    public static final ColorMetric oklabCarefulMetric = new ColorMetric(){
         public double difference(int color1, int color2) {
             if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
             return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
