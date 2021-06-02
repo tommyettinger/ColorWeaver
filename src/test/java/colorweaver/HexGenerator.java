@@ -15,7 +15,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "dogette-63";
+    public static final String NAME = "huckle-63";
     
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -402,9 +402,32 @@ public class HexGenerator extends ApplicationAdapter {
 //                0xBAD3F8FF, 0x00C3D4FF, 0x170041FF, 0x3CC678FF, 0x004973FF, 0xCCA1E8FF, 0xFF0060FF, 0x84C8BDFF,
 //        };
 
+        int[] huckle =
+                {
+                        0x00000000, 0x000000FF, 0xFFFFFFFF, 0x888888FF, 0x444444FF, 0xCCCCCCFF, 0x222222FF, 0xAAAAAAFF,
+                        0x666666FF, 0xEEEEEEFF, 0xC020ACFF, 0x35955EFF, 0xFAA7CFFF, 0x8835D9FF, 0x3E51D9FF, 0x272FE2FF,
+                        0xB481D4FF, 0x009512FF, 0x806CCFFF, 0x723BA7FF, 0x8D2969FF, 0xED3BEEFF, 0x5DF67BFF, 0xCDB080FF,
+                        0x3E518BFF, 0xA0911FFF, 0x61FCE3FF, 0x172E78FF, 0x99F166FF, 0x766E19FF, 0x4AB7F1FF, 0x47EFADFF,
+                        0xC5574BFF, 0x9CF0D4FF, 0x84E2A3FF, 0x829651FF, 0x5CC162FF, 0x560C1DFF, 0xE05097FF, 0xD1D94DFF,
+                        0xFEEFA8FF, 0xD78B22FF, 0x93BFEBFF, 0xFB906DFF, 0x0032ABFF, 0xA03133FF, 0x97C824FF, 0xEF3466FF,
+                        0x359AAEFF, 0x54BC99FF, 0x5AF536FF, 0x050B50FF, 0x367D22FF, 0xFB75F5FF, 0xF0C41BFF, 0x5C1B80FF,
+                        0x19DE54FF, 0xCDFD90FF, 0x74A2BFFF, 0x1F6CFFFF, 0x00ECFFFF, 0xC9A7F9FF, 0xFF0000FF, 0xA65979FF,
+                }
+//                {
+//                0x00000000, 0x000000FF, 0xFFFFFFFF, 0x888888FF, 0x444444FF, 0xCCCCCCFF, 0x222222FF, 0xAAAAAAFF,
+//                0x666666FF, 0xEEEEEEFF, 0x59B2C2FF, 0x7E2722FF, 0x50AA64FF, 0xC66FEDFF, 0x835EF6FF, 0x7B1CCAFF,
+//                0x8D91DBFF, 0x598318FF, 0x4F32AEFF, 0xDAAC65FF, 0xAFB274FF, 0x8EC7FEFF, 0xDD7D43FF, 0x121E98FF,
+//                0xE03C36FF, 0x72F9D5FF, 0x59EC91FF, 0xA86761FF, 0x00CC3CFF, 0x177961FF, 0x547CEBFF, 0x89337BFF,
+//                0x5678ABFF, 0x6962BEFF, 0x1FE3C9FF, 0xEA3FCEFF, 0xF9FAAEFF, 0xEFDC9FFF, 0x819642FF, 0x3E00BDFF,
+//                0xFF80FEFF, 0xA960BDFF, 0xD2E86AFF, 0x1E52C0FF, 0x186094FF, 0x691052FF, 0x00FF00FF, 0x1C135EFF,
+//                0x2C9B97FF, 0xF0CE35FF, 0x32A8F3FF, 0xD64C6FFF, 0x00FF8EFF, 0xBAFCE3FF, 0xA9F0A5FF, 0xEF92C3FF,
+//                0xB7BA3BFF, 0xFF00E6FF, 0x4439E5FF, 0x268800FF, 0xFF00A8FF, 0x57E13EFF, 0xB54113FF, 0x2800FFFF,
+//        }
+                ;
+
 
         palette =
-                dogette;
+                huckle;
 //                Coloring.HALTONIC255;
 //                new int[]
 //                { // halturvy
