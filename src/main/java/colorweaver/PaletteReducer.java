@@ -2331,6 +2331,11 @@ public class PaletteReducer {
             10,  6,   9,   5,
     };
 
+    static final int[] thresholdVector9 = {
+            8, 2, 6, 5, 0, 4, 1, 7, 3
+    };
+
+
     private final int[] candidates = new int[16];
 
     /**
@@ -2375,6 +2380,38 @@ public class PaletteReducer {
         compareSwap(i8, 2, 4);
         compareSwap(i8, 3, 5);
         compareSwap(i8, 3, 4);
+    }
+
+    /**
+     * Sorting network, found by http://pages.ripco.net/~jgamble/nw.html , considered the best known for length 9.
+     * @param i9 a 9-or-more-element array that will be sorted in-place by {@link #compareSwap(int[], int, int)}
+     */
+    void sort9(final int[] i9) {
+        compareSwap(i9, 0, 1);
+        compareSwap(i9, 3, 4);
+        compareSwap(i9, 6, 7);
+        compareSwap(i9, 1, 2);
+        compareSwap(i9, 4, 5);
+        compareSwap(i9, 7, 8);
+        compareSwap(i9, 0, 1);
+        compareSwap(i9, 3, 4);
+        compareSwap(i9, 6, 7);
+        compareSwap(i9, 0, 3);
+        compareSwap(i9, 3, 6);
+        compareSwap(i9, 0, 3);
+        compareSwap(i9, 1, 4);
+        compareSwap(i9, 4, 7);
+        compareSwap(i9, 1, 4);
+        compareSwap(i9, 2, 5);
+        compareSwap(i9, 5, 8);
+        compareSwap(i9, 2, 5);
+        compareSwap(i9, 1, 3);
+        compareSwap(i9, 5, 7);
+        compareSwap(i9, 2, 6);
+        compareSwap(i9, 4, 6);
+        compareSwap(i9, 2, 4);
+        compareSwap(i9, 2, 3);
+        compareSwap(i9, 5, 6);
     }
 
     /**
@@ -2558,7 +2595,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, usedIndex;
         float cr, cg, cb;
-        final float errorMul = (float) (ditherStrength * populationBias);
+        final float errorMul = (float) (ditherStrength * populationBias * 0.25);
         computePaletteGamma();
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
@@ -2566,15 +2603,10 @@ public class PaletteReducer {
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    final float tri = TRI_BLUE_NOISE_MULTIPLIERS_SMALL[(px & 63) | ((y << 6) & 0xFC0)];
-//                    final int blueByte = TRI_BLUE_NOISE[(px & 63) | ((y << 6) & 0xFC0)] + 128;
-//                    int er = TRI_BLUE_NOISE[(px + 21 & 63) | ((y << 6) & 0xFC0)] >> 2,
-//                            eg = TRI_BLUE_NOISE[(px + 23 & 63) | ((y + 19 << 6) & 0xFC0)] >> 2,
-//                            eb = TRI_BLUE_NOISE[(px & 63) | ((y + 29 << 6) & 0xFC0)] >> 2;
-                    float er = 0, eg = 0, eb = 0;
-                    cr = (color >>> 24) * tri;
-                    cg = (color >>> 16 & 0xFF) * tri;
-                    cb = (color >>> 8 & 0xFF) * tri;
+                    int er = 0, eg = 0, eb = 0;
+                    cr = (color >>> 24);
+                    cg = (color >>> 16 & 0xFF);
+                    cb = (color >>> 8 & 0xFF);
                     for (int i = 0; i < 16; i++) {
                         int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
                         int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
@@ -2588,7 +2620,11 @@ public class PaletteReducer {
                         eb += cb - (used >>> 8 & 0xFF);
                     }
                     sort16(candidates);
-                    pixmap.drawPixel(px, y, candidates[(thresholdMatrix[((px & 3) | (y & 3) << 2)])]);
+                    int bn = RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128;
+//                    pixmap.drawPixel(px, y, candidates[RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128 >>> 5]);
+//                    pixmap.drawPixel(px, y, candidates[(int)Math.sqrt(RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128)]);
+                    pixmap.drawPixel(px, y, candidates[bn >>> 4 ^ (bn & 3)]);
+//                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[((px & 3) | (y & 3) << 2)]]);
                 }
             }
         }

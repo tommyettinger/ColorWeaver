@@ -15,8 +15,8 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "haeckel-255";
-    
+    public static final String NAME = "hardcmyk-4";
+
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle(".hex Palette Generator");
@@ -493,9 +493,10 @@ public class HexGenerator extends ApplicationAdapter {
                         0x4CC6FFFF, 0x1C66FFFF, 0xFEA654FF, 0x05791CFF, 0x07A423FF, 0x23FC2AFF, 0xA6F171FF, 0x776410FF,
                 }
                 ;
-
+        int[] hardRGB = {0x00000000, 0x000000FF, 0xFF0000FF, 0x00FF00FF, 0x0000FFFF};
+        int[] hardCMYK = {0x00000000, 0x000000FF, 0x00FFFFFF, 0xFF00FFFF, 0xFFFF00FF};
         palette =
-                haeckel;
+                hardCMYK;
 //                Coloring.HALTONIC255;
 //                new int[]
 //                { // halturvy
