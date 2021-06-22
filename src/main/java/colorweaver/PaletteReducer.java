@@ -2607,7 +2607,7 @@ public class PaletteReducer {
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
-                    for (int i = 0; i < 16; i++) {
+                    for (int i = 0; i < 8; i++) {
                         int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
                         int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
                         int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
@@ -2619,11 +2619,11 @@ public class PaletteReducer {
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
                     }
-                    sort16(candidates);
-                    int bn = RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128;
+                    sort8(candidates);
+                    int bn = BlueNoise.getSeededTriOmniTiling(px, y, 0) + 128;
 //                    pixmap.drawPixel(px, y, candidates[RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128 >>> 5]);
 //                    pixmap.drawPixel(px, y, candidates[(int)Math.sqrt(RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128)]);
-                    pixmap.drawPixel(px, y, candidates[bn >>> 4 ^ (bn & 3)]);
+                    pixmap.drawPixel(px, y, candidates[bn >>> 5 ^ (px + y & 1)]);
 //                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[((px & 3) | (y & 3) << 2)]]);
                 }
             }
