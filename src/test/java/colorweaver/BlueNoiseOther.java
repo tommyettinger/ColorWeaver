@@ -1,6 +1,5 @@
 package colorweaver;
 
-import colorweaver.tools.StringKit;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -8,9 +7,6 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Pixmap;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-
-import static colorweaver.PreloadCodeGenerator.generatePreloadCode;
 
 /**
  * Created by Tommy Ettinger on 1/21/2018.
@@ -25,20 +21,7 @@ public class BlueNoiseOther extends ApplicationAdapter {
         config.setResizable(false);
         new Lwjgl3Application(new BlueNoiseOther(), config);
     }
-//    private static RandomXS128 random = new RandomXS128(12345678, 901234567);
-    
-    // Based off Alan Wolfe's work at https://github.com/Atrix256/TriangularBlueNoise
-    // adapted from https://www.shadertoy.com/view/4t2SDh
-    public static byte reshape(byte b)
-    {
-        double rnd = (b + 0.5) / 256.0 + 1.0;
-        rnd -= (int)rnd;
-        double orig = rnd * 2.0 - 1.0;
-        rnd = (orig == 0.0) ? 0.0 : (orig / Math.sqrt(Math.abs(orig)));
-        rnd = rnd - Math.signum(orig);
-        return (byte) (rnd * 128 - 0.5);
-    }
-    public byte[][] bytes;
+
     public void create() {
         for (int n = 0; n < 64; n++) {
             Pixmap pix = new Pixmap(Gdx.files.internal("BlueOmniTri_" + n + ".png"));
@@ -53,64 +36,48 @@ public class BlueNoiseOther extends ApplicationAdapter {
         }
         Gdx.app.exit();
     }
-    public void createOldTri() {
-        for (int n = 0; n < 64; n++) {
-            Pixmap pix = new Pixmap(Gdx.files.internal("BlueTri64_" + n + ".png"));
-            ByteBuffer l3a1 = pix.getPixels();
-            final int len = pix.getWidth() * pix.getHeight();
-//            System.out.println("Original image has format " + pix.getFormat() + " and contains " + len + " pixels, " + l3a1.remaining() + " bytes.");
-            byte[] brights = new byte[len];
-            for (int i = 0; i < len; i++) {
-                brights[i] = l3a1.get(i);
-                brights[i] += -128;
+    /**
+     * Given a byte array, this appends to a file called {@code filename} containing a code snippet that can be pasted
+     * into Java code as the preload data used by {@link PaletteReducer#exact(int[], byte[])}; this is almost never
+     * needed by external code. When using this for preload data, the byte array should be
+     * {@link PaletteReducer#paletteMapping}.
+     * @param data the bytes to use as preload data, usually {@link PaletteReducer#paletteMapping}
+     * @param filename the name of the text file to append to
+     */
+    public static void generatePreloadCode(final byte[] data, String filename){
+        StringBuilder sb = new StringBuilder(data.length + 400);
+        sb.append('"');
+        for (int i = 0; i < data.length;) {
+            for (int j = 0; j < 0x80 && i < data.length; j++) {
+                byte b = data[i++];
+                switch (b)
+                {
+                    case '\t': sb.append("\\t");
+                        break;
+                    case '\b': sb.append("\\b");
+                        break;
+                    case '\n': sb.append("\\n");
+                        break;
+                    case '\r': sb.append("\\r");
+                        break;
+                    case '\f': sb.append("\\f");
+                        break;
+                    case '\"': sb.append("\\\"");
+                        break;
+                    case '\\': sb.append("\\\\");
+                        break;
+                    default:
+                        if(Character.isISOControl(b))
+                            sb.append(String.format("\\%03o", b));
+                        else
+                            sb.append((char) (b&0xFF));
+                        break;
+                }
             }
-            generatePreloadCode(brights, "BlueNoiseTri.txt");
         }
-        Gdx.app.exit();
+        sb.append("\".getBytes(StandardCharsets.ISO_8859_1),\n");
+        Gdx.files.local(filename).writeString(sb.toString(), true, "ISO-8859-1");
+        System.out.println("Wrote code snippet to " + filename);
     }
-    public void createReshape() {
-        bytes = BlueNoise.ALT_NOISE;
-        int[] counts = new int[256], bestCounts = new int[256];
-        byte[] tri = new byte[0x1000], choice = new byte[0x1000];
-        int bestOff = Integer.MAX_VALUE;
-//        for (int trial = 0; trial < 200; trial++) { // when using random aspect
 
-            for (int i = 0; i < 64; i++) {
-                Arrays.fill(counts, 0);
-                for (int k = 0; k < 0x1000; k++) {
-                    counts[128 + (tri[k] = reshape(bytes[i][k]))]++;
-                }
-                int off = 0;
-                for (int k = 0; k < 128; k++) {
-                    off += Math.abs(counts[k] - counts[255 - k]);
-                }
-                if (off < bestOff) {
-                    System.arraycopy(tri, 0, choice, 0, 0x1000);
-                    System.arraycopy(counts, 0, bestCounts, 0, 256);
-                    bestOff = off;
-                }
-            }
-//        }
-//        for (int i = 0; i < 63; i++) {
-//            for (int j = i+1; j < 64; j++) {
-//                Arrays.fill(counts, 0);
-//                for (int k = 0; k < 0x1000; k++) {
-//                    counts[128 + (tri[k] = (byte) (bytes[i][k] + bytes[j][k] >> 1))]++;
-//                }
-//                int off = 0;
-//                for (int k = 0; k < 128; k++) {
-//                    off += Math.abs(counts[k] - counts[255 - k]);
-//                }
-//                if(off < bestOff)
-//                {
-//                    System.arraycopy(tri, 0, choice, 0, 0x1000);
-//                    bestOff = off;
-//                }
-//            }
-//        }
-        System.out.println("Best offset was " + bestOff);
-        System.out.println(StringKit.join(", ", bestCounts));
-        BlueNoiseTiler.generatePreloadCode(choice, "TriangularBlue.txt");
-        Gdx.app.exit();
-    }
 }

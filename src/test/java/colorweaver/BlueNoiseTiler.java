@@ -333,4 +333,16 @@ mv blueTiling_15.png blueN_10.png
             return to;
         }
     }
+    // Based off Alan Wolfe's work at https://github.com/Atrix256/TriangularBlueNoise
+    // adapted from https://www.shadertoy.com/view/4t2SDh
+    public static byte reshape(byte b)
+    {
+        double rnd = (b + 0.5) / 256.0 + 1.0;
+        rnd -= (int)rnd;
+        double orig = rnd * 2.0 - 1.0;
+        rnd = (orig == 0.0) ? 0.0 : (orig / Math.sqrt(Math.abs(orig)));
+        rnd = rnd - Math.signum(orig);
+        return (byte) (rnd * 128 - 0.5);
+    }
+
 }
