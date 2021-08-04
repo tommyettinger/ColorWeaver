@@ -2512,7 +2512,7 @@ public class PaletteReducer {
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
-                    for (int i = 0; i < candidates.length; i++) {
+                    for (int i = 0; i < 16; i++) {
                         int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
                         int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
                         int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
@@ -2564,7 +2564,7 @@ public class PaletteReducer {
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
-                    for (int i = 0; i < 8; i++) {
+                    for (int i = 0; i < 16; i++) {
                         int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
                         int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
                         int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
@@ -2576,10 +2576,10 @@ public class PaletteReducer {
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
                     }
-                    sort8(candidates);
-                    pixmap.drawPixel(px, y, candidates[thresholdMatrix8[
+                    sort16(candidates);
+                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[
                             ((int) (px * 0x1.C13FA9A902A6328Fp3 + y * 0x1.9E3779B97F4A7C15p-2) & 3) ^
-                                    ((px & 3) | (y & 1) << 2)
+                                    ((px & 3) | (y & 3) << 2)
                             ]]);
                 }
             }
