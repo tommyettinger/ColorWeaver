@@ -2595,7 +2595,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, usedIndex;
         float cr, cg, cb;
-        final float errorMul = (float) (ditherStrength * populationBias * 0.25);
+        final float errorMul = (float) (ditherStrength * populationBias);
         computePaletteGamma();
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
@@ -2604,6 +2604,8 @@ public class PaletteReducer {
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int er = 0, eg = 0, eb = 0;
+                    int checker = (px & 1) + (y & 1);
+//                    int checker = (px + y & 1) << 2;
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
@@ -2614,17 +2616,19 @@ public class PaletteReducer {
                         usedIndex = paletteMapping[((rr << 7) & 0x7C00)
                                 | ((gg << 2) & 0x3E0)
                                 | ((bb >>> 3))] & 0xFF;
-                        used = candidates[i] = paletteArray[usedIndex];
+                        used = candidates[i ^ checker] = paletteArray[usedIndex];
                         er += cr - (used >>> 24);
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
                     }
                     sort8(candidates);
-                    int bn = BlueNoise.getSeededTriOmniTiling(px, y, 0) + 128;
 //                    pixmap.drawPixel(px, y, candidates[RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128 >>> 5]);
 //                    pixmap.drawPixel(px, y, candidates[(int)Math.sqrt(RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128)]);
-                    pixmap.drawPixel(px, y, candidates[bn >>> 5 ^ (px + y & 1)]);
-//                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[((px & 3) | (y & 3) << 2)]]);
+//                    pixmap.drawPixel(px, y, candidates[bn >>> 5 ^ (px + y & 1)]);
+//                    int bn = BlueNoise.getSeededTriOmniTiling(px, y, 123) >>> 4 & 14;
+                    int bn = BlueNoise.getSeededOmniTiling(px, y, 123) + 128 >>> 5;
+//                    int rawY = BlueNoise.getSeededTriOmniTiling(y + 35, px + 29, 123456) + 128 >>> 6;
+                    pixmap.drawPixel(px, y, candidates[(bn)]);
                 }
             }
         }
