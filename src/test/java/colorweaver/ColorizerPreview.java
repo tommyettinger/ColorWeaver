@@ -308,6 +308,9 @@ public class ColorizerPreview extends ApplicationAdapter {
 	}
 	
 	public void mixPalette (boolean doRemove){
+		mixPalette(doRemove, true);
+	}
+	public void mixPalette (boolean doRemove, boolean doSort){
 		ArrayList<CIELABConverter.Lab> labs = new ArrayList<>(mixingPalette.size());
 		IntSet removalSet = new IntSet(16);
 		for (int i = 0; i < mixingPalette.size(); i++) {
@@ -335,12 +338,14 @@ public class ColorizerPreview extends ApplicationAdapter {
 				mixingPalette.remove(removalIndices.get(i));
 			}
 		}
-		
-		mixingPalette.sort(hueComparator);
-		
-		palette = new int[mixingPalette.size()];
-		for (int i = 0; i < palette.length; i++) {
-			palette[i] = mixingPalette.get(i);
+
+		if(doSort) {
+			mixingPalette.sort(hueComparator);
+
+			palette = new int[mixingPalette.size()];
+			for (int i = 0; i < palette.length; i++) {
+				palette[i] = mixingPalette.get(i);
+			}
 		}
 		mixingPalette.clear();
 		StringBuilder sb = new StringBuilder(palette.length * 12);
@@ -477,8 +482,19 @@ public class ColorizerPreview extends ApplicationAdapter {
 				0xD64A8CFF, 0xE79CBDFF, 0xF7A5C6FF, 0xDE1863FF, 0x94526BFF, 0xCE7394FF, 0xF72163FF, 0xDE8CA5FF,
 				0xC6184AFF, 0x6B424AFF, 0x841021FF, 0xEF6373FF, 0xAD1021FF, 0x5A0810FF, 0xFF1021FF, 0xE71821FF,
 		};
-		palette = Coloring.HALTONIC255;
+		palette =
+				//Coloring.HALTONIC255;
+				new int[]{
+						0x00000000,
+						0x000000FF, 0x282828FF, 0x585858FF, 0x868686FF, 0xA2A2A2FF, 0xCBCBCBFF, 0xFFFFFFFF, 0xA6D755FF, 0x8ABF5EFF, 0x7AA221FF, 0x6E8A31FF, 0x0A4111FF, 0x0F661DFF, 0x147E25FF, 0x229E35FF, 0x42C372FF,
+						0x8CE7A6FF, 0x78FAE6FF, 0x00C7A5FF, 0x009282FF, 0x163135FF, 0x21526BFF, 0x3B768FFF, 0x53A1ADFF, 0x8CDAFFFF, 0x50AAF7FF, 0x3E83EBFF, 0x354AD7FF, 0x1D2DAAFF, 0x152135FF, 0x66397EFF, 0x7E5596FF,
+						0xA68ABFFF, 0xDFBFEFFF, 0xC772FFFF, 0x9245E7FF, 0x6E05C3FF, 0x350082FF, 0x721C2FFF, 0xB22E69FF, 0xE54286FF, 0xFF6EAFFF, 0xFF9AC7FF, 0xFFD7F3FF, 0xE3B3C3FF, 0xCB96A2FF, 0xAA768AFF, 0xCF4929FF,
+						0xF3820DFF, 0xFFAA0DFF, 0xFFD3A6FF, 0xFFBB8AFF, 0xE7A67AFF, 0xBB7251FF, 0x82491DFF, 0x513115FF, 0xB7515AFF, 0x6E5A51FF, 0x8A7A5AFF, 0xB79E5EFF, 0xDFC721FF, 0xFFDF00FF, 0xFFF3B3FF,
 
+
+
+
+				};
 //				new int[]{
 //				0x00000000, 0x000000FF, 0x071314FF, 0x141E09FF, 0x081021FF, 0x102929FF, 0x291919FF, 0x292136FF, 0x233539FF, 0x393939FF, 0x423131FF, 0x422931FF, 0x52525AFF, 0x6B6B63FF, 0x5A6373FF, 0x8C9484FF,
 //				0x9C848CFF, 0xA89C9CFF, 0xA5ADBDFF, 0xADBDC6FF, 0xD6CECEFF, 0xD6BDCEFF, 0xDEE7EFFF, 0xEFEFEFFF, 0xE7FFE7FF, 0xFFFFFFFF, 0x422121FF, 0xBD6363FF, 0x390808FF, 0xC63129FF, 0xF7948CFF, 0xF73121FF,
@@ -508,7 +524,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		for (int i = 0; i < palette.length; i++) {
 			mixingPalette.add(palette[i]);
 		}
-		mixPalette(false);
+		mixPalette(false, false);
 //		mixingPalette = IntArray.with(
 //			0x060608ff, 0x141013ff, 0x3b1725ff, 0x73172dff, 0xb4202aff, 0xdf3e23ff, 0xfa6a0aff, 0xf9a31bff,
 //			0xffd541ff, 0xfffc40ff, 0xd6f264ff, 0x9cdb43ff, 0x59c135ff, 0x14a02eff, 0x1a7a3eff, 0x24523bff,
