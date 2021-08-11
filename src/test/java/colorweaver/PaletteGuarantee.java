@@ -9,8 +9,9 @@ import java.util.Comparator;
 public class PaletteGuarantee {
     public static void main(String[] args){
         ArrayList<Integer> edit = new ArrayList<Integer>(256);
-        for (int i = 0; i < Coloring.MANOSSUS256.length; i++) {
-            edit.add(Coloring.MANOSSUS256[i]);
+        int[] outer = Coloring.HALTONIC255;
+        for (int i = 0; i < outer.length; i++) {
+            edit.add(outer[i]);
         }
         int[] guarantee = Coloring.BETTS64;
         for(int want : guarantee){
