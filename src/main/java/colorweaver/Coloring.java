@@ -2633,7 +2633,22 @@ public class Coloring {
             0x80708040, 0x88788840, 0x90809040, 0x98889840, 0xA070A040, 0xA860A840, 0xB050B040, 0xB840B840,
              */
     };
-
+    /**
+     * Manually-edited version of the 64-color BLK-NX64 palette, which was made by BLK for pixel art. This reduces
+     * the gray-red and purple coverage of BLK-NX64, and improves its coverage of specific shades of peach and brown
+     * (human skin tones), yellow, chartreuse, and gray.
+     * <a href="https://i.imgur.com/LFpwaJl.png">Image preview</a>.
+     */
+    public static final int[] BETTS64 = {
+            0x00000000, 0x010101FF, 0x282828FF, 0x585858FF, 0x868686FF, 0xA2A2A2FF, 0xCBCBCBFF, 0xFFFFFFFF,
+            0xA6D755FF, 0x8ABF5EFF, 0x7AA221FF, 0x6E8A31FF, 0x0A4111FF, 0x0F661DFF, 0x147E25FF, 0x229E35FF,
+            0x42C372FF, 0x8CE7A6FF, 0x78FAE6FF, 0x00C7A5FF, 0x009282FF, 0x163135FF, 0x21526BFF, 0x3B768FFF,
+            0x53A1ADFF, 0x8CDAFFFF, 0x50AAF7FF, 0x3E83EBFF, 0x354AD7FF, 0x1D2DAAFF, 0x152135FF, 0x66397EFF,
+            0x7E5596FF, 0xA68ABFFF, 0xDFBFEFFF, 0xC772FFFF, 0x9245E7FF, 0x6E05C3FF, 0x350082FF, 0x721C2FFF,
+            0xB22E69FF, 0xE54286FF, 0xFF6EAFFF, 0xFF9AC7FF, 0xFFD7F3FF, 0xE3B3C3FF, 0xCB96A2FF, 0xAA768AFF,
+            0xCF4929FF, 0xF3820DFF, 0xFFAA0DFF, 0xFFD3A6FF, 0xFFBB8AFF, 0xE7A67AFF, 0xBB7251FF, 0x82491DFF,
+            0x513115FF, 0xB7515AFF, 0x6E5A51FF, 0x8A7A5AFF, 0xB79E5EFF, 0xDFC721FF, 0xFFDF00FF, 0xFFF3B3FF,
+    };
 
     public static int mixLightly(int baseColor, int mixColor)
     {
