@@ -1975,7 +1975,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        float adj, strength = (float) (ditherStrength * populationBias * 64);
+        float adj, strength = (float) (ditherStrength / populationBias * 48);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -1983,7 +1983,7 @@ public class PaletteReducer {
                     pixmap.drawPixel(px, y, 0);
                 else {
                     adj = ((BlueNoise.getSeededTriOmniTiling(px, y, 123) + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
-                    adj *= strength;
+                    adj *= strength + (px + y << 3 & 24) - 12f;
                     int rr = MathUtils.clamp((int) (adj + ((color >>> 24)       )), 0, 255);
                     int gg = MathUtils.clamp((int) (adj + ((color >>> 16) & 0xFF)), 0, 255);
                     int bb = MathUtils.clamp((int) (adj + ((color >>> 8)  & 0xFF)), 0, 255);
