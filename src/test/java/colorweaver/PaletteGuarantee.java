@@ -28,7 +28,8 @@ public class PaletteGuarantee {
         }
         edit.sort(Comparator.comparing(i -> {
             int s = PaletteReducer.shrink(i);
-            return TrigTools.atan2_(PaletteReducer.OKLAB[1][s], PaletteReducer.OKLAB[2][s]);
+            double L = PaletteReducer.OKLAB[0][s],  A = PaletteReducer.OKLAB[1][s], B = PaletteReducer.OKLAB[2][s];
+            return (A * A + B * B < 0.00325 ? L : TrigTools.atan2_(A, B) + 2f);
         }));
         for (int i = 0; i < guarantee.length; i++) {
             edit.add(i, guarantee[i]);
