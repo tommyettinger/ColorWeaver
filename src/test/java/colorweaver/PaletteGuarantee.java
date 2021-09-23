@@ -9,7 +9,7 @@ import java.util.Comparator;
 public class PaletteGuarantee {
     public static void main(String[] args){
         ArrayList<Integer> edit = new ArrayList<Integer>(256);
-        int[] outer = Coloring.YAM255;
+        int[] outer = Coloring.YAMOG255;
         for (int i = 0; i < outer.length; i++) {
             edit.add(outer[i]);
         }
