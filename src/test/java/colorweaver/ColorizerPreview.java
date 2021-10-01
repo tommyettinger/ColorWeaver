@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
+import static colorweaver.PaletteReducer.oklabCarefulMetric;
 import static colorweaver.PaletteReducer.oklabMetric;
 
 /**
@@ -129,8 +130,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	};
 
 	public int[] lloyd(int[] palette) {
-		CIELABConverter.makeLAB15();
-		PaletteReducer pr = new PaletteReducer(palette, oklabMetric);
+		PaletteReducer pr = new PaletteReducer(palette, oklabCarefulMetric);
 		float[][] centroids = new float[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index, mix;
@@ -143,20 +143,24 @@ public class ColorizerPreview extends ApplicationAdapter {
 			centroids[3][index]++;
 		}
 		mixingPalette.clear();
-		for (int i = 0; i < palette.length; i++) {
+		for (int i = 0; i < 16; i++) {
+			mixingPalette.add(palette[i]);
+		}
+		for (int i = 16; i < palette.length; i++) {
 			if (palette[i] == 0)
 			{
 				mixingPalette.add(0, 0);
 				continue;
 			}
 			count = centroids[3][i];
-			if(count == 0) continue;
-			mix = MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10
+			if(count == 0) System.out.printf("Omitting color with no volume: %08X\n", palette[i]);
+//			if(count == 0) continue;
+			mix =     MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10
 					| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5
 					| MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
 			mixingPalette.add(CIELABConverter.puff(mix));
 		}
-		mixPalette(true);
+		mixPalette(false, false);
 		/*
 		Collections.sort(mixingPalette, hueComparator);
 		palette = new int[mixingPalette.size()];
@@ -168,7 +172,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	}
 
 	public int[] lloydCentral(int[] palette) {
-		PaletteReducer pr = new PaletteReducer(palette, oklabMetric);
+		PaletteReducer pr = new PaletteReducer(palette, oklabCarefulMetric);
 		float[][] centroids = new float[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index, mix;
@@ -203,7 +207,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 					centroids[1][i] / count2,
 					centroids[2][i] / count2));
 		}
-		Collections.sort(mixingPalette, hueComparator);
+//		Collections.sort(mixingPalette, hueComparator);
 		palette = new int[mixingPalette.size()];
 		for (int i = 0; i < palette.length; i++) {
 			//mixingPalette.set(i, FloatColorTools.floatToInt(FloatColorTools.toEditedFloat(FloatColorTools.floatGet(mixingPalette.get(i)), 0f, -0.25f, 0f, 0f)));
@@ -341,11 +345,10 @@ public class ColorizerPreview extends ApplicationAdapter {
 
 		if(doSort) {
 			mixingPalette.sort(hueComparator);
-
-			palette = new int[mixingPalette.size()];
-			for (int i = 0; i < palette.length; i++) {
-				palette[i] = mixingPalette.get(i);
-			}
+		}
+		palette = new int[mixingPalette.size()];
+		for (int i = 0; i < palette.length; i++) {
+			palette[i] = mixingPalette.get(i);
 		}
 		mixingPalette.clear();
 		StringBuilder sb = new StringBuilder(palette.length * 12);
@@ -518,7 +521,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		};
 
 		palette =
-				betsy255;
+				Coloring.YAM255;
 				//Coloring.HALTONIC255;
 //				new int[]{
 //				0x00000000, 0x000000FF, 0x071314FF, 0x141E09FF, 0x081021FF, 0x102929FF, 0x291919FF, 0x292136FF, 0x233539FF, 0x393939FF, 0x423131FF, 0x422931FF, 0x52525AFF, 0x6B6B63FF, 0x5A6373FF, 0x8C9484FF,
