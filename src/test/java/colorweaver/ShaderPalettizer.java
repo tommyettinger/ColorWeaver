@@ -149,6 +149,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                 palette.bind();
                 batch.begin();
                 sh.setUniformi("u_palette", 1);
+                Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 //                if(!batch.getShader().equals(shaderStandard))
 //                {
 //                    sh.setUniformf("u_mul", mul);
@@ -160,7 +161,6 @@ public class ShaderPalettizer extends ApplicationAdapter {
 //                    shader.setUniformf("u_add", 0.1f, 0.95f, NumberTools.swayRandomized(12345, TimeUtils.timeSinceMillis(startTime) * 0x1p-9f) * 0.4f + 0.2f);
 //                else batch.getShader().setUniformi("u_palette", 1);
 
-                Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
             }
             else
             {

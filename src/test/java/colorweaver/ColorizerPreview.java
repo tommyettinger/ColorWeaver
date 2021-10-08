@@ -106,12 +106,13 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 	}
 	
-	private static int roughBrightness(int color)
+	private static double roughBrightness(int color)
 	{
-		return (
-			(color >>> 24) * 3 +
-			(color >>> 14 & 0x3FC) +
-			(color >>>  8 & 0xFF));
+		return PaletteReducer.OKLAB[0][PaletteReducer.shrink(color)];
+//		return (
+//			(color >>> 24) * 3 +
+//			(color >>> 14 & 0x3FC) +
+//			(color >>>  8 & 0xFF));
 	}
 
 	public static final Comparator<Integer> hueComparator = new Comparator<Integer>() {
@@ -125,7 +126,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			if(o1 == 0) return -1;
 			if(o2 == 0) return 1;
 //			return (int)Math.signum(CIELABConverter.differenceLAB(o1, o2) - 50);
-			return Integer.compare(roughBrightness(o1), roughBrightness(o2));
+			return Double.compare(roughBrightness(o1), roughBrightness(o2));
 		}
 	};
 
@@ -158,7 +159,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			mix =     MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10
 					| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5
 					| MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
-			mixingPalette.add(CIELABConverter.puff(mix));
+			mixingPalette.add(PaletteReducer.stretch(mix));//CIELABConverter.puff(mix)
 		}
 		mixPalette(false, false);
 		/*
@@ -315,6 +316,73 @@ public class ColorizerPreview extends ApplicationAdapter {
 		mixPalette(doRemove, true);
 	}
 	public void mixPalette (boolean doRemove, boolean doSort){
+//		ArrayList<double[]> labs = new ArrayList<>(mixingPalette.size());
+		IntSet removalSet = new IntSet(16);
+//		for (int i = 0; i < mixingPalette.size(); i++) {
+//			double[] d = new double[4];
+//			System.arraycopy(PaletteReducer.OKLAB[PaletteReducer.shrink(mixingPalette.get(i))], 0, d, 0, 3);
+//			d[3] = mixingPalette.get(i) & 255;
+//			labs.add(d);
+//		}
+		for (int i = 0; i < mixingPalette.size(); i++) {
+			for (int j = i + 1; j < mixingPalette.size(); j++) {
+				if(((mixingPalette.get(i) & 255) > 0 && (mixingPalette.get(j) & 255) > 0) && PaletteReducer.oklabCarefulMetric.difference(mixingPalette.get(i), mixingPalette.get(j)) <= 100) {
+					if (doRemove) {
+						removalSet.add(i);
+						removalSet.add(j);
+						System.out.printf("Combined 0x%08X and 0x%08X\n", mixingPalette.get(i), mixingPalette.get(j));
+						mixingPalette.add(Coloring.mixEvenly(mixingPalette.get(i), mixingPalette.get(j)));
+					}
+					else {
+						System.out.printf("0x%08X and 0x%08X are very close!\n", mixingPalette.get(i), mixingPalette.get(j));
+					}
+				}
+			}
+		}
+		if(doRemove) {
+			IntArray removalIndices = removalSet.iterator().toArray();
+			removalIndices.sort();
+			for (int i = removalIndices.size - 1; i >= 0; i--) {
+				mixingPalette.remove(removalIndices.get(i));
+			}
+		}
+
+		if(doSort) {
+			mixingPalette.sort(hueComparator);
+		}
+		palette = new int[mixingPalette.size()];
+		for (int i = 0; i < palette.length; i++) {
+			palette[i] = mixingPalette.get(i);
+		}
+		mixingPalette.clear();
+		StringBuilder sb = new StringBuilder(palette.length * 12);
+		StringKit.appendHex(sb.append("0x"), palette[0]);
+		for (int i = 1; i < palette.length; i++) {
+			if((i & 15) == 0)
+				StringKit.appendHex(sb.append(",\n0x"), palette[i]);
+			else
+				StringKit.appendHex(sb.append(", 0x"), palette[i]);
+		}
+		System.out.println(sb);
+		System.out.println(palette.length + " colors used.");
+		colorizer = Colorizer.arbitraryLABColorizer(palette);
+		cubePix = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+		cubeTextures = new Texture[palette.length];
+		for (int i = 0; i < palette.length; i++) {
+			cubeTextures[i] = new Texture(16, 16, Pixmap.Format.RGBA8888);
+		}
+		int idx = 0;
+		if(palette[0] == 0)
+		{
+			System.out.println("\n0x00, 0x00, 0x00, 0x00,");
+			idx++;
+		}
+		for (; idx < palette.length; idx++) {
+			System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte)idx, -2), colorizer.colorize((byte)idx, -1), idx, colorizer.colorize((byte)idx, 1));
+		}
+
+	}
+	public void mixPaletteCIELAB (boolean doRemove, boolean doSort){
 		ArrayList<CIELABConverter.Lab> labs = new ArrayList<>(mixingPalette.size());
 		IntSet removalSet = new IntSet(16);
 		for (int i = 0; i < mixingPalette.size(); i++) {
@@ -378,7 +446,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 
 	}
-	
+
 	public void create () {
 		int[] haltonite = new int[]{
 				0x00000000,
