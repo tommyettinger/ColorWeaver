@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import static colorweaver.PaletteReducer.oklabCarefulMetric;
-import static colorweaver.PaletteReducer.oklabMetric;
 
 /**
  * Created by Tommy Ettinger on 1/30/2020.
@@ -132,10 +131,10 @@ public class ColorizerPreview extends ApplicationAdapter {
 
 	public int[] lloyd(int[] palette) {
 		PaletteReducer pr = new PaletteReducer(palette, oklabCarefulMetric);
-		float[][] centroids = new float[4][palette.length];
+		double[][] centroids = new double[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index, mix;
-		float count;
+		double count;
 		for (int i = 0; i < 0x8000; i++) {
 			index = pm[i] & 0xFF;
 			centroids[0][index] += (i >>> 10);
@@ -174,29 +173,38 @@ public class ColorizerPreview extends ApplicationAdapter {
 
 	public int[] lloydCentral(int[] palette) {
 		PaletteReducer pr = new PaletteReducer(palette, oklabCarefulMetric);
-		float[][] centroids = new float[4][palette.length];
+		double[][] centroids = new double[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index, mix;
-		float count, count2;
+		double count;
+		double[][] oklabPalette = new double[palette.length][3];
+		for (int i = 1; i < palette.length; i++) {
+			PaletteReducer.fillOklab(oklabPalette[i], (palette[i] >>> 24)/255.0, (palette[i] >>> 16 & 255)/255.0, (palette[i] >>> 8 & 255)/255.0);
+		}
+		double[] ok = new double[3];
 		for (int i = 0; i < 0x8000; i++) {
 			index = pm[i] & 0xFF;
-			mix = CIELABConverter.shrink(palette[index]);
-			centroids[0][index] += PaletteReducer.labs[0][mix];
-			centroids[1][index] += PaletteReducer.labs[1][mix];
-			centroids[2][index] += PaletteReducer.labs[2][mix];
+			PaletteReducer.fillOklab(ok,
+					(i >>> 10) / 31.0,
+					(i >>> 5 & 0x1F) / 31.0,
+					(i & 0x1F) / 31.0);
+			centroids[0][index] += ok[0];
+			centroids[1][index] += ok[1];
+			centroids[2][index] += ok[2];
 			centroids[3][index]++;
 		}
 		state = Arrays.hashCode(palette);
 		mixingPalette.clear();
-		for (int i = 0; i < palette.length; i++) {
-			if (palette[i] == 0)
-			{
-				mixingPalette.add(0, 0);
-				continue;
-			}
+		mixingPalette.add(palette[0]);
+		for (int i = 1; i < palette.length; i++) {
+//			if (palette[i] == 0)
+//			{
+//				mixingPalette.add(0, 0);
+//				continue;
+//			}
 			count = centroids[3][i];
-			if(count == 0) continue;
-			count2 = count * 0.9375f;
+//			count2 = count * 0.9375f;
+
 //			mix = MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10
 //					| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5
 //					| MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
@@ -204,17 +212,27 @@ public class ColorizerPreview extends ApplicationAdapter {
 //			double l = PaletteReducer.lab15[0][mix], 
 //					a = PaletteReducer.lab15[1][mix] * 0.8, 
 //					b = PaletteReducer.lab15[2][mix] * 0.8;
-			mixingPalette.add(CIELABConverter.rgba8888(centroids[0][i] / count, 
-					centroids[1][i] / count2,
-					centroids[2][i] / count2));
+
+
+//			mixingPalette.add(CIELABConverter.rgba8888(centroids[0][i] / count,
+//					centroids[1][i] / count,
+//					centroids[2][i] / count));
+			if(count == 0 || oklabPalette[i][1] * oklabPalette[i][1] + oklabPalette[i][2] * oklabPalette[i][2] < 0x1p-13)
+				mixingPalette.add(palette[i]);
+			else
+				mixingPalette.add(PaletteReducer.oklabToRGB(centroids[0][i] / count,
+					centroids[1][i] / count,
+					centroids[2][i] / count));
 		}
-//		Collections.sort(mixingPalette, hueComparator);
+		mixPalette(false, false);
+		/*
+		Collections.sort(mixingPalette, hueComparator);
 		palette = new int[mixingPalette.size()];
 		for (int i = 0; i < palette.length; i++) {
-			//mixingPalette.set(i, FloatColorTools.floatToInt(FloatColorTools.toEditedFloat(FloatColorTools.floatGet(mixingPalette.get(i)), 0f, -0.25f, 0f, 0f)));
 			palette[i] = mixingPalette.get(i);
 		}
-		return palette;
+		 */
+		return this.palette;
 	}
 
 	private int[] emphasize (int[] palette) {

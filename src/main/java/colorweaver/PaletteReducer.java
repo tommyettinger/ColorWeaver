@@ -640,6 +640,37 @@ public class PaletteReducer {
         }
     };
 
+    public static double[] fillOklab(double[] toFill, double r, double g, double b){
+        r *= r;
+        g *= g;
+        b *= b;
+
+        double l = Math.cbrt(0.4121656120 * r + 0.5362752080 * g + 0.0514575653 * b);
+        double m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
+        double s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
+
+        toFill[0] = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
+        toFill[1] = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+        toFill[2] = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+
+        return toFill;
+    }
+
+    public static int oklabToRGB(double L, double A, double B)
+    {
+        double l = (L + 0.3963377774 * A + 0.2158037573 * B);
+        double m = (L - 0.1055613458 * A - 0.0638541728 * B);
+        double s = (L - 0.0894841775 * A - 1.2914855480 * B);
+        l *= l * l;
+        m *= m * m;
+        s *= s * s;
+        final int r = (int)(Math.sqrt(Math.min(Math.max(+4.0767245293 * l - 3.3072168827 * m + 0.2307590544 * s, 0.0), 1.0)) * 255.9999);
+        final int g = (int)(Math.sqrt(Math.min(Math.max(-1.2681437731 * l + 2.6093323231 * m - 0.3411344290 * s, 0.0), 1.0)) * 255.9999);
+        final int b = (int)(Math.sqrt(Math.min(Math.max(-0.0041119885 * l - 0.7034763098 * m + 1.7068625689 * s, 0.0), 1.0)) * 255.9999);
+        return r << 24 | g << 16 | b << 8 | 255;
+    }
+
+
     private static final double[] RGB_POWERS = new double[3 << 8];
     static {
         for (int i = 1; i < 256; i++) {
