@@ -676,7 +676,7 @@ public class PaletteReducer {
         for (int i = 1; i < 256; i++) {
             RGB_POWERS[i]     = Math.pow(i, 3.7);
             RGB_POWERS[i+256] = Math.pow(i, 4.0);
-            RGB_POWERS[i+512] = Math.pow(i, 3.3);
+            RGB_POWERS[i+512] = Math.pow(i, 3.1);
         }
     }
 
@@ -1959,7 +1959,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used;
         float pos, adj;
-        final float strength = (float) (ditherStrength * populationBias * 3.333);
+        final float strength = (float) (ditherStrength * populationBias * 3f);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y) & 0xF8F8F880;
@@ -1977,10 +1977,12 @@ public class PaletteReducer {
                     pos -= (int) pos;
                     pos *= 52.9829189f;
                     pos -= (int) pos;
-                    adj = (pos * pos - 0.3f) * strength;
-                    rr = MathUtils.clamp((int) (rr + (adj * (rr - (used >>> 24       )))), 0, 0xFF);
-                    gg = MathUtils.clamp((int) (gg + (adj * (gg - (used >>> 16 & 0xFF)))), 0, 0xFF);
-                    bb = MathUtils.clamp((int) (bb + (adj * (bb - (used >>> 8  & 0xFF)))), 0, 0xFF);
+                    adj = (pos-0.5f) * strength;
+//                    adj = MathUtils.sin(pos * 2f - 1f) * strength;
+//                    adj = (pos * pos - 0.3f) * strength;
+                    rr = Math.min(Math.max((int) (rr + (adj * (rr - (used >>> 24       )))), 0), 0xFF);
+                    gg = Math.min(Math.max((int) (gg + (adj * (gg - (used >>> 16 & 0xFF)))), 0), 0xFF);
+                    bb = Math.min(Math.max((int) (bb + (adj * (bb - (used >>> 8  & 0xFF)))), 0), 0xFF);
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF]);
