@@ -71,8 +71,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
     }
 
     public void create() {
-        final String targetDir = "samples/reducedEasy/"; //
-//        final String targetDir = "samples/reducedOkCareful/"; //
+//        final String targetDir = "samples/reducedGood/"; //
+        final String targetDir = "samples/reducedOkCareful2/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")};
 //        FileHandle[] samples = {Gdx.files.local("samples/ignored/meowsterpiece.jpg")};
@@ -86,12 +86,14 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
 //        for(FileHandle hex : hexes) {
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/azurestar-32.hex");{
-//        FileHandle hex = Gdx.files.local("palettes/hex/blknx-64.hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/manos-64.hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/betts-63.hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/tater-255.hex");{
 
 //            if(i++ > 12) break;
 
@@ -103,8 +105,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             PNG8 png8 = new PNG8();
             png8.setCompression(7);
             png8.setFlipY(false);
-            reducer.exact(PALETTE, PaletteReducer.rgbEasyMetric);
-//            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
+//            reducer.exact(PALETTE, PaletteReducer.iptGoodMetric);
+            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
             png8.palette = reducer;
             try {
 //                FileHandle sample = Gdx.files.local("samples/David.png"); {

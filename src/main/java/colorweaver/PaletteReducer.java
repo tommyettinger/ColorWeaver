@@ -619,6 +619,10 @@ public class PaletteReducer {
             double L1 = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
             double A1 = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
             double B1 = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+////LR alternate lightness estimate
+//            final double k1 = 0.206, k2 = 0.03, k3 = 1.17087;
+//            double t = (k3 * L1 - k1);
+//            L1 = (t + Math.sqrt(t * t + 0.1405044 * L1)) * 0.5;
 
             r = r2 * 0.00392156862745098; r *= r;
             g = g2 * 0.00392156862745098; g *= g;
@@ -631,6 +635,8 @@ public class PaletteReducer {
             double L2 = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s;
             double A2 = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
             double B2 = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+//            t = (k3 * L2 - k1);
+//            L2 = (t + Math.sqrt(t * t + 0.1405044 * L2)) * 0.5;
 
             double L = L1 /* * L1 * L1 */ - L2 /* * L2 */;
             double A = A1 /* * A1 * A1 */ - A2 /* * A2 */;
@@ -2022,7 +2028,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        float adj, strength = (float) (48 * ditherStrength / populationBias);
+        float adj, strength = (float) (60 * ditherStrength / populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -2030,7 +2036,8 @@ public class PaletteReducer {
                     pixmap.drawPixel(px, y, 0);
                 else {
                     adj = ((BlueNoise.getSeededTriOmniTiling(px, y, 123) + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
-                    adj *= strength + (px + y << 3 & 24) - 12f;
+                    adj = Math.min(Math.max(adj * strength + (px + y << 4 & 16) - 8f, -20f), 20f);
+//                    adj = Math.min(Math.max(adj * strength + (px + y << 3 & 24) - 12f, -24f), 24f);
                     int rr = MathUtils.clamp((int) (adj + ((color >>> 24)       )), 0, 255);
                     int gg = MathUtils.clamp((int) (adj + ((color >>> 16) & 0xFF)), 0, 255);
                     int bb = MathUtils.clamp((int) (adj + ((color >>> 8)  & 0xFF)), 0, 255);
