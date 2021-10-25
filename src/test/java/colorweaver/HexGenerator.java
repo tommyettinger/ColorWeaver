@@ -15,7 +15,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "tater-255";
+    public static final String NAME = "limited-31";
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -1238,9 +1238,44 @@ public class HexGenerator extends ApplicationAdapter {
                 0xE4A253FF, 0xEF9D25FF, 0xA0711EFF, 0xB3862EFF, 0xDAB161FF, 0x9E8253FF, 0xD9C590FF, 0xE9B42AFF,
         };
 
+        int[] limited31 = {
+                0x00000000,
+                0x000000FF,
+                0x292625FF,
+                0x4A4645FF,
+                0x726E6CFF,
+                0x9D9997FF,
+                0xCFCAC8FF,
+                0xFBFFFFFF,
+                0x662F28FF,
+                0xB0342EFF,
+                0xD0977EFF,
+                0x68452FFF,
+                0xB36731FF,
+                0xD3AA85FF,
+                0x6E6C3DFF,
+                0xDDEC6FFF,
+                0xD9DCC4FF,
+                0x366F35FF,
+                0x47CA5FFF,
+                0xB0DD99FF,
+                0x326672FF,
+                0x63E7ECFF,
+                0xBDDCDFFF,
+                0x1D2565FF,
+                0x3967DCFF,
+                0x81ACD7FF,
+                0x422866FF,
+                0x662CB3FF,
+                0x9D7ED0FF,
+                0x5E2E69FF,
+                0xDD56A4FF,
+                0xCFB5D2FF
+        };
+
 
         palette =
-                tater255;
+                limited31;
 //                Coloring.HALTONIC255;
 //                new int[]
 //                { // halturvy
