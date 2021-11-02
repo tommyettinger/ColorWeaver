@@ -2024,7 +2024,7 @@ public class PaletteReducer {
      */
     public Pixmap reduceTrueBlue (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
-        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight(), seed = (lineLen + 1) * h;
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
@@ -2035,8 +2035,7 @@ public class PaletteReducer {
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-//                    adj = ((BlueNoise.getSeededOmniTiling(px, y, 123) + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
-                    adj = ((BlueNoise.getSeededTriOmniTiling(px, y, 123) + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
+                    adj = ((BlueNoise.getSeededTriOmniTiling(px, y, seed) + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
                     adj = Math.min(Math.max(adj * strength + (px + y << 4 & 16) - 8f, -20f), 20f);
 //                    adj = Math.min(Math.max(adj * strength + (px + y << 3 & 24) - 12f, -24f), 24f);
                     int rr = MathUtils.clamp((int) (adj + ((color >>> 24)       )), 0, 255);

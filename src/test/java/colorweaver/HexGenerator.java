@@ -15,7 +15,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "limited-31";
+    public static final String NAME = "cc-29";
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -24,7 +24,7 @@ public class HexGenerator extends ApplicationAdapter {
         config.setIdleFPS(10);
         config.useVsync(true);
         config.setResizable(false);
-        new Lwjgl3Application(new HexGenerator(), config);
+//        new Lwjgl3Application(new HexGenerator(), config);
         AutomaticPaletteTransformer.main(arg);
         AutomaticPalettizer.main(arg);
     }
