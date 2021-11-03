@@ -2096,13 +2096,19 @@ public class PaletteReducer {
 //    }
 
     /**
-     * A different kind of blue-noise-based dither; does not diffuse error, and uses a non-repeating blue noise pattern
-     * (the same type as what {@link #reduceTrueBlue(Pixmap)} uses) as well as a checkerboard pattern, but only applies
-     * these noisy patterns when there's error matching a color from the image to a color in the palette.
+     * A different kind of blue-noise-based dither; combines error-diffusion with (tri-mapped, made into multipliers
+     * using {@link Math#exp(double)}) blue noise like {@link #reduceScatter(Pixmap)}, but also a tri-mapped additive
+     * blue noise pattern (the same type as what {@link #reduceTrueBlue(Pixmap)} uses) and a checkerboard pattern (also
+     * just like in TrueBlue) to adjust error further (additively, again). This adds its error in first before sending
+     * it through error-diffusion, where the accumulated error is multiplied by blue noise again. This uses the same
+     * blue noise texture for both the additive and multiplicative steps, but offsets them so that they don't apply
+     * twice to the same pixel.
      * <br>
-     * There are times to use {@link #reduceTrueBlue(Pixmap)} and times to use this; each palette and
-     * source image will have different qualities of result. {@link #reduceTrueBlue(Pixmap)} will add splotches of
-     * different lightness even in areas where a color would be matched exactly; this method shouldn't do that.
+     * This can be seen as a mid-way point between {@link #reduceTrueBlue(Pixmap)} and {@link #reduceScatter(Pixmap)}.
+     * This performs almost as well on gradients as TrueBlue, and almost as well on color preservation as Scatter.
+     * Similarly, it does much better on gradients when compared to Scatter, and on color preservation when compared to
+     * TrueBlue. Some palettes and some images will look significantly better with one or two of these three, but not
+     * the other(s); you may need to experiment.
      * @param pixmap will be modified in-place and returned
      * @return pixmap, after modifications
      */
@@ -2137,7 +2143,7 @@ public class PaletteReducer {
         float er, eg, eb;
         byte paletteIndex;
         float w1 = (float)(ditherStrength * 3.5), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
-                adj, strength = (float) (80.0 * ditherStrength / populationBias);
+                adj, strength = (float) (32.0 * ditherStrength / populationBias);
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -2153,8 +2159,10 @@ public class PaletteReducer {
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    adj = ((TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
-                    adj = Math.min(Math.max(adj * strength + thresholdMatrix[((px & 3) | (y & 3) << 2)] - 7.5f, -24f), 24f);
+                    adj = ((TRI_BLUE_NOISE[(px + 32 & 63) | (y + 32 & 63) << 6] + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
+                    adj = Math.min(Math.max(adj * strength + ((px + y << 4 & 16) - 8f), -16f), 16f);
+//                    adj = Math.min(Math.max(adj * strength + (thresholdMatrix[((px & 3) | (y & 3) << 2)] - 7.5f), -16f), 16f);
+
 //                    adj = Math.min(Math.max(adj * strength + (px + y << 4 & 16) - 8f, -24f), 24f);
                     //                    int rr = MathUtils.clamp((int) (adj + ((color >>> 24)       )), 0, 255);
                     //                    int gg = MathUtils.clamp((int) (adj + ((color >>> 16) & 0xFF)), 0, 255);
