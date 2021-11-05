@@ -26,6 +26,22 @@ public class ShaderUtils {
     
     public static final String vertexShaderImmediate = vertexShader.replace("u_projTrans", "u_projModelView");
 
+    /**
+     * A snippet to be used from other shader code, this provides a blue() method that takes a position in pixels and
+     * returns an approximation of blue noise, from -1 to 1.
+     */
+    public static final String blueNoiseSnippet =
+            "float hash(vec2 p) {\n" +
+            "    return fract(dot(vec2(476.39, 687.12), p) * sin(p.x * 3.1 + p.y * 4.3 + 13.1));\n" +
+            "}\n" +
+            "float blue(vec2 p) {\n" +
+            "    float v =  hash(p + vec2(-1, 0))\n" +
+            "             + hash(p + vec2( 1, 0))\n" +
+            "             + hash(p + vec2( 0, 1))\n" +
+            "             + hash(p + vec2( 0,-1)); \n" +
+            "    return  hash(p) - v * 0.25;\n" +
+            "}\n";
+
 //                    "   float len = dot(tgt.rgb, bright * 0.0625) + 1.0;\n" +
 //                    "   float adj = (fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) - step(fract(dot(vec2(0.75487, 0.56984), gl_FragCoord.xy)), 0.5)));\n" +
 //                    "   float adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy)));\n" +
@@ -62,6 +78,24 @@ public class ShaderUtils {
                     //// white noise, to compare with gradient interleaved noise
                     //"   float adj = fract(4768.1232345456 * sin((gl_FragCoord.x+gl_FragCoord.y*43.0+137.0))) - 0.4;\n" +
                     "   float adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) - 0.4;\n" +
+                    "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
+                    "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
+                    "   gl_FragColor.a = v_color.a * tgt.a;\n" +
+                    "}";
+
+    public static final String fragmentShaderBlue =
+            "varying vec2 v_texCoords;\n" +
+                    "varying vec4 v_color;\n" +
+                    "uniform sampler2D u_texture;\n" +
+                    "uniform sampler2D u_palette;\n" +
+                    "const float b_adj = 31.0 / 32.0;\n" +
+                    "const float rb_adj = 32.0 / 1023.0;\n" +
+                    blueNoiseSnippet +
+                    "void main()\n" +
+                    "{\n" +
+                    "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
+                    "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
+                    "   float adj = blue(gl_FragCoord.xy);\n" +
                     "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
                     "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
                     "   gl_FragColor.a = v_color.a * tgt.a;\n" +
