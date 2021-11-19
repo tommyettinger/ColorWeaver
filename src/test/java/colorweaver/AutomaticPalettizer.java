@@ -75,19 +75,19 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         final String targetDir = "samples/reducedOkCareful/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")};
-        FileHandle[] samples = {Gdx.files.local("samples/Cat_Posing.jpg")};
+//        FileHandle[] samples = {Gdx.files.local("samples/Cat_Posing.jpg")};
 //        FileHandle[] samples = {Gdx.files.local("samples/ignored/meowsterpiece.jpg")};
-//        FileHandle[] samples =
-//                Gdx.files.local("samples/").list(new FileFilter() {
-//            @Override
-//            public boolean accept (File pathname) {
-//                return !pathname.isDirectory();
-//            }
-//        });
+        FileHandle[] samples =
+                Gdx.files.local("samples/").list(new FileFilter() {
+            @Override
+            public boolean accept (File pathname) {
+                return !pathname.isDirectory();
+            }
+        });
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
-        for(FileHandle hex : hexes) {
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        for(FileHandle hex : hexes) {
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
