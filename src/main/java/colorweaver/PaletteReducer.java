@@ -2216,7 +2216,7 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
-    public Pixmap reduceNeuterB (Pixmap pixmap) {
+    public Pixmap reduceNeue(Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
@@ -2271,10 +2271,10 @@ public class PaletteReducer {
                     //                    int rr = MathUtils.clamp((int) (adj + ((color >>> 24)       )), 0, 255);
                     //                    int gg = MathUtils.clamp((int) (adj + ((color >>> 16) & 0xFF)), 0, 255);
                     //                    int bb = MathUtils.clamp((int) (adj + ((color >>> 8)  & 0xFF)), 0, 255);
-                    float tbn = (TRI_BLUE_NOISE[(px & 63) | ((y << 6) & 0xFC0)] + 0.5f) * 0.007f;
-                    er = adj + (curErrorRed[px] + tbn);
-                    eg = adj + (curErrorGreen[px] + tbn);
-                    eb = adj + (curErrorBlue[px] + tbn);
+                    //float tbn = 0;//(TRI_BLUE_NOISE[(px & 63) | ((y << 6) & 0xFC0)] + 0.5f) * 0.007f;
+                    er = adj + (curErrorRed[px]);
+                    eg = adj + (curErrorGreen[px]);
+                    eb = adj + (curErrorBlue[px]);
 
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);

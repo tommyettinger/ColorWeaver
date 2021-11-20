@@ -183,20 +183,20 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
 ////great
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceNeuterB(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_NeuterB" + suffix + ".png"), pm, PALETTE, false, 0);
-//////incredible
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceKnoll(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
-//////great
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceKnollRoberts(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_KR_G" + suffix + ".png"), pm, PALETTE, false, 0);
-//////quite good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceKnollBlue(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_KB" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceNeue(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
+////incredible
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceKnoll(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
+////great
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceKnollRoberts(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_KR_G" + suffix + ".png"), pm, PALETTE, false, 0);
+////quite good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceKnollBlue(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_KB" + suffix + ".png"), pm, PALETTE, false, 0);
 
     }
 }
