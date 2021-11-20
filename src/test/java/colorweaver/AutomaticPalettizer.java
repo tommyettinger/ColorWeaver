@@ -93,6 +93,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/azurestar-32.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/manos-64.hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/tzi-24.hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/ziggurat-63.hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/dawnvinja-63.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/betts-63.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/tater-255.hex");{
 

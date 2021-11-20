@@ -2259,7 +2259,7 @@ public class PaletteReducer {
         float er, eg, eb;
         byte paletteIndex;
         float w1 = (float)(ditherStrength * 3.5), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
-                adj, strength = (float) (40.0 * ditherStrength / populationBias);
+                adj, strength = (float) (24.0 * ditherStrength / populationBias);
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -2276,7 +2276,7 @@ public class PaletteReducer {
                     pixmap.drawPixel(px, y, 0);
                 else {
                     adj = ((TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
-                    adj = Math.min(Math.max(adj * strength + ((px + y << 4 & 24) - 12f), -16f), 16f);
+                    adj = Math.min(Math.max(adj * strength + ((px + y << 4 & 16) - 8f), -16f), 16f);
 //                    adj = Math.min(Math.max(adj * strength + (thresholdMatrix[((px & 3) | (y & 3) << 2)] - 7.5f), -16f), 16f);
 
 //                    adj = Math.min(Math.max(adj * strength + (px + y << 4 & 16) - 8f, -24f), 24f);
