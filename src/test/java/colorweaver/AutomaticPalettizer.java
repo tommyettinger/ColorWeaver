@@ -153,22 +153,22 @@ public class AutomaticPalettizer extends ApplicationAdapter {
     }
 
     private void drawPart(Pixmap pm, Pixmap sam, PaletteReducer reducer, PNG8 png8, String subname, String suffix) throws IOException {
-//////pretty bad
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceChaoticNoise(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Chaotic" + suffix + ".png"), pm, PALETTE, false, 0);
-//////ok
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceShaderMimic(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
-////good enough
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceSierraLite(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
-//////rather good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceFloydSteinberg(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
+////pretty bad
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceChaoticNoise(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Chaotic" + suffix + ".png"), pm, PALETTE, false, 0);
+////ok
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceShaderMimic(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
+//good enough
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSierraLite(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
+////rather good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
 ////ok
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceTrueBlue(pm);

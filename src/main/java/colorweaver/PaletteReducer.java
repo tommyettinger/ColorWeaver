@@ -1200,7 +1200,7 @@ public class PaletteReducer {
             for (int x = 0; x < width; x++) {
                 color = pixmap.getPixel(x, y);
                 if ((color & 0x80) != 0) {
-                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
                     counts.getAndIncrement(color, 0, 1);
                 } else {
                     hasTransparent = 1;
@@ -1397,7 +1397,7 @@ public class PaletteReducer {
                     er = curErrorRed[px];
                     eg = curErrorGreen[px];
                     eb = curErrorBlue[px];
-                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
                     int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
@@ -1548,7 +1548,7 @@ public class PaletteReducer {
                     er = curErrorRed[px];
                     eg = curErrorGreen[px];
                     eb = curErrorBlue[px];
-                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
                     int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
@@ -1675,7 +1675,7 @@ public class PaletteReducer {
                     er = curErrorRed[px];
                     eg = curErrorGreen[px];
                     eb = curErrorBlue[px];
-                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
                     int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
@@ -1772,14 +1772,14 @@ public class PaletteReducer {
                 nextErrorBlue[i] = 0;
             }
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+                color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
                     er = curErrorRed[px];
                     eg = curErrorGreen[px];
                     eb = curErrorBlue[px];
-                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
                     int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
@@ -1832,7 +1832,7 @@ public class PaletteReducer {
         byte paletteIndex;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+                color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
@@ -1840,7 +1840,7 @@ public class PaletteReducer {
                     adj ^= adj >> 31;
                     //adj = (-(adj >>> 4 & 1) ^ adj) & 7;
                     adj -= 32 * ditherStrength;
-                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
                     int rr = MathUtils.clamp(((color >>> 24)       ) + (adj), 0, 0xFF);
                     int gg = MathUtils.clamp(((color >>> 16) & 0xFF) + (adj), 0, 0xFF);
                     int bb = MathUtils.clamp(((color >>> 8)  & 0xFF) + (adj), 0, 0xFF);
@@ -1868,18 +1868,19 @@ public class PaletteReducer {
         long pos;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+                color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
 //                    adj = (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >> 40) * 0x1.Fp-26f) * ditherStrength) + 1f;
-//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+////                    color |= (color >>> 5 & 0x07070700) | 0xFE;
 //                    int rr = MathUtils.clamp((int) (((color >>> 24)       ) * adj), 0, 0xFF);
 //                    int gg = MathUtils.clamp((int) (((color >>> 16) & 0xFF) * adj), 0, 0xFF);
 //                    int bb = MathUtils.clamp((int) (((color >>> 8)  & 0xFF) * adj), 0, 0xFF);
                     //0xD1B54A32D192ED03L, 0xABC98388FB8FAC03L, 0x8CB92BA72F3D8DD7L
 //                    adj = (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 40) * str);
-                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+
+//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
                     int rr = ((color >>> 24)       );//MathUtils.clamp((int) (rr * (1f + adj)), 0, 0xFF);
                     int gg = ((color >>> 16) & 0xFF);//MathUtils.clamp((int) (gg * (1f + adj)), 0, 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);//MathUtils.clamp((int) (bb * (1f + adj)), 0, 0xFF);
@@ -1913,18 +1914,19 @@ public class PaletteReducer {
         float adj, str = (float) (-0x3.Fp-20 * ditherStrength * populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+                color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
 //                    adj = (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >> 40) * 0x1.Fp-26f) * ditherStrength) + 1f;
-//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+////                    color |= (color >>> 5 & 0x07070700) | 0xFE;
 //                    int rr = MathUtils.clamp((int) (((color >>> 24)       ) * adj), 0, 0xFF);
 //                    int gg = MathUtils.clamp((int) (((color >>> 16) & 0xFF) * adj), 0, 0xFF);
 //                    int bb = MathUtils.clamp((int) (((color >>> 8)  & 0xFF) * adj), 0, 0xFF);
                     //0xD1B54A32D192ED03L, 0xABC98388FB8FAC03L, 0x8CB92BA72F3D8DD7L
 //                    adj = (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 40) * str);
-                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+
+//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
                     int rr = ((color >>> 24)       );//MathUtils.clamp((int) (rr * (1f + adj)), 0, 0xFF);
                     int gg = ((color >>> 16) & 0xFF);//MathUtils.clamp((int) (gg * (1f + adj)), 0, 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);//MathUtils.clamp((int) (bb * (1f + adj)), 0, 0xFF);
@@ -1968,11 +1970,11 @@ public class PaletteReducer {
         final float strength = (float) (ditherStrength * populationBias * 3f);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+                color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    color |= (color >>> 5 & 0x07070700) | 0xFF;
+//                    color |= (color >>> 5 & 0x07070700) | 0xFF;
                     int rr = ((color >>> 24)       );
                     int gg = ((color >>> 16) & 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);
@@ -2069,11 +2071,11 @@ public class PaletteReducer {
 //        float adj, strength = ditherStrength * 8;
 //        for (int y = 0; y < h; y++) {
 //            for (int px = 0; px < lineLen; px++) {
-//                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+//                color = pixmap.getPixel(px, y);
 //                if ((color & 0x80) == 0 && hasTransparent)
 //                    pixmap.drawPixel(px, y, 0);
 //                else {
-//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+////                    color |= (color >>> 5 & 0x07070700) | 0xFE;
 //                    int rr = ((color >>> 24)       );
 //                    int gg = ((color >>> 16) & 0xFF);
 //                    int bb = ((color >>> 8)  & 0xFF);
@@ -2155,7 +2157,7 @@ public class PaletteReducer {
                 nextErrorBlue[i] = 0;
             }
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+                color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
@@ -2404,11 +2406,11 @@ public class PaletteReducer {
 //        double adj, strength = ditherStrength;
 //        for (int y = 0; y < h; y++) {
 //            for (int px = 0; px < lineLen; px++) {
-//                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+//                color = pixmap.getPixel(px, y);
 //                if ((color & 0x80) == 0 && hasTransparent)
 //                    pixmap.drawPixel(px, y, 0);
 //                else {
-//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+////                    color |= (color >>> 5 & 0x07070700) | 0xFE;
 //                    int rr = ((color >>> 24)       );
 //                    int gg = ((color >>> 16) & 0xFF);
 //                    int bb = ((color >>> 8)  & 0xFF);
@@ -2449,11 +2451,11 @@ public class PaletteReducer {
         long s = 0xC13FA9A902A6328FL;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+                color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    color |= (color >>> 5 & 0x07070700) | 0xFF;
+//                    color |= (color >>> 5 & 0x07070700) | 0xFF;
                     int rr = ((color >>> 24)       );
                     int gg = ((color >>> 16) & 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);
@@ -2536,7 +2538,7 @@ public class PaletteReducer {
                 nextErrorBlue[i] = 0;
             }
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y) & 0xF8F8F880;
+                color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
@@ -2549,7 +2551,7 @@ public class PaletteReducer {
                     er = (curErrorRed[px] * tbn);
                     eg = (curErrorGreen[px] * tbn);
                     eb = (curErrorBlue[px] * tbn);
-                    color |= (color >>> 5 & 0x07070700) | 0xFF;
+//                    color |= (color >>> 5 & 0x07070700) | 0xFF;
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
                     int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
