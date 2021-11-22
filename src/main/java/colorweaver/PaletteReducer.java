@@ -2258,10 +2258,12 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float)(ditherStrength * 3.5), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
-                adj, strength = (float) (24.0 * ditherStrength / populationBias);
-        for (int y = 0; y < h; y++) {
-            int ny = y + 1;
+        float w1 = (float) ditherStrength * 3.5f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
+                adj, strength = (float) (24 * ditherStrength / populationBias);
+        int sum = (lineLen * 0x9E373 ^ 0xC79E7B1D) ^ (h * 0xB9C9B ^ 0xD1B54A35);
+
+        for (int py = 0; py < h; py++) {
+            int ny = py + 1;
             for (int i = 0; i < lineLen; i++) {
                 curErrorRed[i] = nextErrorRed[i];
                 curErrorGreen[i] = nextErrorGreen[i];
@@ -2271,19 +2273,13 @@ public class PaletteReducer {
                 nextErrorBlue[i] = 0;
             }
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y);
+                sum += color = pixmap.getPixel(px, py);
                 if ((color & 0x80) == 0 && hasTransparent)
-                    pixmap.drawPixel(px, y, 0);
+                    pixmap.drawPixel(px, py, 0);
                 else {
-                    adj = ((TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
-                    adj = Math.min(Math.max(adj * strength + ((px + y << 4 & 16) - 8f), -16f), 16f);
-//                    adj = Math.min(Math.max(adj * strength + (thresholdMatrix[((px & 3) | (y & 3) << 2)] - 7.5f), -16f), 16f);
-
-//                    adj = Math.min(Math.max(adj * strength + (px + y << 4 & 16) - 8f, -24f), 24f);
-                    //                    int rr = MathUtils.clamp((int) (adj + ((color >>> 24)       )), 0, 255);
-                    //                    int gg = MathUtils.clamp((int) (adj + ((color >>> 16) & 0xFF)), 0, 255);
-                    //                    int bb = MathUtils.clamp((int) (adj + ((color >>> 8)  & 0xFF)), 0, 255);
-                    //float tbn = 0;//(TRI_BLUE_NOISE[(px & 63) | ((y << 6) & 0xFC0)] + 0.5f) * 0.007f;
+                    adj = ((TRI_BLUE_NOISE[(px & 63) | (py & 63) << 6] + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
+//                    adj = Math.min(Math.max(adj * strength + ((px + py << 4 & 16) - 8f), -16f), 16f);
+                    adj = Math.min(Math.max(adj * strength + ((px + py << 3 & 8) + ((sum >>> 29 ^ sum >>> 21 ^ sum >>> 13) & 7) - 7.5f), -16f), 16f);
                     er = adj + (curErrorRed[px]);
                     eg = adj + (curErrorGreen[px]);
                     eb = adj + (curErrorBlue[px]);
@@ -2296,7 +2292,7 @@ public class PaletteReducer {
                                     | ((gg << 2) & 0x3E0)
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
-                    pixmap.drawPixel(px, y, used);
+                    pixmap.drawPixel(px, py, used);
                     rdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>24)-    (used>>>24))    );
                     gdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>16&255)-(used>>>16&255)));
                     bdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>8&255)- (used>>>8&255)) );
