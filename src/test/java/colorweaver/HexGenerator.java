@@ -24,7 +24,7 @@ public class HexGenerator extends ApplicationAdapter {
         config.setIdleFPS(10);
         config.useVsync(true);
         config.setResizable(false);
-        new Lwjgl3Application(new HexGenerator(), config);
+//        new Lwjgl3Application(new HexGenerator(), config);
         AutomaticPaletteTransformer.main(arg);
         AutomaticPalettizer.main(arg);
     }
