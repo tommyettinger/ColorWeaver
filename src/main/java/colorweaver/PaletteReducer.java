@@ -499,7 +499,7 @@ public class PaletteReducer {
                     m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
                     s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
 
-                    OKLAB[0][idx] = reverseLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
+                    OKLAB[0][idx] = forwardLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
                     OKLAB[1][idx] = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
                     OKLAB[2][idx] = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
 
@@ -570,6 +570,7 @@ public class PaletteReducer {
             return (i * i + p * p + t * t) * 0x1p13;
         }
     };
+
     /**
      * Changes the curve of a requested L value so that it matches the internally-used curve. This takes a curve with a
      * very-dark area similar to sRGB (a very small one), and makes it significantly larger. This is typically used on
@@ -610,10 +611,10 @@ public class PaletteReducer {
                     L = OKLAB[0][indexA] - OKLAB[0][indexB],
                     A = OKLAB[1][indexA] - OKLAB[1][indexB],
                     B = OKLAB[2][indexA] - OKLAB[2][indexB];
-//            L *= L;
-//            A *= A;
-//            B *= B;
-            return (L * L + A * A + B * B) * 0x1p+13;
+            L = forwardLight(L * L);
+            A *= A;
+            B *= B;
+            return (L * L + A * A + B * B) * 0x1.2p+22;
         }
     };
 
@@ -637,7 +638,7 @@ public class PaletteReducer {
             double m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
             double s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
 
-            double L1 = reverseLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
+            double L1 = forwardLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
             double A1 = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
             double B1 = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
 ////LR alternate lightness estimate
@@ -653,7 +654,7 @@ public class PaletteReducer {
             m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
             s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
 
-            double L2 = reverseLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
+            double L2 = forwardLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
             double A2 = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
             double B2 = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
 //            t = (k3 * L2 - k1);
@@ -769,7 +770,7 @@ public class PaletteReducer {
     final int[] gammaArray = new int[256];
     FloatArray curErrorRedFloats, nextErrorRedFloats, curErrorGreenFloats, nextErrorGreenFloats, curErrorBlueFloats, nextErrorBlueFloats;
     public int colorCount;
-    double ditherStrength = 0.5, populationBias = 0.5;
+    double ditherStrength = 1.0, populationBias = 0.5;
 
     /**
      * This stores a preload code for a PaletteReducer using {@link Coloring#AURORA} with {@link #oklabMetric}. Using
@@ -1299,7 +1300,7 @@ public class PaletteReducer {
      * @param ditherStrength dither strength as a non-negative float that should be close to 1f
      */
     public void setDitherStrength(float ditherStrength) {
-        this.ditherStrength = 0.5f * ditherStrength;
+        this.ditherStrength = ditherStrength;
     }
 
     /**

@@ -23,17 +23,28 @@ public class BlueNoiseOther extends ApplicationAdapter {
     }
 
     public void create() {
-        for (int n = 0; n < 64; n++) {
-            Pixmap pix = new Pixmap(Gdx.files.internal("BlueOmniTri_" + n + ".png"));
-            ByteBuffer buf = pix.getPixels();
-            final int len = pix.getWidth() * pix.getHeight();
-            byte[] brights = new byte[len];
-            for (int i = 0; i < len; i++) {
-                brights[i] = buf.get(i);
-                brights[i] += -128;
-            }
-            generatePreloadCode(brights, "BlueNoiseOmniTri.txt");
+//        for (int n = 0; n < 64; n++) {
+//            Pixmap pix = new Pixmap(Gdx.files.internal("BlueOmniTri_" + n + ".png"));
+//            ByteBuffer buf = pix.getPixels();
+//            final int len = pix.getWidth() * pix.getHeight();
+//            byte[] brights = new byte[len];
+//            for (int i = 0; i < len; i++) {
+//                brights[i] = buf.get(i);
+//                brights[i] += -128;
+//            }
+//            generatePreloadCode(brights, "BlueNoiseOmniTri.txt");
+//        }
+        Pixmap pix = new Pixmap(Gdx.files.internal("LDR_LLL1_0.png"));
+//        Pixmap pix = new Pixmap(Gdx.files.internal("blueTri.png"));
+        ByteBuffer buf = pix.getPixels();
+        final int len = pix.getWidth() * pix.getHeight();
+        byte[] brights = new byte[len];
+        for (int i = 0; i < len; i++) {
+            brights[i] = buf.get(i);
+            brights[i] += -128;
         }
+        generatePreloadCode(brights, "BlueNoiseRaw.txt");
+
         Gdx.app.exit();
     }
     /**
@@ -67,16 +78,17 @@ public class BlueNoiseOther extends ApplicationAdapter {
                     case '\\': sb.append("\\\\");
                         break;
                     default:
-                        if(Character.isISOControl(b))
-                            sb.append(String.format("\\%03o", b));
-                        else
+//                        if(Character.isISOControl(b))
+//                            sb.append(String.format("\\%03o", b));
+//                        else
                             sb.append((char) (b&0xFF));
                         break;
                 }
             }
         }
-        sb.append("\".getBytes(StandardCharsets.ISO_8859_1),\n");
-        Gdx.files.local(filename).writeString(sb.toString(), true, "ISO-8859-1");
+        sb.append("\".getBytes(\"ISO-8859-1\");\n");
+//        sb.append("\".getBytes(StandardCharsets.ISO_8859_1),\n");
+        Gdx.files.local(filename).writeString(sb.toString(), false, "ISO-8859-1");
         System.out.println("Wrote code snippet to " + filename);
     }
 

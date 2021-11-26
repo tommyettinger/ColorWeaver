@@ -56,9 +56,9 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
                 0xB92DECFF, 0xCA23EAFF, 0xDB20E9FF, 0xF12BF6FF, 0xF027D1FF, 0xEB26A4FF, 0xEB2372FF, 0xEA2144FF,
         };
 
-        PaletteReducer reducer = new PaletteReducer(joker255, PaletteReducer.oklabCarefulMetric);
-        generatePreloadCode(reducer.paletteMapping, "TaterPreload.txt");
-        Gdx.files.local("TaterPreload.dat").writeBytes(reducer.paletteMapping, false);
+        PaletteReducer reducer = new PaletteReducer(Coloring.HALTONIC255, PaletteReducer.oklabCarefulMetric);
+        generatePreloadCode(reducer.paletteMapping, "HaltonicPreload.txt");
+        Gdx.files.local("HaltonicPreload.dat").writeBytes(reducer.paletteMapping, false);
         Gdx.app.exit();
     }
     /**
@@ -101,15 +101,16 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
                     case '\\': sb.append("\\\\");
                         break;
                     default:
-                        if(Character.isISOControl(b))
-                            sb.append(String.format("\\%03o", b));
-                        else
+//                        if(Character.isISOControl(b))
+//                            sb.append(String.format("\\%03o", b));
+//                        else
                             sb.append((char) (b&0xFF));
                         break;
                 }
             } 
         }
-        sb.append("\".getBytes(StandardCharsets.ISO_8859_1);\n");
+        sb.append("\".getBytes(\"ISO-8859-1\");\n");
+//        sb.append("\".getBytes(StandardCharsets.ISO_8859_1);\n");
         Gdx.files.local(filename).writeString(sb.toString(), true, "ISO-8859-1");
         System.out.println("Wrote code snippet to " + filename);
     }
