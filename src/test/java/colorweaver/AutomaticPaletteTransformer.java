@@ -47,8 +47,8 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
         Gdx.files.local("palettes/gen/txt/").mkdirs();
         Gdx.files.local("palettes/genOkAdjusted/").mkdirs();
-        for(FileHandle hex : hexes) {
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        for(FileHandle hex : hexes) {
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/blknx-64.hex");{
             String name = hex.nameWithoutExtension().toLowerCase();
