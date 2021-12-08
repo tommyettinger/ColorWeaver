@@ -2245,7 +2245,7 @@ public class PaletteReducer {
      * noise before diffusing, like {@link #reduceTrueBlue(Pixmap)}. This looks like {@link #reduceScatter(Pixmap)} in
      * many cases, but smooth gradients are much smoother with Neue than Scatter. Scatter multiplies error by a blue
      * noise value, where this adds blue noise regardless of error. This also preserves color better than TrueBlue,
-     * while keeping similar gradient smoothness. The algorithm here uses a 4x4 rough checkerboard pattern to offset
+     * while keeping similar gradient smoothness. The algorithm here uses a 2x2 rough checkerboard pattern to offset
      * some roughness that can appear in blue noise; the checkerboard can appear in some cases when a dithered image is
      * zoomed with certain image filters.
      * @param pixmap will be modified in-place and returned
@@ -2304,6 +2304,102 @@ public class PaletteReducer {
                     adj = ((TRI_BLUE_NOISE[(px & 63) | (py & 63) << 6] + 0.5f) * 0.005f); // plus or minus 255/400
 //                    adj = Math.min(Math.max(adj * strength + ((px + py << 4 & 16) - 8f), -16f), 16f);
                     adj = Math.min(Math.max(adj * strength + ((px + py << 2 & 4) + sum - 5.5f), -16f), 16f);
+                    er = adj + (curErrorRed[px]);
+                    eg = adj + (curErrorGreen[px]);
+                    eb = adj + (curErrorBlue[px]);
+
+                    int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
+                    int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
+                    int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
+                    paletteIndex =
+                            paletteMapping[((rr << 7) & 0x7C00)
+                                    | ((gg << 2) & 0x3E0)
+                                    | ((bb >>> 3))];
+                    used = paletteArray[paletteIndex & 0xFF];
+                    pixmap.drawPixel(px, py, used);
+                    rdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>8&255)- (used>>>8&255)) );
+                    if(px < lineLen - 1)
+                    {
+                        curErrorRed[px+1]   += rdiff * w7;
+                        curErrorGreen[px+1] += gdiff * w7;
+                        curErrorBlue[px+1]  += bdiff * w7;
+                    }
+                    if(ny < h)
+                    {
+                        if(px > 0)
+                        {
+                            nextErrorRed[px-1]   += rdiff * w3;
+                            nextErrorGreen[px-1] += gdiff * w3;
+                            nextErrorBlue[px-1]  += bdiff * w3;
+                        }
+                        if(px < lineLen - 1)
+                        {
+                            nextErrorRed[px+1]   += rdiff * w1;
+                            nextErrorGreen[px+1] += gdiff * w1;
+                            nextErrorBlue[px+1]  += bdiff * w1;
+                        }
+                        nextErrorRed[px]   += rdiff * w5;
+                        nextErrorGreen[px] += gdiff * w5;
+                        nextErrorBlue[px]  += bdiff * w5;
+                    }
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+    public Pixmap reducePlexus(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedFloats == null) {
+            curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(lineLen)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(lineLen)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(lineLen)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(lineLen)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(lineLen)).items;
+        } else {
+            curErrorRed = curErrorRedFloats.ensureCapacity(lineLen);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(lineLen);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(lineLen);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(lineLen);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(lineLen);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(lineLen);
+            for (int i = 0; i < lineLen; i++) {
+                nextErrorRed[i] = 0;
+                nextErrorGreen[i] = 0;
+                nextErrorBlue[i] = 0;
+            }
+        }
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used;
+        float rdiff, gdiff, bdiff;
+        float er, eg, eb;
+        byte paletteIndex;
+        float w1 = (float) ditherStrength * 2f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
+                adj, strength = (float) (24 * ditherStrength * populationBias);
+        for (int py = 0; py < h; py++) {
+            int ny = py + 1;
+            for (int i = 0; i < lineLen; i++) {
+                curErrorRed[i] = nextErrorRed[i];
+                curErrorGreen[i] = nextErrorGreen[i];
+                curErrorBlue[i] = nextErrorBlue[i];
+                nextErrorRed[i] = 0;
+                nextErrorGreen[i] = 0;
+                nextErrorBlue[i] = 0;
+            }
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, py);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, py, 0);
+                else {
+                    adj = ((TRI_BLUE_NOISE[(px & 63) | (py & 63) << 6] + 0.5f) * 0.005f); // plus or minus 255/400
+//                    adj = Math.min(Math.max(adj * strength + ((px + py << 4 & 16) - 8f), -16f), 16f);
+                    adj = Math.min(Math.max(adj * strength, -16f), 16f);
                     er = adj + (curErrorRed[px]);
                     eg = adj + (curErrorGreen[px]);
                     eb = adj + (curErrorBlue[px]);
