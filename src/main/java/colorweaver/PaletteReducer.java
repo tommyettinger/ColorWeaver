@@ -2380,8 +2380,8 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float) ditherStrength * 2f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
-                adj, strength = (float) (24 * ditherStrength * populationBias);
+        float w1 = (float) ditherStrength * 2.75f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
+                adj, strength = (float) (24 * ditherStrength * populationBias) * 0.005f;
         for (int py = 0; py < h; py++) {
             int ny = py + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -2397,9 +2397,8 @@ public class PaletteReducer {
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, py, 0);
                 else {
-                    adj = ((TRI_BLUE_NOISE[(px & 63) | (py & 63) << 6] + 0.5f) * 0.005f); // plus or minus 255/400
-//                    adj = Math.min(Math.max(adj * strength + ((px + py << 4 & 16) - 8f), -16f), 16f);
-                    adj = Math.min(Math.max(adj * strength, -16f), 16f);
+                    adj = ((TRI_BLUE_NOISE[(px & 63) | (py & 63) << 6] + 0.5f) * strength); // plus or minus 255/400
+                    adj = Math.min(Math.max(adj, -16f), 16f);
                     er = adj + (curErrorRed[px]);
                     eg = adj + (curErrorGreen[px]);
                     eb = adj + (curErrorBlue[px]);
@@ -2591,6 +2590,59 @@ public class PaletteReducer {
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF];
                     adj = ((PaletteReducer.RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007843138f);
+                    adj *= adj * adj;
+                    //// Complicated... This starts with a checkerboard of -0.5 and 0.5, times a tiny fraction.
+                    //// The next 3 lines generate 3 low-quality-random numbers based on s, which should be
+                    ////   different as long as the colors encountered so far were different. The numbers can
+                    ////   each be positive or negative, and are reduced to a manageable size, summed, and
+                    ////   multiplied by the earlier tiny fraction. Summing 3 random values gives us a curved
+                    ////   distribution, centered on about 0.0 and weighted so most results are close to 0.
+                    ////   Two of the random numbers use an XLCG, and the last uses an LCG.
+                    adj += ((px + y & 1) - 0.5f) * 0x1.8p-49 * strength *
+                            (((s ^ 0x9E3779B97F4A7C15L) * 0xC6BC279692B5CC83L >> 15) +
+                                    ((~s ^ 0xDB4F0B9175AE2165L) * 0xD1B54A32D192ED03L >> 15) +
+                                    ((s = (s ^ color) * 0xD1342543DE82EF95L + 0x91E10DA5C79E7B1DL) >> 15));
+                    rr = MathUtils.clamp((int) (rr + (adj * ((rr - (used >>> 24))))), 0, 0xFF);
+                    gg = MathUtils.clamp((int) (gg + (adj * ((gg - (used >>> 16 & 0xFF))))), 0, 0xFF);
+                    bb = MathUtils.clamp((int) (bb + (adj * ((bb - (used >>> 8 & 0xFF))))), 0, 0xFF);
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reduceGarbage (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used;
+        double adj, strength = ditherStrength * populationBias * 1.5;
+        long s = 0xC13FA9A902A6328FL;
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                byte bn = PaletteReducer.RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6];
+                if (((color & 0x80) == 0 || bn < -115) && hasTransparent)
+                {
+                    if(bn > 125)
+                        pixmap.drawPixel(px, y, paletteArray[(int)((s = s * 0xD1342543DE82EF95L + 0x91E10DA5C79E7B1DL) >>> 33) % colorCount]);
+                    else
+                        pixmap.drawPixel(px, y, 0);
+                }
+                else {
+//                    color |= (color >>> 5 & 0x07070700) | 0xFF;
+                    int rr = ((color >>> 24)       );
+                    int gg = ((color >>> 16) & 0xFF);
+                    int bb = ((color >>> 8)  & 0xFF);
+                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF];
+                    adj = ((bn + 0.5f) * 0.007843138f);
                     adj *= adj * adj;
                     //// Complicated... This starts with a checkerboard of -0.5 and 0.5, times a tiny fraction.
                     //// The next 3 lines generate 3 low-quality-random numbers based on s, which should be
