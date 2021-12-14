@@ -36,7 +36,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
     private long startTime = 0L, lastProcessedTime = 0L;
     private ShaderProgram defaultShader;
     private ShaderProgram shaderFlat, shaderStandard, shaderCB;
-    private Texture palette;
+    private Texture palette, blueNoise;
     private FileHandle[] lospec;
     private int lospecIndex = 0;
     private Vector3 add, mul;
@@ -79,16 +79,17 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if(equalize)
         {
             Pixmap pm = new Pixmap(file);
-            if(equalizeCB = !equalizeCB)
+//            if(equalizeCB = !equalizeCB)
             {
-                screenTexture = new Texture(cba.process(pm), Pixmap.Format.RGBA8888, false);
+                screenTexture = new Texture(file);
+//                screenTexture = new Texture(cba.process(pm), Pixmap.Format.RGBA8888, false);
                 batch.setShader(shaderCB);
             }
-            else
-            {
-                screenTexture = new Texture(cba.process(pm), Pixmap.Format.RGBA8888, false);
-                batch.setShader(defaultShader);
-            }
+//            else
+//            {
+//                screenTexture = new Texture(cba.process(pm), Pixmap.Format.RGBA8888, false);
+//                batch.setShader(defaultShader);
+//            }
             pm.dispose();
         }
         else
@@ -107,6 +108,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
         lospec = Gdx.files.local("palettes/genOk/").list("_GLSL.png");
         palette = new Texture(Gdx.files.local("palettes/genOk/db-aurora-255_GLSL.png"), Pixmap.Format.RGBA8888, false);
         palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        blueNoise = new Texture(Gdx.files.internal("blueTri.png"), Pixmap.Format.RGBA8888, false);
+        blueNoise.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         font = new BitmapFont();
         add = new Vector3(0, 0, 0);
         mul = new Vector3(1, 1, 1);
@@ -119,7 +122,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if (!shaderStandard.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderStandard.getLog());
         shaderCB = 
            //defaultShader; 
-           new ShaderProgram(vertexShader, fragmentShaderColorblind);
+           new ShaderProgram(vertexShader, fragmentShaderBlue);
         if (!shaderCB.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderCB.getLog());
         batch = new SpriteBatch(1000, shaderStandard);
         screenView = new ScreenViewport();
@@ -143,12 +146,18 @@ public class ShaderPalettizer extends ApplicationAdapter {
         final ShaderProgram sh = batch.getShader();
         batch.setProjectionMatrix(screenView.getCamera().combined);
         if(screenTexture != null) {
-            if(!sh.equals(defaultShader) && !sh.equals(shaderCB)) {
+            if(!sh.equals(defaultShader)) {
                 batch.setPackedColor(-0x1.fffffep126f); // packed white
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE1);
                 palette.bind();
+                if(sh == shaderCB) {
+                    Gdx.gl.glActiveTexture(GL20.GL_TEXTURE2);
+                    blueNoise.bind(2);
+                }
                 batch.begin();
                 sh.setUniformi("u_palette", 1);
+                if(sh == shaderCB)
+                    sh.setUniformi("u_blue", 2);
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 //                if(!batch.getShader().equals(shaderStandard))
 //                {
