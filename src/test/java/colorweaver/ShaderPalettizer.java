@@ -35,7 +35,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
 
     private long startTime = 0L, lastProcessedTime = 0L;
     private ShaderProgram defaultShader;
-    private ShaderProgram shaderFlat, shaderStandard, shaderCB;
+    private ShaderProgram shaderFlat, shaderStandard, shaderBlueNoise;
     private Texture palette, blueNoise;
     private FileHandle[] lospec;
     private int lospecIndex = 0;
@@ -61,7 +61,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
             public void filesDropped(String[] files) {
                 if (files != null && files.length > 0) {
                     if (files[0].endsWith(".png") || files[0].endsWith(".jpg") || files[0].endsWith(".jpeg"))
-                        app.load(files[0], equalize = !equalize);
+                        app.load(files[0], false);
+//                        app.load(files[0], equalize = !equalize);
                 }
             }
         });
@@ -83,7 +84,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
             {
                 screenTexture = new Texture(file);
 //                screenTexture = new Texture(cba.process(pm), Pixmap.Format.RGBA8888, false);
-                batch.setShader(shaderCB);
+                batch.setShader(shaderBlueNoise);
             }
 //            else
 //            {
@@ -120,11 +121,11 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if (!shaderFlat.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderFlat.getLog());
         shaderStandard = new ShaderProgram(vertexShader, fragmentShader);
         if (!shaderStandard.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderStandard.getLog());
-        shaderCB = 
+        shaderBlueNoise =
            //defaultShader; 
            new ShaderProgram(vertexShader, fragmentShaderBlue);
-        if (!shaderCB.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderCB.getLog());
-        batch = new SpriteBatch(1000, shaderStandard);
+        if (!shaderBlueNoise.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderBlueNoise.getLog());
+        batch = new SpriteBatch(1000, shaderBlueNoise);
         screenView = new ScreenViewport();
         screenView.getCamera().position.set(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0);
         screenView.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -149,14 +150,18 @@ public class ShaderPalettizer extends ApplicationAdapter {
             if(!sh.equals(defaultShader)) {
                 batch.setPackedColor(-0x1.fffffep126f); // packed white
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE1);
-                palette.bind();
-                if(sh == shaderCB) {
+                if(sh != shaderBlueNoise) {
+                    palette.bind();
+                }
+                else
+                {
                     Gdx.gl.glActiveTexture(GL20.GL_TEXTURE2);
                     blueNoise.bind(2);
                 }
                 batch.begin();
-                sh.setUniformi("u_palette", 1);
-                if(sh == shaderCB)
+                if(sh != shaderBlueNoise)
+                    sh.setUniformi("u_palette", 1);
+                if(sh == shaderBlueNoise)
                     sh.setUniformi("u_blue", 2);
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 //                if(!batch.getShader().equals(shaderStandard))
