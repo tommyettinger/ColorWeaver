@@ -157,6 +157,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                 {
                     Gdx.gl.glActiveTexture(GL20.GL_TEXTURE2);
                     blueNoise.bind(2);
+                    blueNoise.unsafeSetWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
                 }
                 batch.begin();
                 if(sh != shaderBlueNoise)
