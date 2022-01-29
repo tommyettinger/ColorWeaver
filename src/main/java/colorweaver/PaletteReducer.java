@@ -2245,9 +2245,7 @@ public class PaletteReducer {
      * noise before diffusing, like {@link #reduceTrueBlue(Pixmap)}. This looks like {@link #reduceScatter(Pixmap)} in
      * many cases, but smooth gradients are much smoother with Neue than Scatter. Scatter multiplies error by a blue
      * noise value, where this adds blue noise regardless of error. This also preserves color better than TrueBlue,
-     * while keeping similar gradient smoothness. The algorithm here uses a 2x2 rough checkerboard pattern to offset
-     * some roughness that can appear in blue noise; the checkerboard can appear in some cases when a dithered image is
-     * zoomed with certain image filters.
+     * while keeping similar gradient smoothness.
      * @param pixmap will be modified in-place and returned
      * @return pixmap, after modifications
      */
@@ -2281,9 +2279,9 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float) ditherStrength * 3.5f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
-                adj, strength = (float) (24 * ditherStrength / populationBias);
-        int sum = 3;//(lineLen * 0x9E373 ^ 0xC79E7B1D) ^ (h * 0xB9C9B ^ 0xD1B54A35);
+        float w1 = (float) ditherStrength * 3f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
+                adj, strength = (float) (24.0 * ditherStrength / (populationBias * populationBias)),
+                limit = (float) Math.pow(80, 1.635 - populationBias);
 
         for (int py = 0; py < h; py++) {
             int ny = py + 1;
@@ -2296,14 +2294,12 @@ public class PaletteReducer {
                 nextErrorBlue[i] = 0;
             }
             for (int px = 0; px < lineLen; px++) {
-                sum ^= px + py & 7;
                 color = pixmap.getPixel(px, py);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, py, 0);
                 else {
                     adj = ((TRI_BLUE_NOISE[(px & 63) | (py & 63) << 6] + 0.5f) * 0.005f); // plus or minus 255/400
-//                    adj = Math.min(Math.max(adj * strength + ((px + py << 4 & 16) - 8f), -16f), 16f);
-                    adj = Math.min(Math.max(adj * strength + ((px + py << 2 & 4) + sum - 5.5f), -16f), 16f);
+                    adj = Math.min(Math.max(adj * strength, -limit), limit);
                     er = adj + (curErrorRed[px]);
                     eg = adj + (curErrorGreen[px]);
                     eb = adj + (curErrorBlue[px]);

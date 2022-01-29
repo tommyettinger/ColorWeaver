@@ -72,28 +72,25 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
     public void create() {
 //        final String targetDir = "samples/reducedGood/"; //
-        final String targetDir = "samples/LowColorGoodDithers/"; //
-//        final String targetDir = "samples/reducedOkAdjusted/"; //
+//        final String targetDir = "samples/LowColorGoodDithers/"; //
+        final String targetDir = "samples/reducedOkAdjusted/"; //
 //        final String targetDir = "samples/ignored/youeye1/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
-        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
-                , Gdx.files.local("samples/Painting_by_Henri_Biva.jpg")
-                , Gdx.files.local("samples/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg")
-                , Gdx.files.local("samples/Girl_with_a_Pearl_Earring.jpg")
-                // Add any art you have the rights to (optimally public domain or self-made) to samples/ and
-                // use the format of the lines above to add it to the set of generated palettized artwork.
-        };
+//        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
+//                , Gdx.files.local("samples/Painting_by_Henri_Biva.jpg")
+//                , Gdx.files.local("samples/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg")
+//                , Gdx.files.local("samples/Girl_with_a_Pearl_Earring.jpg")
+//        };
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Cat_Posing.jpg")};
 //        FileHandle[] samples = {Gdx.files.local("samples/ignored/meowsterpiece.jpg")};
-//        FileHandle[] samples =
-////                Gdx.files.local("samples/ignored/youeye1").list(new FileFilter() {
-//                Gdx.files.local("samples/").list(new FileFilter() {
-//            @Override
-//            public boolean accept (File pathname) {
-//                return !pathname.isDirectory();
-//            }
-//        });
+        FileHandle[] samples =
+                Gdx.files.local("samples/").list(new FileFilter() {
+            @Override
+            public boolean accept (File pathname) {
+                return !pathname.isDirectory();
+            }
+        });
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
         for(FileHandle hex : hexes) {
@@ -116,8 +113,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             System.out.println(name);
 //            if(name.compareToIgnoreCase("nameOfPaletteThatFailed") < 0) continue;
             loadPalette(name);
-            if(PALETTE.length > 40)
-                continue;
             Gdx.files.local(targetDir).mkdirs();
 //            Gdx.files.local(targetDir + name).mkdirs();
             PNG8 png8 = new PNG8();
@@ -132,8 +127,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                     Pixmap pm, sam = new Pixmap(sample);
                     pm = new Pixmap(sam.getWidth(), sam.getHeight(), sam.getFormat());
                     reducer.setDitherStrength(1f);
-                    String subname = targetDir + "/" + sample.nameWithoutExtension();
-//                    String subname = targetDir + name + "/" + sample.nameWithoutExtension();
+//                    String subname = targetDir + "/" + sample.nameWithoutExtension();
+                    String subname = targetDir + name + "/" + sample.nameWithoutExtension();
 ////lousy but important
 //                    pm.drawPixmap(sam, 0, 0);
 //                    pm = reducer.reduceSolid(pm);
@@ -142,25 +137,25 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                     reducer.setDitherStrength(1f);
                     drawPart(pm, sam, reducer, png8, subname, suffix);
 
-//                    reducer.setDitherStrength(0.5f);
-//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
-//
-//                    drawPart(pm, sam, reducer, png8, subname, suffix);
-//
-//                    reducer.setDitherStrength(1.5f);
-//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_bonus";
-//
-//                    drawPart(pm, sam, reducer, png8, subname, suffix);
-//
-//                    reducer.setDitherStrength(2f);
-//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_heavy";
-//
-//                    drawPart(pm, sam, reducer, png8, subname, suffix);
-//
-//                    reducer.setDitherStrength(0.25f);
-//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_quarter";
-//
-//                    drawPart(pm, sam, reducer, png8, subname, suffix);
+                    reducer.setDitherStrength(0.5f);
+                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
+
+                    drawPart(pm, sam, reducer, png8, subname, suffix);
+
+                    reducer.setDitherStrength(1.5f);
+                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_bonus";
+
+                    drawPart(pm, sam, reducer, png8, subname, suffix);
+
+                    reducer.setDitherStrength(2f);
+                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_heavy";
+
+                    drawPart(pm, sam, reducer, png8, subname, suffix);
+
+                    reducer.setDitherStrength(0.25f);
+                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_quarter";
+
+                    drawPart(pm, sam, reducer, png8, subname, suffix);
 
                 }
             } catch (IOException e) {
@@ -209,9 +204,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         pm = reducer.reduceNeue(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
 //////incredible
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceKnoll(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceKnoll(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
 //////great
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceKnollRoberts(pm);
