@@ -774,12 +774,12 @@ public class PaletteReducer {
         }
 
         public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-            double ra = r1 * 0.00392156862745098; ra *= ra;
-            double ga = g1 * 0.00392156862745098; ga *= ga;
-            double ba = b1 * 0.00392156862745098; ba *= ba;
-            double rb = r2 * 0.00392156862745098; rb *= rb;
-            double gb = g2 * 0.00392156862745098; gb *= gb;
-            double bb = b2 * 0.00392156862745098; bb *= bb;
+            double ra = forwardLight(r1 * 0.00392156862745098);// ra *= ra;
+            double ga = forwardLight(g1 * 0.00392156862745098);// ga *= ga;
+            double ba = forwardLight(b1 * 0.00392156862745098);// ba *= ba;
+            double rb = forwardLight(r2 * 0.00392156862745098);// rb *= rb;
+            double gb = forwardLight(g2 * 0.00392156862745098);// gb *= gb;
+            double bb = forwardLight(b2 * 0.00392156862745098);// bb *= bb;
 
             double rf = (ra - rb);
             double gf = (ga - gb);
@@ -2306,8 +2306,8 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float) ditherStrength * 6f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
-                adj, strength = (float) (24.0 * ditherStrength / (populationBias * populationBias)),
+        float w1 = (float) ditherStrength * 7f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
+                adj, strength = (float) (32.0 * ditherStrength / (populationBias * populationBias)),
                 limit = (float) Math.pow(80, 1.635 - populationBias);
 
         for (int py = 0; py < h; py++) {
@@ -2340,9 +2340,9 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, py, used);
-                    rdiff = OtherMath.cbrtShape(0x2.Ep-11f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = OtherMath.cbrtShape(0x2.Ep-11f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = OtherMath.cbrtShape(0x2.Ep-11f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = OtherMath.cbrtShape(0x1.7p-10f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = OtherMath.cbrtShape(0x1.7p-10f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = OtherMath.cbrtShape(0x1.7p-10f * ((color>>>8&255)- (used>>>8&255)) );
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * w7;
