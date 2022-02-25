@@ -660,9 +660,9 @@ public class PaletteReducer {
 //            t = (k3 * L2 - k1);
 //            L2 = (t + Math.sqrt(t * t + 0.1405044 * L2)) * 0.5;
 
-            double L = L1 /* * L1 * L1 */ - L2 /* * L2 */;
-            double A = A1 /* * A1 * A1 */ - A2 /* * A2 */;
-            double B = B1 /* * B1 * B1 */ - B2 /* * B2 */;
+            double L = (L1 - L2) * 1.25;
+            double A = (A1 - A2);
+            double B = (B1 - B2);
 
             return (L * L + A * A + B * B) * 0x1p+21;
         }
@@ -759,6 +759,33 @@ public class PaletteReducer {
             return (RGB_POWERS[Math.abs(r1 - r2)]
                     + RGB_POWERS[256+Math.abs(g1 - g2)]
                     + RGB_POWERS[512+Math.abs(b1 - b2)]) * 0x1p-10;
+        }
+    };
+
+    public static final ColorMetric rgbStupidMetric = new ColorMetric(){
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            double ra = r1 * 0.00392156862745098; ra *= ra;
+            double ga = g1 * 0.00392156862745098; ga *= ga;
+            double ba = b1 * 0.00392156862745098; ba *= ba;
+            double rb = r2 * 0.00392156862745098; rb *= rb;
+            double gb = g2 * 0.00392156862745098; gb *= gb;
+            double bb = b2 * 0.00392156862745098; bb *= bb;
+
+            double rf = (ra - rb);
+            double gf = (ga - gb);
+            double bf = (ba - bb);
+
+            return (rf * rf + gf * gf + bf * bf) * 0x1p+21;
         }
     };
 
@@ -2313,9 +2340,9 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, py, used);
-                    rdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = OtherMath.cbrtShape(0x2.Ep-11f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = OtherMath.cbrtShape(0x2.Ep-11f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = OtherMath.cbrtShape(0x2.Ep-11f * ((color>>>8&255)- (used>>>8&255)) );
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * w7;

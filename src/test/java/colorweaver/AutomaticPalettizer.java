@@ -73,7 +73,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
     public void create() {
 //        final String targetDir = "samples/reducedGood/"; //
 //        final String targetDir = "samples/LowColorGoodDithers/"; //
-        final String targetDir = "samples/reducedOkAdjusted/"; //
+        final String targetDir = "samples/reducedRgbStupid/"; //
+//        final String targetDir = "samples/reducedOkAdjusted/"; //
 //        final String targetDir = "samples/ignored/youeye1/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
@@ -94,13 +95,13 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
 //        for(FileHandle hex : hexes) {
-        for(FileHandle hex : new FileHandle[]{
-                Gdx.files.local("palettes/hex/carnival-32.hex"),
-                Gdx.files.local("palettes/hex/duel-256.hex"),
-                Gdx.files.local("palettes/hex/duelish-255.hex"),
-                Gdx.files.local("palettes/hex/shockwaver-v2-65.hex"),
-        }) {
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        for(FileHandle hex : new FileHandle[]{
+//                Gdx.files.local("palettes/hex/carnival-32.hex"),
+//                Gdx.files.local("palettes/hex/duel-256.hex"),
+//                Gdx.files.local("palettes/hex/duelish-255.hex"),
+//                Gdx.files.local("palettes/hex/shockwaver-v2-65.hex"),
+//        }) {
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
@@ -127,10 +128,11 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             png8.setCompression(7);
             png8.setFlipY(false);
 //            reducer.exact(PALETTE, PaletteReducer.iptGoodMetric);
-            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
+            reducer.exact(PALETTE, PaletteReducer.rgbStupidMetric);
+//            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
             png8.palette = reducer;
             try {
-//                FileHandle sample = Gdx.files.local("samples/David.png"); {
+//                FileHandle sample = Gdx.files.local("samples/Portal_Companion_Cube.jpg"); {
                 for(FileHandle sample : samples) {
                     Pixmap pm, sam = new Pixmap(sample);
                     pm = new Pixmap(sam.getWidth(), sam.getHeight(), sam.getFormat());
