@@ -94,7 +94,13 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
 //        for(FileHandle hex : hexes) {
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/carnival-32.hex"),
+                Gdx.files.local("palettes/hex/duel-256.hex"),
+                Gdx.files.local("palettes/hex/duelish-255.hex"),
+                Gdx.files.local("palettes/hex/shockwaver-v2-65.hex"),
+        }) {
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
