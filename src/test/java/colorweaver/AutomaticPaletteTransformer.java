@@ -50,10 +50,10 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
 //        Gdx.files.local("palettes/genRgbStupid/").mkdirs();
 //        for(FileHandle hex : hexes) {
 //        for(FileHandle hex : new FileHandle[]{
-//                Gdx.files.local("palettes/hex/carnival-32.hex"),
-//                Gdx.files.local("palettes/hex/duel-256.hex"),
-//                Gdx.files.local("palettes/hex/duelish-255.hex"),
-//                Gdx.files.local("palettes/hex/shockwaver-v2-65.hex"),
+//                Gdx.files.local("palettes/hex/florescence-4.hex"),
+//                Gdx.files.local("palettes/hex/moonlight-gb-4.hex"),
+//                Gdx.files.local("palettes/hex/pix-byrg-4.hex"),
+//                Gdx.files.local("palettes/hex/technobike-4.hex"),
 //        }) {
         FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
@@ -72,14 +72,15 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
 
             PNG8 png8 = new PNG8();
             png8.setCompression(7);
-            png8.palette = new PaletteReducer(PALETTE, PaletteReducer.rgbStupidMetric);
+            png8.palette = new PaletteReducer(PALETTE, PaletteReducer.oklabCarefulMetric);
             Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
             for (int i = 1; i < PALETTE.length; i++) {
                 pix.drawPixel(i - 1, 0, PALETTE[i]);
             }
             pix.drawPixel(255, 0, 0);
             try {
-                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupid/" + name + ".png"), pix, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genOkAdjusted/" + name + ".png"), pix, false);
+//                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupid/" + name + ".png"), pix, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -93,7 +94,8 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
                 }
             }
             try {
-                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupid/" + name + "_GLSL.png"), p2, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genOkAdjusted/" + name + "_GLSL.png"), p2, false);
+//                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupid/" + name + "_GLSL.png"), p2, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }

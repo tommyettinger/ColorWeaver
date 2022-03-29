@@ -15,7 +15,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "bw-2";
+    public static final String NAME = "color-graphics-adapter-16";
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -764,9 +764,15 @@ public class HexGenerator extends ApplicationAdapter {
                 0x00FFDAFF, 0x39F9F8FF, 0x00CCFEFF, 0x179BEFFF, 0x0000FFFF, 0x3F25F1FF, 0x6400FEFF, 0x8824F1FF,
                 0x9D00FFFF, 0xAA28FAFF, 0xBF00FFFF, 0xCB25F8FF, 0xEC0FFFFF, 0xF42FFAFF, 0xFF00A9FF, 0xF52664FF,
         };
-
+        int[] nasty = {
+                0x00000000, 0x000000FF, 0xFF00FFFF
+        };
+        int[] nastier = {
+                0x00000000, 0x504000FF, 0xFF00FFFF
+        };
         palette =
-                yam3;
+                nastier
+                ;
 //                Coloring.HALTONIC255;
 //                new int[]
 //                { // halturvy

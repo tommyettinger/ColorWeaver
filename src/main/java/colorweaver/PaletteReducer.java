@@ -700,12 +700,14 @@ public class PaletteReducer {
     }
 
 
+    private static final double[] FORWARD_LOOKUP = new double[256];
     private static final double[] RGB_POWERS = new double[3 << 8];
     static {
         for (int i = 1; i < 256; i++) {
             RGB_POWERS[i]     = Math.pow(i, 3.7);
             RGB_POWERS[i+256] = Math.pow(i, 4.0);
             RGB_POWERS[i+512] = Math.pow(i, 3.1);
+            FORWARD_LOOKUP[0] = forwardLight(i * 0.00392156862745098);
         }
     }
 
@@ -774,12 +776,12 @@ public class PaletteReducer {
         }
 
         public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-            double ra = forwardLight(r1 * 0.00392156862745098);// ra *= ra;
-            double ga = forwardLight(g1 * 0.00392156862745098);// ga *= ga;
-            double ba = forwardLight(b1 * 0.00392156862745098);// ba *= ba;
-            double rb = forwardLight(r2 * 0.00392156862745098);// rb *= rb;
-            double gb = forwardLight(g2 * 0.00392156862745098);// gb *= gb;
-            double bb = forwardLight(b2 * 0.00392156862745098);// bb *= bb;
+            double ra = FORWARD_LOOKUP[r1];// ra *= ra;
+            double ga = FORWARD_LOOKUP[g1];// ga *= ga;
+            double ba = FORWARD_LOOKUP[b1];// ba *= ba;
+            double rb = FORWARD_LOOKUP[r2];// rb *= rb;
+            double gb = FORWARD_LOOKUP[g2];// gb *= gb;
+            double bb = FORWARD_LOOKUP[b2];// bb *= bb;
 
             double rf = (ra - rb);
             double gf = (ga - gb);
