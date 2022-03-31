@@ -74,7 +74,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedGood/"; //
 //        final String targetDir = "samples/LowColorGoodDithers/"; //
 //        final String targetDir = "samples/reducedRgbStupid/"; //
-        final String targetDir = "samples/reducedOkAdjusted/"; //
+        final String targetDir = "samples/reducedOkReadjusted/"; //
 //        final String targetDir = "samples/ignored/youeye1/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
@@ -94,14 +94,14 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         });
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
-//        for(FileHandle hex : hexes) {
+        for(FileHandle hex : hexes) {
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/florescence-4.hex"),
 //                Gdx.files.local("palettes/hex/moonlight-gb-4.hex"),
 //                Gdx.files.local("palettes/hex/pix-byrg-4.hex"),
 //                Gdx.files.local("palettes/hex/technobike-4.hex"),
 //        }) {
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
@@ -135,7 +135,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
             png8.palette = reducer;
             try {
-//                FileHandle sample = Gdx.files.local("samples/Pounce.png"); {
+//                FileHandle sample = Gdx.files.local("samples/Happy_Dog.jpg"); {
                 for(FileHandle sample : samples) {
                     Pixmap pm, sam = new Pixmap(sample);
                     pm = new Pixmap(sam.getWidth(), sam.getHeight(), sam.getFormat());

@@ -579,8 +579,19 @@ public class PaletteReducer {
      * @return an adjusted L value that can be used internally
      */
     public static double forwardLight(final double L) {
-        return (L - 1.004) / (1.0 - L * 0.4285714) + 1.004;
+        final double shape = 0.64516133, turning = 0.95;
+        final double d = turning - L;
+        double r;
+        if(d < 0)
+            r = ((1.0 - turning) * (L - 1.0)) / (1.0 - (L + shape * d)) + 1.0;
+        else
+            r = (turning * L) / (1e-50 + (L + shape * d));
+        return r * r;
     }
+
+//	public static float forwardLight(final float L) {
+//		return (L - 1.004f) / (1f - L * 0.4285714f) + 1.004f;
+//	}
 
     /**
      * Changes the curve of the internally-used lightness when it is output to another format. This makes the very-dark
@@ -589,9 +600,21 @@ public class PaletteReducer {
      * @param L lightness, from 0 to 1 inclusive
      * @return an adjusted L value that can be fed into a conversion to RGBA or something similar
      */
-    public static double reverseLight(final double L) {
-        return (L - 0.993) / (1.0 + L * 0.75) + 0.993;
+    public static double reverseLight(double L) {
+        L = Math.sqrt(L);
+        final double shape = 1.55, turning = 0.95;
+        final double d = turning - L;
+        double r;
+        if(d < 0)
+            r = ((1.0 - turning) * (L - 1.0)) / (1.0 - (L + shape * d)) + 1.0;
+        else
+            r = (turning * L) / (1e-50 + (L + shape * d));
+        return r;
     }
+
+//	public static float reverseLight(final float L) {
+//		return (L - 0.993f) / (1f + L * 0.75f) + 0.993f;
+//	}
 
     public static final ColorMetric oklabMetric = new ColorMetric(){
         public double difference(int color1, int color2) {
@@ -611,7 +634,7 @@ public class PaletteReducer {
                     L = OKLAB[0][indexA] - OKLAB[0][indexB],
                     A = OKLAB[1][indexA] - OKLAB[1][indexB],
                     B = OKLAB[2][indexA] - OKLAB[2][indexB];
-            L = forwardLight(L * L);
+            L = L * L;
             A *= A;
             B *= B;
             return (L * L + A * A + B * B) * 0x1.2p+22;
@@ -677,7 +700,7 @@ public class PaletteReducer {
         double m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
         double s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
 
-        toFill[0] = reverseLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
+        toFill[0] = forwardLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
         toFill[1] = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
         toFill[2] = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
 
@@ -686,7 +709,7 @@ public class PaletteReducer {
 
     public static int oklabToRGB(double L, double A, double B)
     {
-        L = forwardLight(L);
+        L = reverseLight(L);
         double l = (L + 0.3963377774 * A + 0.2158037573 * B);
         double m = (L - 0.1055613458 * A - 0.0638541728 * B);
         double s = (L - 0.0894841775 * A - 1.2914855480 * B);
