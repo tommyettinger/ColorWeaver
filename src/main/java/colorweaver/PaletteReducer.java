@@ -634,10 +634,10 @@ public class PaletteReducer {
                     L = OKLAB[0][indexA] - OKLAB[0][indexB],
                     A = OKLAB[1][indexA] - OKLAB[1][indexB],
                     B = OKLAB[2][indexA] - OKLAB[2][indexB];
-            L = L * L;
+            L *= L;
             A *= A;
             B *= B;
-            return (L * L + A * A + B * B) * 0x1.2p+22;
+            return (L * L + A * A + B * B) * 0x1p+27;
         }
     };
 
@@ -683,7 +683,7 @@ public class PaletteReducer {
 //            t = (k3 * L2 - k1);
 //            L2 = (t + Math.sqrt(t * t + 0.1405044 * L2)) * 0.5;
 
-            double L = (L1 - L2) * 1.25;
+            double L = (L1 - L2);// * 1.25;
             double A = (A1 - A2);
             double B = (B1 - B2);
 
@@ -730,7 +730,7 @@ public class PaletteReducer {
             RGB_POWERS[i]     = Math.pow(i, 3.7);
             RGB_POWERS[i+256] = Math.pow(i, 4.0);
             RGB_POWERS[i+512] = Math.pow(i, 3.1);
-            FORWARD_LOOKUP[0] = forwardLight(i * 0.00392156862745098);
+            FORWARD_LOOKUP[i] = forwardLight(i * 0.00392156862745098);
         }
     }
 
@@ -819,7 +819,6 @@ public class PaletteReducer {
     public static final LABRoughColorMetric labRoughMetric = new LABRoughColorMetric();
     public byte[] paletteMapping;
     public final int[] paletteArray = new int[256];
-    final int[] gammaArray = new int[256];
     FloatArray curErrorRedFloats, nextErrorRedFloats, curErrorGreenFloats, nextErrorGreenFloats, curErrorBlueFloats, nextErrorBlueFloats;
     public int colorCount;
     double ditherStrength = 1.0, populationBias = 0.5;

@@ -73,8 +73,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
     public void create() {
 //        final String targetDir = "samples/reducedGood/"; //
 //        final String targetDir = "samples/LowColorGoodDithers/"; //
-//        final String targetDir = "samples/reducedRgbStupid/"; //
-        final String targetDir = "samples/reducedOkReadjusted/"; //
+        final String targetDir = "samples/reducedRgbStupid/"; //
+//        final String targetDir = "samples/reducedOkReadjusted/"; //
 //        final String targetDir = "samples/ignored/youeye1/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
@@ -131,8 +131,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             png8.setCompression(2);
             png8.setFlipY(false);
 //            reducer.exact(PALETTE, PaletteReducer.iptGoodMetric);
-//            reducer.exact(PALETTE, PaletteReducer.rgbStupidMetric);
-            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
+            reducer.exact(PALETTE, PaletteReducer.rgbStupidMetric);
+//            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
             png8.palette = reducer;
             try {
 //                FileHandle sample = Gdx.files.local("samples/Happy_Dog.jpg"); {
