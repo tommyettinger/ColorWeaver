@@ -226,7 +226,7 @@ public class PNG8 implements Disposable {
         }
         else if(computePalette)
         {
-            palette.analyze(pixmap, threshold);
+            palette.analyze(pixmap, threshold, 256, PaletteReducer.rgbStupidMetric);
         }
 
         if(dither) writeDithered(output, pixmap);

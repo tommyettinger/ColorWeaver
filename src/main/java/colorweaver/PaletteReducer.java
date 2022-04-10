@@ -789,30 +789,35 @@ public class PaletteReducer {
 
     public static final ColorMetric rgbStupidMetric = new ColorMetric(){
         public double difference(int color1, int color2) {
-            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.MAX_VALUE;
             return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
         }
 
         public double difference(int color1, int r2, int g2, int b2) {
-            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            if((color1 & 0x80) == 0) return Double.MAX_VALUE;
             return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
         }
 
         public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-            double ra = FORWARD_LOOKUP[r1];// ra *= ra;
-            double ga = FORWARD_LOOKUP[g1];// ga *= ga;
-            double ba = FORWARD_LOOKUP[b1];// ba *= ba;
-            double rb = FORWARD_LOOKUP[r2];// rb *= rb;
-            double gb = FORWARD_LOOKUP[g2];// gb *= gb;
-            double bb = FORWARD_LOOKUP[b2];// bb *= bb;
+            double rf = (FORWARD_LOOKUP[r1] - FORWARD_LOOKUP[r2]); rf *= rf;
+            double gf = (FORWARD_LOOKUP[g1] - FORWARD_LOOKUP[g2]); gf *= gf;
+            double bf = (FORWARD_LOOKUP[b1] - FORWARD_LOOKUP[b2]); bf *= bf;
 
-            double rf = (ra - rb);
-            double gf = (ga - gb);
-            double bf = (ba - bb);
-
-            return (rf * rf + gf * gf + bf * bf) * 0x1p+21;
+            return (rf * rf + gf * gf + bf * bf) * 0x1.8p17;
         }
     };
+//            double ra = FORWARD_LOOKUP[r1];// ra *= ra;
+//            double ga = FORWARD_LOOKUP[g1];// ga *= ga;
+//            double ba = FORWARD_LOOKUP[b1];// ba *= ba;
+//            double rb = FORWARD_LOOKUP[r2];// rb *= rb;
+//            double gb = FORWARD_LOOKUP[g2];// gb *= gb;
+//            double bb = FORWARD_LOOKUP[b2];// bb *= bb;
+//
+//            double rf = (ra - rb);
+//            double gf = (ga - gb);
+//            double bf = (ba - bb);
+//
+//            return (rf * rf + gf * gf + bf * bf) * 0x1p+21;
 
     public static final ColorMetric rgbSimpleMetric = new ColorMetric(){
         public double difference(int color1, int color2) {
@@ -826,11 +831,11 @@ public class PaletteReducer {
         }
 
         public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-            double rf = (r1 - r2); rf *= rf * 0x1p-16;
-            double gf = (g1 - g2); gf *= gf * 0x1p-16;
-            double bf = (b1 - b2); bf *= bf * 0x1p-16;
+            double rf = (r1 - r2); rf *= rf;
+            double gf = (g1 - g2); gf *= gf;
+            double bf = (b1 - b2); bf *= bf;
 
-            return (rf * rf + gf * gf + bf * bf) * 0x1p+21;
+            return (rf * rf + gf * gf + bf * bf) * 0x1p-10;
         }
     };
 
@@ -944,66 +949,66 @@ public class PaletteReducer {
         analyze(pixmap, threshold);
     }
 
-    /**
-     * Color difference metric; returns large numbers even for smallish differences.
-     * If this returns 250 or more, the colors may be perceptibly different; 500 or more almost guarantees it.
-     *
-     * @param color1 an RGBA8888 color as an int
-     * @param color2 an RGBA8888 color as an int
-     * @return the difference between the given colors, as a positive double
-     */
-    public static double difference(int color1, int color2) {
-        int indexA = (color1 >>> 17 & 0x7C00) | (color1 >>> 14 & 0x3E0) | (color1 >>> 11 & 0x1F),
-                indexB = (color2 >>> 17 & 0x7C00) | (color2 >>> 14 & 0x3E0) | (color2 >>> 11 & 0x1F);
-        final double
-                L = labs[0][indexA] - labs[0][indexB],
-                A = labs[1][indexA] - labs[1][indexB],
-                B = labs[2][indexA] - labs[2][indexB];
-        return (L * L * 7 + A * A + B * B);
-    }
-
-
-    /**
-     * Color difference metric; returns large numbers even for smallish differences.
-     * If this returns 250 or more, the colors may be perceptibly different; 500 or more almost guarantees it.
-     *
-     * @param color1 an RGBA8888 color as an int
-     * @param r2     red value from 0 to 255, inclusive
-     * @param g2     green value from 0 to 255, inclusive
-     * @param b2     blue value from 0 to 255, inclusive
-     * @return the difference between the given colors, as a positive double
-     */
-    public static double difference(int color1, int r2, int g2, int b2) {
-        int indexA = (color1 >>> 17 & 0x7C00) | (color1 >>> 14 & 0x3E0) | (color1 >>> 11 & 0x1F),
-                indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
-        final double
-                L = labs[0][indexA] - labs[0][indexB],
-                A = labs[1][indexA] - labs[1][indexB],
-                B = labs[2][indexA] - labs[2][indexB];
-        return (L * L * 7 + A * A + B * B);
-    }
-
-    /**
-     * Color difference metric; returns large numbers even for smallish differences.
-     * If this returns 250 or more, the colors may be perceptibly different; 500 or more almost guarantees it.
-     *
-     * @param r1 red value from 0 to 255, inclusive
-     * @param g1 green value from 0 to 255, inclusive
-     * @param b1 blue value from 0 to 255, inclusive
-     * @param r2 red value from 0 to 255, inclusive
-     * @param g2 green value from 0 to 255, inclusive
-     * @param b2 blue value from 0 to 255, inclusive
-     * @return the difference between the given colors, as a positive double
-     */
-    public static double difference(final int r1, final int g1, final int b1, final int r2, final int g2, final int b2) {
-        int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
-                indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
-        final double
-                L = labs[0][indexA] - labs[0][indexB],
-                A = labs[1][indexA] - labs[1][indexB],
-                B = labs[2][indexA] - labs[2][indexB];
-        return (L * L * 7 + A * A + B * B);
-    }
+//    /**
+//     * Color difference metric; returns large numbers even for smallish differences.
+//     * If this returns 250 or more, the colors may be perceptibly different; 500 or more almost guarantees it.
+//     *
+//     * @param color1 an RGBA8888 color as an int
+//     * @param color2 an RGBA8888 color as an int
+//     * @return the difference between the given colors, as a positive double
+//     */
+//    public static double difference(int color1, int color2) {
+//        int indexA = (color1 >>> 17 & 0x7C00) | (color1 >>> 14 & 0x3E0) | (color1 >>> 11 & 0x1F),
+//                indexB = (color2 >>> 17 & 0x7C00) | (color2 >>> 14 & 0x3E0) | (color2 >>> 11 & 0x1F);
+//        final double
+//                L = labs[0][indexA] - labs[0][indexB],
+//                A = labs[1][indexA] - labs[1][indexB],
+//                B = labs[2][indexA] - labs[2][indexB];
+//        return (L * L * 7 + A * A + B * B);
+//    }
+//
+//
+//    /**
+//     * Color difference metric; returns large numbers even for smallish differences.
+//     * If this returns 250 or more, the colors may be perceptibly different; 500 or more almost guarantees it.
+//     *
+//     * @param color1 an RGBA8888 color as an int
+//     * @param r2     red value from 0 to 255, inclusive
+//     * @param g2     green value from 0 to 255, inclusive
+//     * @param b2     blue value from 0 to 255, inclusive
+//     * @return the difference between the given colors, as a positive double
+//     */
+//    public static double difference(int color1, int r2, int g2, int b2) {
+//        int indexA = (color1 >>> 17 & 0x7C00) | (color1 >>> 14 & 0x3E0) | (color1 >>> 11 & 0x1F),
+//                indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
+//        final double
+//                L = labs[0][indexA] - labs[0][indexB],
+//                A = labs[1][indexA] - labs[1][indexB],
+//                B = labs[2][indexA] - labs[2][indexB];
+//        return (L * L * 7 + A * A + B * B);
+//    }
+//
+//    /**
+//     * Color difference metric; returns large numbers even for smallish differences.
+//     * If this returns 250 or more, the colors may be perceptibly different; 500 or more almost guarantees it.
+//     *
+//     * @param r1 red value from 0 to 255, inclusive
+//     * @param g1 green value from 0 to 255, inclusive
+//     * @param b1 blue value from 0 to 255, inclusive
+//     * @param r2 red value from 0 to 255, inclusive
+//     * @param g2 green value from 0 to 255, inclusive
+//     * @param b2 blue value from 0 to 255, inclusive
+//     * @return the difference between the given colors, as a positive double
+//     */
+//    public static double difference(final int r1, final int g1, final int b1, final int r2, final int g2, final int b2) {
+//        int indexA = (r1 << 7 & 0x7C00) | (g1 << 2 & 0x3E0) | (b1 >>> 3),
+//                indexB = (r2 << 7 & 0x7C00) | (g2 << 2 & 0x3E0) | (b2 >>> 3);
+//        final double
+//                L = labs[0][indexA] - labs[0][indexB],
+//                A = labs[1][indexA] - labs[1][indexB],
+//                B = labs[2][indexA] - labs[2][indexB];
+//        return (L * L * 7 + A * A + B * B);
+//    }
 
     /**
      * Gets a pseudo-random float between -0.65625f and 0.65625f, determined by the upper 23 bits of seed.
@@ -1226,7 +1231,7 @@ public class PaletteReducer {
      * transparency). Because calling {@link #reduce(Pixmap)} (or any of PNG8's write methods) will dither colors that
      * aren't exact, and dithering works better when the palette can choose colors that are sufficiently different, this
      * uses a threshold value to determine whether it should permit a less-common color into the palette, and if the
-     * second color is different enough (as measured by {@link #difference(int, int)}) by a value of at least 400, it is
+     * second color is different enough (as measured by {@link ColorMetric#difference(int, int)}) by a value of at least 400, it is
      * allowed in the palette, otherwise it is kept out for being too similar to existing colors. This doesn't return a
      * value but instead stores the palette info in this object; a PaletteReducer can be assigned to the
      * {@link PNG8#palette} field or can be used directly to {@link #reduce(Pixmap)} a Pixmap.
@@ -1234,7 +1239,7 @@ public class PaletteReducer {
      * @param pixmap a Pixmap to analyze, making a palette which can be used by this to {@link #reduce(Pixmap)} or by PNG8
      */
     public void analyze(Pixmap pixmap) {
-        analyze(pixmap, 400);
+        analyze(pixmap, 150, 256, rgbStupidMetric);
     }
 
     private static final Comparator<IntIntMap.Entry> entryComparator = new Comparator<IntIntMap.Entry>() {
@@ -1253,17 +1258,17 @@ public class PaletteReducer {
      * transparency). Because calling {@link #reduce(Pixmap)} (or any of PNG8's write methods) will dither colors that
      * aren't exact, and dithering works better when the palette can choose colors that are sufficiently different, this
      * takes a threshold value to determine whether it should permit a less-common color into the palette, and if the
-     * second color is different enough (as measured by {@link #difference(int, int)}) by a value of at least
+     * second color is different enough (as measured by {@link ColorMetric#difference(int, int)}) by a value of at least
      * {@code threshold}, it is allowed in the palette, otherwise it is kept out for being too similar to existing
      * colors. The threshold is usually between 250 and 1000, and 400 is a good default. This doesn't return a value but
      * instead stores the palette info in this object; a PaletteReducer can be assigned to the {@link PNG8#palette}
      * field or can be used directly to {@link #reduce(Pixmap)} a Pixmap.
      *
      * @param pixmap    a Pixmap to analyze, making a palette which can be used by this to {@link #reduce(Pixmap)} or by PNG8
-     * @param threshold a minimum color difference as produced by {@link #difference(int, int)}; usually between 250 and 1000, 400 is a good default
+     * @param threshold a minimum color difference as produced by {@link ColorMetric#difference(int, int)}; usually between 250 and 1000, 400 is a good default
      */
     public void analyze(Pixmap pixmap, int threshold) {
-        analyze(pixmap, threshold, 256);
+        analyze(pixmap, threshold, 256, rgbStupidMetric);
     }
     /**
      * Analyzes {@code pixmap} for color count and frequency, building a palette with at most 256 colors if there are
@@ -1273,16 +1278,16 @@ public class PaletteReducer {
      * transparency). Because calling {@link #reduce(Pixmap)} (or any of PNG8's write methods) will dither colors that
      * aren't exact, and dithering works better when the palette can choose colors that are sufficiently different, this
      * takes a threshold value to determine whether it should permit a less-common color into the palette, and if the
-     * second color is different enough (as measured by {@link #difference(int, int)}) by a value of at least
+     * second color is different enough (as measured by {@link ColorMetric#difference(int, int)}) by a value of at least
      * {@code threshold}, it is allowed in the palette, otherwise it is kept out for being too similar to existing
      * colors. The threshold is usually between 250 and 1000, and 400 is a good default. This doesn't return a value but
      * instead stores the palette info in this object; a PaletteReducer can be assigned to the {@link PNG8#palette}
      * field or can be used directly to {@link #reduce(Pixmap)} a Pixmap.
      *
      * @param pixmap    a Pixmap to analyze, making a palette which can be used by this to {@link #reduce(Pixmap)} or by PNG8
-     * @param threshold a minimum color difference as produced by {@link #difference(int, int)}; usually between 250 and 1000, 400 is a good default
+     * @param threshold a minimum color difference as produced by {@link ColorMetric#difference(int, int)}; usually between 250 and 1000, 400 is a good default
      */
-    public void analyze(Pixmap pixmap, int threshold, int limit) {
+    public void analyze(Pixmap pixmap, int threshold, int limit, ColorMetric metric) {
         Arrays.fill(paletteArray, 0);
         Arrays.fill(paletteMapping, (byte) 0);
         int color;
@@ -1332,7 +1337,7 @@ public class PaletteReducer {
             for (; i < limit && c < cs;) {
                 color = es.get(c++).key;
                 for (int j = 1; j < i; j++) {
-                    if (difference(color, paletteArray[j]) < threshold)
+                    if (metric.difference(color, paletteArray[j]) < threshold)
                         continue PER_BEST;
                 }
                 paletteArray[i] = color;
@@ -1355,7 +1360,7 @@ public class PaletteReducer {
                     if (paletteMapping[c2] == 0) {
                         dist = Double.POSITIVE_INFINITY;
                         for (int i = 1; i < limit; i++) {
-                            if (dist > (dist = Math.min(dist, difference(reds[i], greens[i], blues[i], r, g, b))))
+                            if (dist > (dist = Math.min(dist, metric.difference(reds[i], greens[i], blues[i], r, g, b))))
                                 paletteMapping[c2] = (byte) i;
                         }
                     }
