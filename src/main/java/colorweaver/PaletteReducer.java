@@ -637,7 +637,7 @@ public class PaletteReducer {
             L *= L;
             A *= A;
             B *= B;
-            return (L * L + A * A + B * B) * 0x1p+27;
+            return (L * L + A * A + B * B) * 0x1.2p+22;
         }
     };
 
@@ -809,6 +809,26 @@ public class PaletteReducer {
             double rf = (ra - rb);
             double gf = (ga - gb);
             double bf = (ba - bb);
+
+            return (rf * rf + gf * gf + bf * bf) * 0x1p+21;
+        }
+    };
+
+    public static final ColorMetric rgbSimpleMetric = new ColorMetric(){
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            double rf = (r1 - r2); rf *= rf * 0x1p-16;
+            double gf = (g1 - g2); gf *= gf * 0x1p-16;
+            double bf = (b1 - b2); bf *= bf * 0x1p-16;
 
             return (rf * rf + gf * gf + bf * bf) * 0x1p+21;
         }
