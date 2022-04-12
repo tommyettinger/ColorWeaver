@@ -56,9 +56,9 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
                 0x9D00FFFF, 0xAA28FAFF, 0xBF00FFFF, 0xCB25F8FF, 0xEC0FFFFF, 0xF42FFAFF, 0xFF00A9FF, 0xF52664FF,
         };
 
-        PaletteReducer reducer = new PaletteReducer(yam3, PaletteReducer.oklabCarefulMetric);
-        generatePreloadCode(reducer.paletteMapping, "Yam3Preload.txt");
-        Gdx.files.local("Yam3Preload.dat").writeBytes(reducer.paletteMapping, false);
+        PaletteReducer reducer = new PaletteReducer(Coloring.HALTONIC255, PaletteReducer.rgbStupidMetric);
+        generatePreloadCode(reducer.paletteMapping, "HaltonicPreload.txt");
+        Gdx.files.local("HaltonicPreload.dat").writeBytes(reducer.paletteMapping, false);
         Gdx.app.exit();
     }
     /**

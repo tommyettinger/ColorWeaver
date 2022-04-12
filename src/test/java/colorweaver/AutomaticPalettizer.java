@@ -97,10 +97,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        int i = 0;
 //        for(FileHandle hex : hexes) {
         for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/yam3-255.hex"),
+                Gdx.files.local("palettes/hex/haltonic-255.hex"),
                 Gdx.files.local("palettes/hex/ayy-4.hex"),
                 Gdx.files.local("palettes/hex/bw-2.hex"),
-                Gdx.files.local("palettes/hex/americana-4.hex"),
-                Gdx.files.local("palettes/hex/ty-nokia-12.hex"),
+//                Gdx.files.local("palettes/hex/americana-4.hex"),
+//                Gdx.files.local("palettes/hex/ty-nokia-12.hex"),
         }) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
@@ -126,8 +128,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             System.out.println(name);
 //            if(name.compareToIgnoreCase("nameOfPaletteThatFailed") < 0) continue;
             loadPalette(name);
-            if(PALETTE.length > 40)
-                continue;
+//            if(PALETTE.length > 40)
+//                continue;
 
             Gdx.files.local(targetDir).mkdirs();
 //            Gdx.files.local(targetDir + name).mkdirs();

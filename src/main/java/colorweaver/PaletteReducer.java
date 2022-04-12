@@ -730,7 +730,9 @@ public class PaletteReducer {
             RGB_POWERS[i]     = Math.pow(i, 3.7);
             RGB_POWERS[i+256] = Math.pow(i, 4.0);
             RGB_POWERS[i+512] = Math.pow(i, 3.1);
-            FORWARD_LOOKUP[i] = Math.pow(OtherMath.barronSpline(i / 255f, 25f, 0.5f), 4);
+//            FORWARD_LOOKUP[i] = Math.pow(i / 255.0, 2.0);
+            FORWARD_LOOKUP[i] = OtherMath.barronSpline(i / 255f, 4f, 0.5f);
+//            FORWARD_LOOKUP[i] = Math.pow(OtherMath.barronSpline(i / 255f, 4f, 0.5f), 2.0);
         }
     }
 
@@ -799,12 +801,14 @@ public class PaletteReducer {
         }
 
         public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-            double rf = (FORWARD_LOOKUP[r1] - FORWARD_LOOKUP[r2]);// rf *= rf;
-            double gf = (FORWARD_LOOKUP[g1] - FORWARD_LOOKUP[g2]);// gf *= gf;
-            double bf = (FORWARD_LOOKUP[b1] - FORWARD_LOOKUP[b2]);// bf *= bf;
+            double rf = (FORWARD_LOOKUP[r1] - FORWARD_LOOKUP[r2]) * 1.55;// rf *= rf;
+            double gf = (FORWARD_LOOKUP[g1] - FORWARD_LOOKUP[g2]) * 2.05;// gf *= gf;
+            double bf = (FORWARD_LOOKUP[b1] - FORWARD_LOOKUP[b2]) * 0.90;// bf *= bf;
 
-            return (rf * rf + gf * gf + bf * bf) * 0x1p21;
+//            return (rf * rf + gf * gf + bf * bf) * 0x1p21;
 //            return (rf * rf + gf * gf + bf * bf) * 0x1.8p17;
+            double d2 = (rf * rf + gf * gf + bf * bf);
+            return d2 * d2 * 0x1.8p17;
         }
     };
 //            double ra = FORWARD_LOOKUP[r1];// ra *= ra;
@@ -1197,7 +1201,7 @@ public class PaletteReducer {
         Arrays.fill(paletteMapping, (byte) 0);
         final int plen = Math.min(Math.min(256, colorPalette.length), limit);
         colorCount = plen;
-        populationBias = Math.exp(-1.375/colorCount);
+        populationBias = Math.exp(-1.125/colorCount);
         int color, c2;
         double dist;
         for (int i = 0; i < plen; i++) {
