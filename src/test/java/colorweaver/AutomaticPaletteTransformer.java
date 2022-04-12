@@ -48,14 +48,14 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
         Gdx.files.local("palettes/gen/txt/").mkdirs();
 //        Gdx.files.local("palettes/genOkReadjusted/").mkdirs();
 //        Gdx.files.local("palettes/genOkBasic2/").mkdirs();
-        Gdx.files.local("palettes/genRgbStupid/").mkdirs();
-        for(FileHandle hex : hexes) {
-//        for(FileHandle hex : new FileHandle[]{
-//                Gdx.files.local("palettes/hex/florescence-4.hex"),
-//                Gdx.files.local("palettes/hex/moonlight-gb-4.hex"),
-//                Gdx.files.local("palettes/hex/pix-byrg-4.hex"),
-//                Gdx.files.local("palettes/hex/technobike-4.hex"),
-//        }) {
+        Gdx.files.local("palettes/genRgbSlippery/").mkdirs();
+//        for(FileHandle hex : hexes) {
+        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/ayy-4.hex"),
+                Gdx.files.local("palettes/hex/bw-2.hex"),
+                Gdx.files.local("palettes/hex/americana-4.hex"),
+                Gdx.files.local("palettes/hex/ty-nokia-12.hex"),
+        }) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/blknx-64.hex");{
@@ -82,7 +82,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
             try {
 //                png8.writePrecisely(Gdx.files.local("palettes/genOkReadjusted/" + name + ".png"), pix, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genOkBasic2/" + name + ".png"), pix, false);
-                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupid/" + name + ".png"), pix, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genRgbSlippery/" + name + ".png"), pix, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -98,7 +98,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
             try {
 //                png8.writePrecisely(Gdx.files.local("palettes/genOkReadjusted/" + name + "_GLSL.png"), p2, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genOkBasic2/" + name + "_GLSL.png"), p2, false);
-                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupid/" + name + "_GLSL.png"), p2, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genRgbSlippery/" + name + "_GLSL.png"), p2, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -730,7 +730,7 @@ public class PaletteReducer {
             RGB_POWERS[i]     = Math.pow(i, 3.7);
             RGB_POWERS[i+256] = Math.pow(i, 4.0);
             RGB_POWERS[i+512] = Math.pow(i, 3.1);
-            FORWARD_LOOKUP[i] = forwardLight(i * 0.00392156862745098);
+            FORWARD_LOOKUP[i] = Math.pow(OtherMath.barronSpline(i / 255f, 25f, 0.5f), 4);
         }
     }
 
@@ -799,11 +799,12 @@ public class PaletteReducer {
         }
 
         public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-            double rf = (FORWARD_LOOKUP[r1] - FORWARD_LOOKUP[r2]); rf *= rf;
-            double gf = (FORWARD_LOOKUP[g1] - FORWARD_LOOKUP[g2]); gf *= gf;
-            double bf = (FORWARD_LOOKUP[b1] - FORWARD_LOOKUP[b2]); bf *= bf;
+            double rf = (FORWARD_LOOKUP[r1] - FORWARD_LOOKUP[r2]);// rf *= rf;
+            double gf = (FORWARD_LOOKUP[g1] - FORWARD_LOOKUP[g2]);// gf *= gf;
+            double bf = (FORWARD_LOOKUP[b1] - FORWARD_LOOKUP[b2]);// bf *= bf;
 
-            return (rf * rf + gf * gf + bf * bf) * 0x1.8p17;
+            return (rf * rf + gf * gf + bf * bf) * 0x1p21;
+//            return (rf * rf + gf * gf + bf * bf) * 0x1.8p17;
         }
     };
 //            double ra = FORWARD_LOOKUP[r1];// ra *= ra;
