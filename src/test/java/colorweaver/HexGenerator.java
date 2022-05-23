@@ -15,7 +15,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "ty-nokia-12";
+    public static final String NAME = "zenit-241";
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
