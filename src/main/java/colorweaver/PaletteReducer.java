@@ -805,10 +805,27 @@ public class PaletteReducer {
             double gf = (FORWARD_LOOKUP[g1] - FORWARD_LOOKUP[g2]) * 2.05;// gf *= gf;
             double bf = (FORWARD_LOOKUP[b1] - FORWARD_LOOKUP[b2]) * 0.90;// bf *= bf;
 
-//            return (rf * rf + gf * gf + bf * bf) * 0x1p21;
-//            return (rf * rf + gf * gf + bf * bf) * 0x1.8p17;
             double d2 = (rf * rf + gf * gf + bf * bf);
             return d2 * d2 * 0x1.8p17;
+        }
+    };
+
+    public static final ColorMetric rgbStupiderMetric = new ColorMetric(){
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.MAX_VALUE;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.MAX_VALUE;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            double rf = (r1 - r2);
+            double gf = (g1 - g2);
+            double bf = (b1 - b2);
+            return (rf * rf + gf * gf + bf * bf);
         }
     };
 //            double ra = FORWARD_LOOKUP[r1];// ra *= ra;

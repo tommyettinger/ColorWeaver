@@ -48,16 +48,17 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
         Gdx.files.local("palettes/gen/txt/").mkdirs();
 //        Gdx.files.local("palettes/genOkReadjusted/").mkdirs();
 //        Gdx.files.local("palettes/genOkBasic2/").mkdirs();
-        Gdx.files.local("palettes/genRgbSlippery/").mkdirs();
-//        for(FileHandle hex : hexes) {
-        for(FileHandle hex : new FileHandle[]{
-                Gdx.files.local("apollo-46.hex"),
-                Gdx.files.local("florentine-24.hex"),
-                Gdx.files.local("island-joy-16.hex"),
-                Gdx.files.local("lost-century-16.hex"),
-                Gdx.files.local("lost-century-24.hex"),
-                Gdx.files.local("luap-40.hex"),
-        }) {
+        Gdx.files.local("palettes/genRgbStupider/").mkdirs();
+//        Gdx.files.local("palettes/genRgbSlippery/").mkdirs();
+        for(FileHandle hex : hexes) {
+//        for(FileHandle hex : new FileHandle[]{
+//                Gdx.files.local("apollo-46.hex"),
+//                Gdx.files.local("florentine-24.hex"),
+//                Gdx.files.local("island-joy-16.hex"),
+//                Gdx.files.local("lost-century-16.hex"),
+//                Gdx.files.local("lost-century-24.hex"),
+//                Gdx.files.local("luap-40.hex"),
+//        }) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/blknx-64.hex");{
@@ -75,7 +76,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
 
             PNG8 png8 = new PNG8();
             png8.setCompression(7);
-            png8.palette = new PaletteReducer(PALETTE, PaletteReducer.rgbStupidMetric);
+            png8.palette = new PaletteReducer(PALETTE, PaletteReducer.rgbStupiderMetric);
             Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
             for (int i = 1; i < PALETTE.length; i++) {
                 pix.drawPixel(i - 1, 0, PALETTE[i]);
@@ -84,7 +85,8 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
             try {
 //                png8.writePrecisely(Gdx.files.local("palettes/genOkReadjusted/" + name + ".png"), pix, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genOkBasic2/" + name + ".png"), pix, false);
-                png8.writePrecisely(Gdx.files.local("palettes/genRgbSlippery/" + name + ".png"), pix, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupider/" + name + ".png"), pix, false);
+//                png8.writePrecisely(Gdx.files.local("palettes/genRgbSlippery/" + name + ".png"), pix, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -100,7 +102,8 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
             try {
 //                png8.writePrecisely(Gdx.files.local("palettes/genOkReadjusted/" + name + "_GLSL.png"), p2, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genOkBasic2/" + name + "_GLSL.png"), p2, false);
-                png8.writePrecisely(Gdx.files.local("palettes/genRgbSlippery/" + name + "_GLSL.png"), p2, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupider/" + name + "_GLSL.png"), p2, false);
+//                png8.writePrecisely(Gdx.files.local("palettes/genRgbSlippery/" + name + "_GLSL.png"), p2, false);
             } catch (IOException e) {
                 e.printStackTrace();
             }
