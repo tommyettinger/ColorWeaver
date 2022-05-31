@@ -73,7 +73,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
     public void create() {
 //        final String targetDir = "samples/reducedGood/"; //
 //        final String targetDir = "samples/LowColorGoodDithers/"; //
-        final String targetDir = "samples/reducedRgbStupider/"; //
+        final String targetDir = "samples/reducedRgbTricky/"; //
+//        final String targetDir = "samples/reducedRgbStupider/"; //
 //        final String targetDir = "samples/reducedRgbSlippery/"; //
 //        final String targetDir = "samples/reducedOkReadjusted/"; //
 //        final String targetDir = "samples/reducedOkBasic2/"; //
@@ -86,7 +87,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        };
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Cat_Posing.jpg")};
-//        FileHandle[] samples = {Gdx.files.local("samples/ignored/meowsterpiece.jpg")};
+//        FileHandle[] samples = {Gdx.files.local("samples/ignored/Vandalism.jpg")};
         FileHandle[] samples =
                 Gdx.files.local("samples/").list(new FileFilter() {
             @Override
@@ -96,7 +97,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         });
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
-        for(FileHandle hex : hexes) {
+//        for(FileHandle hex : hexes) {
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("apollo-46.hex"),
 //                Gdx.files.local("florentine-24.hex"),
@@ -105,7 +106,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("lost-century-24.hex"),
 //                Gdx.files.local("luap-40.hex"),
 //        }) {
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
@@ -138,7 +139,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             png8.setCompression(2);
             png8.setFlipY(false);
 //            reducer.exact(PALETTE, PaletteReducer.iptGoodMetric);
-            reducer.exact(PALETTE, PaletteReducer.rgbStupiderMetric);
+            reducer.exact(PALETTE, PaletteReducer.rgbTrickyMetric);
+//            reducer.exact(PALETTE, PaletteReducer.rgbStupiderMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbStupidMetric);
 //            reducer.exact(PALETTE, PaletteReducer.oklabMetric);
             png8.palette = reducer;
@@ -168,15 +170,15 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
                     drawPart(pm, sam, reducer, png8, subname, suffix);
 
-                    reducer.setDitherStrength(2f);
-                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_heavy";
-
-                    drawPart(pm, sam, reducer, png8, subname, suffix);
-
-                    reducer.setDitherStrength(0.25f);
-                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_quarter";
-
-                    drawPart(pm, sam, reducer, png8, subname, suffix);
+//                    reducer.setDitherStrength(2f);
+//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_heavy";
+//
+//                    drawPart(pm, sam, reducer, png8, subname, suffix);
+//
+//                    reducer.setDitherStrength(0.25f);
+//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_quarter";
+//
+//                    drawPart(pm, sam, reducer, png8, subname, suffix);
 
                 }
             } catch (IOException e) {

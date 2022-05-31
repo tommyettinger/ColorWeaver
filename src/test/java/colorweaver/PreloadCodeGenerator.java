@@ -56,7 +56,7 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
                 0x9D00FFFF, 0xAA28FAFF, 0xBF00FFFF, 0xCB25F8FF, 0xEC0FFFFF, 0xF42FFAFF, 0xFF00A9FF, 0xF52664FF,
         };
 
-        PaletteReducer reducer = new PaletteReducer(Coloring.HALTONIC255, PaletteReducer.rgbStupidMetric);
+        PaletteReducer reducer = new PaletteReducer(Coloring.HALTONIC255, PaletteReducer.rgbStupiderMetric);
         generatePreloadCode(reducer.paletteMapping, "HaltonicPreload.txt");
         Gdx.files.local("HaltonicPreload.dat").writeBytes(reducer.paletteMapping, false);
         Gdx.app.exit();
@@ -111,7 +111,7 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
         }
         sb.append("\".getBytes(\"ISO-8859-1\");\n");
 //        sb.append("\".getBytes(StandardCharsets.ISO_8859_1);\n");
-        Gdx.files.local(filename).writeString(sb.toString(), true, "ISO-8859-1");
+        Gdx.files.local(filename).writeString(sb.toString(), false, "ISO-8859-1");
         System.out.println("Wrote code snippet to " + filename);
     }
 }
