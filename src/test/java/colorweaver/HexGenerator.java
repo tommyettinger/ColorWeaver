@@ -15,7 +15,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "fuser-15";
+    public static final String NAME = "fusera-15";
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -24,7 +24,7 @@ public class HexGenerator extends ApplicationAdapter {
         config.setIdleFPS(10);
         config.useVsync(true);
         config.setResizable(false);
-//        new Lwjgl3Application(new HexGenerator(), config);
+        new Lwjgl3Application(new HexGenerator(), config);
         AutomaticPaletteTransformer.main(arg);
         AutomaticPalettizer.main(arg);
     }
@@ -775,8 +775,14 @@ public class HexGenerator extends ApplicationAdapter {
                 0xC36A49FF,0xFFCCAAFF,0x6A3111FF,0xFFF321FF,0x4145C3FF,0xA2A6A2FF,0x7ACF5EFF,0x399615FF,
                 0x29ADFFFF,0xEBF7FFFF,0x55415FFF,0x83769CFF,0xDF1539FF,0xFF77A8FF,0x000000FF
         };
+
+        int[] fusera = {
+                0x00000000,
+                0xDF6E45FF,0xFFCCAAFF,0x6A3111FF,0xFFF321FF,0x2D45C3FF,0xA2A6A2FF,0x66CF96FF,0x399615FF,
+                0x29ADFFFF,0xEBF7FFFF,0x55415FFF,0x9282AAFF,0xDF1539FF,0xF396B7FF,0x000000FF
+        };
         palette =
-                fuser
+                fusera
                 ;
 //                Coloring.HALTONIC255;
 //                new int[]
