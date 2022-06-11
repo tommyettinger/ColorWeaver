@@ -150,17 +150,17 @@ public class ShaderPalettizer extends ApplicationAdapter {
             if(!sh.equals(defaultShader)) {
                 batch.setPackedColor(-0x1.fffffep126f); // packed white
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE1);
-                if(sh != shaderBlueNoise) {
+//                if(sh != shaderBlueNoise) {
                     palette.bind();
-                }
-                else
-                {
+//                }
+//                else
+                if(sh == shaderBlueNoise) {
                     Gdx.gl.glActiveTexture(GL20.GL_TEXTURE2);
                     blueNoise.bind(2);
                     blueNoise.unsafeSetWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
                 }
                 batch.begin();
-                if(sh != shaderBlueNoise)
+//                if(sh != shaderBlueNoise)
                     sh.setUniformi("u_palette", 1);
                 if(sh == shaderBlueNoise)
                     sh.setUniformi("u_blue", 2);
@@ -350,6 +350,10 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         {
                             batch.setShader(shaderFlat);
                         }
+                        else if((UIUtils.ctrl()))
+                        {
+                            batch.setShader(shaderBlueNoise);
+                        }
                         else if(!batch.getShader().equals(shaderStandard))
                         {
                             batch.setShader(shaderStandard);
@@ -369,7 +373,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
                 Gdx.graphics.setTitle(((batch.getShader().equals(defaultShader)) ? "Full Color" : "Palette "
                         + lospec[lospecIndex].nameWithoutExtension())
                    + " with Equalize: " + (equalize ? (equalizeCB ? "COLORBLIND" : "STANDARD") : "OFF")
-                   + (batch.getShader().equals(shaderStandard) ? " on standard mode" : " on no-dither mode"));
+                   + (batch.getShader() == shaderFlat ? " on no-dither mode" : batch.getShader() == shaderBlueNoise
+                        ? " on blue noise mode" : " on standard mode"));
                 return true;
             }
         };
