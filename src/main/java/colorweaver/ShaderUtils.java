@@ -93,7 +93,8 @@ public class ShaderUtils {
                     "const float rb_adj = 32.0 / 1023.0;\n" +
                     "void main()\n" +
                     "{\n" +
-                    "   float adj = (texture2D(u_blue, gl_FragCoord.xy * (1.0 / 64.0)).r * 0.14 - 0.07);\n" +
+                    "   float adj = (texture2D(u_blue, gl_FragCoord.xy * (1.0 / 64.0)).r * 0.14 +" +
+                    "   0.06 * fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy)))) - 0.1;\n" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
                     "   tgt.rgb = clamp(tgt.rgb + adj, 0.0, 1.0);\n" +
                     "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
