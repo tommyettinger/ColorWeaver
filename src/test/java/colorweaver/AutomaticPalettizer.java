@@ -213,7 +213,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 ////ok
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceTrueBlue(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer" + suffix + ".png"), pm, PALETTE, false, 0);
+        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer2" + suffix + ".png"), pm, PALETTE, false, 0);
 //////great
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBluish(pm);
