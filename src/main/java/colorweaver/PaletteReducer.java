@@ -2171,7 +2171,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
 //        float adj, strength = (float) (48.0 * ditherStrength / populationBias), pos;
-        float adj, strength = (float) (36.0 * ditherStrength / populationBias), pos;
+        float adj, strength = (float) (28.0 * ditherStrength / populationBias), pos;
 //        float adj, strength = (float) (36.0 * ditherStrength / populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
@@ -2186,11 +2186,12 @@ public class PaletteReducer {
 //                    pos -= ((int) pos) + 0.5f;
 //                    adj = (adj + pos) * strength;
 
-                    adj = ((TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.0125f);
-                    pos = (px * 0.06711056f + y * 0.00583715f);
-                    pos -= (int) pos;
-                    pos *= 52.9829189f;
-                    pos -= ((int) pos) + 0.5f;
+                    adj = ((TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.01f);
+//                    pos = (px * 0.06711056f + y * 0.00583715f);
+//                    pos -= (int) pos;
+//                    pos *= 52.9829189f;
+//                    pos -= ((int) pos) + 0.5f;
+                    pos = (thresholdMatrix64[(px & 7) | (y & 7) << 3] - 31.5f) * 0.011f;
                     adj = (adj + pos) * strength;
 
 //                    adj = ((TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
@@ -2927,6 +2928,20 @@ public class PaletteReducer {
     static final int[] thresholdMatrix8 = {
             0, 4, 2, 6,
             3, 7, 1, 5,
+    };
+
+    /**
+     * Given by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
+     */
+    static final int[] thresholdMatrix64 = {
+              0,  48,  12,  60,   3,  51,  15,  63,
+             32,  16,  44,  28,  35,  19,  47,  31,
+              8,  56,   4,  52,  11,  59,   7,  55,
+             40,  24,  36,  20,  43,  27,  39,  23,
+              2,  50,  14,  62,   1,  49,  13,  61,
+             34,  18,  46,  30,  33,  17,  45,  29,
+             10,  58,   6,  54,   9,  57,   5,  53,
+             42,  26,  38,  22,  41,  25,  37,  21
     };
 
     /**
