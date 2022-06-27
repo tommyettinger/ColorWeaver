@@ -52,15 +52,20 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
         Gdx.files.local("palettes/genRgbStupider/").mkdirs();
 //        Gdx.files.local("palettes/genRgbSlippery/").mkdirs();
 //        for(FileHandle hex : hexes) {
-//        for(FileHandle hex : new FileHandle[]{
-//                Gdx.files.local("apollo-46.hex"),
-//                Gdx.files.local("florentine-24.hex"),
-//                Gdx.files.local("island-joy-16.hex"),
-//                Gdx.files.local("lost-century-16.hex"),
-//                Gdx.files.local("lost-century-24.hex"),
-//                Gdx.files.local("luap-40.hex"),
-//        }) {
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("afr-32.hex"),
+                Gdx.files.local("archerer-48.hex"),
+                Gdx.files.local("comfy-52.hex"),
+                Gdx.files.local("diverse-natural-120.hex"),
+                Gdx.files.local("equpix-15.hex"),
+                Gdx.files.local("lospec2000-182.hex"),
+                Gdx.files.local("oh-hell-pastel-15.hex"),
+                Gdx.files.local("punolite-25.hex"),
+                Gdx.files.local("retrocal-8.hex"),
+                Gdx.files.local("twilioquest-76.hex"),
+                Gdx.files.local("y-gigante-76.hex"),
+        }) {
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/blknx-64.hex");{
             String name = hex.nameWithoutExtension().toLowerCase();
