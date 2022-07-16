@@ -3216,8 +3216,7 @@ public class PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color, used, usedIndex;
-        float cr, cg, cb;
+        int color, used, cr, cg, cb, usedIndex;
         final float errorMul = (float) (ditherStrength * populationBias);
         computePaletteGamma();
         for (int y = 0; y < h; y++) {
@@ -3227,36 +3226,76 @@ public class PaletteReducer {
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int er = 0, eg = 0, eb = 0;
-                    int checker = (px & 1) + (y & 1);
-//                    int checker = (px + y & 1) << 2;
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
-                    for (int i = 0; i < 8; i++) {
-                        int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
-                        int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
-                        int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
+                    for (int i = 0; i < 16; i++) {
+                        int rr = MathUtils.clamp((int) (cr - er * errorMul), 0, 255);
+                        int gg = MathUtils.clamp((int) (cg - eg * errorMul), 0, 255);
+                        int bb = MathUtils.clamp((int) (cb - eb * errorMul), 0, 255);
                         usedIndex = paletteMapping[((rr << 7) & 0x7C00)
                                 | ((gg << 2) & 0x3E0)
                                 | ((bb >>> 3))] & 0xFF;
-                        used = candidates[i ^ checker] = paletteArray[usedIndex];
+                        used = candidates[i] = paletteArray[usedIndex];
                         er += cr - (used >>> 24);
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
                     }
-                    sort8(candidates);
-//                    pixmap.drawPixel(px, y, candidates[RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128 >>> 5]);
-//                    pixmap.drawPixel(px, y, candidates[(int)Math.sqrt(RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128)]);
-//                    pixmap.drawPixel(px, y, candidates[bn >>> 5 ^ (px + y & 1)]);
-//                    int bn = BlueNoise.getSeededTriOmniTiling(px, y, 123) >>> 4 & 14;
-                    int bn = BlueNoise.getSeededOmniTiling(px, y, 123) + 128 >>> 5;
-//                    int rawY = BlueNoise.getSeededTriOmniTiling(y + 35, px + 29, 123456) + 128 >>> 6;
-                    pixmap.drawPixel(px, y, candidates[(bn)]);
+                    sort16(candidates);
+//                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128 >>> 4]]);
+                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[((px & 3) | (y & 3) << 2)]]);
+//                    pixmap.drawPixel(px, y, candidates[TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128 >>> 4]);
                 }
             }
         }
         pixmap.setBlending(blending);
         return pixmap;
+
+//        boolean hasTransparent = (paletteArray[0] == 0);
+//        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+//        Pixmap.Blending blending = pixmap.getBlending();
+//        pixmap.setBlending(Pixmap.Blending.None);
+//        int color, used, usedIndex;
+//        float cr, cg, cb;
+//        final float errorMul = (float) (ditherStrength * populationBias);
+//        computePaletteGamma();
+//        for (int y = 0; y < h; y++) {
+//            for (int px = 0; px < lineLen; px++) {
+//                color = pixmap.getPixel(px, y);
+//                if ((color & 0x80) == 0 && hasTransparent)
+//                    pixmap.drawPixel(px, y, 0);
+//                else {
+//                    int er = 0, eg = 0, eb = 0;
+//                    int checker = (px & 1) + (y & 1);
+////                    int checker = (px + y & 1) << 2;
+//                    cr = (color >>> 24);
+//                    cg = (color >>> 16 & 0xFF);
+//                    cb = (color >>> 8 & 0xFF);
+//                    for (int i = 0; i < 8; i++) {
+//                        int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
+//                        int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
+//                        int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
+//                        usedIndex = paletteMapping[((rr << 7) & 0x7C00)
+//                                | ((gg << 2) & 0x3E0)
+//                                | ((bb >>> 3))] & 0xFF;
+//                        used = candidates[i ^ checker] = paletteArray[usedIndex];
+//                        er += cr - (used >>> 24);
+//                        eg += cg - (used >>> 16 & 0xFF);
+//                        eb += cb - (used >>> 8 & 0xFF);
+//                    }
+//                    sort8(candidates);
+////                    pixmap.drawPixel(px, y, candidates[RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128 >>> 5]);
+////                    pixmap.drawPixel(px, y, candidates[(int)Math.sqrt(RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128)]);
+////                    pixmap.drawPixel(px, y, candidates[bn >>> 5 ^ (px + y & 1)]);
+////                    int bn = BlueNoise.getSeededTriOmniTiling(px, y, 123) >>> 4 & 14;
+//                    int bn = BlueNoise.getSeededOmniTiling(px, y, 123) + 128 >>> 5;
+////                    int rawY = BlueNoise.getSeededTriOmniTiling(y + 35, px + 29, 123456) + 128 >>> 6;
+//                    pixmap.drawPixel(px, y, candidates[(bn)]);
+//                }
+//            }
+//        }
+//        pixmap.setBlending(blending);
+//        return pixmap;
     }
 
 
