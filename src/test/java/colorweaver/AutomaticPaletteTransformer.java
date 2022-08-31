@@ -53,17 +53,9 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
 //        Gdx.files.local("palettes/genRgbSlippery/").mkdirs();
 //        for(FileHandle hex : hexes) {
         for(FileHandle hex : new FileHandle[]{
-                Gdx.files.local("afr-32.hex"),
-                Gdx.files.local("archerer-48.hex"),
-                Gdx.files.local("comfy-52.hex"),
-                Gdx.files.local("diverse-natural-120.hex"),
-                Gdx.files.local("equpix-15.hex"),
                 Gdx.files.local("lospec2000-182.hex"),
-                Gdx.files.local("oh-hell-pastel-15.hex"),
-                Gdx.files.local("punolite-25.hex"),
-                Gdx.files.local("retrocal-8.hex"),
-                Gdx.files.local("twilioquest-76.hex"),
-                Gdx.files.local("y-gigante-76.hex"),
+                Gdx.files.local("zenit-241.hex"),
+                Gdx.files.local("project-ruzikb-86.hex"),
         }) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{

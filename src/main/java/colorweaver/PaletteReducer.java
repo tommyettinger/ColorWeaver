@@ -3230,9 +3230,12 @@ public class PaletteReducer {
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
                     for (int i = 0; i < 16; i++) {
-                        int rr = MathUtils.clamp((int) (cr - er * errorMul), 0, 255);
-                        int gg = MathUtils.clamp((int) (cg - eg * errorMul), 0, 255);
-                        int bb = MathUtils.clamp((int) (cb - eb * errorMul), 0, 255);
+                        int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
+                        int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
+                        int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
+//                        int rr = MathUtils.clamp((int) (cr - er * errorMul), 0, 255);
+//                        int gg = MathUtils.clamp((int) (cg - eg * errorMul), 0, 255);
+//                        int bb = MathUtils.clamp((int) (cb - eb * errorMul), 0, 255);
                         usedIndex = paletteMapping[((rr << 7) & 0x7C00)
                                 | ((gg << 2) & 0x3E0)
                                 | ((bb >>> 3))] & 0xFF;
@@ -3243,8 +3246,8 @@ public class PaletteReducer {
                     }
                     sort16(candidates);
 //                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128 >>> 4]]);
-                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[((px & 3) | (y & 3) << 2)]]);
-//                    pixmap.drawPixel(px, y, candidates[TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128 >>> 4]);
+//                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[((px & 3) | (y & 3) << 2)]]);
+                    pixmap.drawPixel(px, y, candidates[TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 128 >>> 4]);
                 }
             }
         }
