@@ -133,7 +133,7 @@ public class MetricPalettizer extends ApplicationAdapter {
                         png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 ////good
-                        pm = (reducer.reduceTrueBlue(new Pixmap(sample)));
+                        pm = (reducer.reduceTrueBlue3(new Pixmap(sample)));
                         png8.writePrecisely(Gdx.files.local(subname + "_Blue" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 //good
@@ -165,7 +165,7 @@ public class MetricPalettizer extends ApplicationAdapter {
                         png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 ////good
-                        pm = (reducer.reduceTrueBlue(new Pixmap(sample)));
+                        pm = (reducer.reduceTrueBlue3(new Pixmap(sample)));
                         png8.writePrecisely(Gdx.files.local(subname + "_Blue" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 //good
@@ -198,7 +198,7 @@ public class MetricPalettizer extends ApplicationAdapter {
                         png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 ////good
-                        pm = (reducer.reduceTrueBlue(new Pixmap(sample)));
+                        pm = (reducer.reduceTrueBlue3(new Pixmap(sample)));
                         png8.writePrecisely(Gdx.files.local(subname + "_Blue" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 //good

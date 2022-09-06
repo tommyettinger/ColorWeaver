@@ -77,7 +77,7 @@ public class Palettizer extends ApplicationAdapter {
 //            pm = reducer.reduceRobertsEdit(new Pixmap(Gdx.files.absolute(name)));
 //            png8.writePrecisely(Gdx.files.local(subname + "_RobertsEdit"+suffix+".png"), pm, false);
 
-            pm = reducer.reduceTrueBlue(new Pixmap(Gdx.files.absolute(name)));
+            pm = reducer.reduceTrueBlue3(new Pixmap(Gdx.files.absolute(name)));
             png8.writePrecisely(Gdx.files.local(subname + "_Blue"+suffix+".png"), pm, palette, false, 1);
 
             pm = reducer.reduceBluish(new Pixmap(Gdx.files.absolute(name)));

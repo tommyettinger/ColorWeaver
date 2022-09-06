@@ -184,7 +184,7 @@ public class FolderPalettizer extends ApplicationAdapter {
         png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
 //////ok
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceTrueBlue(pm);
+        pm = reducer.reduceTrueBlue3(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer" + suffix + ".png"), pm, PALETTE, false, 0);
 //////great
 //        pm.drawPixmap(sam, 0, 0);
