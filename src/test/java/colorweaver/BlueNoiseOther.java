@@ -34,17 +34,18 @@ public class BlueNoiseOther extends ApplicationAdapter {
 //            }
 //            generatePreloadCode(brights, "BlueNoiseOmniTri.txt");
 //        }
-        Pixmap pix = new Pixmap(Gdx.files.internal("LDR_LLL1_0.png"));
-//        Pixmap pix = new Pixmap(Gdx.files.internal("blueTri.png"));
-        ByteBuffer buf = pix.getPixels();
-        final int len = pix.getWidth() * pix.getHeight();
-        byte[] brights = new byte[len];
-        for (int i = 0; i < len; i++) {
-            brights[i] = buf.get(i);
-            brights[i] += -128;
+//        Pixmap pix = new Pixmap(Gdx.files.internal("LDR_LLL1_0.png"));
+        for (int idx = 0; idx < 5; idx++) {
+            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/blueTri64_"+idx+".png"));
+            ByteBuffer buf = pix.getPixels();
+            final int len = pix.getWidth() * pix.getHeight();
+            byte[] brights = new byte[len];
+            for (int i = 0; i < len; i++) {
+                brights[i] = buf.get(i);
+                brights[i] += -128;
+            }
+            generatePreloadCode(brights, "BlueNoise"+idx+".txt");
         }
-        generatePreloadCode(brights, "BlueNoiseRaw.txt");
-
         Gdx.app.exit();
     }
     /**
