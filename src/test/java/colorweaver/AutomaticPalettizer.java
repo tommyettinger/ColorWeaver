@@ -74,10 +74,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedGood/"; //
 //        final String targetDir = "samples/LowColorGoodDithers/"; //
 //        final String targetDir = "samples/reducedRgbTricky/"; //
-        final String targetDir = "samples/reducedRgbStupider/"; //
+//        final String targetDir = "samples/reducedRgbStupider/"; //
 //        final String targetDir = "samples/reducedRgbSlippery/"; //
 //        final String targetDir = "samples/reducedOkReadjusted/"; //
-//        final String targetDir = "samples/reducedOkBasic2/"; //
+        final String targetDir = "samples/reducedOkCareful/"; //
 //        final String targetDir = "samples/ignored/youeye1/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
@@ -140,9 +140,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             png8.setFlipY(false);
 //            reducer.exact(PALETTE, PaletteReducer.iptGoodMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbTrickyMetric);
-            reducer.exact(PALETTE, PaletteReducer.rgbStupiderMetric);
+//            reducer.exact(PALETTE, PaletteReducer.rgbStupiderMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbStupidMetric);
-//            reducer.exact(PALETTE, PaletteReducer.oklabMetric);
+            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
             png8.palette = reducer;
             try {
 //                FileHandle sample = Gdx.files.local("samples/Happy_Dog.jpg"); {
@@ -194,22 +194,22 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceGarbage(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Garbage.png"), pm, PALETTE, false, 0);
-//////pretty bad
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceChaoticNoise(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Chaotic" + suffix + ".png"), pm, PALETTE, false, 0);
-//////ok
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceShaderMimic(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
-//////good enough
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceSierraLite(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
-////////rather good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceFloydSteinberg(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
+////pretty bad
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceChaoticNoise(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Chaotic" + suffix + ".png"), pm, PALETTE, false, 0);
+////ok
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceShaderMimic(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
+////good enough
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSierraLite(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
+//////rather good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
 ////ok
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceTrueBlue3(pm);
@@ -222,29 +222,29 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBluish(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_Neuter" + suffix + ".png"), pm, PALETTE, false, 0);
-//////very good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceScatter(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
-////////YAY YIPPEE WOO NO BANDING
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceNeue(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
-////////incredible
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceKnoll(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
-////////great
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceKnollRoberts(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_KR_G" + suffix + ".png"), pm, PALETTE, false, 0);
-//////quite good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceKnollBlue(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_KB2" + suffix + ".png"), pm, PALETTE, false, 0);
-////////???
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reducePlexus(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Plexus" + suffix + ".png"), pm, PALETTE, false, 0);
+////very good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceScatter(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
+//////YAY YIPPEE WOO NO BANDING
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceNeue(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
+//////incredible
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceKnoll(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
+//////great
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceKnollRoberts(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_KR_G" + suffix + ".png"), pm, PALETTE, false, 0);
+////quite good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceKnollBlue(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_KB2" + suffix + ".png"), pm, PALETTE, false, 0);
+//////???
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reducePlexus(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Plexus" + suffix + ".png"), pm, PALETTE, false, 0);
     }
 }
