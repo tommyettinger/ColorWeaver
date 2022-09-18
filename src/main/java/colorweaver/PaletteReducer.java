@@ -2049,9 +2049,9 @@ public class PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color, used;
+        int color;
         long pos;
-        float adj, str = (float) (3 * ditherStrength * populationBias);
+        float adj, str = (float) (128 * ditherStrength * populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -2067,20 +2067,26 @@ public class PaletteReducer {
 //                    adj = (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 40) * str);
 
 //                    color |= (color >>> 5 & 0x07070700) | 0xFE;
-                    int rr = ((color >>> 24)       );//MathUtils.clamp((int) (rr * (1f + adj)), 0, 0xFF);
-                    int gg = ((color >>> 16) & 0xFF);//MathUtils.clamp((int) (gg * (1f + adj)), 0, 0xFF);
-                    int bb = ((color >>> 8)  & 0xFF);//MathUtils.clamp((int) (bb * (1f + adj)), 0, 0xFF);
-                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
-                            | ((gg << 2) & 0x3E0)
-                            | ((bb >>> 3))] & 0xFF];
+
+
                     pos = (px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41);
 //                    pos = (px * (0xC13FA9A9) + y * (0x91E10DA5));
-                    adj = (pos * 0x1p-23f - 0.5f) * str;
-                    //adj = adj * ditherStrength; //(adj * adj * adj + 0x5p-6f)
-                    // + NumberTools.sway(y * 0.7548776662466927f + px * 0.5698402909980532f) * 0.0625f;
-                    rr = MathUtils.clamp((int) (rr + (adj * (((used >>> 24) - rr)))), 0, 0xFF);
-                    gg = MathUtils.clamp((int) (gg + (adj * (((used >>> 16 & 0xFF) - gg)))), 0, 0xFF);
-                    bb = MathUtils.clamp((int) (bb + (adj * (((used >>> 8 & 0xFF) - bb)))), 0, 0xFF);
+
+                    adj = (pos * 0x1p-23f - 0.5f) * str + 0.5f;
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + adj), 0), 255);//MathUtils.clamp((int) (rr * (1f + adj)), 0, 0xFF);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + adj), 0), 255);//MathUtils.clamp((int) (gg * (1f + adj)), 0, 0xFF);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + adj), 0), 255);//MathUtils.clamp((int) (bb * (1f + adj)), 0, 0xFF);
+
+//                    adj = (pos * 0x1p-23f - 0.5f) * str;
+//                    int rr = ((color >>> 24)       );//MathUtils.clamp((int) (rr * (1f + adj)), 0, 0xFF);
+//                    int gg = ((color >>> 16) & 0xFF);//MathUtils.clamp((int) (gg * (1f + adj)), 0, 0xFF);
+//                    int bb = ((color >>> 8)  & 0xFF);//MathUtils.clamp((int) (bb * (1f + adj)), 0, 0xFF);
+//                    int used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+//                            | ((gg << 2) & 0x3E0)
+//                            | ((bb >>> 3))] & 0xFF];
+//                    rr = MathUtils.clamp((int) (rr + (adj * (((used >>> 24) - rr)))), 0, 0xFF);
+//                    gg = MathUtils.clamp((int) (gg + (adj * (((used >>> 16 & 0xFF) - gg)))), 0, 0xFF);
+//                    bb = MathUtils.clamp((int) (bb + (adj * (((used >>> 8 & 0xFF) - bb)))), 0, 0xFF);
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF]);

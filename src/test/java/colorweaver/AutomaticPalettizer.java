@@ -249,6 +249,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //////???
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceRobertsEdit(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Roberts" + suffix + ".png"), pm, PALETTE, false, 0);
+        png8.writePrecisely(Gdx.files.local(subname + "_Roberts2" + suffix + ".png"), pm, PALETTE, false, 0);
     }
 }
