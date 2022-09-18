@@ -2050,8 +2050,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        long pos;
-        float adj, str = (float) (28 * ditherStrength * populationBias);
+        float adj, str = (float) (24 * ditherStrength / (populationBias * populationBias));
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -2073,8 +2072,15 @@ public class PaletteReducer {
 //                    pos = (px * (0xC13FA9A9) + y * (0x91E10DA5));
 
 //                    adj = (pos * 0x1p-23f - 0.5f) * str + 0.5f;
-                    adj = ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1p-23f - 0.5f) * 2.5f;
+
+//                    float ign = (px * 0.06711056f + y * 0.00583715f);
+//                    ign -= (int) ign;
+//                    ign *= 52.9829189f;
+//                    ign -= (int) ign;
+
+                    adj = (px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1p-22f - 1f;
 //                    adj *= Math.abs(adj);
+                    adj = Math.copySign((float) Math.sqrt(Math.abs(adj)), adj);
                     adj = adj * str + 0.5f;
 //                    pos = px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41;
 //                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((pos ^ 0x555555) * 0x1p-23f - 0.5f) * str + 0.5f), 0), 255);
