@@ -210,10 +210,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceFloydSteinberg(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
-////ok
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceTrueBlue3(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer3" + suffix + ".png"), pm, PALETTE, false, 0);
+//////ok
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceTrueBlue3(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer3" + suffix + ".png"), pm, PALETTE, false, 0);
 //////better?
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceTrueBlue4(pm);
@@ -246,5 +246,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reducePlexus(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Plexus" + suffix + ".png"), pm, PALETTE, false, 0);
+//////???
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceRobertsEdit(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Roberts" + suffix + ".png"), pm, PALETTE, false, 0);
     }
 }
