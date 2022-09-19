@@ -125,8 +125,8 @@ public class MetricPalettizer extends ApplicationAdapter {
                         png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 ////good
-                        pm = reducer.reduceShaderMimic(new Pixmap(sample));
-                        png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
+                        pm = reducer.reduceIGN(new Pixmap(sample));
+                        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 ////good
                         pm = (reducer.reduceFloydSteinberg(new Pixmap(sample)));
@@ -157,8 +157,8 @@ public class MetricPalettizer extends ApplicationAdapter {
                         png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 ////good
-                        pm = reducer.reduceShaderMimic(new Pixmap(sample));
-                        png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
+                        pm = reducer.reduceIGN(new Pixmap(sample));
+                        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 ////good
                         pm = (reducer.reduceFloydSteinberg(new Pixmap(sample)));
@@ -190,8 +190,8 @@ public class MetricPalettizer extends ApplicationAdapter {
                         png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 ////good
-                        pm = reducer.reduceShaderMimic(new Pixmap(sample));
-                        png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
+                        pm = reducer.reduceIGN(new Pixmap(sample));
+                        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
                         pm.dispose();
 ////good
                         pm = (reducer.reduceFloydSteinberg(new Pixmap(sample)));
@@ -219,8 +219,8 @@ public class MetricPalettizer extends ApplicationAdapter {
 //                        pm = (reducer.reduceSierraLite(new Pixmap(sample)));
 //                        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
 ////good
-                        pm = reducer.reduceShaderMimic(new Pixmap(sample));
-                        png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
+                        pm = reducer.reduceIGN(new Pixmap(sample));
+                        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
 ////good
                         pm = (reducer.reduceFloydSteinberg(new Pixmap(sample)));
                         png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);

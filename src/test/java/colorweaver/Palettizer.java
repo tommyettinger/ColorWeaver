@@ -83,17 +83,17 @@ public class Palettizer extends ApplicationAdapter {
             pm = reducer.reduceBluish(new Pixmap(Gdx.files.absolute(name)));
             png8.writePrecisely(Gdx.files.local(subname + "_Bluish"+suffix+".png"), pm, palette, false, 1);
 
-            pm = reducer.reduceShaderMimic(new Pixmap(Gdx.files.absolute(name)));
-            png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic"+suffix+".png"), pm, palette, false, 1);
+            pm = reducer.reduceIGN(new Pixmap(Gdx.files.absolute(name)));
+            png8.writePrecisely(Gdx.files.local(subname + "_IGN"+suffix+".png"), pm, palette, false, 1);
 
             pm = reducer.reduceKnollRoberts(new Pixmap(Gdx.files.absolute(name)));
             png8.writePrecisely(Gdx.files.local(subname + "_KR_G"+suffix+".png"), pm, palette, false, 1);
             
-//            FileHandle next = Gdx.files.local(subname + "_ShaderMimic"+suffix+".png");
+//            FileHandle next = Gdx.files.local(subname + "_IGN"+suffix+".png");
 //            png8.writePrecisely(next, pm, reducer.paletteArray, false, 0);
 //            int[] hsp = Arrays.copyOf(reducer.paletteArray, 256);
 //            PaletteReducer.hueShiftPalette(hsp);
-//            PNG8.swapPalette(next, Gdx.files.local(subname + "_ShaderMimicHSP"+suffix+".png"), hsp);
+//            PNG8.swapPalette(next, Gdx.files.local(subname + "_IGNHSP"+suffix+".png"), hsp);
             pm = (reducer.reduceFloydSteinberg(new Pixmap(Gdx.files.absolute(name))));
             FileHandle next = Gdx.files.local(subname + "_FloydSteinberg"+suffix+".png");
             png8.writePrecisely(next, pm, palette, false, 1);

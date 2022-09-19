@@ -2113,43 +2113,39 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
-    public Pixmap reduceShaderMimic (Pixmap pixmap) {
+
+    /**
+     * Uses Interleaved Gradient Noise, by Jorge Jimenez.
+     * @param pixmap
+     * @return
+     */
+    public Pixmap reduceIGN(Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color, used;
-        float pos, adj;
-        final float strength = (float) (ditherStrength * populationBias * 3f);
+        int color;
+        float pos;
+        final float strength = (float) (40 * ditherStrength / (populationBias * populationBias));
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-//                    color |= (color >>> 5 & 0x07070700) | 0xFF;
-                    int rr = ((color >>> 24)       );
-                    int gg = ((color >>> 16) & 0xFF);
-                    int bb = ((color >>> 8)  & 0xFF);
-                    used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
-                            | ((gg << 2) & 0x3E0)
-                            | ((bb >>> 3))] & 0xFF];
                     pos = (px * 0.06711056f + y * 0.00583715f);
                     pos -= (int) pos;
                     pos *= 52.9829189f;
                     pos -= (int) pos;
-                    adj = (pos-0.5f) * strength;
-//                    adj = MathUtils.sin(pos * 2f - 1f) * strength;
-//                    adj = (pos * pos - 0.3f) * strength;
-                    rr = Math.min(Math.max((int) (rr + (adj * (rr - (used >>> 24       )))), 0), 0xFF);
-                    gg = Math.min(Math.max((int) (gg + (adj * (gg - (used >>> 16 & 0xFF)))), 0), 0xFF);
-                    bb = Math.min(Math.max((int) (bb + (adj * (bb - (used >>> 8  & 0xFF)))), 0), 0xFF);
+                    pos = (pos-0.5f) * strength;
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + pos), 0), 255);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + pos), 0), 255);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + pos), 0), 255);
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF]);
                 }
             }
-
         }
         pixmap.setBlending(blending);
         return pixmap;

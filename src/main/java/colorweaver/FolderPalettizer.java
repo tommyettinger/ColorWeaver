@@ -172,8 +172,8 @@ public class FolderPalettizer extends ApplicationAdapter {
 //        png8.writePrecisely(Gdx.files.local(subname + "_Chaotic" + suffix + ".png"), pm, PALETTE, false, 0);
 //////ok
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceShaderMimic(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_ShaderMimic" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceIGN(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
 ////good enough
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSierraLite(pm);
