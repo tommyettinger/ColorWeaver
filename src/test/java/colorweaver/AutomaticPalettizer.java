@@ -198,10 +198,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceChaoticNoise(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Chaotic" + suffix + ".png"), pm, PALETTE, false, 0);
-////very good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceIGN(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
+//////very good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceIGN(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
 //////good enough
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSierraLite(pm);
@@ -246,9 +246,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reducePlexus(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Plexus" + suffix + ".png"), pm, PALETTE, false, 0);
-////////very good, very little banding
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceRobertsEdit(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Roberts3" + suffix + ".png"), pm, PALETTE, false, 0);
+//////very good, very little banding
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceRobertsEdit(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Roberts4" + suffix + ".png"), pm, PALETTE, false, 0);
     }
 }
