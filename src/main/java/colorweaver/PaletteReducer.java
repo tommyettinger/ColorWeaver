@@ -2063,41 +2063,21 @@ public class PaletteReducer {
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-//                    adj = (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >> 40) * 0x1.Fp-26f) * ditherStrength) + 1f;
-////                    color |= (color >>> 5 & 0x07070700) | 0xFE;
-//                    int rr = MathUtils.clamp((int) (((color >>> 24)       ) * adj), 0, 0xFF);
-//                    int gg = MathUtils.clamp((int) (((color >>> 16) & 0xFF) * adj), 0, 0xFF);
-//                    int bb = MathUtils.clamp((int) (((color >>> 8)  & 0xFF) * adj), 0, 0xFF);
-                    //0xD1B54A32D192ED03L, 0xABC98388FB8FAC03L, 0x8CB92BA72F3D8DD7L
-//                    adj = (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 40) * str);
-
-//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
-
-
-//                    pos = (px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41);
-//                    pos = (px * (0xC13FA9A9) + y * (0x91E10DA5));
-
-//                    adj = (pos * 0x1p-23f - 0.5f) * str + 0.5f;
-
-//                    float ign = (px * 0.06711056f + y * 0.00583715f);
-//                    ign -= (int) ign;
-//                    ign *= 52.9829189f;
-//                    ign -= (int) ign;
-
-                    adj = (px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1.8p-23f - 0.75f;
+//                    adj = (px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1.8p-23f - 0.75f;
+//                    adj = adj * str + 0.5f;
 //                    adj *= Math.abs(adj); // sign-preserving square
 //                    adj = Math.copySign((float) Math.sqrt(Math.abs(adj)), adj); // sign-preserving square root
-                    adj = adj * str + 0.5f;
+
 //                    pos = px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41;
 //                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((pos ^ 0x555555) * 0x1p-23f - 0.5f) * str + 0.5f), 0), 255);
 //                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((pos ^ 0x2AAAAA) * 0x1p-23f - 0.5f) * str + 0.5f), 0), 255);
 //                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((pos           ) * 0x1p-23f - 0.5f) * str + 0.5f), 0), 255);
-//                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL                      ) >>> 41) * 0x1p-23f - 0.5f) * str + 0.5f), 0), 255);
-//                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL ^ 0xB9C9AA3A51D00B65L) >>> 41) * 0x1p-23f - 0.5f) * str + 0.5f), 0), 255);
-//                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL ^ 0xA6F5777F6F88983FL) >>> 41) * 0x1p-23f - 0.5f) * str + 0.5f), 0), 255);
-                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + adj), 0), 255);
-                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + adj), 0), 255);
-                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + adj), 0), 255);
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px-1) * 0xC13FA9A902A6328FL + (y+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.8p-22f - 1.5f) * str + 0.5f), 0), 255);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+4) * 0xC13FA9A902A6328FL + (y-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.8p-22f - 1.5f) * str + 0.5f), 0), 255);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y+3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.8p-22f - 1.5f) * str + 0.5f), 0), 255);
+//                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + adj), 0), 255);
+//                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + adj), 0), 255);
+//                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + adj), 0), 255);
 
 //                    adj = (pos * 0x1p-23f - 0.5f) * str;
 //                    int rr = ((color >>> 24)       );//MathUtils.clamp((int) (rr * (1f + adj)), 0, 0xFF);
