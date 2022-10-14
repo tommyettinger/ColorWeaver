@@ -2132,7 +2132,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
         float pos;
-        final float strength = (float) (40 * ditherStrength / (populationBias * populationBias));
+        final float strength = (float) (40 * ditherStrength / (populationBias * populationBias * populationBias));
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -2143,7 +2143,10 @@ public class PaletteReducer {
                     pos -= (int) pos;
                     pos *= 52.9829189f;
                     pos -= (int) pos;
-                    pos = (pos-0.5f) * strength;
+                    pos -= 0.5f;
+                    pos = pos * strength + 0.5f;
+//                    pos = (((pos > 0.5f) ? 1f - (float)Math.sqrt(2f - pos - pos) : (float)Math.sqrt(pos + pos) - 1f)) * strength + 0.5f;
+//                    pos = (pos-0.5f) * strength + 0.5f;
                     int rr = Math.min(Math.max((int)(((color >>> 24)       ) + pos), 0), 255);
                     int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + pos), 0), 255);
                     int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + pos), 0), 255);

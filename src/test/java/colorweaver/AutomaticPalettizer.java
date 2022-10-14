@@ -74,10 +74,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedGood/"; //
 //        final String targetDir = "samples/LowColorGoodDithers/"; //
 //        final String targetDir = "samples/reducedRgbTricky/"; //
-//        final String targetDir = "samples/reducedRgbStupider/"; //
+        final String targetDir = "samples/reducedRgbStupider/"; //
 //        final String targetDir = "samples/reducedRgbSlippery/"; //
 //        final String targetDir = "samples/reducedOkReadjusted/"; //
-        final String targetDir = "samples/reducedOkCareful/"; //
+//        final String targetDir = "samples/reducedOkCareful/"; //
 //        final String targetDir = "samples/ignored/youeye1/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
@@ -89,7 +89,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        FileHandle[] samples = {Gdx.files.local("samples/Cat_Posing.jpg")};
 //        FileHandle[] samples = {Gdx.files.local("samples/ignored/Vandalism.jpg")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Judgment_Cat.jpg"), Gdx.files.local("samples/Purrito.jpg")};
-//        FileHandle[] samples = {Gdx.files.local("samples/Roar.jpg")};
+//        FileHandle[] samples = {Gdx.files.local("samples/Trance.png")};
         FileHandle[] samples =
                 Gdx.files.local("samples/").list(new FileFilter() {
             @Override
@@ -102,14 +102,20 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         png8.setFlipY(false);
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
-        for(FileHandle hex : hexes) {
+//        for(FileHandle hex : hexes) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
-//        for(FileHandle hex : new FileHandle[]{
-//                Gdx.files.local("lospec2000-182.hex"),
-//                Gdx.files.local("zenit-241.hex"),
-//                Gdx.files.local("project-ruzikb-86.hex"),
-//        }) {
+        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/bw-2.hex"),
+                Gdx.files.local("palettes/hex/americana-4.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+                Gdx.files.local("palettes/hex/yam3-255.hex"),
+                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+        }) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/db-iso-22.hex");{
@@ -140,9 +146,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //            Gdx.files.local(targetDir + name).mkdirs();
 //            reducer.exact(PALETTE, PaletteReducer.iptGoodMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbTrickyMetric);
-//            reducer.exact(PALETTE, PaletteReducer.rgbStupiderMetric);
+            reducer.exact(PALETTE, PaletteReducer.rgbStupiderMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbStupidMetric);
-            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
+//            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
             png8.palette = reducer;
             try {
 //                FileHandle sample = Gdx.files.local("samples/Kitten.jpg"); {
@@ -201,7 +207,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //////very good
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceIGN(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
+        png8.writePrecisely(Gdx.files.local(subname + "_IGN3" + suffix + ".png"), pm, PALETTE, false, 0);
 //////good enough
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSierraLite(pm);
@@ -247,8 +253,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reducePlexus(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Plexus" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////very good, very little banding
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceRobertsEdit(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Roberts4" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceRobertsEdit(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Roberts4" + suffix + ".png"), pm, PALETTE, false, 0);
     }
 }
