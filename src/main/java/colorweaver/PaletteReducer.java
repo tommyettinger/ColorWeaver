@@ -2144,7 +2144,9 @@ public class PaletteReducer {
                     pos *= 52.9829189f;
                     pos -= (int) pos;
                     pos -= 0.5f;
-                    pos = pos * pos * pos * strength + 0.5f;
+//                    pos = OtherMath.cbrt(pos) * strength + 0.5f;
+//                    pos = pos * pos * pos * strength + 0.5f;
+                    pos = pos * pos * pos * strength + ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1p-20f - 3f);
 //                    pos = (((pos > 0.5f) ? 1f - (float)Math.sqrt(2f - pos - pos) : (float)Math.sqrt(pos + pos) - 1f)) * strength + 0.5f;
 //                    pos = (pos-0.5f) * strength + 0.5f;
                     int rr = Math.min(Math.max((int)(((color >>> 24)       ) + pos), 0), 255);

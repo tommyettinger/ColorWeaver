@@ -207,7 +207,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //////very good
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceIGN(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_IGN_C" + suffix + ".png"), pm, PALETTE, false, 0);
+        png8.writePrecisely(Gdx.files.local(subname + "_IGN_R" + suffix + ".png"), pm, PALETTE, false, 0);
 //////good enough
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSierraLite(pm);
