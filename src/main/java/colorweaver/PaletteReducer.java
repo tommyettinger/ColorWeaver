@@ -2056,7 +2056,9 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        float adj, str = (float) (32 * ditherStrength / (populationBias * populationBias * populationBias));
+        float str = (float) (64 * ditherStrength / Math.log(colorCount * 0.09 + 3.0));
+//        float str = (float) (32 * ditherStrength / (populationBias * populationBias));
+//        System.out.println(colorCount + " colors: " + str + " with pop bias " + populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -2072,9 +2074,27 @@ public class PaletteReducer {
 //                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((pos ^ 0x555555) * 0x1p-23f - 0.5f) * str + 0.5f), 0), 255);
 //                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((pos ^ 0x2AAAAA) * 0x1p-23f - 0.5f) * str + 0.5f), 0), 255);
 //                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((pos           ) * 0x1p-23f - 0.5f) * str + 0.5f), 0), 255);
+
+                    // roberts5
                     int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px-1) * 0xC13FA9A902A6328FL + (y+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
                     int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
                     int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px+2) * 0xC13FA9A902A6328FL + (y+3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+                    //roberts6
+//                    float adj = (px * 0.06711056f + y * 0.00583715f);
+//                    adj -= (int) adj;
+//                    adj *= 52.9829189f;
+//                    adj -= (int) adj;
+//                    adj -= 0.5f;
+//                    adj *= adj * adj * 4f;
+//                    adj += 0.5f;
+//                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px-2) * 0xC13FA9A902A6328FL + (y+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.0p-23f - adj) * str + 0.5f), 0), 255);
+//                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.0p-23f - adj) * str + 0.5f), 0), 255);
+//                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px+1) * 0xC13FA9A902A6328FL + (y-3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.0p-23f - adj) * str + 0.5f), 0), 255);
+                    //roberts7
+//                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px-2) * 0xC13FA9A902A6328FL + (y+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+//                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+//                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px+1) * 0xC13FA9A902A6328FL + (y-3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+
 //                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + adj), 0), 255);
 //                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + adj), 0), 255);
 //                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + adj), 0), 255);

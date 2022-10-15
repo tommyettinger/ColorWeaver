@@ -255,6 +255,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 ////////very good, very little banding
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceRobertsEdit(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Roberts5" + suffix + ".png"), pm, PALETTE, false, 0);
+        png8.writePrecisely(Gdx.files.local(subname + "_Roberts7" + suffix + ".png"), pm, PALETTE, false, 0);
     }
 }
