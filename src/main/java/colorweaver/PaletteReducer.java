@@ -2056,7 +2056,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        float str = (float) (64 * ditherStrength / Math.log(colorCount * 0.09 + 3.0));
+        float str = (float) (64 * ditherStrength / Math.log(colorCount * 0.3 + 2.5));
 //        float str = (float) (32 * ditherStrength / (populationBias * populationBias));
 //        System.out.println(colorCount + " colors: " + str + " with pop bias " + populationBias);
         for (int y = 0; y < h; y++) {
