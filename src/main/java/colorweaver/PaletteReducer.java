@@ -2176,13 +2176,13 @@ public class PaletteReducer {
         float pos, sy;
         final float strength = (float) (8 * ditherStrength / (populationBias * populationBias * populationBias));
         for (int y = 0; y < h; y++) {
-            sy = MathUtils.sin(y * 0.25f);
+            sy = MathUtils.sinDeg(y * 90f);
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    pos = (MathUtils.sin(px * 0.25f) + sy) * strength;
+                    pos = (MathUtils.sinDeg(px * 90f) + sy) * strength;
                     int rr = Math.min(Math.max((int)(((color >>> 24)       ) + pos), 0), 255);
                     int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + pos), 0), 255);
                     int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + pos), 0), 255);
