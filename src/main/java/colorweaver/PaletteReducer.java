@@ -2174,7 +2174,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
         float pos;
-        final float strength = (float) (8 * ditherStrength / (populationBias * populationBias * populationBias));
+        final float strength = (float) (10 * ditherStrength / (populationBias * populationBias * populationBias));
         for (int y = 0; y < h; y++) {
 //            sy = MathUtils.sinDeg(y * 90f);
             for (int px = 0; px < lineLen; px++) {
@@ -2182,7 +2182,7 @@ public class PaletteReducer {
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    pos = (MathUtils.sinDeg((px + y) * 60f) + MathUtils.cosDeg((px - y) * 60f)) * strength;
+                    pos = (MathUtils.sinDeg((px + y + y) * 40f) + MathUtils.cosDeg((px + px - y) * 40f)) * strength;
                     int rr = Math.min(Math.max((int)(((color >>> 24)       ) + pos), 0), 255);
                     int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + pos), 0), 255);
                     int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + pos), 0), 255);
