@@ -107,14 +107,14 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
         for(FileHandle hex : new FileHandle[]{
                 Gdx.files.local("palettes/hex/bw-2.hex"),
-                Gdx.files.local("palettes/hex/americana-4.hex"),
                 Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
                 Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
                 Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
                 Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
                 Gdx.files.local("palettes/hex/azurestar-32.hex"),
                 Gdx.files.local("palettes/hex/yam3-255.hex"),
-                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+                Gdx.files.local("palettes/hex/americana-4.hex"),
         }) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
@@ -252,13 +252,17 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reducePlexus(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Plexus" + suffix + ".png"), pm, PALETTE, false, 0);
+//////???
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceWeave(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Weave" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////very good, very little banding
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceRobertsEdit(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Roberts7" + suffix + ".png"), pm, PALETTE, false, 0);
 //////???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlob(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Blob" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBlob(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Blob" + suffix + ".png"), pm, PALETTE, false, 0);
     }
 }

@@ -2200,13 +2200,11 @@ public class PaletteReducer {
 
     public static final byte[] TRI_BLUE_NOISE = "íøN\fÒ&^\001C0ûÍ\002*\033\f\000àÊ\005-ò;ÒKõÛ ´8\024R(\035ZÐ\0211éô\"7-\030Ûo\0340Â\r\004²ð\017È>óÚ,\031\020#À²:ðÅ\bô\016Õ\034\t<ëPÈ¤óTBûæ\013á\023§éBÄíøÍ\006Àí<$øVÝ\031eáñ\006·ÿÌßSìÐ\031üL!.\006\024éú¢Í4Ø\004\024¤G1äS¯àhÛ\017ú9,®\026Ö!g¹\0034$ÿ\017\b`Ü°3à\026\002ØÅÿ\r²\003Î»Oé*\nú#¢@+©ßºÑþ_Ä;L\001ôU\037èûÚ\031¼ù*Æ\023ö$¹å×\007ì¾6\rÍø\031íÈYÔ\030#J\017ûyµ\033ì+Hú\020\0369Õ¸\0255ôÜ\007jø\026ïä®\037Õ\bã\016Éd,\002Î>ê \000î4\005D\035o\022%ã\001ðO/Ø?­úä-òÿèÕCó*å6PÒ\025<æ'ÅõXïä¾[\021Çé4\tTD'\fñ´\030ý=á­õ#\021\006IÏªZÓÂþ·Î÷Z\035°è¿\nM\037\022<É©0Â\037\tÍ\020\003õ½\tðÙ©\001\f\033GýÒ\037\001%ØÊ£\000Þ3w(½î\bÕK·ïqÜ\024.â\f\027éò1\003<ÆÜD\023þ(ßó\005»Ûg\r\003W±ê?Ü¦&àý2n\027Cà.Ê\004\r®/ñAÀ\017õ7\027øÅèÒF.\022\0329ä\0133Áü´ó=(LÞ¸\027\013+ô\007Îl\030Ñ&ìù\033áõ\025þcÄ\032;[É\037¶Ïêû`Ú\":êÝ\027Oä\003\035êº@\020\004 Ü\001ùÄ\000Ðö\032çU \002Ùú\017!íQçýÕ¨8î\0163B\000O 5Í)×#øð\006é\r÷\005+¥\023Àô¡vùËý¯e+ÐWÚNõÌbê'Y\037¥N&Ö\nÊ0¼bÈ\bÓ6½\\#äÇ³üçÃ\024\t·FîQ\0074\017³Ò\024/@ãU\034ð=\001æ)\021»5#\013Ý ð\bü,\026¬\035:µ×ñ\017ß\003?þîF\026æ¦Aø&\020ñ\032\fF÷ XÜ\034ôÕä \020ÀàÌåGVÛ\000óÃ×\013ºÎP\nÓE\004îÕ;÷F\022$Éåî\013á÷\024\006E¯6ë¿\021i®Üö\0052\033Ûs\002Íà\003Ö/\007)z;\004ý§÷>\000\033(ú©%\031®H&Þ1ù\037âÅ\034\025éÅ\033\000°8j½3þRÆæ.üÉ\026ó-ã\035\f'ÐðÿÀå­1@ûS¹\023ðÎ\r«ìÄ1^\025,ï¾\fÊìh\020üé\003\024µ]þôT,\007¶^Óàö\031\004Ô¸\n&\033Õ\\\"\007Îú7Ã\\µ:\023N\n#í\026Â(ê:â\001Fú\"Þ\013ÑéØ\tpÞD\0048àÐ4§ZóAí*\rÚ¯?âû0íA\rM\"DëÑ}ô\fè²HÚR\000ë áÌõGÔ\007Ýô\036È\\´4Ô\026O°ó\034K²ö.\026\037ö½\b!ÇÖ\032\007Î5ç\"\001Í\020\037©\002)ÍÝòÂ\027=\001Þ¾0\000£\020ñ\031\t×C\016ü-\031¶ÿªb\020¢ü\t\032çö¾\005'AÆ\002\"ÏýçÕP\000-îE\022å8Àü¡\024e½ðIÙRÀçü\0210ãú­\020%Lø=á)Èå,ö­SîØgç2\034;Ð.IÙ%\017bâþ\022ä5\rÂ<ò\016¬^Úù\002pÞ\036OöÖ\013\032÷\b\0267b¤\007VØ4ïÍ\024í\035\004Dm½5Ï\006'¿\004\020Éðùä\002íÀóC.Êï:Ùø`î¥W$¶\033Èã\030%»\fô'³\006ìÇ:%æ/Éï#Öõ\034)¶\005\036æd\bÂ¸Õü¨\017þ\035ä\026¢=Þ\"P\r¸\030k\006ß\000\036§\030-\007»Ö\025\001Û\bIë\003;ÑR1êÓ?ã-Hú´\002xà®\f»=Ë\rýJÓ8þÛ.X\"ó\026Þí]ÇøKñü\\\bÃØ)8Î\023¸ÕN\néÌI\035)Bôä3ù*\021£ðþÆ\027«\017ÿ\030Þ\022Ò8\035þEä\002ìláÄ\021ò¯\031÷\rçÌ>&9Ú/\013®Ò*éB\037ô¨æû\">øºsó¸áüÈcÎ¨×Ái\nÝ GùaÁÐ\t\\'ñ\nöY\022/\031ö\"¡(@ÉH3\006TÃ\001\b¶ ç\0247º\003\022àþG\t3îÅå\024%\001\0164ì\006\023 \fÿA#ö4ç\004Øï#3óè¹ÆPÜ+ÐÅòÛ«5\004]ê\nâ\001ïÙ±ùä\022IôÎn\001Û\033öÏaÁ\033Y*\005Û7Ó¿\032K°,ç¼Rìá\031±M\020(9æ¦Nü\032C\000\024ê¸\033\005%C\nçÍÙû\026¾!|\024)\034ðÕ-\031ýCïÈW:%ì\020ÚöÒ\r®DúYÝ÷Ñ<Ûó/\024\005ÈÿÔò¹Ì\025\013Ü²\006Ö1ø>\râûO¿\026ý>¹/QÓ6¦ýÍE»d§ëß%À\r0ûã\007°/\002Kã\031ÿñ\036è)\nk\002û\034²Ò:W\0360ú{\002@\037É*ã¡\"¿g6·ëÔóT\035\017ñ¸÷\007ê\017â2\n\000É\0176Q\004å!¶Ó\030ò=É#ºh0ÃS\006Êî\027$\020ÄI\tfúï\nÜÃ\bâöë_\021GðÎ\003Ùñ \0200ÝÅá\005#HÝÁWôÚ!<ò¹Ö÷\025¢\tGuý¤è\024ûìÏß\021¦@3½âëª7Ùæ ,¶é\027C\"×5¿þ¬÷\tU\026þÊ_¸&\b,kèÊ\022+\034>\002\030úPä\006\034,ÌY7ÚëÁ)Þ\fB\b:ø\033\001ÖõþCÐ*ñ\027\000ÌD\017 Yî±\016)\027à:Ô\034è3*\013ã;\002éGúÔ7\000òÖ¯Ë(íÂ¬aüíÿ$ô\022\003\036Ð\\ó-Ø$¬Fæ!³Z\r\005Uø£'¾áõ1üÑ\000NòÌ\003#O·ÅÞøE¼\031öÏ\025¬î\027ºVü\ffå7\021Ó0\026Ü\017?á¨ÇAµø6¯\004ÈO\017ðÀq\t,Ü\036àÉ\021L\005bÖ\033\006Å8æd\013¥î\023\001u®ì$Ø\f9Â \013Dà1ì!\005ºJ\t÷èFÄ\037\005d\r.åNî\025ã\034·ÿÞ\027ÍúìÆ\026û2¹<èû\025°>'Þ\023\036ùÚ0åû(9\bÑ\022M\003Xßþ^Úõ'ÏÂ\024¢Ùýð$Í\002³2ÕêûÏ\031\nÔ'ûëX.7¡\021<OòÓk\tïÐ\"òé¼l¸\b@¾\032GÉØô üÆñ)¸ì0\005ç\002>ö+O\036<ßm\032ïW÷\024­K$Ü\000i½2C\013Ó\004ó&â±#\003å¡*\016Ü5P\000\016÷ì*Ññ\021\001±Y\027à?æ2¥\034÷\023ÍHµ\035w\t³ãÌ\016¾ù-§\rä(¿9ñ\007Ä=õ\020ÛòÊ!ç»^×ÿ\0130ÀF\034þ[Á\007Ë ×EÈþ[á3ê\f,ÁS\016Ú\007BÄå#û\0176îÔ\032\000_ê\027Õ\001Ç?Ù\bþ\035â£-ë\037§\004`ý\023Jù\035Ç@ê\022÷×­Aõ\027ä/\0315ª$\006M ùÏ\004î©ø\030Ðm\002V×áÆø¨F3ò\0076ç\023óMÑr\017øW\024Ïä6&´á¤+ì\006\030ÝdË8\006áì&¶û]ð\004Þè\025ÃõÛ?µi$ÿ8¹í,\033;ñ\n)Q\023&Ý\fÆ)D·]!°/\027ìÅA×¹ýM\fÃî\030>Ù\0168²Jüñ!´T\032Î\003=Õ\013¾M\017ù;Ó\f¦\031ã\022×Ê\036Lß\rÔ±\025¾ÿ¡è\004ºüÓ\036öÝüÏ\004àù!\0022\n%ß­CøÓ\007S\000Íõã\021Ò(\001æ\f1\000r\021¦ê&Í-·oï(Tý2óEè\007ôý%cê/Ð>\033\\îJ\024å©\021Jî\017;S´æïË\031\001+\0340êÀ#u/¾Q£\025ÄúñÜ\0374÷\032ÿÚ\033\002ºêÇ\t½*\021[1Á\005ÝùI\007ôØÉ.9o\0062¾'ÇÚ+\022aö7XçòØgû¸\026\tîú\036\006Ü6îÕJ)þæÆJáZó\tEÞ/\021Ö\"Q\003ùÜÎæBï\016!ä³\017\"øàÿìËØ\000æh\tòþÒ\036Ü\007Á¥\nÉ\020ä'AÜ4ÆEê\016øc\037»\t«B\004µ\023¨9$çËö_9â\030í<±!\023«\032Ì6Ã\027f9\002À\030\013µ%\034?\024ø\0335¿\f>¯ü\023?#J5\004ôÑ¨\022\002Õ­\032Ë\003à>\020Ð\030Ù.\013îÔÂý\026\005·ûÄÓj\nòýV+\002PÛýïçSÑ,LùñÒ¸ßQ¦íLä/Ñì÷Þ Ã\\\032Kæ*`ó:´,èõhíúVÉ\001\034e1\rI\037ñ+\017¢\0332Ç9×»ëö\f.Ô%\t@®òÛ\020a\b*DÌ$\005\027È&\003t\030³\000 ï\f²þ÷\"ßL\n\025ý$5¿\035%èF÷°ÝíÕ­åN@\000éß\005äx&§E±\024ÅõÞ\036\0033Æã¼ë\001\016çúÚöð¼Ø,R\022Ö.ß9Ê\017\005ÁûÑïZÙÊ\b\0018ß\016¤*\007¾7\000&Í\bÛ÷¶$M\020ú\bÑ\035\003æU5ýl\022¡éþ\031S4 e-;W\013\036A\007çËú@ê\003\035V×ë\0271åº@¬\022ãP¶ôÖ;\024ãV\032ös\023¿\036X.Ïó?\030ðá<ÈòÝ\034»ìÌ;H%Ó«úÇóÖ³Á\021Ïàû3\016&¬lÂ¸ð(D¤q%\004\033÷1ë\"Î\027cÂþñÐ\013 é;üí\025\002ªÚÂV\016û*\007\016-Ø\n¶ó\007\021ÝG\026\t\035þé(J¯Å_ó\031Ò\nö\0242\b±ÿôÈÝ\rUÿ£\nDü\006ê!ª?,Çß\0051Ö\rÆbè 2ÿ%\025I¿cÒÿMö!â^.í=\000ãNî7\005¢õ\030ëÚ\0047â!JÚüãÐ\036\021KñÒ½+Ûï2(KÙ\027ùN\"²ðH'â6ø\013µöéÙ¬í!>å¨\030ÃüË\032½ 'Ë«ÝjÔ:ÿ#\021L½î\000:Æ]=êØ6'è=\025mÇ\036´âÌ\016\001»ë\bÒ`\026÷·\006£\032DÓ\007`Ë1ùß\021ò4\004T\0249Ù\003yö\f2ú\"\022Ç\013U¶Ð÷-¤Ì\017è$\031\013ºù\001°\006\037âõ\003\021Xø8òkà4\022ÿå Î=þÜÇ+ \030:\f\003\032É¼&Ñèð\f)ä!êÖY\002½æ.ðà@æ\nf\027óT\002­ð-gÄ\023OÌüAèÔ\030\bÃ\033®Eô*ÛÁP\016êp\023ïL\001ÞóµUG\bnÝ¬C¹ùKÅ\022´\031òB\033ù3\005\025(ûÝ³0ÔøßIÎ\034áô*ª\0164$ºþMç%ÖýÉ\035?\0043Õô$»å Â(èÒ-÷ëý\020/\002\035Ò¤\0068HáÏ'\bØa¼ ÖÃM\035\006CÀ)\025\006\0164ëÔ[ÞïÄ\n)Û0B\003\020Wê\fªïù\032,\t¬4\r=új\022ÿ\036Ø9¤\031Ëô`ß+þðû\016RëÿÌDé\001ñ¦Ïìã\r©:íÚúG¼\nÿ\033FÑfô²îÎø¦.ºâf\024ÌáTÄüZÐØ\t©Aâ\r·$MåÀ\013ëR\025×. Ä«7\026°\017ö5Y\022<÷\"rýÊQ&\002¨!?ö´\022\003â\037\025\013_ß\027ðH\007Ô%´E\002èÛ\026ñéI\032ËíÁcòÐù4\023<©\"Ê\013åe\003Ûõ,â$Ü\nµ+\004Ùò\035æÂa\026ãÈ-è2ùª:\001À!9Èþ\037ô8ü\020\035A/\004¿+õ6\006(\025\000Þ\007×\004ú¼õE·í;\034\n¾nýH\032ÑçüÇK\025\t2±\020õÓï\005tÙ#QëÊÖ*æ\005Ú+ Â[Ùì(õË°\020\000]ß´úR<-[\037ð(pÜ3\001\031¥úËNéÔ\006Åï0d\036Þ7ºÑÿEÝ/<\r\031ýÁ\b@\016ZûIõ\021té\r\032å\0052¼\bmã#Ô¥\023\037ÏæØ\fÆé¹FÈ\030é\020ÏTà)\022ò =\023ª\000¼ô\017ë%_î\bú\037R¹5Îó\025Ý ï\030³&ÑA¶ùLÏ«\027SÕû8ðP\013ìC\003%ð±\033÷\021áÿB°#ñ\tÖ\000B/²÷ÞQ&×B\007®ùá\026!ÎçÃ\001ìàH+µ\036ÿ3Åà\ní\0001Ý#ò@ÿß\016\025Ä\035üÚ1¿\017IýU\0057Ò\013ô-\006üÄ5i»ä\030\004Ì6\tå\027¢X,Æ\003K¼+i\023×'ø§\005äUÒ$\005]9¨Ê\026\007\021)Æí\"Fæ0\006Êqõ¬6ÍÜ'¥a!LØä=\035ëø\016Ù]ì\020ûËñ\034Ô?\016Ù5ýñ¯\034>\f[\023í;ø¹è\023×\037öX¿êhù³5Ð\001õ¯A)å\030ÿà\036ë\025Áñç²\024½ï^Ó\023'«JÃ\034þ(¾v1\005âþèõª\tâG\004Ê¼ÔýÈ\rBòýHã'8×\002â\033Q\013¼eÞ".getBytes(StandardCharsets.ISO_8859_1);
     public static final float[] TRI_BLUE_NOISE_MULTIPLIERS = new float[4096];
-    public static final float[] TRI_BLUE_NOISE_MULTIPLIERS_SMALL = new float[4096];
     static {
         for (int i = 0; i < 4096; i++) {
             //double phi = 1.6180339887498949;
             double gauss = OtherMath.probit((PaletteReducer.TRI_BLUE_NOISE[i] + 128.5) * 0x1p-8);
             TRI_BLUE_NOISE_MULTIPLIERS[i] = (float)Math.exp(gauss * 0.5);
-            TRI_BLUE_NOISE_MULTIPLIERS_SMALL[i] = (float)Math.exp(gauss * 0.0625);
         }
     }
 
@@ -2625,6 +2623,104 @@ public class PaletteReducer {
                     rdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>24)-    (used>>>24))    );
                     gdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>16&255)-(used>>>16&255)));
                     bdiff = OtherMath.cbrtShape(0x2.Ep-8f * ((color>>>8&255)- (used>>>8&255)) );
+                    if(px < lineLen - 1)
+                    {
+                        curErrorRed[px+1]   += rdiff * w7;
+                        curErrorGreen[px+1] += gdiff * w7;
+                        curErrorBlue[px+1]  += bdiff * w7;
+                    }
+                    if(ny < h)
+                    {
+                        if(px > 0)
+                        {
+                            nextErrorRed[px-1]   += rdiff * w3;
+                            nextErrorGreen[px-1] += gdiff * w3;
+                            nextErrorBlue[px-1]  += bdiff * w3;
+                        }
+                        if(px < lineLen - 1)
+                        {
+                            nextErrorRed[px+1]   += rdiff * w1;
+                            nextErrorGreen[px+1] += gdiff * w1;
+                            nextErrorBlue[px+1]  += bdiff * w1;
+                        }
+                        nextErrorRed[px]   += rdiff * w5;
+                        nextErrorGreen[px] += gdiff * w5;
+                        nextErrorBlue[px]  += bdiff * w5;
+                    }
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+    public Pixmap reduceWeave(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedFloats == null) {
+            curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(lineLen)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(lineLen)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(lineLen)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(lineLen)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(lineLen)).items;
+        } else {
+            curErrorRed = curErrorRedFloats.ensureCapacity(lineLen);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(lineLen);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(lineLen);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(lineLen);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(lineLen);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(lineLen);
+            for (int i = 0; i < lineLen; i++) {
+                nextErrorRed[i] = 0;
+                nextErrorGreen[i] = 0;
+                nextErrorBlue[i] = 0;
+            }
+        }
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used;
+        float rdiff, gdiff, bdiff;
+        float er, eg, eb;
+        byte paletteIndex;
+        float w1 = (float) ditherStrength * 10f, w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
+                strength = (float) (30.0 * ditherStrength / (populationBias * populationBias)),
+                limit = (float) Math.pow(80, 1.635 - populationBias);
+
+        for (int py = 0; py < h; py++) {
+            int ny = py + 1;
+            for (int i = 0; i < lineLen; i++) {
+                curErrorRed[i] = nextErrorRed[i];
+                curErrorGreen[i] = nextErrorGreen[i];
+                curErrorBlue[i] = nextErrorBlue[i];
+                nextErrorRed[i] = 0;
+                nextErrorGreen[i] = 0;
+                nextErrorBlue[i] = 0;
+            }
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, py);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, py, 0);
+                else {
+                    er = Math.min(Math.max(((((px-1) * 0xC13FA9A902A6328FL + (py+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorRed[px]);
+                    eg = Math.min(Math.max(((((px+3) * 0xC13FA9A902A6328FL + (py-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorGreen[px]);
+                    eb = Math.min(Math.max(((((px+2) * 0xC13FA9A902A6328FL + (py+3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorBlue[px]);
+
+                    int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
+                    int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
+                    int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
+                    paletteIndex =
+                            paletteMapping[((rr << 7) & 0x7C00)
+                                    | ((gg << 2) & 0x3E0)
+                                    | ((bb >>> 3))];
+                    used = paletteArray[paletteIndex & 0xFF];
+                    pixmap.drawPixel(px, py, used);
+                    rdiff = (0x3p-10f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = (0x3p-10f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = (0x3p-10f * ((color>>>8&255)- (used>>>8&255)) );
+//                    rdiff = OtherMath.cbrtShape(0x1.7p-10f * ((color>>>24)-    (used>>>24))    );
+//                    gdiff = OtherMath.cbrtShape(0x1.7p-10f * ((color>>>16&255)-(used>>>16&255)));
+//                    bdiff = OtherMath.cbrtShape(0x1.7p-10f * ((color>>>8&255)- (used>>>8&255)) );
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * w7;
