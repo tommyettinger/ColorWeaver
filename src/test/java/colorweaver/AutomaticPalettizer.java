@@ -108,13 +108,13 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         for(FileHandle hex : new FileHandle[]{
                 Gdx.files.local("palettes/hex/bw-2.hex"),
                 Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
-//                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
-//                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
-//                Gdx.files.local("palettes/hex/azurestar-32.hex"),
-//                Gdx.files.local("palettes/hex/yam3-255.hex"),
-//                Gdx.files.local("palettes/hex/americana-4.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+                Gdx.files.local("palettes/hex/yam3-255.hex"),
+                Gdx.files.local("palettes/hex/americana-4.hex"),
         }) {
 
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
