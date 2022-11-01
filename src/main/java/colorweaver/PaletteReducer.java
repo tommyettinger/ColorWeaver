@@ -2686,7 +2686,8 @@ public class PaletteReducer {
         byte paletteIndex;
         float w1 = (float) (20.0 * Math.sqrt(ditherStrength) * populationBias * populationBias * populationBias * populationBias), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
                 strength = (float) (48.0 * ditherStrength / (populationBias * populationBias * populationBias * populationBias)),
-                limit = (float) Math.pow(50, 1.635 - populationBias);
+                limit = 5f + 130f / (float)Math.sqrt(colorCount+1.5);
+//        System.out.println("limit is " + limit + " with popBias " + populationBias);
 
         for (int py = 0; py < h; py++) {
             int ny = py + 1;
