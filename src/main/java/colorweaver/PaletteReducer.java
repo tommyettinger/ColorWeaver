@@ -2684,9 +2684,9 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float) (20.0 * Math.sqrt(ditherStrength) * populationBias * populationBias * populationBias), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
-                strength = (float) (40.0 * ditherStrength / (populationBias * populationBias * populationBias * populationBias)),
-                limit = (float) Math.pow(75, 1.635 - populationBias);
+        float w1 = (float) (20.0 * Math.sqrt(ditherStrength) * populationBias * populationBias * populationBias * populationBias), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
+                strength = (float) (48.0 * ditherStrength / (populationBias * populationBias * populationBias * populationBias)),
+                limit = (float) Math.pow(50, 1.635 - populationBias);
 
         for (int py = 0; py < h; py++) {
             int ny = py + 1;
@@ -2703,9 +2703,9 @@ public class PaletteReducer {
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, py, 0);
                 else {
-                    er = Math.min(Math.max(((((px-1) * 0xC13FA9A902A6328FL + (py+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorRed[px]);
+                    er = Math.min(Math.max(((((px+1) * 0xC13FA9A902A6328FL + (py+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorRed[px]);
                     eg = Math.min(Math.max(((((px+3) * 0xC13FA9A902A6328FL + (py-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorGreen[px]);
-                    eb = Math.min(Math.max(((((px+2) * 0xC13FA9A902A6328FL + (py+3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorBlue[px]);
+                    eb = Math.min(Math.max(((((px+2) * 0xC13FA9A902A6328FL + (py-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorBlue[px]);
 
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
@@ -2716,9 +2716,9 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, py, used);
-                    rdiff = (0x3p-10f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = (0x3p-10f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = (0x3p-10f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = (0x5p-10f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = (0x5p-10f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = (0x5p-10f * ((color>>>8&255)- (used>>>8&255)) );
 //                    rdiff = OtherMath.cbrtShape(0x1.7p-10f * ((color>>>24)-    (used>>>24))    );
 //                    gdiff = OtherMath.cbrtShape(0x1.7p-10f * ((color>>>16&255)-(used>>>16&255)));
 //                    bdiff = OtherMath.cbrtShape(0x1.7p-10f * ((color>>>8&255)- (used>>>8&255)) );
