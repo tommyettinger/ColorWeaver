@@ -2075,9 +2075,9 @@ public class PaletteReducer {
 //                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((pos           ) * 0x1p-23f - 0.5f) * str + 0.5f), 0), 255);
 
                     // roberts5
-                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px-1) * 0xC13FA9A902A6328FL + (y+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
-                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
-                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px+2) * 0xC13FA9A902A6328FL + (y+3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+//                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px-1) * 0xC13FA9A902A6328FL + (y+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+//                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+//                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px+2) * 0xC13FA9A902A6328FL + (y+3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
                     //roberts6
 //                    float adj = (px * 0.06711056f + y * 0.00583715f);
 //                    adj -= (int) adj;
@@ -2089,7 +2089,7 @@ public class PaletteReducer {
 //                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px-2) * 0xC13FA9A902A6328FL + (y+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.0p-23f - adj) * str + 0.5f), 0), 255);
 //                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.0p-23f - adj) * str + 0.5f), 0), 255);
 //                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px+1) * 0xC13FA9A902A6328FL + (y-3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.0p-23f - adj) * str + 0.5f), 0), 255);
-                    //roberts7
+                    //roberts7 (used in anim8-gdx 0.3.10)
 //                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px-2) * 0xC13FA9A902A6328FL + (y+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
 //                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
 //                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px+1) * 0xC13FA9A902A6328FL + (y-3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
@@ -2108,6 +2108,13 @@ public class PaletteReducer {
 //                    rr = MathUtils.clamp((int) (rr + (adj * (((used >>> 24) - rr)))), 0, 0xFF);
 //                    gg = MathUtils.clamp((int) (gg + (adj * (((used >>> 16 & 0xFF) - gg)))), 0, 0xFF);
 //                    bb = MathUtils.clamp((int) (bb + (adj * (((used >>> 8 & 0xFF) - bb)))), 0, 0xFF);
+
+                    //roberts8
+                    float ll = ((((px-1) * 0xC13FA9A902A6328FL + (y-2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.1p-22f - 0x1.1p0f);
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px-2) * 0xC13FA9A902A6328FL + (y+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.6p-22f - 0x1.6p0f + ll) * str + 0.5f), 0), 255);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.6p-22f - 0x1.6p0f + ll) * str + 0.5f), 0), 255);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px+1) * 0xC13FA9A902A6328FL + (y-3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.6p-22f - 0x1.6p0f + ll) * str + 0.5f), 0), 255);
+
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF]);
