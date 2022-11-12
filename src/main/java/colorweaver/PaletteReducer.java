@@ -2829,9 +2829,9 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, py, used);
-                    rdiff = (0x5p-10f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = (0x5p-10f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = (0x5p-10f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = Math.min(Math.max(0xAp-10f * ((color>>>24)-    (used>>>24))    , -0.3125f), 0.5f);
+                    gdiff = Math.min(Math.max(0xAp-10f * ((color>>>16&255)-(used>>>16&255)), -0.3125f), 0.5f);
+                    bdiff = Math.min(Math.max(0xAp-10f * ((color>>>8&255)- (used>>>8&255)) , -0.3125f), 0.5f);
 
                     if(px < lineLen - 1)
                     {
