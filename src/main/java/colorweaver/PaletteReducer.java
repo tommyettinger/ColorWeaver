@@ -2203,7 +2203,7 @@ public class PaletteReducer {
         byte paletteIndex;
         float w1 = (float) (6.0 * ditherStrength * populationBias * populationBias), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
                 strength = (float) (60.0 * ditherStrength / (populationBias * populationBias)),
-                adj;
+                adj, dmul = (float) (0x4p-10 / populationBias);
 
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
@@ -2240,9 +2240,15 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, y, used);
-                    rdiff = (0x3p-10f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = (0x3p-10f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = (0x3p-10f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = (dmul * ((color>>>24)-    (used>>>24))    );
+                    gdiff = (dmul * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = (dmul * ((color>>>8&255)- (used>>>8&255)) );
+//                    rdiff = Math.min(Math.max(dmul * ((color>>>24)-    (used>>>24))    , -0.25f), 0.25f);
+//                    gdiff = Math.min(Math.max(dmul * ((color>>>16&255)-(used>>>16&255)), -0.25f), 0.25f);
+//                    bdiff = Math.min(Math.max(dmul * ((color>>>8&255)- (used>>>8&255)) , -0.25f), 0.25f);
+//                    rdiff = (0x3p-10f * ((color>>>24)-    (used>>>24))    );
+//                    gdiff = (0x3p-10f * ((color>>>16&255)-(used>>>16&255)));
+//                    bdiff = (0x3p-10f * ((color>>>8&255)- (used>>>8&255)) );
 
                     if(px < lineLen - 1)
                     {
@@ -2799,7 +2805,7 @@ public class PaletteReducer {
         byte paletteIndex;
         float w1 = (float) (20.0 * Math.sqrt(ditherStrength) * populationBias * populationBias * populationBias * populationBias), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
                 strength = (float) (48.0 * ditherStrength / (populationBias * populationBias * populationBias * populationBias)),
-                limit = 5f + 130f / (float)Math.sqrt(colorCount+1.5);
+                limit = 5f + 130f / (float)Math.sqrt(colorCount+1.5), dmul = (float) (0x4p-10 / populationBias);
 
         for (int py = 0; py < h; py++) {
             int ny = py + 1;
@@ -2829,9 +2835,12 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, py, used);
-                    rdiff = Math.min(Math.max(0xAp-10f * ((color>>>24)-    (used>>>24))    , -0.3125f), 0.5f);
-                    gdiff = Math.min(Math.max(0xAp-10f * ((color>>>16&255)-(used>>>16&255)), -0.3125f), 0.5f);
-                    bdiff = Math.min(Math.max(0xAp-10f * ((color>>>8&255)- (used>>>8&255)) , -0.3125f), 0.5f);
+                    rdiff = (dmul * ((color>>>24)-    (used>>>24))    );
+                    gdiff = (dmul * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = (dmul * ((color>>>8&255)- (used>>>8&255)) );
+//                    rdiff = Math.min(Math.max(dmul * ((color>>>24)-    (used>>>24))    , -0.25f), 0.25f);
+//                    gdiff = Math.min(Math.max(dmul * ((color>>>16&255)-(used>>>16&255)), -0.25f), 0.25f);
+//                    bdiff = Math.min(Math.max(dmul * ((color>>>8&255)- (used>>>8&255)) , -0.25f), 0.25f);
 
                     if(px < lineLen - 1)
                     {
