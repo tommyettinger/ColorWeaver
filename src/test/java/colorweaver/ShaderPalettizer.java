@@ -125,7 +125,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
            //defaultShader; 
            new ShaderProgram(vertexShader, fragmentShaderBlue);
         if (!shaderBlueNoise.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderBlueNoise.getLog());
-        batch = new SpriteBatch(1000, shaderBlueNoise);
+        batch = new SpriteBatch(1000, shaderStandard);
         screenView = new ScreenViewport();
         screenView.getCamera().position.set(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0);
         screenView.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

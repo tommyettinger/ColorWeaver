@@ -64,7 +64,7 @@ public class ShaderUtils {
      * noise by Jorge Jimenez (modified to incorporate the brightness of a color in dithering calculations). It is very
      * hard to find repeating patterns in this form of dithering, though they can happen in small palettes.
      */
-    public static final String fragmentShader =
+    public static final String fragmentShaderOld =
             "varying vec2 v_texCoords;\n" +
                     "varying vec4 v_color;\n" +
                     "uniform sampler2D u_texture;\n" +
@@ -79,6 +79,31 @@ public class ShaderUtils {
                     //"   float adj = fract(4768.1232345456 * sin((gl_FragCoord.x+gl_FragCoord.y*43.0+137.0))) - 0.4;\n" +
                     "   float adj = fract(52.9829189 * fract(dot(vec2(0.06711056, 0.00583715), gl_FragCoord.xy))) - 0.4;\n" +
                     "   tgt.rgb = clamp(tgt.rgb + (tgt.rgb - used.rgb) * adj, 0.0, 1.0);\n" +
+                    "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
+                    "   gl_FragColor.a = v_color.a * tgt.a;\n" +
+                    "}";
+
+    /**
+     * This fragment shader substitutes colors with ones from a palette, dithering as needed using interleaved gradient
+     * noise by Jorge Jimenez (modified to incorporate the brightness of a color in dithering calculations). It is very
+     * hard to find repeating patterns in this form of dithering, though they can happen in small palettes.
+     */
+    public static final String fragmentShader =
+            "varying vec2 v_texCoords;\n" +
+                    "varying vec4 v_color;\n" +
+                    "uniform sampler2D u_texture;\n" +
+                    "uniform sampler2D u_palette;\n" +
+                    "const float b_adj = 31.0 / 32.0;\n" +
+                    "const float rb_adj = 32.0 / 1023.0;\n" +
+//                    "const vec3 xBumps = vec3(0.0);\n" +
+//                    "const vec3 yBumps = vec3(0.0);\n" +
+                    "const vec3 xBumps = vec3(-1., 3., 2.);\n" +
+                    "const vec3 yBumps = vec3(1., -1., 3.);\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
+                    "   vec3 adj = (fract((xBumps + gl_FragCoord.x) * 0.75488 + (yBumps + gl_FragCoord.y) * 0.56984) - 0.5) * 0.3125;\n" +
+                    "   tgt.rgb = clamp(tgt.rgb + adj, 0.0, 1.0);\n" +
                     "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
                     "   gl_FragColor.a = v_color.a * tgt.a;\n" +
                     "}";

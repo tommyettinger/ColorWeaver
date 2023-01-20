@@ -77,7 +77,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedRgbStupider/"; //
 //        final String targetDir = "samples/reducedRgbSlippery/"; //
 //        final String targetDir = "samples/reducedOkReadjusted/"; //
+//        final String targetDir = "samples/reducedOkCareful/"; //
         final String targetDir = "samples/reducedOkSigmoid/"; //
+//        final String targetDir = "samples/reducedOkStraight/"; //
 //        final String targetDir = "samples/ignored/youeye1/"; //
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")

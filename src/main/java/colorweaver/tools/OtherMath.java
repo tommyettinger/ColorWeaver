@@ -128,7 +128,10 @@ public final class OtherMath {
      * @return a loose approximation of the cube root of x; mostly useful for its shape
      */
     public static float cbrtShape(float x){
+//        return x;
+
         return x * 1.25f / (0.25f + Math.abs(x));
+
 /*
  * <a href="https://metamerist.blogspot.com/2007/09/faster-cube-root-iii.html">Initially given here</a> by
  * metamerist; I just made it respect sign.
