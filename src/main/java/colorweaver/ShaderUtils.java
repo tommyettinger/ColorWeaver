@@ -97,12 +97,13 @@ public class ShaderUtils {
                     "const float rb_adj = 32.0 / 1023.0;\n" +
 //                    "const vec3 xBumps = vec3(0.0);\n" +
 //                    "const vec3 yBumps = vec3(0.0);\n" +
-                    "const vec3 xBumps = vec3(-1., 3., 2.);\n" +
-                    "const vec3 yBumps = vec3(1., -1., 3.);\n" +
+                    "const vec3 xBumps = vec3(-1., 3.25, -2.5);\n" +
+                    "const vec3 yBumps = vec3(1.25, -1.5, 3.);\n" +
                     "void main()\n" +
                     "{\n" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
-                    "   vec3 adj = (fract((xBumps + gl_FragCoord.x) * 0.75488 + (yBumps + gl_FragCoord.y) * 0.56984) - 0.5) * 0.3125;\n" +
+                    "   vec3 adj = (fract((xBumps + gl_FragCoord.x) * 0.75488 + (yBumps + gl_FragCoord.y) * 0.56984) - 0.5) * 0.2;\n" +
+//                    "   adj /= 2.5 + abs(adj);\n" + // needs higher multiplier than 0.2 above
                     "   tgt.rgb = clamp(tgt.rgb + adj, 0.0, 1.0);\n" +
                     "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
                     "   gl_FragColor.a = v_color.a * tgt.a;\n" +
