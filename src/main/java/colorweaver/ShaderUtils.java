@@ -99,11 +99,15 @@ public class ShaderUtils {
 //                    "const vec3 yBumps = vec3(0.0);\n" +
                     "const vec3 xBumps = vec3(-1., 0., 3.);\n" +
                     "const vec3 yBumps = vec3(-3., 1., 0.);\n" +
+//                    "const vec3 xBumps = vec3(-1., 3., 2.);\n" +
+//                    "const vec3 yBumps = vec3(1., -1., 3.);\n" +
                     "void main()\n" +
                     "{\n" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
-                    "   vec3 adj = (fract((xBumps + gl_FragCoord.x) * 0.75488 + (yBumps + gl_FragCoord.y) * 0.56984) - 0.5) * 3.0;\n" + // * 3.0 makes this in the -1.5 to 1.5 range
-                    "   adj *= 1.25 / (6.0 + abs(adj));\n" + // sigmoid function; 1.25 affects result range, 6.0 makes the change more gradual as it gets higher
+                    "   vec3 adj = (fract((xBumps + gl_FragCoord.x) * 0.75488 + (yBumps + gl_FragCoord.y) * 0.56984) - " +
+                    "               fract(52.9829189 * fract((xBumps + gl_FragCoord.x) * 0.06711056 + (yBumps + gl_FragCoord.y) * 0.00583715))" +
+                    "              ) * 0.75;\n" + // * 0.75 makes this in the -1.5 to 1.5 range
+                    "   adj *= 2.0 / (5.0 + abs(adj));\n" + // sigmoid function; 2.0 affects result range, 5.0 makes the change more gradual as it gets higher
                     "   tgt.rgb = clamp(tgt.rgb + adj, 0.0, 1.0);\n" +
                     "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
                     "   gl_FragColor.a = v_color.a * tgt.a;\n" +
