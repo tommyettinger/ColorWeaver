@@ -74,10 +74,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedGood/"; //
 //        final String targetDir = "samples/LowColorGoodDithers/"; //
 //        final String targetDir = "samples/reducedRgbTricky/"; //
-//        final String targetDir = "samples/reducedRgbStupider/"; //
+        final String targetDir = "samples/reducedRgbStupider/"; //
 //        final String targetDir = "samples/reducedRgbSlippery/"; //
 //        final String targetDir = "samples/reducedOkReadjusted/"; //
-        final String targetDir = "samples/reducedOkCareful/"; //
+//        final String targetDir = "samples/reducedOkCareful/"; //
 //        final String targetDir = "samples/reducedOkSigmoid/"; //
 //        final String targetDir = "samples/reducedOkStraight/"; //
 //        final String targetDir = "samples/ignored/youeye1/"; //
@@ -153,9 +153,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //            Gdx.files.local(targetDir + name).mkdirs();
 //            reducer.exact(PALETTE, PaletteReducer.iptGoodMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbTrickyMetric);
-//            reducer.exact(PALETTE, PaletteReducer.rgbStupiderMetric);
+            reducer.exact(PALETTE, PaletteReducer.rgbStupiderMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbStupidMetric);
-            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
+//            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
             png8.palette = reducer;
             try {
 //                FileHandle sample = Gdx.files.local("samples/Kitten.jpg"); {
@@ -231,6 +231,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceTrueBlue4(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer4" + suffix + ".png"), pm, PALETTE, false, 0);
+////better?
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceTrueBlue5(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer5" + suffix + ".png"), pm, PALETTE, false, 0);
 //////great
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBluish(pm);
@@ -267,10 +271,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceWeave(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
-//////fairly good, low banding, some other artifacts, per-channel color
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceRobertsEdit(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Roberts10" + suffix + ".png"), pm, PALETTE, false, 0);
+////////fairly good, low banding, some other artifacts, per-channel color
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceRobertsEdit(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Roberts10" + suffix + ".png"), pm, PALETTE, false, 0);
 //////???
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBlob(pm);

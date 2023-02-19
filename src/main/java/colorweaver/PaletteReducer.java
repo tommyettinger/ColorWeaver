@@ -2420,6 +2420,50 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+
+    /**
+     * A blue-noise-based dither that uses a tiling 64x64 noise texture to add error to an image.
+     *
+     * @param pixmap will be modified in-place and returned
+     * @return pixmap, after modifications
+     */
+    public Pixmap reduceTrueBlue5(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+//        float adj, strength = (float) (48.0 * ditherStrength / populationBias), pos;
+//        float adj, strength = (float) (0.1375 * ditherStrength / populationBias);
+//        float adj, strength = (float) (36.0 * ditherStrength / populationBias);
+        float adj, strength = (float) (15 * ditherStrength / (populationBias * populationBias * populationBias * populationBias));
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+//                    float pos = (PaletteReducer.thresholdMatrix64[(px & 7) | (y & 7) << 3] - 31.5f) * 0.2f + 0.5f;
+                    adj = ((BlueNoise.TRIANGULAR_BLUE_NOISE[1][(px & 63) | (y & 63) << 6] + 0.5f));
+                    adj = adj * strength / (10f + Math.abs(adj));
+                    int rr = Math.min(Math.max((int) (adj + ((color >>> 24)       ) + 0.5f), 0), 255);
+                    adj = ((BlueNoise.TRIANGULAR_BLUE_NOISE[2][(px & 63) | (y & 63) << 6] + 0.5f));
+                    adj = adj * strength / (10f + Math.abs(adj));
+                    int gg = Math.min(Math.max((int) (adj + ((color >>> 16) & 0xFF) + 0.5f), 0), 255);
+                    adj = ((BlueNoise.TRIANGULAR_BLUE_NOISE[3][(px & 63) | (y & 63) << 6] + 0.5f));
+                    adj = adj * strength / (10f + Math.abs(adj));
+                    int bb = Math.min(Math.max((int) (adj + ((color >>> 8)  & 0xFF) + 0.5f), 0), 255);
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
 //    /**
 //     * A blue-noise-based dither that uses a tiling 64x64 noise texture to add error to an image;
 //     * this does use an approximation of arccosine to bias results toward the original color.
