@@ -272,9 +272,13 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceWeave(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////fairly good, low banding, some other artifacts, per-channel color
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceRobertsEdit(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Roberts11" + suffix + ".png"), pm, PALETTE, false, 0);
+//////???
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceRobertsEdit(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Roberts11" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceRobertsLAB(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_RobertsLAB" + suffix + ".png"), pm, PALETTE, false, 0);
 //////???
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBlob(pm);

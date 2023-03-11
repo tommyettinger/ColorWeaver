@@ -2152,6 +2152,58 @@ public class PaletteReducer {
         return pixmap;
     }
 
+    public Pixmap reduceRobertsLAB (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+//        float str = (float) (64 * ditherStrength / Math.log(colorCount * 0.3 + 1.5));
+        float str = (float) (0.1 * ditherStrength / (populationBias * populationBias));
+//        float str = (float) (25.0 * ditherStrength / (populationBias));
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int rr = ((color >>> 24)       );
+                    int gg = ((color >>> 16) & 0xFF);
+                    int bb = ((color >>> 8)  & 0xFF);
+                    int shrunk = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
+                    double L = OKLAB[0][shrunk];
+                    double A = OKLAB[1][shrunk];
+                    double B = OKLAB[2][shrunk];
+//                    long rob = ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >>> 41);
+//                    L = Math.min(Math.max((L + (rob * 0x1.1p-22f - 0x1.1p0f) * str), 0), 1f);
+//                    A = Math.min(Math.max((A + (rob * 0x0.9p-22f - 0x0.9p0f) * str), -1f), 1f);
+//                    B = Math.min(Math.max((B + (rob * 0x0.9p-22f - 0x0.9p0f) * str), -1f), 1f);
+//                    double LL = ((((px + 3) * 0xC13FA9A902A6328FL + (y + 2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.1p-23);
+                    L = Math.min(Math.max((L + ((((px + 3) * 0xC13FA9A902A6328FL + (y + 2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.5p-22 - 0x1.5p0) * str), 0), 1f);
+                    A = Math.min(Math.max((A + ((((px + 2) * 0xC13FA9A902A6328FL + (y + 1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x0.Ap-22 - 0x0.Ap0) * str), -1f), 1f);
+                    B = Math.min(Math.max((B + ((((px + 1) * 0xC13FA9A902A6328FL + (y + 3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x0.Ap-22 - 0x0.Ap0) * str), -1f), 1f);
+                    L = reverseLight(L);
+                    double l = (L + 0.3963377774 * A + 0.2158037573 * B);
+                    double m = (L - 0.1055613458 * A - 0.0638541728 * B);
+                    double s = (L - 0.0894841775 * A - 1.2914855480 * B);
+                    l *= l * l;
+                    m *= m * m;
+                    s *= s * s;
+                    rr = (int)(Math.sqrt(Math.min(Math.max(+4.0767245293 * l - 3.3072168827 * m + 0.2307590544 * s, 0.0), 1.0)) * 255.9999);
+                    gg = (int)(Math.sqrt(Math.min(Math.max(-1.2681437731 * l + 2.6093323231 * m - 0.3411344290 * s, 0.0), 1.0)) * 255.9999);
+                    bb = (int)(Math.sqrt(Math.min(Math.max(-0.0041119885 * l - 0.7034763098 * m + 1.7068625689 * s, 0.0), 1.0)) * 255.9999);
+
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
     /**
      * Uses Interleaved Gradient Noise, by Jorge Jimenez.
      * @param pixmap
