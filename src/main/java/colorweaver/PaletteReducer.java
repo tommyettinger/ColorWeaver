@@ -2057,7 +2057,7 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
 //        float str = (float) (64 * ditherStrength / Math.log(colorCount * 0.3 + 1.5));
-        float str = (float) (20.0 * ditherStrength / (populationBias));
+        float str = (float) (25.0 * ditherStrength / (populationBias * populationBias));
 //        float str = (float) (25.0 * ditherStrength / (populationBias));
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
@@ -2100,10 +2100,10 @@ public class PaletteReducer {
                     // px * 0xD1B54A32D192ED03L + y * 0xABC98388FB8FAC03L - 0xCEBD76D9EDB6A8EFL
                     // px * 0xDB4F0B9175AE2165L + y * 0xBBE0563303A4615FL - 0xB9C9AA3A51D00B65L
 //                    int ax = px ^ px >>> 1, ay = y ^ y >>> 1;
-                    long light = ((color >>> 23 & 510) + (color >>> 24) + (color >>> 14 & 1020) + (color >>> 8 & 255)) * 0x9E3779B97F4A7C15L >>> 2;
-                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px + 3) * 0xC13FA9A902A6328FL + (y + 2) * 0x91E10DA5C79E7B1DL + light) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
-                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px + 2) * 0xC13FA9A902A6328FL + (y + 1) * 0x91E10DA5C79E7B1DL + light) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
-                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px + 1) * 0xC13FA9A902A6328FL + (y + 3) * 0x91E10DA5C79E7B1DL + light) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+//                    long light = 0L;//(px + y ^ px + y >>> 1) * 0x9E3779B97F4A7C15L >>> 4;//((color >>> 24) + (color >>> 16 & 255) + (color >>> 8 & 255)) * 0x9E3779B97F4A7C15L >> 2;
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px + 3) * 0xC13FA9A902A6328FL + (y + 2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.3p-22f - 0x1.3p0f) * str + 0.5f), 0), 255);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px + 2) * 0xC13FA9A902A6328FL + (y + 1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.3p-22f - 0x1.3p0f) * str + 0.5f), 0), 255);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px + 1) * 0xC13FA9A902A6328FL + (y + 3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.3p-22f - 0x1.3p0f) * str + 0.5f), 0), 255);
                     //roberts6
 //                    float adj = (px * 0.06711056f + y * 0.00583715f);
 //                    adj -= (int) adj;
