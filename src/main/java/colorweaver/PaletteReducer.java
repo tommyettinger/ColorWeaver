@@ -2087,10 +2087,22 @@ public class PaletteReducer {
                     // px * 0xE60E2B722B53AEEBL + y * 0xA6F5777F6F88983FL
                     // px * 0xCEBD76D9EDB6A8EFL + y * 0x9609C71EB7D03F7BL
                     // px * 0xB9C9AA3A51D00B65L + y * 0x86D516E50B04AB1BL
+//
+//                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL - 0xD1B54A32D192ED03L) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+//                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL - 0xABC98388FB8FAC03L) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+//                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL - 0x8CB92BA72F3D8DD7L) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+                    // roberts11
+                    // 0xD1B54A32D192ED03L
+                    // 0xABC98388FB8FAC03L
+                    // 0x8CB92BA72F3D8DD7L
+                    // , 0xD1B54A32D192ED03L, 0xABC98388FB8FAC03L, 0x8CB92BA72F3D8DD7L
+                    // px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL - 0xE60E2B722B53AEEBL
+                    // px * 0xD1B54A32D192ED03L + y * 0xABC98388FB8FAC03L - 0xCEBD76D9EDB6A8EFL
+                    // px * 0xDB4F0B9175AE2165L + y * 0xBBE0563303A4615FL - 0xB9C9AA3A51D00B65L
 
-                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL - 0xD1B54A32D192ED03L) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
-                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL - 0xABC98388FB8FAC03L) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
-                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL - 0x8CB92BA72F3D8DD7L) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px ^ px <<  1) * 0xC13FA9A902A6328FL + (y ^ y <<  1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px ^ px <<  1) * 0xC13FA9A902A6328FL + (y ^ y >>> 1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px ^ px >>> 1) * 0xC13FA9A902A6328FL + (y ^ y >>> 1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
                     //roberts6
 //                    float adj = (px * 0.06711056f + y * 0.00583715f);
 //                    adj -= (int) adj;
