@@ -2179,7 +2179,7 @@ public class PaletteReducer {
 //                    A = Math.min(Math.max((A + (rob * 0x0.9p-22f - 0x0.9p0f) * str), -1f), 1f);
 //                    B = Math.min(Math.max((B + (rob * 0x0.9p-22f - 0x0.9p0f) * str), -1f), 1f);
 //                    double LL = ((((px + 3) * 0xC13FA9A902A6328FL + (y + 2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.1p-23);
-                    L = Math.min(Math.max((L + ((((px + 3) * 0xC13FA9A902A6328FL + (y + 2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.5p-22 - 0x1.5p0) * str), 0), 1f);
+                    L = Math.min(Math.max((L + ((((px + 3) * 0xC13FA9A902A6328FL + (y + 2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.0p-22 - 0x1.0p0) * str), 0), 1f);
                     A = Math.min(Math.max((A + ((((px + 2) * 0xC13FA9A902A6328FL + (y + 1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x0.Ap-22 - 0x0.Ap0) * str), -1f), 1f);
                     B = Math.min(Math.max((B + ((((px + 1) * 0xC13FA9A902A6328FL + (y + 3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x0.Ap-22 - 0x0.Ap0) * str), -1f), 1f);
                     L = reverseLight(L);
@@ -3541,7 +3541,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
-        final float errorMul = (float) (ditherStrength * populationBias);
+        final float errorMul = (float) (ditherStrength * 0.5 / populationBias);
         computePaletteGamma();
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {

@@ -118,6 +118,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                 Gdx.files.local("palettes/hex/gb-16.hex"),
                 Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
                 Gdx.files.local("palettes/hex/azurestar-32.hex"),
+                Gdx.files.local("palettes/hex/hyper-8.hex"),
                 Gdx.files.local("palettes/hex/yam3-255.hex"),
                 Gdx.files.local("palettes/hex/americana-4.hex"),
                 Gdx.files.local("palettes/hex/vinik-24.hex"),
@@ -248,9 +249,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceNeue(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////incredible
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceKnoll(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_G" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceKnoll(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////great
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceKnollRoberts(pm);
@@ -275,10 +276,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceRobertsEdit(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Roberts11" + suffix + ".png"), pm, PALETTE, false, 0);
-//////???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceRobertsLAB(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_RobertsLAB" + suffix + ".png"), pm, PALETTE, false, 0);
+////////???
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceRobertsLAB(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_RobertsLAB" + suffix + ".png"), pm, PALETTE, false, 0);
 //////???
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBlob(pm);
