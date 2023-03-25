@@ -2534,6 +2534,33 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+    public Pixmap reduceRing (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        float str = (float) (25.0 * ditherStrength / (populationBias * populationBias * populationBias * populationBias));
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((BlueNoise.TRIANGULAR_BLUE_NOISE[1][(px & 63) | (y & 63) << 6] + 0.5f) * 0.01f) * str + 0.5f), 0), 255);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((BlueNoise.TRIANGULAR_BLUE_NOISE[2][(px & 63) | (y & 63) << 6] + 0.5f) * 0.01f) * str + 0.5f), 0), 255);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((BlueNoise.TRIANGULAR_BLUE_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0.01f) * str + 0.5f), 0), 255);
+
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
 
 //    /**
 //     * A blue-noise-based dither that uses a tiling 64x64 noise texture to add error to an image;
