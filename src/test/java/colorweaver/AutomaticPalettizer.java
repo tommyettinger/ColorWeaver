@@ -249,9 +249,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceNeue(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////incredible
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceKnoll(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceKnoll(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////great
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceKnollRoberts(pm);
@@ -273,9 +273,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceWeave(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////fairly good, low banding, some other artifacts, per-channel color
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceRobertsEdit(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Roberts11" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceRobertsEdit(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Roberts13" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////???
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceRobertsLAB(pm);
