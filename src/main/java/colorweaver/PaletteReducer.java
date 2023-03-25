@@ -2540,16 +2540,16 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        float str = (float) (36.0 * ditherStrength / (populationBias));
+        float str = (float) (70.0 * ditherStrength / Math.sqrt(Math.sqrt(colorCount)));
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + (OtherMath.cbrt(BlueNoise.TRIANGULAR_BLUE_NOISE[1][(px & 63) | (y & 63) << 6] + 0.5f) * 0.1875f) * str + 0.5f), 0), 255);
-                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + (OtherMath.cbrt(BlueNoise.TRIANGULAR_BLUE_NOISE[2][(px & 63) | (y & 63) << 6] + 0.5f) * 0.1875f) * str + 0.5f), 0), 255);
-                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + (OtherMath.cbrt(BlueNoise.TRIANGULAR_BLUE_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0.1875f) * str + 0.5f), 0), 255);
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + (OtherMath.cbrtApprox(BlueNoise.TRIANGULAR_BLUE_NOISE[1][(px & 63) | (y & 63) << 6] + 0.5f) * 0.1875f) * str + 0.5f), 0), 255);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + (OtherMath.cbrtApprox(BlueNoise.TRIANGULAR_BLUE_NOISE[2][(px & 63) | (y & 63) << 6] + 0.5f) * 0.1875f) * str + 0.5f), 0), 255);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + (OtherMath.cbrtApprox(BlueNoise.TRIANGULAR_BLUE_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0.1875f) * str + 0.5f), 0), 255);
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
