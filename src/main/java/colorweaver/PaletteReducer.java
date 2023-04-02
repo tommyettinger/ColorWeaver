@@ -2066,7 +2066,7 @@ public class PaletteReducer {
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-//                    adj = (px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1.8p-23f - 0.75f;
+//                    adj = (px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1.8p-23f - 0x1.8p-1f;
 //                    adj = adj * str + 0.5f;
 //                    adj *= Math.abs(adj); // sign-preserving square
 //                    adj = Math.copySign((float) Math.sqrt(Math.abs(adj)), adj); // sign-preserving square root
@@ -2540,16 +2540,28 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        float str = (float) (70.0 * ditherStrength / Math.sqrt(Math.sqrt(colorCount)));
+        float str = (float) ((70.0 * 0.1875) * ditherStrength / Math.sqrt(Math.sqrt(colorCount))),
+                limit = (float) Math.pow(10 * str, 1.635 - populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + (OtherMath.cbrtApprox(BlueNoise.TRIANGULAR_BLUE_NOISE[1][(px & 63) | (y & 63) << 6] + 0.5f) * 0.1875f) * str + 0.5f), 0), 255);
-                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + (OtherMath.cbrtApprox(BlueNoise.TRIANGULAR_BLUE_NOISE[2][(px & 63) | (y & 63) << 6] + 0.5f) * 0.1875f) * str + 0.5f), 0), 255);
-                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + (OtherMath.cbrtApprox(BlueNoise.TRIANGULAR_BLUE_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0.1875f) * str + 0.5f), 0), 255);
+//                    float pos = (PaletteReducer.thresholdMatrix64[(px & 7) | (y & 7) << 3] - 31.5f) * 1.5f + 0.5f;
+//                    float pos = (px * 0.06711056f + y * 0.00583715f);
+//                    pos -= (int) pos;
+//                    pos *= 52.9829189f;
+//                    pos -= (int) pos;
+//                    pos = (pos - 0.5f) * 96f + 0.5f;
+                    float pos = (px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x10p-22f - 0x10p0f;
+                    float noiseA = BlueNoise.TRIANGULAR_BLUE_NOISE[1][(px & 63) | (y & 63) << 6];
+                    float noiseB = BlueNoise.TRIANGULAR_BLUE_NOISE[2][(px & 63) | (y & 63) << 6];
+                    float noiseC = BlueNoise.TRIANGULAR_BLUE_NOISE[0][(px & 63) | (y & 63) << 6];
+
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + Math.min(Math.max((noiseA - noiseB + pos) * str, -limit), limit) + 0.5f), 0), 255);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + Math.min(Math.max((noiseB - noiseC + pos) * str, -limit), limit) + 0.5f), 0), 255);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + Math.min(Math.max((noiseC - noiseA + pos) * str, -limit), limit) + 0.5f), 0), 255);
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
