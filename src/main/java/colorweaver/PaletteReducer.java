@@ -2059,7 +2059,8 @@ public class PaletteReducer {
 //        float str = (float) (64 * ditherStrength / Math.log(colorCount * 0.3 + 1.5));
 //        float str = (float) (40.0 * ditherStrength / (populationBias * populationBias));
 //        float str = (float) (25.0 * ditherStrength / (populationBias));
-        float str = (float) (25.0 * ditherStrength / (populationBias * populationBias * populationBias * populationBias));
+//        float str = (float) (25.0 * ditherStrength / (populationBias * populationBias * populationBias * populationBias));
+        float str = (float) (25 * ditherStrength / (populationBias * populationBias * populationBias * populationBias));
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -2142,9 +2143,18 @@ public class PaletteReducer {
 //                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.6p-22f - 0x1.6p0f + ll) * str + 0.5f), 0), 255);
 //                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px+1) * 0xC13FA9A902A6328FL + (y-3) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.6p-22f - 0x1.6p0f + ll) * str + 0.5f), 0), 255);
                     //roberts13 (used in anim8-gdx 0.3.13)
-                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px-1) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
-                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
-                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px-4) * 0xC13FA9A902A6328FL + (y+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+//                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + ((((px-1) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+//                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + ((((px+3) * 0xC13FA9A902A6328FL + (y-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+//                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + ((((px-4) * 0xC13FA9A902A6328FL + (y+2) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-22f - 0x1.4p0f) * str + 0.5f), 0), 255);
+
+                    //roberts14; uses R2 to get an angle, then gives RGB different rotations of that angle to cos().
+                    //3D Roberts 0xD1B54A32D192ED03L, 0xABC98388FB8FAC03L, 0x8CB92BA72F3D8DD7L
+                    //3D Roberts 0.8191725133961645f, 0.6710436067037893f, 0.5497004779019703f
+                    //6D Roberts 0xE60E2B722B53AEEBL, 0xCEBD76D9EDB6A8EFL, 0xB9C9AA3A51D00B65L, 0xA6F5777F6F88983FL, 0x9609C71EB7D03F7BL, 0x86D516E50B04AB1BL
+                    float theta = ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1p-23f) * MathUtils.PI2;
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + (MathUtils.cos(theta        )) * str + 0.5f), 0), 255);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + (MathUtils.cos(theta + 2.09f)) * str + 0.5f), 0), 255);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + (MathUtils.cos(theta + 4.18f)) * str + 0.5f), 0), 255);
 
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
