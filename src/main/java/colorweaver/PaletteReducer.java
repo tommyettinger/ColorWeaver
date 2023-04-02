@@ -2151,10 +2151,15 @@ public class PaletteReducer {
                     //3D Roberts 0xD1B54A32D192ED03L, 0xABC98388FB8FAC03L, 0x8CB92BA72F3D8DD7L
                     //3D Roberts 0.8191725133961645f, 0.6710436067037893f, 0.5497004779019703f
                     //6D Roberts 0xE60E2B722B53AEEBL, 0xCEBD76D9EDB6A8EFL, 0xB9C9AA3A51D00B65L, 0xA6F5777F6F88983FL, 0x9609C71EB7D03F7BL, 0x86D516E50B04AB1BL
-                    float theta = ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1p-23f) * MathUtils.PI2;
-                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + (MathUtils.cos(theta        )) * str + 0.5f), 0), 255);
-                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + (MathUtils.cos(theta + 2.09f)) * str + 0.5f), 0), 255);
-                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + (MathUtils.cos(theta + 4.18f)) * str + 0.5f), 0), 255);
+                    int rr = ((color >>> 24)       );
+                    int gg = ((color >>> 16) & 0xFF);
+                    int bb = ((color >>> 8)  & 0xFF);
+                    int shrunk = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
+                    float L = (float) OKLAB[0][shrunk];
+                    float theta = ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1p-23f + L) * (MathUtils.PI2);
+                    rr = Math.min(Math.max((int)(rr + (MathUtils.cos(theta         + rr * 0x1p-7f)) * str + 0.5f), 0), 255);
+                    gg = Math.min(Math.max((int)(gg + (MathUtils.cos(theta + 2.09f + gg * 0x1p-7f)) * str + 0.5f), 0), 255);
+                    bb = Math.min(Math.max((int)(bb + (MathUtils.cos(theta + 4.18f + bb * 0x1p-7f)) * str + 0.5f), 0), 255);
 
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
