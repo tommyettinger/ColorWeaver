@@ -2060,7 +2060,7 @@ public class PaletteReducer {
 //        float str = (float) (40.0 * ditherStrength / (populationBias * populationBias));
 //        float str = (float) (25.0 * ditherStrength / (populationBias));
 //        float str = (float) (25.0 * ditherStrength / (populationBias * populationBias * populationBias * populationBias));
-        float str = (float) (25 * ditherStrength / (populationBias * populationBias * populationBias * populationBias));
+        float str = (float) (32 * ditherStrength / (populationBias * populationBias * populationBias * populationBias));
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -2154,13 +2154,10 @@ public class PaletteReducer {
                     int rr = ((color >>> 24)       );
                     int gg = ((color >>> 16) & 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);
-                    int shrunk = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
-                    float L = (float) OKLAB[0][shrunk];
-                    float theta = ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1p-23f + L) * (MathUtils.PI2);
-                    rr = Math.min(Math.max((int)(rr + (MathUtils.cos(theta         + rr * 0x1p-7f)) * str + 0.5f), 0), 255);
-                    gg = Math.min(Math.max((int)(gg + (MathUtils.cos(theta + 2.09f + gg * 0x1p-7f)) * str + 0.5f), 0), 255);
-                    bb = Math.min(Math.max((int)(bb + (MathUtils.cos(theta + 4.18f + bb * 0x1p-7f)) * str + 0.5f), 0), 255);
-
+                    float theta = ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1p-23f) * (MathUtils.PI2);
+                    rr = Math.min(Math.max((int)(rr + (MathUtils.cos(theta        )) * str + 0.5f), 0), 255);
+                    gg = Math.min(Math.max((int)(gg + (MathUtils.cos(theta + 1.09f)) * str + 0.5f), 0), 255);
+                    bb = Math.min(Math.max((int)(bb + (MathUtils.cos(theta + 2.18f)) * str + 0.5f), 0), 255);
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
