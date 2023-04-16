@@ -2154,10 +2154,10 @@ public class PaletteReducer {
                     int rr = ((color >>> 24)       );
                     int gg = ((color >>> 16) & 0xFF);
                     int bb = ((color >>> 8)  & 0xFF);
-                    float theta = ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1p-23f) * (MathUtils.PI2);
-                    rr = Math.min(Math.max((int)(rr + (MathUtils.cos(theta        )) * str + 0.5f), 0), 255);
-                    gg = Math.min(Math.max((int)(gg + (MathUtils.cos(theta + 1.09f)) * str + 0.5f), 0), 255);
-                    bb = Math.min(Math.max((int)(bb + (MathUtils.cos(theta + 2.18f)) * str + 0.5f), 0), 255);
+                    final float theta = ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1.921fb6p-21f); //0x1.921fb6p-21f is 0x1p-23f * MathUtils.PI2
+                    rr = Math.min(Math.max((int)(rr + MathUtils.cos(theta        ) * str + 0.5f), 0), 255);
+                    gg = Math.min(Math.max((int)(gg + MathUtils.cos(theta + 1.04f) * str + 0.5f), 0), 255);
+                    bb = Math.min(Math.max((int)(bb + MathUtils.cos(theta + 2.09f) * str + 0.5f), 0), 255);
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
@@ -3835,6 +3835,54 @@ public class PaletteReducer {
 //        pixmap.setBlending(blending);
 //        return pixmap;
 //    }
+
+
+    public Pixmap reduceShuffle (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used, cr, cg, cb, usedIndex;
+        final float errorMul = (float) (ditherStrength * 0.5 / populationBias);
+        computePaletteGamma();
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int er = 0, eg = 0, eb = 0;
+                    cr = (color >>> 24);
+                    cg = (color >>> 16 & 0xFF);
+                    cb = (color >>> 8 & 0xFF);
+                    for (int i = 0; i < 16; i++) {
+                        int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
+                        int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
+                        int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
+                        usedIndex = paletteMapping[((rr << 7) & 0x7C00)
+                                | ((gg << 2) & 0x3E0)
+                                | ((bb >>> 3))] & 0xFF;
+                        used = candidates[i] = paletteArray[usedIndex];
+                        er += cr - (used >>> 24);
+                        eg += cg - (used >>> 16 & 0xFF);
+                        eb += cb - (used >>> 8 & 0xFF);
+                    }
+                    sort16(candidates);
+                    int shuf = ((px & 3) | (y & 3) << 2);
+                    shuf ^= shuf >>> 3 ^ (px ^ y) >>> 2 & 15;
+                    shuf = shuf * ((px >>> 2) + (y >>> 5) << 1 ^ 13) & 15;
+                    shuf ^= shuf >>> 1 ^ (px ^ y) >>> 6 & 15;
+                    shuf = shuf * ((px >>> 5) - (y >>> 2) << 1 ^ 5) & 15;
+                    shuf ^= shuf >>> 2 ^ (px ^ y) >>> 14 & 15;
+                    shuf = shuf * ((px >>> 8) - (y >>> 8) << 1 ^ 11) & 15;
+                    shuf ^= shuf >>> 2 ^ (px ^ y) >>> 10 & 15;
+                    pixmap.drawPixel(px, y, candidates[shuf]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
 
     /**
      * Retrieves a random non-0 color index for the palette this would reduce to, with a higher likelihood for colors

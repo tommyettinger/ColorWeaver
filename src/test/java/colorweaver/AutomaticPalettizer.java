@@ -107,6 +107,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        for(FileHandle hex : hexes) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
+//        for(FileHandle hex : new FileHandle[]{
+//                Gdx.files.local("palettes/hex/bw-2.hex"),
+//                Gdx.files.local("palettes/hex/gray-16.hex"),
+//                Gdx.files.local("palettes/hex/gray-15.hex"),
+//                Gdx.files.local("palettes/hex/grayfull-256.hex"),
+//        }) {
         for(FileHandle hex : new FileHandle[]{
                 Gdx.files.local("palettes/hex/bw-2.hex"),
                 Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
@@ -212,7 +218,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceChaoticNoise(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Chaotic" + suffix + ".png"), pm, PALETTE, false, 0);
-////////very good
+//////////very good
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceIGN(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
@@ -220,7 +226,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSierraLite(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
-////////rather good
+//////////rather good
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceFloydSteinberg(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
@@ -232,7 +238,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceTrueBlue4(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer4" + suffix + ".png"), pm, PALETTE, false, 0);
-//////better?
+////////better?
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceTrueBlue5(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer5" + suffix + ".png"), pm, PALETTE, false, 0);
@@ -244,14 +250,18 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceScatter(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
-////////YAY YIPPEE WOO NO BANDING
+//////////YAY YIPPEE WOO NO BANDING
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceNeue(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
-////////incredible
+//////////incredible
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceKnoll(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
+////////???
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceShuffle(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Shuffle" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////great
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceKnollRoberts(pm);
@@ -268,15 +278,15 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceIgneous(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Igneous2" + suffix + ".png"), pm, PALETTE, false, 0);
-////////////very good, error-diffusion, per-channel color
+//////////////very good, error-diffusion, per-channel color
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceWeave(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
-////////fairly good, low banding, some other artifacts, per-channel color
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceRobertsEdit(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Roberts14" + suffix + ".png"), pm, PALETTE, false, 0);
-////////???
+//////////fairly good, low banding, some other artifacts, per-channel color
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceRobertsEdit(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Roberts14" + suffix + ".png"), pm, PALETTE, false, 0);
+////////BAD
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceRobertsLAB(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_RobertsLAB" + suffix + ".png"), pm, PALETTE, false, 0);
