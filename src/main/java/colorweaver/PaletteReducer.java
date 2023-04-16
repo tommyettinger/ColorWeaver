@@ -3868,15 +3868,15 @@ public class PaletteReducer {
                         eb += cb - (used >>> 8 & 0xFF);
                     }
                     sort16(candidates);
-                    int shuf = ((px & 3) | (y & 3) << 2);
-                    shuf ^= shuf >>> 3 ^ (px ^ y) >>> 2 & 15;
-                    shuf = shuf * ((px >>> 2) + (y >>> 5) << 1 ^ 13) & 15;
-                    shuf ^= shuf >>> 1 ^ (px ^ y) >>> 6 & 15;
-                    shuf = shuf * ((px >>> 5) - (y >>> 2) << 1 ^ 5) & 15;
-                    shuf ^= shuf >>> 2 ^ (px ^ y) >>> 14 & 15;
-                    shuf = shuf * ((px >>> 8) - (y >>> 8) << 1 ^ 11) & 15;
-                    shuf ^= shuf >>> 2 ^ (px ^ y) >>> 10 & 15;
-                    pixmap.drawPixel(px, y, candidates[shuf]);
+//                    int shuf = ((px & 3) | (y & 3) << 2);
+//                    shuf ^= shuf >>> 3 ^ (px ^ y) >>> 2 & 15;
+//                    shuf = shuf * ((px >>> 2) + (y >>> 5) << 1 ^ 13) & 15;
+//                    shuf ^= shuf >>> 1 ^ (px ^ y) >>> 6 & 15;
+//                    shuf = shuf * ((px >>> 5) - (y >>> 2) << 1 ^ 5) & 15;
+//                    shuf ^= shuf >>> 2 ^ (px ^ y) >>> 14 & 15;
+//                    shuf = shuf * ((px >>> 8) - (y >>> 8) << 1 ^ 11) & 15;
+//                    shuf ^= shuf >>> 2 ^ (px ^ y) >>> 10 & 15;
+                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[((((px & 3) | (y & 3) << 2)) ^ (px >>> 2 ^ y >>> 2)) & 15]]);
                 }
             }
         }
