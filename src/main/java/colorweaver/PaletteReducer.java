@@ -3843,7 +3843,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
-        final float errorMul = (float) (ditherStrength * 0.5 / (populationBias * populationBias));
+        final float errorMul = (float) (ditherStrength * 0.25 / (populationBias * populationBias));
         computePaletteGamma();
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
@@ -3887,6 +3887,9 @@ public class PaletteReducer {
 //                            thresholdMatrix[((px & 3) | (y & 3) << 2)]
 //                            (((px+842 ^ px >>> 1) + (y+842 ^ y >>> 1)) * 0xDE4D >>> 4 & 15)
                             thresholdMatrix[((((px & 3) | (y & 3) << 2)) ^ (px >>> 2) * 5 ^ (y >>> 2) * 7) & 15]
+//                            thresholdMatrix[(((px & 3) | (y & 3) << 2))] ^ ((px >>> 2) * 5 ^ (y >>> 2) * 7) & 15
+//                            ((px ^ px >>> 1) * 5 + (y ^ y >>> 1) * 7) % 9
+//                            ((((px & 3) | (y & 3) << 2)) ^ px * 5 ^ y * 7) & 15
                             ]);
                 }
             }
