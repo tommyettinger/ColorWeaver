@@ -3843,7 +3843,7 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
-        final float errorMul = (float) (ditherStrength * 0.5 / populationBias);
+        final float errorMul = (float) (ditherStrength * 0.5 / (populationBias * populationBias));
         computePaletteGamma();
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
@@ -3856,9 +3856,9 @@ public class PaletteReducer {
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
                     for (int i = 0; i < 16; i++) {
-                        int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
-                        int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
-                        int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
+                        int rr = Math.min(Math.max((int) (cr + er * errorMul), 0), 255);
+                        int gg = Math.min(Math.max((int) (cg + eg * errorMul), 0), 255);
+                        int bb = Math.min(Math.max((int) (cb + eb * errorMul), 0), 255);
                         usedIndex = paletteMapping[((rr << 7) & 0x7C00)
                                 | ((gg << 2) & 0x3E0)
                                 | ((bb >>> 3))] & 0xFF;
@@ -3876,7 +3876,18 @@ public class PaletteReducer {
 //                    shuf ^= shuf >>> 2 ^ (px ^ y) >>> 14 & 15;
 //                    shuf = shuf * ((px >>> 8) - (y >>> 8) << 1 ^ 11) & 15;
 //                    shuf ^= shuf >>> 2 ^ (px ^ y) >>> 10 & 15;
-                    pixmap.drawPixel(px, y, candidates[thresholdMatrix[((((px & 3) | (y & 3) << 2)) ^ (px >>> 2 ^ y >>> 2)) & 15]]);
+//                    int shuf = ((px & 0xFFFF) | (y & 0xFFFF) << 16);
+//                    shuf = shuf * 0xB0553 ^ 0x9E3779BD;
+//                    shuf ^= shuf >>> 15;
+//                    shuf = shuf * 0xB0553 ^ 0x9E3779BD;
+//                    shuf ^= shuf >>> 15;
+//                    shuf = shuf * 0xB0553 ^ 0x9E3779BD;
+                    pixmap.drawPixel(px, y, candidates[
+//                            Integer.numberOfTrailingZeros(shuf >>> 17 | 0x8000)
+//                            thresholdMatrix[((px & 3) | (y & 3) << 2)]
+//                            (((px+842 ^ px >>> 1) + (y+842 ^ y >>> 1)) * 0xDE4D >>> 4 & 15)
+                            thresholdMatrix[((((px & 3) | (y & 3) << 2)) ^ (px >>> 2) * 5 ^ (y >>> 2) * 7) & 15]
+                            ]);
                 }
             }
         }
