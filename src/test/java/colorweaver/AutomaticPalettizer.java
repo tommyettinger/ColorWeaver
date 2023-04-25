@@ -74,10 +74,14 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedGood/"; //
 //        final String targetDir = "samples/LowColorGoodDithers/"; //
 //        final String targetDir = "samples/reducedRgbTricky/"; //
-//        final String targetDir = "samples/reducedRgbStupider/"; //
 //        final String targetDir = "samples/reducedRgbSlippery/"; //
 //        final String targetDir = "samples/reducedOkReadjusted/"; //
-        final String targetDir = "samples/reducedOkCareful/"; //
+
+//        final String targetDir = "samples/reducedRgbStupider/"; //
+//        final String targetDir = "samples/reducedOkCareful/"; //
+        final String targetDir = "samples/reducedRgbSqrt/"; //
+
+
 //        final String targetDir = "samples/reducedOkSigmoid/"; //
 //        final String targetDir = "samples/reducedOkStraight/"; //
 //        final String targetDir = "samples/ignored/youeye1/"; //
@@ -170,7 +174,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //            reducer.exact(PALETTE, PaletteReducer.rgbTrickyMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbStupiderMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbStupidMetric);
-            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
+//            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
+            reducer.exact(PALETTE, PaletteReducer.rgbSqrtMetric);
             png8.palette = reducer;
             try {
 //                FileHandle sample = Gdx.files.local("samples/Koh-i-Noor.jpg"); {
