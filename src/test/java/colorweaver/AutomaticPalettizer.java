@@ -79,7 +79,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
 //        final String targetDir = "samples/reducedRgbStupider/"; //
 //        final String targetDir = "samples/reducedOkCareful/"; //
-        final String targetDir = "samples/reducedRgbSqrt/"; //
+        final String targetDir = "samples/reducedOkOnce/"; //
+//        final String targetDir = "samples/reducedRgbSqrt/"; //
 
 
 //        final String targetDir = "samples/reducedOkSigmoid/"; //
@@ -117,30 +118,32 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/gray-15.hex"),
 //                Gdx.files.local("palettes/hex/grayfull-256.hex"),
 //        }) {
-        for(FileHandle hex : new FileHandle[]{
-                Gdx.files.local("palettes/hex/retrobubble-16.hex"),
-                Gdx.files.local("palettes/hex/fruitpunch-24.hex"),
-                Gdx.files.local("palettes/hex/fractals-die-die-die-32.hex"),
-        }) {
 //        for(FileHandle hex : new FileHandle[]{
-//                Gdx.files.local("palettes/hex/bw-2.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
-//                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
-//                Gdx.files.local("palettes/hex/ayy-4.hex"),
-//                Gdx.files.local("palettes/hex/gb-4.hex"),
-//                Gdx.files.local("palettes/hex/gb-16.hex"),
-//                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
-//                Gdx.files.local("palettes/hex/azurestar-32.hex"),
-//                Gdx.files.local("palettes/hex/hyper-8.hex"),
-//                Gdx.files.local("palettes/hex/yam3-255.hex"),
-//                Gdx.files.local("palettes/hex/americana-4.hex"),
-//                Gdx.files.local("palettes/hex/vinik-24.hex"),
 //                Gdx.files.local("palettes/hex/retrobubble-16.hex"),
 //                Gdx.files.local("palettes/hex/fruitpunch-24.hex"),
 //                Gdx.files.local("palettes/hex/fractals-die-die-die-32.hex"),
 //        }) {
+        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/bw-2.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+                Gdx.files.local("palettes/hex/ayy-4.hex"),
+                Gdx.files.local("palettes/hex/gb-4.hex"),
+                Gdx.files.local("palettes/hex/gb-16.hex"),
+                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+                Gdx.files.local("palettes/hex/hyper-8.hex"),
+                Gdx.files.local("palettes/hex/yam3-255.hex"),
+                Gdx.files.local("palettes/hex/americana-4.hex"),
+                Gdx.files.local("palettes/hex/gray-15.hex"),
+                Gdx.files.local("palettes/hex/grayfull-256.hex"),
+                Gdx.files.local("palettes/hex/vinik-24.hex"),
+                Gdx.files.local("palettes/hex/retrobubble-16.hex"),
+                Gdx.files.local("palettes/hex/fruitpunch-24.hex"),
+                Gdx.files.local("palettes/hex/fractals-die-die-die-32.hex"),
+        }) {
 
 //        FileHandle hex = Gdx.files.local("palettes/hex/websafe-216.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
@@ -175,7 +178,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //            reducer.exact(PALETTE, PaletteReducer.rgbStupiderMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbStupidMetric);
 //            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
-            reducer.exact(PALETTE, PaletteReducer.rgbSqrtMetric);
+            reducer.exact(PALETTE, PaletteReducer.oklabOnceMetric);
+//            reducer.exact(PALETTE, PaletteReducer.rgbSqrtMetric);
             png8.palette = reducer;
             try {
 //                FileHandle sample = Gdx.files.local("samples/Koh-i-Noor.jpg"); {

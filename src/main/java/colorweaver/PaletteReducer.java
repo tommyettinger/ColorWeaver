@@ -691,6 +691,34 @@ public class PaletteReducer {
         }
     };
 
+    public static final ColorMetric oklabOnceMetric = new ColorMetric(){
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
+            double r = (r1 - r2) * 0.00392156862745098; r *= r;
+            double g = (g1 - g2) * 0.00392156862745098; g *= g;
+            double b = (b1 - b2) * 0.00392156862745098; b *= b;
+
+            double l = Math.cbrt(0.4121656120 * r + 0.5362752080 * g + 0.0514575653 * b);
+            double m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
+            double s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
+
+            double L = forwardLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
+            double A = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+            double B = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+
+            return (L * L + A * A + B * B) * 0x1p+21;//300000;
+        }
+    };
+
     public static double[] fillOklab(double[] toFill, double r, double g, double b){
         r *= r;
         g *= g;
