@@ -2929,9 +2929,9 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float) (25.0 * Math.sqrt(ditherStrength) * populationBias * populationBias * populationBias * populationBias), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
-                strength = (float) (0.3 * ditherStrength / (populationBias * populationBias * populationBias * populationBias)),
-                limit = 5f + 80f / (float)Math.sqrt(colorCount+1.5), dmul = (float) (0x1p-8 / populationBias);
+        float w1 = (float) (24.0 * Math.sqrt(ditherStrength) * populationBias * populationBias * populationBias * populationBias), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
+                strength = (float) (0.35 * ditherStrength / (populationBias * populationBias * populationBias * populationBias)),
+                limit = 5f + 90f / (float)Math.sqrt(colorCount+1.5), dmul = (float) (0x1p-8 / populationBias);
 
         for (int py = 0; py < h; py++) {
             int ny = py + 1;
@@ -2951,10 +2951,10 @@ public class PaletteReducer {
                     er = Math.min(Math.max(((BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorRed[px]);
                     eg = Math.min(Math.max(((BlueNoise.TILE_TRI_NOISE[1][(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorGreen[px]);
                     eb = Math.min(Math.max(((BlueNoise.TILE_TRI_NOISE[2][(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorBlue[px]);
-                    double mag = 0.5/Math.sqrt(er * er + eg * eg + eb * eb);
-                    int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + er * mag + 0.5), 0, 0xFF);
-                    int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + eg * mag + 0.5), 0, 0xFF);
-                    int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + eb * mag + 0.5), 0, 0xFF);
+//                    double mag = 0.5/Math.sqrt(er * er + eg * eg + eb * eb);
+                    int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5), 0, 0xFF);
+                    int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5), 0, 0xFF);
+                    int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5), 0, 0xFF);
                     paletteIndex =
                             paletteMapping[((rr << 7) & 0x7C00)
                                     | ((gg << 2) & 0x3E0)
@@ -2964,9 +2964,6 @@ public class PaletteReducer {
                     rdiff = (dmul * ((color>>>24)-    (used>>>24))    );
                     gdiff = (dmul * ((color>>>16&255)-(used>>>16&255)));
                     bdiff = (dmul * ((color>>>8&255)- (used>>>8&255)) );
-//                    rdiff = Math.min(Math.max(dmul * ((color>>>24)-    (used>>>24))    , -0.25f), 0.25f);
-//                    gdiff = Math.min(Math.max(dmul * ((color>>>16&255)-(used>>>16&255)), -0.25f), 0.25f);
-//                    bdiff = Math.min(Math.max(dmul * ((color>>>8&255)- (used>>>8&255)) , -0.25f), 0.25f);
 
                     if(px < lineLen - 1)
                     {
