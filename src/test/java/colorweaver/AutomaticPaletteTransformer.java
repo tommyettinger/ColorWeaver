@@ -46,10 +46,10 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
     public void create() {
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
         Gdx.files.local("palettes/gen/txt/").mkdirs();
-//        Gdx.files.local("palettes/genOkReadjusted/").mkdirs();
-//        Gdx.files.local("palettes/genOkCareful/").mkdirs();
+//        Gdx.files.local("palettes/genOkOnce/").mkdirs();
+        Gdx.files.local("palettes/genOkCareful/").mkdirs();
 //        Gdx.files.local("palettes/genRgbTricky/").mkdirs();
-        Gdx.files.local("palettes/genRgbStupider/").mkdirs();
+//        Gdx.files.local("palettes/genRgbStupider/").mkdirs();
 //        Gdx.files.local("palettes/genRgbSlippery/").mkdirs();
 //        for(FileHandle hex : hexes) {
         FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
@@ -82,6 +82,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
             }
             pix.drawPixel(255, 0, 0);
             try {
+//                png8.writePrecisely(Gdx.files.local("palettes/genOkOnce/" + name + ".png"), pix, false);
                 png8.writePrecisely(Gdx.files.local("palettes/genOkCareful/" + name + ".png"), pix, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genRgbTricky/" + name + ".png"), pix, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupider/" + name + ".png"), pix, false);
@@ -99,7 +100,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
                 }
             }
             try {
-//                png8.writePrecisely(Gdx.files.local("palettes/genOkReadjusted/" + name + "_GLSL.png"), p2, false);
+//                png8.writePrecisely(Gdx.files.local("palettes/genOkOnce/" + name + "_GLSL.png"), p2, false);
                 png8.writePrecisely(Gdx.files.local("palettes/genOkCareful/" + name + "_GLSL.png"), p2, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genRgbTricky/" + name + "_GLSL.png"), p2, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupider/" + name + "_GLSL.png"), p2, false);
