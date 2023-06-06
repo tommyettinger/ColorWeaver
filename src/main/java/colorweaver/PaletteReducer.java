@@ -2931,7 +2931,7 @@ public class PaletteReducer {
         byte paletteIndex;
         float w1 = (float) (24.0 * Math.sqrt(ditherStrength) * populationBias * populationBias * populationBias * populationBias), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
                 strength = (float) (0.35 * ditherStrength / (populationBias * populationBias * populationBias * populationBias)),
-                limit = 5f + 90f / (float)Math.sqrt(colorCount+1.5), dmul = (float) (0x1p-8 / populationBias);
+                limit = 5f + 90f / (float)Math.sqrt(colorCount+1.5), dmul = 0x1p-9f;
 
         for (int py = 0; py < h; py++) {
             int ny = py + 1;

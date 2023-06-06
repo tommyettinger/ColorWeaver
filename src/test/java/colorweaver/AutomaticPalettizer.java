@@ -237,74 +237,74 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceChaoticNoise(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Chaotic" + suffix + ".png"), pm, PALETTE, false, 0);
-////////very good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceIGN(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
-//////good enough
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceSierraLite(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////rather good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceFloydSteinberg(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
-////ok
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceTrueBlue3(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer3" + suffix + ".png"), pm, PALETTE, false, 0);
-////better?
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceTrueBlue4(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer4" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////very good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceIGN(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
+////////good enough
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceSierraLite(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////rather good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceFloydSteinberg(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
+//////ok
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceTrueBlue3(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer3" + suffix + ".png"), pm, PALETTE, false, 0);
 //////better?
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceTrueBlue5(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer5" + suffix + ".png"), pm, PALETTE, false, 0);
-////great
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBluish(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Neuter" + suffix + ".png"), pm, PALETTE, false, 0);
-////very good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceScatter(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
-////////YAY YIPPEE WOO NO BANDING
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceNeue(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
-////////incredible
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceKnoll(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
-//////???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceShuffle(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Shuffle" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceTrueBlue4(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer4" + suffix + ".png"), pm, PALETTE, false, 0);
+////////better?
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceTrueBlue5(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer5" + suffix + ".png"), pm, PALETTE, false, 0);
 //////great
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceKnollRoberts(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_KR_G" + suffix + ".png"), pm, PALETTE, false, 0);
-////meh
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceKnollBlue(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_KB2" + suffix + ".png"), pm, PALETTE, false, 0);
-//???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reducePlexus(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Plexus" + suffix + ".png"), pm, PALETTE, false, 0);
-//////??? error diffusion with IGN
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceIgneous(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Igneous2" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////very good, error-diffusion, per-channel color
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceWeave(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
-//////fairly good, low banding, some other artifacts, per-channel color
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceRobertsEdit(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Roberts14" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBluish(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Neuter" + suffix + ".png"), pm, PALETTE, false, 0);
+//////very good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceScatter(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////YAY YIPPEE WOO NO BANDING
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceNeue(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////incredible
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceKnoll(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
+////////???
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceShuffle(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Shuffle" + suffix + ".png"), pm, PALETTE, false, 0);
+////////great
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceKnollRoberts(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_KR_G" + suffix + ".png"), pm, PALETTE, false, 0);
+//////meh
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceKnollBlue(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_KB2" + suffix + ".png"), pm, PALETTE, false, 0);
+////???
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reducePlexus(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Plexus" + suffix + ".png"), pm, PALETTE, false, 0);
+////////??? error diffusion with IGN
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceIgneous(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Igneous2" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////very good, error-diffusion, per-channel color
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceWeave(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
+////////fairly good, low banding, some other artifacts, per-channel color
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceRobertsEdit(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Roberts14" + suffix + ".png"), pm, PALETTE, false, 0);
 //???
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceDodgy(pm);
