@@ -307,9 +307,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceRobertsEdit(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Roberts14" + suffix + ".png"), pm, PALETTE, false, 0);
 ////very good!
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceDodgy(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Dodgy4" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceDodgy(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Dodgy4" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////BAD
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceRobertsLAB(pm);
@@ -318,6 +318,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceRing(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Ring2" + suffix + ".png"), pm, PALETTE, false, 0);
+//???
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceLoaf(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
 //////???
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBlob(pm);

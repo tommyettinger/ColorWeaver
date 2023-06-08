@@ -2270,6 +2270,37 @@ public class PaletteReducer {
     }
 
     /**
+     * An intentionally low-fidelity dither, meant for pixel art.
+     * @param pixmap
+     * @return
+     */
+    public Pixmap reduceLoaf(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        final int strength = (int) (25 * ditherStrength / (populationBias * populationBias) + 0.5);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int adj = ((px & 1) + (y & 1) - 1) * (strength + (((px ^ y) & 2) - 1 << 2));
+                    int rr = Math.min(Math.max(((color >>> 24)       ) + adj, 0), 255);
+                    int gg = Math.min(Math.max(((color >>> 16) & 0xFF) + adj, 0), 255);
+                    int bb = Math.min(Math.max(((color >>> 8)  & 0xFF) + adj, 0), 255);
+                    int rgb555 = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[rgb555] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    /**
      * Uses Interleaved Gradient Noise, by Jorge Jimenez.
      * @param pixmap
      * @return
