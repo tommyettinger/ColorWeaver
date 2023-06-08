@@ -109,8 +109,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         png8.setFlipY(false);
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
-//        for(FileHandle hex : hexes) {
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        for(FileHandle hex : hexes) {
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/bw-2.hex"),
@@ -238,9 +238,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceChaoticNoise(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Chaotic" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////very good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceIGN(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceIGN(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////good enough
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSierraLite(pm);
@@ -270,9 +270,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceScatter(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////YAY YIPPEE WOO NO BANDING
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceNeue(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceNeue(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////incredible
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceKnoll(pm);
@@ -298,18 +298,17 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceIgneous(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Igneous2" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////very good, error-diffusion, per-channel color
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceWeave(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
-////////fairly good, low banding, some other artifacts, per-channel color
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceRobertsEdit(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Roberts14" + suffix + ".png"), pm, PALETTE, false, 0);
-//???
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceWeave(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////fairly good, low banding, some other artifacts, per-channel color
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceRobertsEdit(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Roberts14" + suffix + ".png"), pm, PALETTE, false, 0);
+////very good!
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceDodgy(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Dodgy" + suffix + ".png"), pm, PALETTE, false, 0);
-
+        png8.writePrecisely(Gdx.files.local(subname + "_Dodgy2" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////BAD
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceRobertsLAB(pm);
