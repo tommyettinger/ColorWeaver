@@ -308,7 +308,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 ////very good!
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceDodgy(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Dodgy2" + suffix + ".png"), pm, PALETTE, false, 0);
+        png8.writePrecisely(Gdx.files.local(subname + "_Dodgy3" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////BAD
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceRobertsLAB(pm);
