@@ -15,7 +15,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "ridgeback2-255";
+    public static final String NAME = "honona-52";
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -1062,7 +1062,7 @@ public class HexGenerator extends ApplicationAdapter {
                 0xAC6A49FF, 0xBF7957FF, 0xD18966FF, 0xE49975FF, 0xF7AA84FF, 0xE6620CFF, 0xFA7225FF, 0x6D4510FF,
                 0x7E5321FF, 0x90622FFF, 0xA1723DFF, 0xB2814BFF, 0xC4925AFF, 0xD6A268FF, 0xE9B378FF, 0xFBC488FF,
         };
-        */
+
         int[] ridgeback2 = new int[]{
                 0x00000000, 0x000000FF, 0x111111FF, 0x1F1F1FFF, 0x2C2C2CFF, 0x393939FF, 0x474747FF, 0x545454FF,
                 0x616161FF, 0x6E6E6EFF, 0x7C7C7CFF, 0x8B8B8BFF, 0x999999FF, 0xA7A7A7FF, 0xB6B6B6FF, 0xC6C6C6FF,
@@ -1097,11 +1097,16 @@ public class HexGenerator extends ApplicationAdapter {
                 0xBB71FFFF, 0xE062D9FF, 0xFA59A4FF, 0xF370E4FF, 0x85BE00FF, 0x16CC61FF, 0x6BD646FF, 0xABDD25FF,
                 0x5BEB6EFF, 0xC9E829FF, 0x7CFA6CFF, 0xF4F013FF, 0x3718FBFF, 0x980EFFFF, 0xEA1DE5FF, 0xFF2FECFF,
         };
-
-
+*/
+int[] honona = {
+        0x00000000, 0xF6C4BAFF, 0xE5858CFF, 0xBD516DFF, 0x80436BFF, 0x383552FF, 0x58485EFF, 0x8D7B80FF, 0xBAA9A6FF, 0xDBD6CAFF, 0xFFFBDEFF, 0xB9EADAFF, 0xB0D18BFF, 0x81C0C6FF, 0x6F9D81FF, 0x5378A7FF,
+        0x295A29FF, 0x294221FF, 0x212110FF, 0x5A1031FF, 0x942121FF, 0x945A21FF, 0xE76329FF, 0x9C8C29FF, 0xA5CE31FF, 0xE7BD39FF, 0xE7E742FF, 0xB57B6BFF, 0xD684DEFF, 0xEFDEEFFF, 0x295A9CFF, 0x397B63FF,
+        0x4A9CE7FF, 0x31DEB5FF, 0xEFCE8CFF, 0xEF9C73FF, 0xE731CEFF, 0x6B63DEFF, 0x317B21FF, 0x399C31FF, 0x7BB542FF, 0x9CF79CFF, 0x181042FF, 0x211894FF, 0x2929DEFF, 0x2994A5FF, 0x31C639FF, 0x42EF42FF,
+        0xB5F731FF, 0xD69C29FF, 0xDE2139FF, 0xAD21C6FF, 0x6B18B5FF
+};
 
         palette =
-                ridgeback2
+                honona
                 ;
 //                Coloring.HALTONIC255;
 //                new int[]

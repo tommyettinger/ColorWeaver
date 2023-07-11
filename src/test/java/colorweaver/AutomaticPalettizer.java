@@ -110,7 +110,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
 //        for(FileHandle hex : hexes) {
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/bw-2.hex"),
@@ -125,7 +125,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/fractals-die-die-die-32.hex"),
 //        }) {
 
-        for(FileHandle hex : new FileHandle[]{
+//        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/bw-2.hex"),
 //                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
 //                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
@@ -143,16 +143,17 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/grayfull-256.hex"),
 //                Gdx.files.local("palettes/hex/vinik-24.hex"),
 
-                Gdx.files.local("palettes/hex/brazilian-afternoon-42.hex"),
-                Gdx.files.local("palettes/hex/cs112-v2-112.hex"),
-                Gdx.files.local("palettes/hex/hope-11.hex"),
-                Gdx.files.local("palettes/hex/japanese-print-56.hex"),
-                Gdx.files.local("palettes/hex/jehkoba-64.hex"),
-                Gdx.files.local("palettes/hex/ludpiratepalette-64.hex"),
-                Gdx.files.local("palettes/hex/nanner2022-29.hex"),
-                Gdx.files.local("palettes/hex/nostalgic-memories-12.hex"),
-                Gdx.files.local("palettes/hex/vibrantskies-48.hex"),
-        }) {
+//            for(FileHandle hex : new FileHandle[]{
+//                    Gdx.files.local("palettes/hex/brazilian-afternoon-42.hex"),
+//                Gdx.files.local("palettes/hex/cs112-v2-112.hex"),
+//                Gdx.files.local("palettes/hex/hope-11.hex"),
+//                Gdx.files.local("palettes/hex/japanese-print-56.hex"),
+//                Gdx.files.local("palettes/hex/jehkoba-64.hex"),
+//                Gdx.files.local("palettes/hex/ludpiratepalette-64.hex"),
+//                Gdx.files.local("palettes/hex/nanner2022-29.hex"),
+//                Gdx.files.local("palettes/hex/nostalgic-memories-12.hex"),
+//                Gdx.files.local("palettes/hex/vibrantskies-48.hex"),
+//        }) {
 
 //                Gdx.files.local("palettes/hex/retrobubble-16.hex"),
 //                Gdx.files.local("palettes/hex/fruitpunch-24.hex"),
