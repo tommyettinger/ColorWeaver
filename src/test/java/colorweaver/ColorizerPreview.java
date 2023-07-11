@@ -72,6 +72,12 @@ public class ColorizerPreview extends ApplicationAdapter {
 	private int[] palette;
 	private MutantBatch batch;
 	private long state = 1234567898765431L;
+	private Pixmap monaOriginal;
+	private Pixmap monaWIP;
+	private Texture mona;
+	private PaletteReducer reducer;
+
+
 	private float nextCurvedFloat ()
 	{
 		return (((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 42)
@@ -384,7 +390,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 		System.out.println(sb);
 		System.out.println(palette.length + " colors used.");
-		colorizer = Colorizer.arbitraryLABColorizer(palette);
+		refreshTexture();
 		cubePix = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
 		cubeTextures = new Texture[palette.length];
 		for (int i = 0; i < palette.length; i++) {
@@ -401,7 +407,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 
 	}
-	public void mixPaletteCIELAB (boolean doRemove, boolean doSort){
+	public void mixPaletteCIELAB (boolean doRemove, boolean doSort) {
 		ArrayList<CIELABConverter.Lab> labs = new ArrayList<>(mixingPalette.size());
 		IntSet removalSet = new IntSet(16);
 		for (int i = 0; i < mixingPalette.size(); i++) {
@@ -409,20 +415,19 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 		for (int i = 0; i < labs.size(); i++) {
 			for (int j = i + 1; j < labs.size(); j++) {
-				if((labs.get(i).alpha > 0.0 && labs.get(j).alpha > 0.0) && CIELABConverter.delta(labs.get(i), labs.get(j), 1.0, 1.5, 1.5) <= 100) {
+				if ((labs.get(i).alpha > 0.0 && labs.get(j).alpha > 0.0) && CIELABConverter.delta(labs.get(i), labs.get(j), 1.0, 1.5, 1.5) <= 100) {
 					if (doRemove) {
 						removalSet.add(i);
 						removalSet.add(j);
 						System.out.printf("Combined 0x%08X and 0x%08X\n", mixingPalette.get(i), mixingPalette.get(j));
 						mixingPalette.add(Coloring.mixEvenly(mixingPalette.get(i), mixingPalette.get(j)));
-					}
-					else {
+					} else {
 						System.out.printf("0x%08X and 0x%08X are very close!\n", mixingPalette.get(i), mixingPalette.get(j));
 					}
 				}
 			}
 		}
-		if(doRemove) {
+		if (doRemove) {
 			IntArray removalIndices = removalSet.iterator().toArray();
 			removalIndices.sort();
 			for (int i = removalIndices.size - 1; i >= 0; i--) {
@@ -430,7 +435,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			}
 		}
 
-		if(doSort) {
+		if (doSort) {
 			mixingPalette.sort(hueComparator);
 		}
 		palette = new int[mixingPalette.size()];
@@ -441,31 +446,36 @@ public class ColorizerPreview extends ApplicationAdapter {
 		StringBuilder sb = new StringBuilder(palette.length * 12);
 		StringKit.appendHex(sb.append("0x"), palette[0]);
 		for (int i = 1; i < palette.length; i++) {
-			if((i & 15) == 0)
+			if ((i & 15) == 0)
 				StringKit.appendHex(sb.append(",\n0x"), palette[i]);
 			else
 				StringKit.appendHex(sb.append(", 0x"), palette[i]);
 		}
 		System.out.println(sb);
 		System.out.println(palette.length + " colors used.");
-		colorizer = Colorizer.arbitraryLABColorizer(palette);
+		refreshTexture();
 		cubePix = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
 		cubeTextures = new Texture[palette.length];
 		for (int i = 0; i < palette.length; i++) {
 			cubeTextures[i] = new Texture(16, 16, Pixmap.Format.RGBA8888);
 		}
 		int idx = 0;
-		if(palette[0] == 0)
-		{
+		if (palette[0] == 0) {
 			System.out.println("\n0x00, 0x00, 0x00, 0x00,");
 			idx++;
 		}
 		for (; idx < palette.length; idx++) {
-			System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte)idx, -2), colorizer.colorize((byte)idx, -1), idx, colorizer.colorize((byte)idx, 1));
+			System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte) idx, -2), colorizer.colorize((byte) idx, -1), idx, colorizer.colorize((byte) idx, 1));
 		}
-
 	}
 
+	public void refreshTexture() {
+		colorizer = Colorizer.arbitraryLABColorizer(palette);
+		reducer.exact(palette, oklabCarefulMetric);
+		monaWIP.drawPixmap(monaOriginal, 0, 0);
+		reducer.reduceDodgy(monaWIP);
+		mona.draw(monaWIP, 0, 0);
+	}
 	public void create () {
 		palette =
 				new int[]{
@@ -529,10 +539,15 @@ public class ColorizerPreview extends ApplicationAdapter {
 //				0x4E7337FE, 0x49943DFE, 0x53BD4DFE, 0x65EF5FFE, 0x5BAD79FE, 0x70E7A4FE, 0x497B64FE, 0x80C6A6FE, 0x78EFDCFE, 0x66B5A9FE, 0x558E94FE, 0x78D4E7FE, 0x74B9D6FE, 0x41697BFE, 0x80ADE7FE, 0x6689BDFE,
 //				0x4F619CFE, 0x767BDEFE, 0x2C2673FE, 0x503CBDFE, 0x6646E7FE, 0x563D94FE, 0xB557E7FE, 0x3D1E4AFE, 0xD7A1E7FE, 0x9841A5FE, 0xE757D4FE, 0x8C3466FE, 0xBD4584FE, 0xE7578FFE, 0xE7A9C1FE, 0x9C363DFE
 //		};
+		monaOriginal = new Pixmap(Gdx.files.local("samples/Mona_Lisa.jpg"));
+		monaWIP = new Pixmap(monaOriginal.getWidth(), monaOriginal.getHeight(), monaOriginal.getFormat());
+		mona = new Texture(monaWIP);
 		mixingPalette = new ArrayList<>(256);
 		for (int i = 0; i < palette.length; i++) {
 			mixingPalette.add(palette[i]);
 		}
+		reducer = new PaletteReducer();
+		refreshTexture();
 		mixPalette(false, false);
 //		mixingPalette = IntArray.with(
 //			0x060608ff, 0x141013ff, 0x3b1725ff, 0x73172dff, 0xb4202aff, 0xdf3e23ff, 0xfa6a0aff, 0xf9a31bff,
@@ -583,6 +598,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 //			0x8c14beff, 0x5a187bff, 0x641464ff, 0x410062ff, 0x320a46ff, 0x551937ff, 0xa01982ff, 0xc80078ff,
 //			0xff50bfff, 0xff6ac5ff, 0xfaa0b9ff, 0xfc3a8cff, 0xe61e78ff, 0xbd1039ff, 0x98344dff, 0x911437ff,
 //		};
+
 		batch = new MutantBatch();
 		Gdx.input.setInputProcessor(new InputAdapter() {
 			public boolean keyUp(int keycode) {
@@ -604,39 +620,39 @@ public class ColorizerPreview extends ApplicationAdapter {
 						break;
 					case Input.Keys.LEFT:
 						modify(palette, -0.1f, 0f, 0f);
-						colorizer = Colorizer.arbitraryLABColorizer(palette);
+						refreshTexture();
 						break;
 					case Input.Keys.RIGHT:
 						modify(palette, 0.1f, 0f, 0f);
-						colorizer = Colorizer.arbitraryLABColorizer(palette);
+						refreshTexture();
 						break;
 					case Input.Keys.UP:
 						modify(palette, 0f, 0.1f, 0f);
-						colorizer = Colorizer.arbitraryLABColorizer(palette);
+						refreshTexture();
 						break;
 					case Input.Keys.DOWN:
 						modify(palette, 0f, -0.1f, 0f);
-						colorizer = Colorizer.arbitraryLABColorizer(palette);
+						refreshTexture();
 						break;
 					case Input.Keys.J:
 						modify(palette, 0f, 0f, 0.1f);
-						colorizer = Colorizer.arbitraryLABColorizer(palette);
+						refreshTexture();
 						break;
 					case Input.Keys.D:
 						palette = distribute(palette);
-						colorizer = Colorizer.arbitraryLABColorizer(palette);
+						refreshTexture();
 						break;
 					case Input.Keys.L:
 						palette = lloyd(palette);
-						colorizer = Colorizer.arbitraryLABColorizer(palette);
+						refreshTexture();
 						break;
 					case Input.Keys.C:
 						palette = lloydCentral(palette);
-						colorizer = Colorizer.arbitraryLABColorizer(palette);
+						refreshTexture();
 						break;
 					case Input.Keys.E:
 						emphasize(palette);
-						colorizer = Colorizer.arbitraryLABColorizer(palette);
+						refreshTexture();
 						break;
 					default:
 						StringBuilder sb = new StringBuilder(palette.length * 12);
@@ -660,6 +676,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 
 	public void render () {
 		if(cubePix == null) return;
+		if(colorizer == null) refreshTexture();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
@@ -673,6 +690,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			cubeTextures[i].draw(cubePix, 0, 0);
 			batch.draw(cubeTextures[i], (i - 1 & 15) << 4, 240 - (i - 1 & -16), 16, 16);
 		}
+		batch.draw(mona, 256, 0);
 		batch.end();
 	}
 
@@ -682,7 +700,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	public static void main(String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setTitle("Palette Reducer");
-		config.setWindowedMode(16 * 16, 16 * 16);
+		config.setWindowedMode(16 * 16 + 404, 600);
 		config.setIdleFPS(10);
 		config.useVsync(true);
 		final ColorizerPreview app = new ColorizerPreview();
