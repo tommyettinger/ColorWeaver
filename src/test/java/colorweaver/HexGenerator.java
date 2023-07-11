@@ -15,7 +15,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "honona-52";
+    public static final String NAME = "apolland-63";
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -1105,8 +1105,15 @@ int[] honona = {
         0xB5F731FF, 0xD69C29FF, 0xDE2139FF, 0xAD21C6FF, 0x6B18B5FF
 };
 
+int[] apolland = {
+        0x00000000, 0x000000FF, 0xFFFFFFFF, 0x6DF7C1FF, 0x11ADC1FF, 0x606C81FF, 0x393457FF, 0x1E8875FF, 0x5BB361FF, 0xA1E55AFF, 0xF7E476FF, 0xF99252FF, 0xCB4D68FF, 0x6A3771FF, 0xC92464FF, 0xF48CB6FF,
+        0xF7B69EFF, 0x6B9C6BFF, 0x102152FF, 0x1818ADFF, 0x2931DEFF, 0x3973DEFF, 0x39C6B5FF, 0x4ADEDEFF, 0x183918FF, 0x295A18FF, 0x318421FF, 0x31A521FF, 0x39DE39FF, 0x9CDE94FF, 0x4A2921FF, 0x734A4AFF,
+        0xA56B52FF, 0xC68C7BFF, 0xADB58CFF, 0xDED6CEFF, 0x391010FF, 0x731818FF, 0x845221FF, 0x947B21FF, 0xADA529FF, 0xDEBD31FF, 0x290842FF, 0x521042FF, 0x8C1052FF, 0xAD2121FF, 0xE72929FF, 0xE76B31FF,
+        0x101073FF, 0x4A108CFF, 0x6B21CEFF, 0x9C29C6FF, 0xDE29CEFF, 0xCE6BD6FF, 0x080831FF, 0x101010FF, 0x102110FF, 0x183139FF, 0x21527BFF, 0x317342FF, 0x848CCEFF, 0x8CB5DEFF, 0xD6BDE7FF, 0xC6EFDEFF
+};
+
         palette =
-                honona
+                apolland
                 ;
 //                Coloring.HALTONIC255;
 //                new int[]
