@@ -4,6 +4,9 @@ import colorweaver.tools.TrigTools;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.ObjectIntMap;
 
+import static colorweaver.PaletteReducer.forwardLight;
+import static colorweaver.PaletteReducer.oklabToRGB;
+
 /**
  * Created by Tommy Ettinger on 11/4/2017.
  */
@@ -2785,11 +2788,36 @@ public class Coloring {
 
     public static int mixEvenly(int baseColor, int mixColor)
     {
-        final int
-                r = (baseColor >>> 25) + (mixColor >>> 25),
-                g = (baseColor >>> 17 & 0x7F) + (mixColor >>> 17 & 0x7F),
-                b = (baseColor >>> 9 & 0x7F) + (mixColor >>> 9 & 0x7F);
-        return r << 24 | g << 16 | b << 8 | 0xFF;
+        double r = (baseColor >>> 24 & 255) * 0.00392156862745098; r *= r;
+        double g = (baseColor >>> 16 & 255) * 0.00392156862745098; g *= g;
+        double b = (baseColor >>> 8  & 255) * 0.00392156862745098; b *= b;
+
+        double l = Math.cbrt(0.4121656120 * r + 0.5362752080 * g + 0.0514575653 * b);
+        double m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
+        double s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
+
+        double L1 = forwardLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
+        double A1 = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+        double B1 = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+
+        r = (mixColor >>> 24 & 255) * 0.00392156862745098; r *= r;
+        g = (mixColor >>> 16 & 255) * 0.00392156862745098; g *= g;
+        b = (mixColor >>> 8  & 255) * 0.00392156862745098; b *= b;
+
+        l = Math.cbrt(0.4121656120 * r + 0.5362752080 * g + 0.0514575653 * b);
+        m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
+        s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
+
+        double L2 = forwardLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
+        double A2 = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+        double B2 = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+
+        return oklabToRGB((L1 + L2) * 0.5, (A1 + A2) * 0.5, (B1 + B2) * 0.5);
+//        final int
+//                r = (baseColor >>> 25) + (mixColor >>> 25),
+//                g = (baseColor >>> 17 & 0x7F) + (mixColor >>> 17 & 0x7F),
+//                b = (baseColor >>> 9 & 0x7F) + (mixColor >>> 9 & 0x7F);
+//        return r << 24 | g << 16 | b << 8 | 0xFF;
     }
 
     public static int mixHeavily(int baseColor, int mixColor)
