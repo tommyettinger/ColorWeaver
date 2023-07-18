@@ -153,7 +153,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		for (int i = 0; i < palette.length; i++) {
 			if (palette[i] == 0)
 			{
-				mixingPalette.add(0, 0);
+				mixingPalette.insert(0, 0);
 				continue;
 			}
 			count = centroids[3][i];
@@ -266,7 +266,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		for (int i = 0; i < palette.length; i++) {
 			if (palette[i] == 0)
 			{
-				mixingPalette.add(0, 0);
+				mixingPalette.insert(0, 0);
 				continue;
 			}
 			float c = FloatColorTools.floatGet(palette[i]);
@@ -288,7 +288,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		int count = palette.length - 1;
 		for (int i = 0; i < palette.length; i++) {
 			if (palette[i] == 0) {
-				mixingPalette.add(0, 0);
+				mixingPalette.insert(0, 0);
 				count--;
 			} else {
 				mixingPalette.add(palette[i]);
