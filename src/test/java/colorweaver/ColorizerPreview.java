@@ -161,7 +161,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 					| MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
 			mixingPalette.add(PaletteReducer.stretch(mix));//CIELABConverter.puff(mix)
 		}
-		mixPalette(false, false);
+		mixPalette(0, false);
 		/*
 		Collections.sort(mixingPalette, hueComparator);
 		palette = new int[mixingPalette.size()];
@@ -196,7 +196,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 		state = Arrays.hashCode(palette);
 		mixingPalette.clear();
-		mixingPalette.add(palette[0]);
+		mixingPalette.addAll(palette, 0, 1);
 		for (int i = 1; i < palette.length; i++) {
 //			if (palette[i] == 0)
 //			{
@@ -225,7 +225,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 					centroids[1][i] / count,
 					centroids[2][i] / count));
 		}
-		mixPalette(false, false);
+		mixPalette(0, false);
 		/*
 		Collections.sort(mixingPalette, hueComparator);
 		palette = new int[mixingPalette.size()];
@@ -272,7 +272,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			//System.out.printf("0x%08X -> 0x%08X\n", palette[i], ic);
 			mixingPalette.add(ic);
 		}
-		mixPalette(true);
+		mixPalette(0);
 //		Collections.sort(mixingPalette, hueComparator);
 //		for (int i = 0; i < palette.length; i++) {
 //			palette[i] = mixingPalette.get(i);
@@ -330,10 +330,10 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 	}
 	
-	public void mixPalette (boolean doRemove){
+	public void mixPalette (int doRemove){
 		mixPalette(doRemove, true);
 	}
-	public void mixPalette (boolean doRemove, boolean doSort){
+	public void mixPalette (int doRemove, boolean doSort){
 //		ArrayList<double[]> labs = new ArrayList<>(mixingPalette.size());
 		IntSet removalSet = new IntSet(16);
 //		for (int i = 0; i < mixingPalette.size(); i++) {
@@ -343,11 +343,12 @@ public class ColorizerPreview extends ApplicationAdapter {
 //			labs.add(d);
 //		}
 		int size = mixingPalette.size();
-		System.out.println("Mixing palette of size " + size + " with remove " + doRemove + ", sort " + doSort);
+		double closest = Double.MAX_VALUE;
 		for (int i = 0; i < size; i++) {
 			for (int j = i + 1; j < size; j++) {
-				if(((mixingPalette.get(i) & 255) > 0 && (mixingPalette.get(j) & 255) > 0) && PaletteReducer.oklabCarefulMetric.difference(mixingPalette.get(i), mixingPalette.get(j)) <= 100) {
-					if (doRemove) {
+				double diff = PaletteReducer.oklabCarefulMetric.difference(mixingPalette.get(i), mixingPalette.get(j));
+				if(((mixingPalette.get(i) & 255) > 0 && (mixingPalette.get(j) & 255) > 0) && diff <= 100) {
+					if (doRemove < 0) {
 						removalSet.add(mixingPalette.get(i));
 						removalSet.add(mixingPalette.get(j));
 						System.out.printf("Combined 0x%08X and 0x%08X\n", mixingPalette.get(i), mixingPalette.get(j));
@@ -357,9 +358,20 @@ public class ColorizerPreview extends ApplicationAdapter {
 						System.out.printf("0x%08X and 0x%08X are very close in size %d!\n", mixingPalette.get(i), mixingPalette.get(j), size);
 					}
 				}
+				if(doRemove > 0) {
+					if(closest > (closest = Math.min(closest, diff))) {
+						removalSet.clear();
+						removalSet.add(mixingPalette.get(i));
+						removalSet.add(mixingPalette.get(j));
+					}
+				}
 			}
 		}
-		if(doRemove) {
+		if(doRemove > 0 && removalSet.size() >= 2) {
+			IntSet.IntSetIterator it = removalSet.iterator();
+			mixingPalette.add(Coloring.mixEvenly(it.nextInt(), it.nextInt()));
+		}
+		if(doRemove != 0) {
 			mixingPalette.removeAll(removalSet);
 		}
 
@@ -551,7 +563,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		mixingPalette.addAll(palette);
 		reducer = new PaletteReducer();
 		refreshTexture();
-		mixPalette(false, false);
+		mixPalette(0, false);
 //		mixingPalette = IntArray.with(
 //			0x060608ff, 0x141013ff, 0x3b1725ff, 0x73172dff, 0xb4202aff, 0xdf3e23ff, 0xfa6a0aff, 0xf9a31bff,
 //			0xffd541ff, 0xfffc40ff, 0xd6f264ff, 0x9cdb43ff, 0x59c135ff, 0x14a02eff, 0x1a7a3eff, 0x24523bff,
@@ -657,15 +669,15 @@ public class ColorizerPreview extends ApplicationAdapter {
 						emphasize(palette);
 						refreshTexture();
 						break;
-					case Input.Keys.F: // fuse
+					case Input.Keys.F: // fuse; combines most similar and moves them to end
 						if(mixingPalette.isEmpty())
 							mixingPalette.addAll(palette);
-						mixPalette(true, false);
+						mixPalette(1, false);
 						break;
 					case Input.Keys.S: // sort
 						if(mixingPalette.isEmpty())
 							mixingPalette.addAll(palette);
-						mixPalette(false, true);
+						mixPalette(0, true);
 						break;
 					default:
 						StringBuilder sb = new StringBuilder(palette.length * 12);
@@ -677,8 +689,8 @@ public class ColorizerPreview extends ApplicationAdapter {
 								StringKit.appendHex(sb.append(", 0x"), palette[i]);
 						}
 						System.out.println(sb);
+						System.out.println(palette.length + " colors used");
 				}
-				System.out.println(palette.length + " colors used, mixing " + mixingPalette.size());
 				Gdx.graphics.requestRendering();
 				return true;
 			}
@@ -733,7 +745,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 						if (files[i].endsWith(".hex"))
 							app.loadPalette(files[i]);
 					}
-					app.mixPalette(true, false);
+					app.mixPalette(-1, false);
 					Gdx.graphics.requestRendering();
 				}
 			}
