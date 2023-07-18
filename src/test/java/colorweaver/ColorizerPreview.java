@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.NumberUtils;
+import com.github.tommyettinger.digital.MathTools;
 import com.github.tommyettinger.ds.IntList;
 import com.github.tommyettinger.ds.IntSet;
 import com.github.tommyettinger.ds.support.sort.IntComparator;
@@ -28,6 +29,7 @@ import static colorweaver.PaletteReducer.oklabCarefulMetric;
  * Created by Tommy Ettinger on 1/30/2020.
  */
 public class ColorizerPreview extends ApplicationAdapter {
+	public static final boolean PRINT_EXTRA = false;
 	public static final int[][] CUBE = {
 		{4,4,4,4,4,4,4,0,0,4,4,4,4,4,4,4,},
 		{4,4,4,4,4,0,0,3,3,0,0,4,4,4,4,4,},
@@ -154,12 +156,21 @@ public class ColorizerPreview extends ApplicationAdapter {
 				continue;
 			}
 			count = centroids[3][i];
-			if(count == 0) System.out.printf("Omitting color with no volume: %08X\n", palette[i]);
-//			if(count == 0) continue;
-			mix =     MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10
-					| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5
-					| MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
-			mixingPalette.add(PaletteReducer.stretch(mix));//CIELABConverter.puff(mix)
+			if(count == 0) {
+				System.out.printf("Omitting color with no volume: %08X\n", palette[i]);
+				continue;
+			}
+			if(MathTools.isEqual(palette[i] >>> 24, palette[i] >>> 16 & 255, 9) &&
+					MathTools.isEqual(palette[i] >>> 16 & 255, palette[i] >>> 8 & 255, 9)) {
+				mixingPalette.add(palette[i]);
+//				System.out.printf("Not changing grayscale color %08X\n", palette[i]);
+			}
+			else {
+				mix = MathUtils.clamp((int) (centroids[0][i] / count + 0.5f), 0, 31) << 10
+						| MathUtils.clamp((int) (centroids[1][i] / count + 0.5f), 0, 31) << 5
+						| MathUtils.clamp((int) (centroids[2][i] / count + 0.5f), 0, 31);
+				mixingPalette.add(PaletteReducer.stretch(mix));//CIELABConverter.puff(mix)
+			}
 		}
 		mixPalette(0, false);
 		/*
@@ -408,16 +419,16 @@ public class ColorizerPreview extends ApplicationAdapter {
 		for (int i = 0; i < palette.length; i++) {
 			cubeTextures[i] = new Texture(16, 16, Pixmap.Format.RGBA8888);
 		}
-		int idx = 0;
-		if(palette[0] == 0)
-		{
-			System.out.println("\n0x00, 0x00, 0x00, 0x00,");
-			idx++;
+		if(PRINT_EXTRA) {
+			int idx = 0;
+			if (palette[0] == 0) {
+				System.out.println("\n0x00, 0x00, 0x00, 0x00,");
+				idx++;
+			}
+			for (; idx < palette.length; idx++) {
+				System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte) idx, -2), colorizer.colorize((byte) idx, -1), idx, colorizer.colorize((byte) idx, 1));
+			}
 		}
-		for (; idx < palette.length; idx++) {
-			System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte)idx, -2), colorizer.colorize((byte)idx, -1), idx, colorizer.colorize((byte)idx, 1));
-		}
-
 	}
 	public void mixPaletteCIELAB (boolean doRemove, boolean doSort) {
 		ArrayList<CIELABConverter.Lab> labs = new ArrayList<>(mixingPalette.size());
@@ -476,13 +487,15 @@ public class ColorizerPreview extends ApplicationAdapter {
 		for (int i = 0; i < palette.length; i++) {
 			cubeTextures[i] = new Texture(16, 16, Pixmap.Format.RGBA8888);
 		}
-		int idx = 0;
-		if (palette[0] == 0) {
-			System.out.println("\n0x00, 0x00, 0x00, 0x00,");
-			idx++;
-		}
-		for (; idx < palette.length; idx++) {
-			System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte) idx, -2), colorizer.colorize((byte) idx, -1), idx, colorizer.colorize((byte) idx, 1));
+		if(PRINT_EXTRA) {
+			int idx = 0;
+			if (palette[0] == 0) {
+				System.out.println("\n0x00, 0x00, 0x00, 0x00,");
+				idx++;
+			}
+			for (; idx < palette.length; idx++) {
+				System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte) idx, -2), colorizer.colorize((byte) idx, -1), idx, colorizer.colorize((byte) idx, 1));
+			}
 		}
 	}
 
