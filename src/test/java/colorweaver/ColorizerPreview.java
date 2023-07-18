@@ -14,16 +14,13 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.IntArray;
-import com.badlogic.gdx.utils.IntSet;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.github.tommyettinger.ds.IntList;
+import com.github.tommyettinger.ds.IntSet;
 import com.github.tommyettinger.ds.support.sort.IntComparator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 import static colorweaver.PaletteReducer.oklabCarefulMetric;
 
@@ -351,8 +348,8 @@ public class ColorizerPreview extends ApplicationAdapter {
 			for (int j = i + 1; j < size; j++) {
 				if(((mixingPalette.get(i) & 255) > 0 && (mixingPalette.get(j) & 255) > 0) && PaletteReducer.oklabCarefulMetric.difference(mixingPalette.get(i), mixingPalette.get(j)) <= 100) {
 					if (doRemove) {
-						removalSet.add(i);
-						removalSet.add(j);
+						removalSet.add(mixingPalette.get(i));
+						removalSet.add(mixingPalette.get(j));
 						System.out.printf("Combined 0x%08X and 0x%08X\n", mixingPalette.get(i), mixingPalette.get(j));
 						mixingPalette.add(Coloring.mixEvenly(mixingPalette.get(i), mixingPalette.get(j)));
 					}
@@ -363,20 +360,13 @@ public class ColorizerPreview extends ApplicationAdapter {
 			}
 		}
 		if(doRemove) {
-			IntArray removalIndices = removalSet.iterator().toArray();
-			removalIndices.sort();
-			for (int i = removalIndices.size - 1; i >= 0; i--) {
-				mixingPalette.removeAt(removalIndices.get(i));
-			}
+			mixingPalette.removeAll(removalSet);
 		}
 
 		if(doSort) {
 			mixingPalette.sort(hueComparator);
 		}
-		palette = new int[mixingPalette.size()];
-		for (int i = 0; i < palette.length; i++) {
-			palette[i] = mixingPalette.get(i);
-		}
+		palette = mixingPalette.toArray();
 		mixingPalette.clear();
 		StringBuilder sb = new StringBuilder(palette.length * 12);
 		StringKit.appendHex(sb.append("0x"), palette[0]);
@@ -427,8 +417,8 @@ public class ColorizerPreview extends ApplicationAdapter {
 			for (int j = i + 1; j < labs.size(); j++) {
 				if ((labs.get(i).alpha > 0.0 && labs.get(j).alpha > 0.0) && CIELABConverter.delta(labs.get(i), labs.get(j), 1.0, 1.5, 1.5) <= 100) {
 					if (doRemove) {
-						removalSet.add(i);
-						removalSet.add(j);
+						removalSet.add(mixingPalette.get(i));
+						removalSet.add(mixingPalette.get(j));
 						System.out.printf("Combined 0x%08X and 0x%08X\n", mixingPalette.get(i), mixingPalette.get(j));
 						mixingPalette.add(Coloring.mixEvenly(mixingPalette.get(i), mixingPalette.get(j)));
 					} else {
@@ -438,20 +428,13 @@ public class ColorizerPreview extends ApplicationAdapter {
 			}
 		}
 		if (doRemove) {
-			IntArray removalIndices = removalSet.iterator().toArray();
-			removalIndices.sort();
-			for (int i = removalIndices.size - 1; i >= 0; i--) {
-				mixingPalette.removeAt(removalIndices.get(i));
-			}
+			mixingPalette.removeAll(removalSet);
 		}
 
 		if (doSort) {
 			mixingPalette.sort(hueComparator);
 		}
-		palette = new int[mixingPalette.size()];
-		for (int i = 0; i < palette.length; i++) {
-			palette[i] = mixingPalette.get(i);
-		}
+		palette = mixingPalette.toArray();
 		mixingPalette.clear();
 		StringBuilder sb = new StringBuilder(palette.length * 12);
 		StringKit.appendHex(sb.append("0x"), palette[0]);
@@ -675,11 +658,13 @@ public class ColorizerPreview extends ApplicationAdapter {
 						refreshTexture();
 						break;
 					case Input.Keys.F: // fuse
-						mixingPalette.addAll(palette);
+						if(mixingPalette.isEmpty())
+							mixingPalette.addAll(palette);
 						mixPalette(true, false);
 						break;
 					case Input.Keys.S: // sort
-						mixingPalette.addAll(palette);
+						if(mixingPalette.isEmpty())
+							mixingPalette.addAll(palette);
 						mixPalette(false, true);
 						break;
 					default:
