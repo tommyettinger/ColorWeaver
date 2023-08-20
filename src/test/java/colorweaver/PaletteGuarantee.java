@@ -36,7 +36,7 @@ public class PaletteGuarantee {
             int idx = 0;
             double dist = Double.MAX_VALUE, diff;
             for (int i = 0; i < edit.size(); i++) {
-                diff = PaletteReducer.oklabCarefulMetric.difference(want, edit.get(i));
+                diff = HexGenerator.METRIC.difference(want, edit.get(i));
                 if(diff < dist){
                     dist = diff;
                     idx = i;

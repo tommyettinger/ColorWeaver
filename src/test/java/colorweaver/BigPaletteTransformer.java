@@ -185,7 +185,7 @@ public class BigPaletteTransformer extends ApplicationAdapter {
                         bb = (b << 2 | b >>> 4);
                         dist = 0x1e256;
                         for (int i = 1; i < plen; i++) {
-                            if (dist > (dist = Math.min(dist, PaletteReducer.oklabCarefulMetric.difference(PALETTE[i], rr, gg, bb))))
+                            if (dist > (dist = Math.min(dist, HexGenerator.METRIC.difference(PALETTE[i], rr, gg, bb))))
                                 paletteMapping[c2] = (short) i;
                         }
                     }

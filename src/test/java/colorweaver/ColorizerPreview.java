@@ -23,10 +23,8 @@ import com.github.tommyettinger.ds.IntList;
 import com.github.tommyettinger.ds.IntSet;
 import com.github.tommyettinger.ds.support.sort.IntComparator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
-import static colorweaver.PaletteReducer.oklabCarefulMetric;
 
 /**
  * Created by Tommy Ettinger on 1/30/2020.
@@ -158,7 +156,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	};
 
 	public int[] lloyd(int[] palette) {
-		PaletteReducer pr = new PaletteReducer(palette, oklabCarefulMetric);
+		PaletteReducer pr = new PaletteReducer(palette, HexGenerator.METRIC);
 		double[][] centroids = new double[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index, mix;
@@ -209,7 +207,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	}
 
 	public int[] lloydCentral(int[] palette) {
-		PaletteReducer pr = new PaletteReducer(palette, oklabCarefulMetric);
+		PaletteReducer pr = new PaletteReducer(palette, HexGenerator.METRIC);
 		double[][] centroids = new double[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index;
@@ -382,7 +380,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		double closest = Double.MAX_VALUE;
 		for (int i = 0; i < size; i++) {
 			for (int j = i + 1; j < size; j++) {
-				double diff = PaletteReducer.oklabCarefulMetric.difference(mixingPalette.get(i), mixingPalette.get(j));
+				double diff = HexGenerator.METRIC.difference(mixingPalette.get(i), mixingPalette.get(j));
 				if(((mixingPalette.get(i) & 255) > 0 && (mixingPalette.get(j) & 255) > 0) && diff <= 100) {
 					if (doRemove < 0) {
 						removalSet.add(mixingPalette.get(i));
@@ -526,7 +524,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 
 	public void refreshTexture() {
 		colorizer = Colorizer.arbitraryLABColorizer(palette);
-		reducer.exact(palette, oklabCarefulMetric);
+		reducer.exact(palette, HexGenerator.METRIC);
 		monaWIP.drawPixmap(monaOriginal, 0, 0);
 		reducer.reduceDodgy(monaWIP);
 		mona.draw(monaWIP, 0, 0);

@@ -78,7 +78,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedOkReadjusted/"; //
 
 //        final String targetDir = "samples/reducedRgbStupider/"; //
-        final String targetDir = "samples/reducedOkCareful/"; //
+        final String targetDir = "samples/reduced"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedOkOnce/"; //
 //        final String targetDir = "samples/reducedRgbSqrt/"; //
 
@@ -191,7 +191,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //            reducer.exact(PALETTE, PaletteReducer.rgbTrickyMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbStupiderMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbStupidMetric);
-            reducer.exact(PALETTE, PaletteReducer.oklabCarefulMetric);
+            reducer.exact(PALETTE, HexGenerator.METRIC);
 //            reducer.exact(PALETTE, PaletteReducer.oklabOnceMetric);
 //            reducer.exact(PALETTE, PaletteReducer.rgbSqrtMetric);
             png8.palette = reducer;

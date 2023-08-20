@@ -334,7 +334,7 @@ public class PaletteGenerator extends ApplicationAdapter {
 //        }
 
         PNG8 png8 = new PNG8();
-        png8.palette = new PaletteReducer(PALETTE, PaletteReducer.oklabCarefulMetric);
+        png8.palette = new PaletteReducer(PALETTE, HexGenerator.METRIC);
         Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
 
         //// for palettes that are fairly small (64 or less) and don't have bonus info.
