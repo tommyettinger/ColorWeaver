@@ -16,8 +16,8 @@ import static colorweaver.tools.TrigTools.sin_;
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
     public static final String NAME = "slso-8";
-    public static final String SPACE = "OkAlternate";
-    public static final PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabAlternateMetric;
+    public static final String SPACE = "OkSmooth";
+    public static final PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabSmoothMetric;
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
