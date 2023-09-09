@@ -575,18 +575,22 @@ public class PaletteReducer {
      * Changes the curve of a requested L value so that it matches the internally-used curve. This takes a curve with a
      * very-dark area similar to sRGB (a very small one), and makes it significantly larger. This is typically used on
      * "to Oklab" conversions.
+     * <br>
+     * Internally, this is just {@code Math.pow(L, 1.5)}. At one point it used a modified "Barron spline" to get its
+     * curvature mostly right, but this now seems nearly indistinguishable from an ideal curve.
      * @param L lightness, from 0 to 1 inclusive
      * @return an adjusted L value that can be used internally
      */
     public static double forwardLight(final double L) {
-        final double shape = 0.64516133, turning = 0.95;
-        final double d = turning - L;
-        double r;
-        if(d < 0)
-            r = ((1.0 - turning) * (L - 1.0)) / (1.0 - (L + shape * d)) + 1.0;
-        else
-            r = (turning * L) / (1e-50 + (L + shape * d));
-        return r * r;
+        return Math.pow(L, 1.5);
+//        final double shape = 0.64516133, turning = 0.95;
+//        final double d = turning - L;
+//        double r;
+//        if(d < 0)
+//            r = ((1.0 - turning) * (L - 1.0)) / (1.0 - (L + shape * d)) + 1.0;
+//        else
+//            r = (turning * L) / (1e-50 + (L + shape * d));
+//        return r * r;
     }
 
 //	public static float forwardLight(final float L) {
@@ -595,21 +599,25 @@ public class PaletteReducer {
 
     /**
      * Changes the curve of the internally-used lightness when it is output to another format. This makes the very-dark
-     * area smaller, matching (kind-of) the curve that the standard sRGB lightness uses. This is typically used on "from
+     * area smaller, matching (closely) the curve that the standard sRGB lightness uses. This is typically used on "from
      * Oklab" conversions.
+     * <br>
+     * Internally, this is just {@code Math.pow(L, 2.0/3.0)}. At one point it used a modified "Barron spline" to get its
+     * curvature mostly right, but this now seems nearly indistinguishable from an ideal curve.
      * @param L lightness, from 0 to 1 inclusive
      * @return an adjusted L value that can be fed into a conversion to RGBA or something similar
      */
     public static double reverseLight(double L) {
-        L = Math.sqrt(L);
-        final double shape = 1.55, turning = 0.95;
-        final double d = turning - L;
-        double r;
-        if(d < 0)
-            r = ((1.0 - turning) * (L - 1.0)) / (1.0 - (L + shape * d)) + 1.0;
-        else
-            r = (turning * L) / (1e-50 + (L + shape * d));
-        return r;
+        return Math.pow(L, 2.0/3.0);
+//        L = Math.sqrt(L);
+//        final double shape = 1.55, turning = 0.95;
+//        final double d = turning - L;
+//        double r;
+//        if(d < 0)
+//            r = ((1.0 - turning) * (L - 1.0)) / (1.0 - (L + shape * d)) + 1.0;
+//        else
+//            r = (turning * L) / (1e-50 + (L + shape * d));
+//        return r;
     }
 
 //	public static float reverseLight(final float L) {
@@ -683,7 +691,7 @@ public class PaletteReducer {
 //            t = (k3 * L2 - k1);
 //            L2 = (t + Math.sqrt(t * t + 0.1405044 * L2)) * 0.5;
 
-            double L = (L1 - L2);// * 1.25;
+            double L = (L1 - L2);
             double A = (A1 - A2);
             double B = (B1 - B2);
 
@@ -769,60 +777,12 @@ public class PaletteReducer {
         }
     };
 
-    public static final ColorMetric oklabSmoothMetric = new ColorMetric(){
-        public double difference(int color1, int color2) {
-            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
-            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
-        }
-
-        public double difference(int color1, int r2, int g2, int b2) {
-            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
-            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
-        }
-
-        public double difference(int r1, int g1, int b1, int r2, int g2, int b2) {
-            double r = r1 * 0.00392156862745098; r *= r;
-            double g = g1 * 0.00392156862745098; g *= g;
-            double b = b1 * 0.00392156862745098; b *= b;
-
-            double l = Math.cbrt(0.4121656120 * r + 0.5362752080 * g + 0.0514575653 * b);
-            double m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
-            double s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
-
-            double L1 = Math.pow(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s, 1.5);
-            double A1 = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
-            double B1 = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
-////LR alternate lightness estimate
-//            final double k1 = 0.206, k2 = 0.03, k3 = 1.17087;
-//            double t = (k3 * L1 - k1);
-//            L1 = (t + Math.sqrt(t * t + 0.1405044 * L1)) * 0.5;
-
-            r = r2 * 0.00392156862745098; r *= r;
-            g = g2 * 0.00392156862745098; g *= g;
-            b = b2 * 0.00392156862745098; b *= b;
-
-            l = Math.cbrt(0.4121656120 * r + 0.5362752080 * g + 0.0514575653 * b);
-            m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
-            s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
-
-            double L2 = Math.pow(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s, 1.5);
-            double A2 = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
-            double B2 = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
-//            t = (k3 * L2 - k1);
-//            L2 = (t + Math.sqrt(t * t + 0.1405044 * L2)) * 0.5;
-
-            double L = (L1 - L2);// * 1.25;
-            double A = (A1 - A2);
-            double B = (B1 - B2);
-
-            return (L * L + A * A + B * B) * 0x1p+21;
-        }
-    };
-
-
-
-
-
+    /**
+     * This metric is currently identical to {@link #oklabCarefulMetric}. For the purpose of comparison,
+     * the term "OkCareful" should probably refer to the older, very-slightly-different oklabCarefulMetric,
+     * and "OkSmooth" should refer to the current metric (such as this one).
+     */
+    public static final ColorMetric oklabSmoothMetric = oklabCarefulMetric;
 
     public static double[] fillOklab(double[] toFill, double r, double g, double b){
         r *= r;
