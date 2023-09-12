@@ -3415,6 +3415,7 @@ public class PaletteReducer {
 
     /**
      * Weaning myself off highly-structured artifacts.
+     * This is going to be called Wren in other code I port it to, because the story won't make sense.
      * @param pixmap
      * @return
      */
@@ -3448,10 +3449,10 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float) (40.0 * ditherStrength * populationBias * populationBias * populationBias * populationBias), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
-                strength = (float) (0.06 * ditherStrength / (populationBias * populationBias * populationBias * populationBias)),
-                limit = 5f + 130f / (float)Math.sqrt(colorCount+1.5),
-                dmul = (float) (0x1p-8 / populationBias);
+        float w1 = (float) (32.0 * ditherStrength * (populationBias * populationBias)), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f,
+                strength = (float) (0.2 * ditherStrength / (populationBias * populationBias * populationBias * populationBias)),
+                limit = 5f + 125f / (float)Math.sqrt(colorCount+1.5),
+                dmul = 0x1p-8f;
 
         for (int py = 0; py < h; py++) {
             int ny = py + 1;
@@ -3469,13 +3470,9 @@ public class PaletteReducer {
                     pixmap.drawPixel(px, py, 0);
                 else {
 
-                    er = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+1) * 0xC13FA9A902A6328FL + (py+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-15f - 0x1p+7f)) * strength) + (curErrorRed[px]), -limit), limit);
-                    eg = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[1][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+3) * 0xC13FA9A902A6328FL + (py-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-15f - 0x1p+7f)) * strength) + (curErrorGreen[px]), -limit), limit);
-                    eb = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[2][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+2) * 0xC13FA9A902A6328FL + (py-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-15f - 0x1p+7f)) * strength) + (curErrorBlue[px]), -limit), limit);
-
-//                    er = Math.min(Math.max(((((px+1) * 0xC13FA9A902A6328FL + (py+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorRed[px]);
-//                    eg = Math.min(Math.max(((((px+3) * 0xC13FA9A902A6328FL + (py-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorGreen[px]);
-//                    eb = Math.min(Math.max(((((px+2) * 0xC13FA9A902A6328FL + (py-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorBlue[px]);
+                    er = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+1) * 0xC13FA9A902A6328FL + (py+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorRed[px]), -limit), limit);
+                    eg = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[1][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+3) * 0xC13FA9A902A6328FL + (py-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorGreen[px]), -limit), limit);
+                    eb = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[2][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+2) * 0xC13FA9A902A6328FL + (py-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorBlue[px]), -limit), limit);
 
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
@@ -3486,12 +3483,9 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, py, used);
-                    rdiff = (dmul * ((color>>>24)-    (used>>>24))    );
-                    gdiff = (dmul * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = (dmul * ((color>>>8&255)- (used>>>8&255)) );
-//                    rdiff = Math.min(Math.max(dmul * ((color>>>24)-    (used>>>24))    , -0.25f), 0.25f);
-//                    gdiff = Math.min(Math.max(dmul * ((color>>>16&255)-(used>>>16&255)), -0.25f), 0.25f);
-//                    bdiff = Math.min(Math.max(dmul * ((color>>>8&255)- (used>>>8&255)) , -0.25f), 0.25f);
+                    rdiff = dmul * ((color>>>24)-    (used>>>24))    ;// rdiff = 8f * rdiff / (float) Math.sqrt(1f + rdiff * rdiff);
+                    gdiff = dmul * ((color>>>16&255)-(used>>>16&255));// gdiff = 8f * gdiff / (float) Math.sqrt(1f + gdiff * gdiff);
+                    bdiff = dmul * ((color>>>8&255)- (used>>>8&255)) ;// bdiff = 8f * bdiff / (float) Math.sqrt(1f + bdiff * bdiff);
 
                     if(px < lineLen - 1)
                     {

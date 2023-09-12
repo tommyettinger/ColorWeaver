@@ -109,7 +109,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         png8.setFlipY(false);
         PaletteReducer reducer = new PaletteReducer();
 //        int i = 0;
-        for(FileHandle hex : hexes) {
+//        for(FileHandle hex : hexes) {
 
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
@@ -126,24 +126,24 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/fractals-die-die-die-32.hex"),
 //        }) {
 
-//        for(FileHandle hex : new FileHandle[]{
-//                Gdx.files.local("palettes/hex/bw-2.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
-//                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
-//                Gdx.files.local("palettes/hex/ayy-4.hex"),
-//                Gdx.files.local("palettes/hex/gb-4.hex"),
-//                Gdx.files.local("palettes/hex/gb-16.hex"),
-//                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
-//                Gdx.files.local("palettes/hex/azurestar-32.hex"),
-//                Gdx.files.local("palettes/hex/hyper-8.hex"),
+        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/bw-2.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+                Gdx.files.local("palettes/hex/ayy-4.hex"),
+                Gdx.files.local("palettes/hex/gb-4.hex"),
+                Gdx.files.local("palettes/hex/gb-16.hex"),
+                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+                Gdx.files.local("palettes/hex/hyper-8.hex"),
 //                Gdx.files.local("palettes/hex/yam3-255.hex"),
-//                Gdx.files.local("palettes/hex/americana-4.hex"),
-//                Gdx.files.local("palettes/hex/gray-15.hex"),
+                Gdx.files.local("palettes/hex/americana-4.hex"),
+                Gdx.files.local("palettes/hex/gray-15.hex"),
 //                Gdx.files.local("palettes/hex/grayfull-256.hex"),
-//                Gdx.files.local("palettes/hex/vinik-24.hex"),
-//        }) {
+                Gdx.files.local("palettes/hex/vinik-24.hex"),
+        }) {
 
 //            for(FileHandle hex : new FileHandle[]{
 //                    Gdx.files.local("palettes/hex/brazilian-afternoon-42.hex"),
