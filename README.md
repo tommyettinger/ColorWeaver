@@ -33,3 +33,7 @@ can be considered public domain.
 
 ![Judgment_Cat.jpg](samples%2FJudgment_Cat.jpg), ![Kitten.jpg](samples%2FKitten.jpg), ![Purrito.jpg](samples%2FPurrito.jpg),
 and ![Roar.jpg](samples%2FRoar.jpg) are all pictures Shelby Lynn took of her pets; I have permission to use them here.
+
+![GoStones](samples/GoStones.png) and ![GoChips](samples/GoChips.png) are lossy renders of a game board by
+[Loren Schmidt](https://twitter.com/lorenschmidt/status/1703462926726640124); they're used here to compare dither
+algorithms with what Schmidt is working on, but I'll take them down if she requests.
