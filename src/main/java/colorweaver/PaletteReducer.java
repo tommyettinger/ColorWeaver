@@ -4294,7 +4294,7 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float)(ditherStrength * 0x4p-8);
+        float w1 = (float)(ditherStrength * 0.125);
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
