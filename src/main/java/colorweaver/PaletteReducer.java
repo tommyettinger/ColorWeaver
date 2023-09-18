@@ -4294,7 +4294,8 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float)(ditherStrength * 0.125);
+        float w1 = (float)(ditherStrength * 0.125),
+                xorStrength = (float)(10 / (populationBias * populationBias));
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -4323,7 +4324,7 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, y, used);
-                    float xp = ((px ^ y) % 9 - 4) * (float)(ditherStrength * 16);
+                    float xp = ((px ^ y) % 9 - 4) * xorStrength;
                     rdiff = ((color>>>24)-    (used>>>24))     + xp;
                     gdiff = ((color>>>16&255)-(used>>>16&255)) + xp;
                     bdiff = ((color>>>8&255)- (used>>>8&255))  + xp;
