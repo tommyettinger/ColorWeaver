@@ -4323,9 +4323,10 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, y, used);
-                    rdiff = ((color>>>24)-    (used>>>24))    ;
-                    gdiff = ((color>>>16&255)-(used>>>16&255));
-                    bdiff = ((color>>>8&255)- (used>>>8&255)) ;
+                    float xp = ((px ^ y) % 9 - 4) * (float)(ditherStrength * 16);
+                    rdiff = ((color>>>24)-    (used>>>24))     + xp;
+                    gdiff = ((color>>>16&255)-(used>>>16&255)) + xp;
+                    bdiff = ((color>>>8&255)- (used>>>8&255))  + xp;
                     if(ny < h)
                     {
                         if(px > 0)
