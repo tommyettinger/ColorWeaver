@@ -78,7 +78,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedOkReadjusted/"; //
 
 //        final String targetDir = "samples/reducedRgbStupider/"; //
-        final String targetDir = "samples/reduced"+HexGenerator.SPACE+"/"; //
+        final String targetDir = "samples/reducedDiffusion"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedOkOnce/"; //
 //        final String targetDir = "samples/reducedRgbSqrt/"; //
 
@@ -239,6 +239,23 @@ public class AutomaticPalettizer extends ApplicationAdapter {
     }
 
     private void drawPart(Pixmap pm, Pixmap sam, PaletteReducer reducer, PNG8 png8, String subname, String suffix) throws IOException {
+
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSierraLite(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinbergCurvy(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinbergCurvy" + suffix + ".png"), pm, PALETTE, false, 0);
+
 //////pretty bad
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceChaoticNoise(pm);
@@ -308,9 +325,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceWean(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Wean" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceSchmidt(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceSchmidt(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
 
 ////////???
 //        pm.drawPixmap(sam, 0, 0);
