@@ -283,15 +283,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         pm = reducer.reduceFloydSteinberg(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_005" + suffix + ".png"), pm, PALETTE, false, 0);
 
-        PaletteReducer.BURKES_MULTIPLIER = 0.4;
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBurkes(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Burkes_4" + suffix + ".png"), pm, PALETTE, false, 0);
-
-        PaletteReducer.BURKES_MULTIPLIER = 0.3;
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBurkes(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Burkes_3" + suffix + ".png"), pm, PALETTE, false, 0);
 
         PaletteReducer.BURKES_MULTIPLIER = 0.2;
         pm.drawPixmap(sam, 0, 0);
@@ -312,6 +303,17 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBurkes(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_Burkes_05" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.BURKES_MULTIPLIER = 0.025;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes_025" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.BURKES_MULTIPLIER = 0.01;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes_01" + suffix + ".png"), pm, PALETTE, false, 0);
+
 
 //////pretty bad
 //        pm.drawPixmap(sam, 0, 0);
