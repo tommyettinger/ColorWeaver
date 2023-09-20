@@ -240,21 +240,32 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
     private void drawPart(Pixmap pm, Pixmap sam, PaletteReducer reducer, PNG8 png8, String subname, String suffix) throws IOException {
 
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceSierraLite(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceSierraLite(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
+//
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBurkes(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
+//
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceFloydSteinbergCurvy(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinbergCurvy" + suffix + ".png"), pm, PALETTE, false, 0);
 
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBurkes(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
-
+        PaletteReducer.FS_MULTIPLIER = 0.04;
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceFloydSteinberg(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_04" + suffix + ".png"), pm, PALETTE, false, 0);
 
+        PaletteReducer.FS_MULTIPLIER = 0.03;
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceFloydSteinbergCurvy(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinbergCurvy" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_03" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.FS_MULTIPLIER = 0.02;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_02" + suffix + ".png"), pm, PALETTE, false, 0);
 
 //////pretty bad
 //        pm.drawPixmap(sam, 0, 0);
