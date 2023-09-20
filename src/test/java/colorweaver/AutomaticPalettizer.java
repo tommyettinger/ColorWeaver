@@ -240,32 +240,28 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
     private void drawPart(Pixmap pm, Pixmap sam, PaletteReducer reducer, PNG8 png8, String subname, String suffix) throws IOException {
 
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceSierraLite(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBurkes(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceFloydSteinbergCurvy(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinbergCurvy" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSierraLite(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
 
-//        PaletteReducer.FS_MULTIPLIER = 0.04;
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceFloydSteinberg(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_04" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//        PaletteReducer.FS_MULTIPLIER = 0.03;
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceFloydSteinberg(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_03" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//        PaletteReducer.FS_MULTIPLIER = 0.02;
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceFloydSteinberg(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_02" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinbergCurvy(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinbergCurvy" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.FS_MULTIPLIER = 0.04;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_04" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.FS_MULTIPLIER = 0.03;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_03" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.FS_MULTIPLIER = 0.02;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_02" + suffix + ".png"), pm, PALETTE, false, 0);
 
         PaletteReducer.FS_MULTIPLIER = 0.015;
         pm.drawPixmap(sam, 0, 0);
@@ -277,15 +273,45 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         pm = reducer.reduceFloydSteinberg(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_0125" + suffix + ".png"), pm, PALETTE, false, 0);
 
-//        PaletteReducer.FS_MULTIPLIER = 0.01;
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceFloydSteinberg(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_01" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//        PaletteReducer.FS_MULTIPLIER = 0.005;
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceFloydSteinberg(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_005" + suffix + ".png"), pm, PALETTE, false, 0);
+        PaletteReducer.FS_MULTIPLIER = 0.01;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_01" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.FS_MULTIPLIER = 0.005;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg_005" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.BURKES_MULTIPLIER = 0.4;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes_4" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.BURKES_MULTIPLIER = 0.3;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes_3" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.BURKES_MULTIPLIER = 0.2;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes_2" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.BURKES_MULTIPLIER = 0.125;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes_125" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.BURKES_MULTIPLIER = 0.1;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes_1" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        PaletteReducer.BURKES_MULTIPLIER = 0.05;
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes_05" + suffix + ".png"), pm, PALETTE, false, 0);
 
 //////pretty bad
 //        pm.drawPixmap(sam, 0, 0);

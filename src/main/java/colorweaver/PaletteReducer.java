@@ -1589,6 +1589,7 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+    public static double BURKES_MULTIPLIER = 0.125;
 
     /**
      * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can using
@@ -1608,7 +1609,7 @@ public class PaletteReducer {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         float r4, r2, r1, g4, g2, g1, b4, b2, b1;
-        float eighthDitherStrength = (float) (0.125 * ditherStrength * this.populationBias);
+        float partialDitherStrength = (float) (BURKES_MULTIPLIER * ditherStrength / this.populationBias);
         float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
         if (curErrorRedFloats == null) {
             curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
@@ -1666,9 +1667,9 @@ public class PaletteReducer {
                     rdiff = (color>>>24)-    (used>>>24);
                     gdiff = (color>>>16&255)-(used>>>16&255);
                     bdiff = (color>>>8&255)- (used>>>8&255);
-                    r1 = rdiff * eighthDitherStrength;
-                    g1 = gdiff * eighthDitherStrength;
-                    b1 = bdiff * eighthDitherStrength;
+                    r1 = rdiff * partialDitherStrength;
+                    g1 = gdiff * partialDitherStrength;
+                    b1 = bdiff * partialDitherStrength;
                     r2 = r1 + r1;
                     g2 = g1 + g1;
                     b2 = b1 + b1;
@@ -1912,7 +1913,7 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float ditherStrength = (float)(this.ditherStrength * 0.2), halfDitherStrength = ditherStrength * 0.5f;
+        float ditherStrength = (float)(this.ditherStrength * 0.2 / this.populationBias), halfDitherStrength = ditherStrength * 0.5f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -2005,7 +2006,7 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float)(ditherStrength * FS_MULTIPLIER), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float w1 = (float)(ditherStrength * FS_MULTIPLIER / this.populationBias), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -2098,7 +2099,7 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float)(ditherStrength * 4.0), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float w1 = (float)(ditherStrength * 3.0 / this.populationBias), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
