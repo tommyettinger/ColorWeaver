@@ -3637,8 +3637,8 @@ public class PaletteReducer {
         float er, eg, eb;
         byte paletteIndex;
         float partialDitherStrength = (float) (0.25 * ditherStrength * (populationBias * populationBias)),
-                strength = (float) (0.25 * ditherStrength / (populationBias * populationBias * populationBias * populationBias)),
-                blueStrength = (float) (0.15 * ditherStrength / (populationBias * populationBias * populationBias * populationBias)),
+                strength = (float) (25.0 * ditherStrength / (populationBias * populationBias)),
+                blueStrength = (float) (0.15 * ditherStrength / (populationBias * populationBias)),
                 limit = 5f + 125f / (float)Math.sqrt(colorCount+1.5),
                 r1, g1, b1, r2, g2, b2, r4, g4, b4;
 
@@ -3658,9 +3658,9 @@ public class PaletteReducer {
                     pixmap.drawPixel(px, py, 0);
                 else {
 
-                    er = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (py & 63) << 6] + 0.5f) * blueStrength + ((((px+1) * 0xC13FA9A902A6328FL + (py+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f) * strength)) + (curErrorRed[px]), -limit), limit);
-                    eg = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[1][(px & 63) | (py & 63) << 6] + 0.5f) * blueStrength + ((((px+3) * 0xC13FA9A902A6328FL + (py-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f) * strength)) + (curErrorGreen[px]), -limit), limit);
-                    eb = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[2][(px & 63) | (py & 63) << 6] + 0.5f) * blueStrength + ((((px+2) * 0xC13FA9A902A6328FL + (py-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f) * strength)) + (curErrorBlue[px]), -limit), limit);
+                    er = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (py & 63) << 6] + 0.5f) * blueStrength + ((((px+1) * 0xC13FA9A902A6328FL + (py+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[px]);
+                    eg = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[1][(px & 63) | (py & 63) << 6] + 0.5f) * blueStrength + ((((px+3) * 0xC13FA9A902A6328FL + (py-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorGreen[px]);
+                    eb = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[2][(px & 63) | (py & 63) << 6] + 0.5f) * blueStrength + ((((px+2) * 0xC13FA9A902A6328FL + (py-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorBlue[px]);
 
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
