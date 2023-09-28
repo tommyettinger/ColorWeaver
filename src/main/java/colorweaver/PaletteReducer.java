@@ -3636,8 +3636,8 @@ public class PaletteReducer {
         float rdiff, gdiff, bdiff;
         float er, eg, eb;
         byte paletteIndex;
-        float partialDitherStrength = (float) (0.25 * ditherStrength * (populationBias * populationBias)),
-                strength = (float) (25.0 * ditherStrength / (populationBias * populationBias)),
+        float partialDitherStrength = (float) (0.4 * ditherStrength * (populationBias * populationBias)),
+                strength = (float) (40.0 * ditherStrength / (populationBias * populationBias)),
                 blueStrength = (float) (0.15 * ditherStrength / (populationBias * populationBias)),
                 limit = 5f + 125f / (float)Math.sqrt(colorCount+1.5),
                 r1, g1, b1, r2, g2, b2, r4, g4, b4;
@@ -3671,13 +3671,13 @@ public class PaletteReducer {
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, py, used);
-                    rdiff = ((color>>>24)-    (used>>>24))    ;
-                    gdiff = ((color>>>16&255)-(used>>>16&255));
-                    bdiff = ((color>>>8&255)- (used>>>8&255)) ;
+                    rdiff = ((color>>>24)-    (used>>>24))     * partialDitherStrength;
+                    gdiff = ((color>>>16&255)-(used>>>16&255)) * partialDitherStrength;
+                    bdiff = ((color>>>8&255)- (used>>>8&255))  * partialDitherStrength;
 
-                    r1 = rdiff * partialDitherStrength;
-                    g1 = gdiff * partialDitherStrength;
-                    b1 = bdiff * partialDitherStrength;
+                    r1 = rdiff * 16f / (float)Math.sqrt(2048f + rdiff * rdiff);
+                    g1 = gdiff * 16f / (float)Math.sqrt(2048f + gdiff * gdiff);
+                    b1 = bdiff * 16f / (float)Math.sqrt(2048f + bdiff * bdiff);
                     r2 = r1 + r1;
                     g2 = g1 + g1;
                     b2 = b1 + b1;
