@@ -1976,7 +1976,12 @@ public class PaletteReducer {
 
     public static double FS_MULTIPLIER = 0.03;
 
-    public Pixmap reduceFloydSteinberg (Pixmap pixmap) {
+    /**
+     * Some aspects of how this dithers can be changed by adjusting {@link #FS_MULTIPLIER}.
+     * @param pixmap
+     * @return
+     */
+    public Pixmap reduceFloydSteinbergAdjustable (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
@@ -2069,7 +2074,7 @@ public class PaletteReducer {
         return pixmap;
     }
 
-    public Pixmap reduceFloydSteinbergCurvy (Pixmap pixmap) {
+    public Pixmap reduceFloydSteinberg (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
@@ -2097,9 +2102,8 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used;
         float rdiff, gdiff, bdiff;
-        float er, eg, eb;
         byte paletteIndex;
-        float w1 = (float)(ditherStrength * 4.0), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
+        float w1 = (float)(ditherStrength * 4), w3 = w1 * 3f, w5 = w1 * 5f, w7 = w1 * 7f;
         for (int y = 0; y < h; y++) {
             int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
@@ -2115,22 +2119,24 @@ public class PaletteReducer {
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    er = curErrorRed[px];
-                    eg = curErrorGreen[px];
-                    eb = curErrorBlue[px];
-//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
-                    int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
-                    int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
-                    int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + curErrorRed[px]   + 0.5f), 0), 0xFF);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + curErrorGreen[px] + 0.5f), 0), 0xFF);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + curErrorBlue[px]  + 0.5f), 0), 0xFF);
                     paletteIndex =
                             paletteMapping[((rr << 7) & 0x7C00)
                                     | ((gg << 2) & 0x3E0)
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, y, used);
-                    rdiff = OtherMath.cbrtShape(0x1.8p-8f * ((color>>>24)-    (used>>>24))    );
-                    gdiff = OtherMath.cbrtShape(0x1.8p-8f * ((color>>>16&255)-(used>>>16&255)));
-                    bdiff = OtherMath.cbrtShape(0x1.8p-8f * ((color>>>8&255)- (used>>>8&255)) );
+//                    rdiff = OtherMath.cbrtShape(0x1.8p-8f * ((color>>>24)-    (used>>>24))    );
+//                    gdiff = OtherMath.cbrtShape(0x1.8p-8f * ((color>>>16&255)-(used>>>16&255)));
+//                    bdiff = OtherMath.cbrtShape(0x1.8p-8f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff = (0x1.8p-8f * ((color>>>24)-    (used>>>24))    );
+                    gdiff = (0x1.8p-8f * ((color>>>16&255)-(used>>>16&255)));
+                    bdiff = (0x1.8p-8f * ((color>>>8&255)- (used>>>8&255)) );
+                    rdiff *= 1.25f / (0.25f + Math.abs(rdiff));
+                    gdiff *= 1.25f / (0.25f + Math.abs(gdiff));
+                    bdiff *= 1.25f / (0.25f + Math.abs(bdiff));
                     if(px < lineLen - 1)
                     {
                         curErrorRed[px+1]   += rdiff * w7;
@@ -3642,8 +3648,8 @@ public class PaletteReducer {
                 limit = 5f + 125f / (float)Math.sqrt(colorCount+1.5),
                 r1, g1, b1, r2, g2, b2, r4, g4, b4;
 
-        for (int py = 0; py < h; py++) {
-            int ny = py + 1;
+        for (int y = 0; y < h; y++) {
+            int ny = y + 1;
             for (int i = 0; i < lineLen; i++) {
                 curErrorRed[i] = nextErrorRed[i];
                 curErrorGreen[i] = nextErrorGreen[i];
@@ -3652,15 +3658,14 @@ public class PaletteReducer {
                 nextErrorGreen[i] = 0;
                 nextErrorBlue[i] = 0;
             }
-            for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, py);
+            for (int x = 0; x < lineLen; x++) {
+                color = pixmap.getPixel(x, y);
                 if ((color & 0x80) == 0 && hasTransparent)
-                    pixmap.drawPixel(px, py, 0);
+                    pixmap.drawPixel(x, y, 0);
                 else {
-
-                    er = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (py & 63) << 6] + 0.5f) * blueStrength + ((((px+1) * 0xC13FA9A902A6328FL + (py+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[px]);
-                    eg = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[1][(px & 63) | (py & 63) << 6] + 0.5f) * blueStrength + ((((px+3) * 0xC13FA9A902A6328FL + (py-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorGreen[px]);
-                    eb = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[2][(px & 63) | (py & 63) << 6] + 0.5f) * blueStrength + ((((px+2) * 0xC13FA9A902A6328FL + (py-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorBlue[px]);
+                    er = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[0][(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+1) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[x]);
+                    eg = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[1][(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+3) * 0xC13FA9A902A6328FL + (y-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorGreen[x]);
+                    eb = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[2][(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+2) * 0xC13FA9A902A6328FL + (y-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorBlue[x]);
 
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
@@ -3670,7 +3675,7 @@ public class PaletteReducer {
                                     | ((gg << 2) & 0x3E0)
                                     | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
-                    pixmap.drawPixel(px, py, used);
+                    pixmap.drawPixel(x, y, used);
                     rdiff = ((color>>>24)-    (used>>>24))     * partialDitherStrength;
                     gdiff = ((color>>>16&255)-(used>>>16&255)) * partialDitherStrength;
                     bdiff = ((color>>>8&255)- (used>>>8&255))  * partialDitherStrength;
@@ -3684,47 +3689,47 @@ public class PaletteReducer {
                     r4 = r2 + r2;
                     g4 = g2 + g2;
                     b4 = b2 + b2;
-                    if(px < lineLen - 1)
+                    if(x < lineLen - 1)
                     {
-                        curErrorRed[px+1]   += r4;
-                        curErrorGreen[px+1] += g4;
-                        curErrorBlue[px+1]  += b4;
-                        if(px < lineLen - 2)
+                        curErrorRed[x+1]   += r4;
+                        curErrorGreen[x+1] += g4;
+                        curErrorBlue[x+1]  += b4;
+                        if(x < lineLen - 2)
                         {
 
-                            curErrorRed[px+2]   += r2;
-                            curErrorGreen[px+2] += g2;
-                            curErrorBlue[px+2]  += b2;
+                            curErrorRed[x+2]   += r2;
+                            curErrorGreen[x+2] += g2;
+                            curErrorBlue[x+2]  += b2;
                         }
                     }
                     if(ny < h)
                     {
-                        if(px > 0)
+                        if(x > 0)
                         {
-                            nextErrorRed[px-1]   += r2;
-                            nextErrorGreen[px-1] += g2;
-                            nextErrorBlue[px-1]  += b2;
-                            if(px > 1)
+                            nextErrorRed[x-1]   += r2;
+                            nextErrorGreen[x-1] += g2;
+                            nextErrorBlue[x-1]  += b2;
+                            if(x > 1)
                             {
-                                nextErrorRed[px-2]   += r1;
-                                nextErrorGreen[px-2] += g1;
-                                nextErrorBlue[px-2]  += b1;
+                                nextErrorRed[x-2]   += r1;
+                                nextErrorGreen[x-2] += g1;
+                                nextErrorBlue[x-2]  += b1;
                             }
                         }
-                        nextErrorRed[px]   += r4;
-                        nextErrorGreen[px] += g4;
-                        nextErrorBlue[px]  += b4;
-                        if(px < lineLen - 1)
+                        nextErrorRed[x]   += r4;
+                        nextErrorGreen[x] += g4;
+                        nextErrorBlue[x]  += b4;
+                        if(x < lineLen - 1)
                         {
-                            nextErrorRed[px+1]   += r2;
-                            nextErrorGreen[px+1] += g2;
-                            nextErrorBlue[px+1]  += b2;
-                            if(px < lineLen - 2)
+                            nextErrorRed[x+1]   += r2;
+                            nextErrorGreen[x+1] += g2;
+                            nextErrorBlue[x+1]  += b2;
+                            if(x < lineLen - 2)
                             {
 
-                                nextErrorRed[px+2]   += r1;
-                                nextErrorGreen[px+2] += g1;
-                                nextErrorBlue[px+2]  += b1;
+                                nextErrorRed[x+2]   += r1;
+                                nextErrorGreen[x+2] += g1;
+                                nextErrorBlue[x+2]  += b1;
                             }
                         }
                     }
