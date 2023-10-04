@@ -99,24 +99,22 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("samples/Rome-Seagull.jpg"),
 //        };
 
-//        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa_Tiny.png")};
+//        FileHandle[] samples = {Gdx.files.local("samples/Pepper.png")};
+        FileHandle[] samples = {Gdx.files.local("samples/Watching.png")};
+//        FileHandle[] samples = {Gdx.files.local("samples/Rooster.png")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Girl_with_a_Pearl_Earring.jpg")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Cat_Posing.jpg")};
 //        FileHandle[] samples = {Gdx.files.local("samples/ignored/Vandalism.jpg")};
+//        FileHandle[] samples = {Gdx.files.local("samples/ignored/Big_Pepper.png")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Judgment_Cat.jpg"), Gdx.files.local("samples/Purrito.jpg")};
 //        FileHandle[] samples = {
 //                Gdx.files.local("samples/GoStones.png"),
 //                Gdx.files.local("samples/GoChips.png"),
 //        };
 
-        FileHandle[] samples =
-                Gdx.files.local("samples/").list(new FileFilter() {
-            @Override
-            public boolean accept (File pathname) {
-                return !pathname.isDirectory();
-            }
-        });
+        //// USE THIS TO RENDER ALL SAMPLES
+//        FileHandle[] samples = Gdx.files.local("samples/").list(pathname -> !pathname.isDirectory());
 
         PNG8 png8 = new PNG8();
         png8.setCompression(2);
@@ -207,18 +205,21 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             png8.palette = reducer;
             try {
                 for(FileHandle sample : samples) {
+                    long startTime = System.currentTimeMillis();
                     Pixmap pm, sam = new Pixmap(sample);
                     pm = new Pixmap(sam.getWidth(), sam.getHeight(), sam.getFormat());
                     reducer.setDitherStrength(1f);
 //                    String subname = targetDir + "/" + sample.nameWithoutExtension();
                     String subname = targetDir + name + "/" + sample.nameWithoutExtension();
 ////lousy but important
-                    pm.drawPixmap(sam, 0, 0);
-                    pm = reducer.reduceSolid(pm);
-                    png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
+//                    pm.drawPixmap(sam, 0, 0);
+//                    pm = reducer.reduceSolid(pm);
+//                    png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
 
                     reducer.setDitherStrength(1f);
                     drawPart(pm, sam, reducer, png8, subname, suffix);
+
+                    System.out.println("Took " + (System.currentTimeMillis() - startTime) + " ms");
 
                     reducer.setDitherStrength(0.5f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
@@ -338,9 +339,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceSierraLite(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////rather good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceFloydSteinberg(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceFloydSteinberg(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
 //////ok
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceTrueBlue3(pm);
@@ -401,10 +402,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceWean(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Wean" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////more love!
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlubber(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Blubber" + suffix + ".png"), pm, PALETTE, false, 0);
+////////more love!
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBlubber(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Blubber" + suffix + ".png"), pm, PALETTE, false, 0);
 /////////great, especially for error diffusion
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBurkes(pm);
