@@ -15,7 +15,7 @@ import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
     private int[] palette;
-    public static final String NAME = "zygodactyl-36";
+    public static final String NAME = "talon-36";
     public static final String SPACE = "OkSmooth";
     public static final PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabSmoothMetric;
 
@@ -1119,8 +1119,16 @@ int[] zygodactyl = {
         0x098A00FF, 0x4466A9FF, 0x132E76FF, 0x276EFFFF, 0x062FADFF, 0x8F7DB6FF, 0x564383FF, 0xB377FFFF,
         0x7F00F7FF, 0xFF8548FF, 0xAA5327FF, 0xFDDD5FFF, 0xAC9637FF, 0xA5DB53FF, 0x69922DFF, 0x008DB8FF,
         0x00516FFF, 0x6459FFFF, 0x372AA5FF, 0xCF64A4FF, 0x813663FF, };
+int[] talon = {
+        0x00000000, 0xE80071FF, 0xFF256EFF, 0xF52B3DFF, 0xB6361EFF, 0xEF5400FF, 0xAD5400FF, 0xCF7E27FF,
+        0x9A6D28FF, 0xC29500FF, 0x91800FFF, 0x676916FF, 0x77962AFF, 0x4A7E2AFF, 0x0DB335FF, 0x188E53FF,
+        0x2FB58CFF, 0x339281FF, 0x00746FFF, 0x269BA5FF, 0x27798BFF, 0x439FC3FF, 0x007FBCFF, 0x1BA1FFFF,
+        0x2576FFFF, 0x343DFFFF, 0x7D14FFFF, 0x7B24FFFF, 0xBF3BFFFF, 0xA838D6FF, 0xFF02FFFF, 0xDA21B2FF,
+        0xAD2475FF,
+};
+
         palette =
-                zygodactyl
+                talon
                 ;
 //                Coloring.HALTONIC255;
 //                new int[]
