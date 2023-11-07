@@ -78,8 +78,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedOkReadjusted/"; //
 
 //        final String targetDir = "samples/reducedRgbStupider/"; //
-        final String targetDir = "samples/reduced"+HexGenerator.SPACE+"/"; //
+//        final String targetDir = "samples/reducedEmpty"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedDiffusion"+HexGenerator.SPACE+"/"; //
+        final String targetDir = "samples/reducedLow"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedOkOnce/"; //
 //        final String targetDir = "samples/reducedRgbSqrt/"; //
 
@@ -100,7 +101,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        };
 
 //        FileHandle[] samples = {Gdx.files.local("samples/Pepper.png")};
-        FileHandle[] samples = {Gdx.files.local("samples/Watching.png")};
+//        FileHandle[] samples = {Gdx.files.local("samples/Watching.png")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Rooster.png")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Girl_with_a_Pearl_Earring.jpg")};
@@ -114,7 +115,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        };
 
         //// USE THIS TO RENDER ALL SAMPLES
-//        FileHandle[] samples = Gdx.files.local("samples/").list(pathname -> !pathname.isDirectory());
+        FileHandle[] samples = Gdx.files.local("samples/").list(pathname -> !pathname.isDirectory());
 
         PNG8 png8 = new PNG8();
         png8.setCompression(2);
@@ -123,7 +124,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        int i = 0;
 //        for(FileHandle hex : hexes) {
 
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/bw-2.hex"),
@@ -138,26 +139,24 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/fractals-die-die-die-32.hex"),
 //        }) {
 
-        for(FileHandle hex : new FileHandle[]{
-                Gdx.files.local("palettes/hex/bw-2.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
-                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
-                Gdx.files.local("palettes/hex/gb-4.hex"),
-                Gdx.files.local("palettes/hex/septembit23-6.hex"),
-                Gdx.files.local("palettes/hex/hyper-8.hex"),
-                Gdx.files.local("palettes/hex/gb-16.hex"),
-                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
-                Gdx.files.local("palettes/hex/azurestar-32.hex"),
-                Gdx.files.local("palettes/hex/americana-4.hex"),
-                Gdx.files.local("palettes/hex/prospecal-8.hex"),
-                Gdx.files.local("palettes/hex/ayy-4.hex"),
-                Gdx.files.local("palettes/hex/gray-15.hex"),
-                Gdx.files.local("palettes/hex/vinik-24.hex"),
-//                Gdx.files.local("palettes/hex/grayfull-256.hex"),
-//                Gdx.files.local("palettes/hex/yam3-255.hex"),
-        }) {
+//        for(FileHandle hex : new FileHandle[]{
+//                Gdx.files.local("palettes/hex/bw-2.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+//                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+//                Gdx.files.local("palettes/hex/gb-4.hex"),
+//                Gdx.files.local("palettes/hex/septembit23-6.hex"),
+//                Gdx.files.local("palettes/hex/hyper-8.hex"),
+//                Gdx.files.local("palettes/hex/gb-16.hex"),
+//                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+//                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+//                Gdx.files.local("palettes/hex/americana-4.hex"),
+//                Gdx.files.local("palettes/hex/prospecal-8.hex"),
+//                Gdx.files.local("palettes/hex/ayy-4.hex"),
+//                Gdx.files.local("palettes/hex/gray-15.hex"),
+//                Gdx.files.local("palettes/hex/vinik-24.hex"),
+//        }) {
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/septembit23-6.hex"),
@@ -375,41 +374,41 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceKnoll(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////??? error diffusion with IGN
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceIgneous(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Igneous2" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceIgneous(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Igneous2" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////////very good, error-diffusion, per-channel color
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceWeave(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceWeave(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////fairly good, low banding, some other artifacts, per-channel color
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceRobertsEdit(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Roberts14" + suffix + ".png"), pm, PALETTE, false, 0);
 //////very good!
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceDodgy(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Dodgy4" + suffix + ".png"), pm, PALETTE, false, 0);
-//////retro, doesn't have to be classically good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceLoaf(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////stylistic, not a traditional dither
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceSchmidt(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////I'm in love
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceWean(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Wean" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceDodgy(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Dodgy4" + suffix + ".png"), pm, PALETTE, false, 0);
+////retro, doesn't have to be classically good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceLoaf(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
+////////stylistic, not a traditional dither
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSchmidt(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
+////////I'm in love
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceWean(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Wean" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////more love!
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBlubber(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_Blubber" + suffix + ".png"), pm, PALETTE, false, 0);
 /////////great, especially for error diffusion
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBurkes(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
 
 ////////???
 //        pm.drawPixmap(sam, 0, 0);
