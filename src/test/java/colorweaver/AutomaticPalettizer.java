@@ -330,17 +330,17 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         // main block
 
 //////////very good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceIGN(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceIGN(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////good enough
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceSierraLite(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSierraLite(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////rather good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceFloydSteinberg(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
 //////ok
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceTrueBlue3(pm);
@@ -362,17 +362,17 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceBluish(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Neuter" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////very good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceScatter(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceScatter(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////YAY YIPPEE WOO NO BANDING
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceNeue(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceNeue(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////incredible
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceKnoll(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceKnoll(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////??? error diffusion with IGN
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceIgneous(pm);

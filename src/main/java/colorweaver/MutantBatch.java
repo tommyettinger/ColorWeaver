@@ -80,11 +80,11 @@ public class MutantBatch implements Batch {
      * <p>
      * The defaultShader specifies the shader to use. Note that the names for uniforms for this default shader are different than
      * the ones expect for shaders set with {@link #setShader(ShaderProgram)}. See {@link #createDefaultShader()}.
-     * @param size The max number of sprites in a single batch. Max of 8191.
+     * @param size The max number of sprites in a single batch. Max of 16383.
      * @param defaultShader The default shader to use. This is not owned by the MutantBatch and must be disposed separately. */
     public MutantBatch(int size, ShaderProgram defaultShader) {
-        // 32767 is max vertex index, so 32767 / 4 vertices per sprite = 8191 sprites max.
-        if (size > 8191) throw new IllegalArgumentException("Can't have more than 8191 sprites per batch: " + size);
+        // 65535 is max vertex index, so 65535 / 4 vertices per sprite = 16383 sprites max.
+        if (size > 16383) throw new IllegalArgumentException("Can't have more than 16383 sprites per batch: " + size);
 
         Mesh.VertexDataType vertexDataType = (Gdx.gl30 != null) ? Mesh.VertexDataType.VertexBufferObjectWithVAO : Mesh.VertexDataType.VertexArray;
 
