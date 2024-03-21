@@ -14,10 +14,10 @@ import static colorweaver.tools.TrigTools.cos_;
 import static colorweaver.tools.TrigTools.sin_;
 
 public class HexGenerator extends ApplicationAdapter {
-    private int[] palette;
-    public static final String NAME = "judo-31";
-    public static final String SPACE = "OkSmooth";
-    public static final PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabSmoothMetric;
+    public int[] palette;
+    public static String NAME = "judo-31";
+    public static String SPACE = "OkSmooth";
+    public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabSmoothMetric;
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
