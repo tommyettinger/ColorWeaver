@@ -24,8 +24,8 @@ import static colorweaver.tools.TrigTools.sin_;
 public class PaletteExpander extends ApplicationAdapter {
     public int[] palette;
     public static final long SEED = 1L;
-    public static final int LIMIT = 15;
-    public static final String NAME = "patbit";
+    public static final int LIMIT = 63;
+    public static final String NAME = "sunrise";
     static final IntArray RGBA = new IntArray(LIMIT+1);
 
     static final int[] DB8 = new int[]{
@@ -60,7 +60,7 @@ public class PaletteExpander extends ApplicationAdapter {
         double m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
         double s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
         filling.set(
-                (float)Math.min(Math.max(((0.2104542553f * l + 0.7936177850f * m - 0.0040720468f * s)), 0f), 1f),
+                (float)Math.min(Math.max((forwardLight(0.2104542553f * l + 0.7936177850f * m - 0.0040720468f * s)), 0f), 1f),
                 (float)Math.min(Math.max(((1.9779984951f * l - 2.4285922050f * m + 0.4505937099f * s)), -1f), 1f),
                 (float)Math.min(Math.max(((0.0259040371f * l + 0.7827717662f * m - 0.8086757660f * s)), -1f), 1f)
         );
@@ -76,7 +76,7 @@ public class PaletteExpander extends ApplicationAdapter {
      */
     public static boolean inGamut(double L, double A, double B)
     {
-//        L = Math.pow(L, 2.0/3.0);
+        L = Math.pow(L, 2.0/3.0);
 
         double l = (L + +0.3963377774 * A + +0.2158037573 * B);
         l *= l * l;
@@ -131,8 +131,7 @@ public class PaletteExpander extends ApplicationAdapter {
 
     public static int toRGBA8888(final Vector3 oklab)
     {
-//        final float L = (float) Math.pow(oklab.x, 2.0/3.0);
-        final float L = oklab.x;
+        final float L = (float) Math.pow(oklab.x, 2.0/3.0);
         final float A = oklab.y;
         final float B = oklab.z;
         final float l = cube(L + 0.3963377774f * A + 0.2158037573f * B);
@@ -176,7 +175,7 @@ public class PaletteExpander extends ApplicationAdapter {
 
     @Override
     public void create() {
-        loadPalette("septembit23-6");
+        loadPalette("dawnbringer-8");
 //        palette = PROSPECAL;
         HexGenerator.NAME = NAME + "-" + LIMIT;
 
@@ -186,7 +185,7 @@ public class PaletteExpander extends ApplicationAdapter {
         for (int i = 0; i < base.length; i++) {
             vs.add(fromRGBA8888(new Vector3(), base[i]));
         }
-        final float threshold = 1f / LIMIT, lowThreshold = 1f / LIMIT, move = (float)Math.sqrt(threshold);
+        final float threshold = 1f / LIMIT, lowThreshold = 1.5f / LIMIT, move = (float)Math.sqrt(threshold);
 
         ITERS:
         for (int iter = vs.size(); iter < LIMIT; iter++) {
@@ -212,8 +211,9 @@ public class PaletteExpander extends ApplicationAdapter {
         for (int i = 0; i < vs.size(); i++) {
             Vector3 v = vs.get(i);
             if(v.y * v.y + v.z * v.z <= GRAY_LIMIT){
-                v.y *= 0.25f;
-                v.z *= 0.25f;
+                System.out.println("BRINGING " + v + " TOWARD GRAYSCALE");
+                v.y *= 0.125f;
+                v.z *= 0.125f;
             }
         }
         Collections.sort(vs, (c1, c2) -> {
