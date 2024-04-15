@@ -24,8 +24,8 @@ import static colorweaver.tools.TrigTools.sin_;
 public class PaletteExpander extends ApplicationAdapter {
     public int[] palette;
     public static final long SEED = 1L;
-    public static final int LIMIT = 63;
-    public static final String NAME = "sunrise";
+    public static final int LIMIT = 1023;
+    public static final String NAME = "jwbx";
     static final IntArray RGBA = new IntArray(LIMIT+1);
 
     static final int[] DB8 = new int[]{
@@ -152,8 +152,8 @@ public class PaletteExpander extends ApplicationAdapter {
         config.useVsync(true);
         config.setResizable(false);
         new Lwjgl3Application(new PaletteExpander(), config);
-        AutomaticPaletteTransformer.main(arg);
-        AutomaticPalettizer.main(arg);
+//        AutomaticPaletteTransformer.main(arg);
+//        AutomaticPalettizer.main(arg);
     }
 
     public void loadPalette(String name) {
@@ -175,8 +175,8 @@ public class PaletteExpander extends ApplicationAdapter {
 
     @Override
     public void create() {
-        loadPalette("dawnbringer-8");
-//        palette = PROSPECAL;
+//        loadPalette("db-aurora-255");
+        palette = JAPANESE_WOODBLOCK;
         HexGenerator.NAME = NAME + "-" + LIMIT;
 
         AlternateRandom random = new AlternateRandom(SEED);
@@ -185,7 +185,7 @@ public class PaletteExpander extends ApplicationAdapter {
         for (int i = 0; i < base.length; i++) {
             vs.add(fromRGBA8888(new Vector3(), base[i]));
         }
-        final float threshold = 1f / LIMIT, lowThreshold = 1.5f / LIMIT, move = (float)Math.sqrt(threshold);
+        final float threshold = 1f / LIMIT, lowThreshold = 1.5f / LIMIT, move = (float)Math.sqrt(1f/palette.length);
 
         ITERS:
         for (int iter = vs.size(); iter < LIMIT; iter++) {
@@ -207,7 +207,7 @@ public class PaletteExpander extends ApplicationAdapter {
             System.err.println("OH NO, FAILED ON ITERATION " + iter);
             throw new RuntimeException("SAD FACE :(");
         }
-        final float GRAY_LIMIT = 0.005f;
+        final float GRAY_LIMIT = 1.2f / LIMIT;
         for (int i = 0; i < vs.size(); i++) {
             Vector3 v = vs.get(i);
             if(v.y * v.y + v.z * v.z <= GRAY_LIMIT){

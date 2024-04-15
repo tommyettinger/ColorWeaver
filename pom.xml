@@ -67,7 +67,7 @@
         <maven.gpg.version>1.6</maven.gpg.version>
         <jdk.version>1.8</jdk.version>
         <junit.version>4.13.2</junit.version>
-        <gdx.version>1.12.0</gdx.version>
+        <gdx.version>1.12.1</gdx.version>
     </properties>
 
 
