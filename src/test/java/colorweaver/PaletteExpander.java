@@ -15,9 +15,11 @@ import com.github.tommyettinger.digital.AlternateRandom;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Random;
 
 import static colorweaver.PaletteReducer.forwardLight;
+import static colorweaver.PaletteReducer.shrink;
 import static colorweaver.tools.TrigTools.cos_;
 import static colorweaver.tools.TrigTools.sin_;
 
@@ -25,7 +27,7 @@ public class PaletteExpander extends ApplicationAdapter {
     public int[] palette;
     public static final long SEED = 1L;
     public static final int LIMIT = 1023;
-    public static final String NAME = "jwbx";
+    public static final String NAME = "bigdawn";
     static final IntArray RGBA = new IntArray(LIMIT+1);
 
     static final int[] DB8 = new int[]{
@@ -175,15 +177,19 @@ public class PaletteExpander extends ApplicationAdapter {
 
     @Override
     public void create() {
-//        loadPalette("db-aurora-255");
-        palette = JAPANESE_WOODBLOCK;
+        loadPalette("db-aurora-255");
+//        palette = JAPANESE_WOODBLOCK;
         HexGenerator.NAME = NAME + "-" + LIMIT;
 
         AlternateRandom random = new AlternateRandom(SEED);
         ArrayList<Vector3> vs = new ArrayList<>(LIMIT);
+        HashSet<Integer> unique = new HashSet<>(1024);
         int[] base = palette;
-        for (int i = 0; i < base.length; i++) {
-            vs.add(fromRGBA8888(new Vector3(), base[i]));
+//        unique.add(-1);
+//        vs.add(fromRGBA8888(new Vector3(), base[0]));
+        for (int i = 1; i < base.length; i++) {
+            if(unique.add(shrink(base[i])))
+                vs.add(fromRGBA8888(new Vector3(), base[i]));
         }
         final float threshold = 1f / LIMIT, lowThreshold = 1.5f / LIMIT, move = (float)Math.sqrt(1f/palette.length);
 
@@ -200,22 +206,24 @@ public class PaletteExpander extends ApplicationAdapter {
                     Vector3 other = vs.get(i);
                     if(other.dst(next) < lowThreshold) continue TRIALS;
                 }
-                vs.add(next);
-                continue ITERS;
+                if(unique.add(shrink(toRGBA8888(next)))) {
+                    vs.add(next);
+                    continue ITERS;
+                }
             }
             // failed to find a valid color in 100 tries
             System.err.println("OH NO, FAILED ON ITERATION " + iter);
             throw new RuntimeException("SAD FACE :(");
         }
         final float GRAY_LIMIT = 1.2f / LIMIT;
-        for (int i = 0; i < vs.size(); i++) {
-            Vector3 v = vs.get(i);
-            if(v.y * v.y + v.z * v.z <= GRAY_LIMIT){
-                System.out.println("BRINGING " + v + " TOWARD GRAYSCALE");
-                v.y *= 0.125f;
-                v.z *= 0.125f;
-            }
-        }
+//        for (int i = 0; i < vs.size(); i++) {
+//            Vector3 v = vs.get(i);
+//            if(v.y * v.y + v.z * v.z <= GRAY_LIMIT){
+//                System.out.println("BRINGING " + v + " TOWARD GRAYSCALE");
+//                v.y *= 0.125f;
+//                v.z *= 0.125f;
+//            }
+//        }
         Collections.sort(vs, (c1, c2) -> {
 //                if (ColorTools.alphaInt(c1.value) < 128) return -10000;
 //                else if (ColorTools.alphaInt(c2.value) < 128) return 10000;
@@ -232,6 +240,7 @@ public class PaletteExpander extends ApplicationAdapter {
                         + (int)Math.signum(c1.x - c2.x);
         });
 
+        unique.add(-1);
         RGBA.add(0);
         for(Vector3 v : vs) {
             RGBA.add(toRGBA8888(v));
@@ -255,6 +264,7 @@ public class PaletteExpander extends ApplicationAdapter {
                 System.out.println();
         }
         System.out.println("};");
+        System.out.println("Number of unique colors: " + unique.size());
         Gdx.app.exit();
     }
 
