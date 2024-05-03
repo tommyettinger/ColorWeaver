@@ -27,7 +27,7 @@ public class PaletteExpander extends ApplicationAdapter {
     public int[] palette;
     public static final long SEED = 1L;
     public static final int LIMIT = 1023;
-    public static final String NAME = "bigdawn";
+    public static final String NAME = "bigzure";
     static final IntArray RGBA = new IntArray(LIMIT+1);
 
     static final int[] DB8 = new int[]{
@@ -177,7 +177,7 @@ public class PaletteExpander extends ApplicationAdapter {
 
     @Override
     public void create() {
-        loadPalette("db-aurora-255");
+        loadPalette("azurestar-32");
 //        palette = JAPANESE_WOODBLOCK;
         HexGenerator.NAME = NAME + "-" + LIMIT;
 

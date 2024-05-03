@@ -124,7 +124,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        int i = 0;
 //        for(FileHandle hex : hexes) {
 
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/bw-2.hex"),
@@ -139,24 +139,24 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/fractals-die-die-die-32.hex"),
 //        }) {
 
-//        for(FileHandle hex : new FileHandle[]{
-//                Gdx.files.local("palettes/hex/bw-2.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
-//                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
-//                Gdx.files.local("palettes/hex/gb-4.hex"),
-//                Gdx.files.local("palettes/hex/septembit23-6.hex"),
-//                Gdx.files.local("palettes/hex/hyper-8.hex"),
-//                Gdx.files.local("palettes/hex/gb-16.hex"),
-//                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
-//                Gdx.files.local("palettes/hex/azurestar-32.hex"),
-//                Gdx.files.local("palettes/hex/americana-4.hex"),
-//                Gdx.files.local("palettes/hex/prospecal-8.hex"),
-//                Gdx.files.local("palettes/hex/ayy-4.hex"),
-//                Gdx.files.local("palettes/hex/gray-15.hex"),
-//                Gdx.files.local("palettes/hex/vinik-24.hex"),
-//        }) {
+        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/bw-2.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+                Gdx.files.local("palettes/hex/gb-4.hex"),
+                Gdx.files.local("palettes/hex/septembit23-6.hex"),
+                Gdx.files.local("palettes/hex/hyper-8.hex"),
+                Gdx.files.local("palettes/hex/gb-16.hex"),
+                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+                Gdx.files.local("palettes/hex/americana-4.hex"),
+                Gdx.files.local("palettes/hex/prospecal-8.hex"),
+                Gdx.files.local("palettes/hex/ayy-4.hex"),
+                Gdx.files.local("palettes/hex/gray-15.hex"),
+                Gdx.files.local("palettes/hex/vinik-24.hex"),
+        }) {
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/septembit23-6.hex"),
@@ -217,8 +217,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
                     reducer.setDitherStrength(1f);
                     drawPart(pm, sam, reducer, png8, subname, suffix);
-
-                    System.out.println("Took " + (System.currentTimeMillis() - startTime) + " ms");
+//
+//                    System.out.println("Took " + (System.currentTimeMillis() - startTime) + " ms");
 
                     reducer.setDitherStrength(0.5f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
@@ -366,9 +366,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceScatter(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////YAY YIPPEE WOO NO BANDING
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceNeue(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceNeue(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////////incredible
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceKnoll(pm);
@@ -378,9 +378,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceIgneous(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Igneous2" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////////very good, error-diffusion, per-channel color
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceWeave(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceWeave(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Weave2" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////////fairly good, low banding, some other artifacts, per-channel color
 ////        pm.drawPixmap(sam, 0, 0);
 ////        pm = reducer.reduceRobertsEdit(pm);
@@ -393,22 +393,26 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceLoaf(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
+////retro, doesn't have to be classically good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceLoaf2(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Loaf2" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////stylistic, not a traditional dither
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSchmidt(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////I'm in love
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceWean(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Wean" + suffix + ".png"), pm, PALETTE, false, 0);
-////////more love!
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlubber(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Blubber" + suffix + ".png"), pm, PALETTE, false, 0);
-/////////great, especially for error diffusion
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBurkes(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceWean(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Wean" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////more love!
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBlubber(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Blubber" + suffix + ".png"), pm, PALETTE, false, 0);
+///////////great, especially for error diffusion
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBurkes(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
 
 ////////???
 //        pm.drawPixmap(sam, 0, 0);
