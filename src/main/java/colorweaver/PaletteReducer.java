@@ -2470,16 +2470,14 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        final double strength = ditherStrength / (populationBias * populationBias);
+        final double strength = ditherStrength * populationBias;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-//                    int adj = (int)((px + y & 1) << 3);
                     int adj = (int)((((px + y & 1) << 5) - 16) * strength);
-                    // ^ (RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] & 255) >>> 4
                     int rr = Math.min(Math.max(((color >>> 24)       ) + adj, 0), 255);
                     int gg = Math.min(Math.max(((color >>> 16) & 0xFF) + adj, 0), 255);
                     int bb = Math.min(Math.max(((color >>> 8)  & 0xFF) + adj, 0), 255);
@@ -2491,6 +2489,9 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+
+//                    int adj = (int)((px + y & 1) << 3);
+// ^ (RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] & 255) >>> 4
 
     /**
      * Uses Interleaved Gradient Noise, by Jorge Jimenez.
