@@ -9,8 +9,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 
 /**
@@ -401,10 +399,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSchmidt(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
-////////doesn't really work; just looks like a mild XOR-mod pattern...
+////////
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceSchmidt2(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Kufic2" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceOverboard(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Overboard" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////I'm in love
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceWean(pm);

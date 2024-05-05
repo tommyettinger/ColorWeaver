@@ -4609,18 +4609,17 @@ public class PaletteReducer {
 
 
     /**
-     * <a href="https://twitter.com/lorenschmidt/status/1703267207268983293">"Kufic dither" by Loren Schmidt</a>.
-     * Currently, this is a failed attempt to simplify the algorithm using Loaf dither's approach... no such luck.
+     * Burkes dither with some extra error added in, selecting different types of error pattern in an ordered way.
      * @param pixmap
      * @return
      */
-    public Pixmap reduceSchmidt2(Pixmap pixmap) {
+    public Pixmap reduceOverboard(Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         float r4, r2, r1, g4, g2, g1, b4, b2, b1;
 //        float strength = (float) (0.1 * ditherStrength * (populationBias * populationBias));
         float strength = (float)(ditherStrength * 0.05),
-                xorStrength = (float)(5f / (populationBias * populationBias));
+                noiseStrength = (float)(2.5f / (populationBias * populationBias));
 
         float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
         if (curErrorRedFloats == null) {
@@ -4675,10 +4674,29 @@ public class PaletteReducer {
                                            | ((bb >>> 3))];
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, y, used);
-                    float xp = ((px ^ y) % 9 - 4) * xorStrength;
-                    rdiff = (color>>>24)-    (used>>>24)     + xp;
-                    gdiff = (color>>>16&255)-(used>>>16&255) + xp;
-                    bdiff = (color>>>8&255)- (used>>>8&255)  + xp;
+                    float noise = 0f;
+                    switch ((px << 1 & 2) | (y & 1)){
+                        case 0:
+                            noise += ((px ^ y) % 9 - 4);
+                            noise += ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
+                            break;
+                        case 1:
+                            noise += (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
+                            noise += ((px * -0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
+                            break;
+                        case 2:
+                            noise += (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
+                            noise += ((y * 0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
+                            break;
+                        default: // case 3:
+                            noise += ((px ^ y) % 17 - 8) * 0.5f;
+                            noise += ((y * -0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
+                            break;
+                    }
+                    noise *= noiseStrength;
+                    rdiff = (color>>>24)-    (used>>>24)     + noise;
+                    gdiff = (color>>>16&255)-(used>>>16&255) + noise;
+                    bdiff = (color>>>8&255)- (used>>>8&255)  + noise;
                     r1 = rdiff * strength;
                     g1 = gdiff * strength;
                     b1 = bdiff * strength;
