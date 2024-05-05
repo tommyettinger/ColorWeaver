@@ -4685,12 +4685,12 @@ public class PaletteReducer {
                             noise += ((px * -0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
                             break;
                         case 2:
-                            noise += (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
-                            noise += ((y * 0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
+                            noise += (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
+                            noise += ((y * 0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                             break;
                         default: // case 3:
-                            noise += ((px ^ y) % 17 - 8) * 0.5f;
-                            noise += ((y * -0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
+                            noise += ((px ^ y) % 11 - 5);
+                            noise += ((y * -0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-21f;
                             break;
                     }
                     noise *= noiseStrength;
