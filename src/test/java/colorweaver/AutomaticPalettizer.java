@@ -394,13 +394,17 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceLoaf(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
 ////retro, doesn't have to be classically good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceLoaf2(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Loaf2" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////stylistic, not a traditional dither
 //        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceSchmidt(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm = reducer.reduceLoaf2(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Loaf2" + suffix + ".png"), pm, PALETTE, false, 0);
+////////stylistic, not a traditional dither
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSchmidt(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
+////////doesn't really work; just looks like a mild XOR-mod pattern...
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSchmidt2(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Kufic2" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////I'm in love
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceWean(pm);

@@ -4607,6 +4607,40 @@ public class PaletteReducer {
         return pixmap;
     }
 
+
+    /**
+     * <a href="https://twitter.com/lorenschmidt/status/1703267207268983293">"Kufic dither" by Loren Schmidt</a>.
+     * Currently, this is a failed attempt to simplify the algorithm using Loaf dither's approach... no such luck.
+     * @param pixmap
+     * @return
+     */
+    public Pixmap reduceSchmidt2(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        final double strength = 4 * ditherStrength * populationBias;
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int adj = (int)(((px ^ y) % 9 - 4) * strength);
+                    int rr = Math.min(Math.max(((color >>> 24)       ) + adj, 0), 255);
+                    int gg = Math.min(Math.max(((color >>> 16) & 0xFF) + adj, 0), 255);
+                    int bb = Math.min(Math.max(((color >>> 8)  & 0xFF) + adj, 0), 255);
+                    int rgb555 = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[rgb555] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+
     /**
      * Retrieves a random non-0 color index for the palette this would reduce to, with a higher likelihood for colors
      * that are used more often in reductions (those with few similar colors). The index is returned as a byte that,
