@@ -401,8 +401,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceOverboard(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Overboard" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceOverboard2(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Overboard2" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////I'm in love
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceWean(pm);
