@@ -4764,7 +4764,7 @@ public class PaletteReducer {
      * <ul>
      * <li>An R2 dither value (as used by {@link #reduceRobertsEdit(Pixmap)}) is used for each pixel, but the four
      * corners of the 2x2 square each use a different angle for the artifacts.</li>
-     * <li>Blue noise from {@link #TRI_BLUE_NOISE} is incorporated into two corners, with different strength.</li>
+     * <li>Blue noise from three noise textures gets incorporated into two corners, with different strength.</li>
      * <li>XOR-Mod patterns are incorporated when blue noise isn't. These are:
      * <ul>
      *     <li>{@code ((px ^ y) % 9 - 4)}</li>
@@ -4774,8 +4774,9 @@ public class PaletteReducer {
      * </ul>
      * <br>
      * This is called Overboard because it is probably going overboard with the different types of extra error. Just
-     * Burkes dither on its own is probably good enough. The results can look quite good, though, especially for
-     * black-and-white dithers.
+     * Burkes dither on its own is probably good enough. The results can look quite good, though, especially when
+     * dither strength is higher than 1.0 (for other dithers, such as WREN, higher strength creates artifacts). This
+     * tends to look a little smoother than WREN, and introduces less of a "rough canvas texture" to the image.
      *
      * @param pixmap will be modified in-place and returned
      * @return pixmap, after modifications
@@ -4784,8 +4785,9 @@ public class PaletteReducer {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         float r4, r2, r1, g4, g2, g1, b4, b2, b1;
-        float strength = (float) (ditherStrength * 0.7 * (populationBias * populationBias)),
-                noiseStrength = (float) (2.5 * (populationBias * populationBias));
+        final float strength = (float) (ditherStrength * 0.5 * (populationBias * populationBias)),
+                noiseStrength = (float) (2.0 / (populationBias)),
+                limit = 5f + 125f / (float)Math.sqrt(colorCount+1.5f);
 
         float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
         if (curErrorRedFloats == null) {
@@ -4868,9 +4870,9 @@ public class PaletteReducer {
                     er = er * noiseStrength + curErrorRed[px];
                     eg = eg * noiseStrength + curErrorGreen[px];
                     eb = eb * noiseStrength + curErrorBlue[px];
-                    int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
-                    int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
-                    int bb = MathUtils.clamp((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0, 0xFF);
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + Math.min(Math.max(er, -limit), limit) + 0.5f), 0), 0xFF);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + Math.min(Math.max(eg, -limit), limit) + 0.5f), 0), 0xFF);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + Math.min(Math.max(eb, -limit), limit) + 0.5f), 0), 0xFF);
                     paletteIndex =
                             paletteMapping[((rr << 7) & 0x7C00)
                                            | ((gg << 2) & 0x3E0)
@@ -4883,9 +4885,6 @@ public class PaletteReducer {
                     r1 = rdiff * 16f / (float)Math.sqrt(2048f + rdiff * rdiff);
                     g1 = gdiff * 16f / (float)Math.sqrt(2048f + gdiff * gdiff);
                     b1 = bdiff * 16f / (float)Math.sqrt(2048f + bdiff * bdiff);
-//                    r1 = rdiff * strength;
-//                    g1 = gdiff * strength;
-//                    b1 = bdiff * strength;
                     r2 = r1 + r1;
                     g2 = g1 + g1;
                     b2 = b1 + b1;
