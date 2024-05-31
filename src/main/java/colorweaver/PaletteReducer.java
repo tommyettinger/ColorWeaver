@@ -2500,14 +2500,14 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        final int strength = (int) (8 * ditherStrength / (populationBias * populationBias) + 0.5);
+        final int strength = (int) (10 * ditherStrength / (populationBias * populationBias) + 0.5);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    int adj = ((px + y << 1 & 2) - 1) * (strength + (((px ^ y) << 1 & 4) - 5 + ((px + px + y ^ y - px) & 3) + (px - y & 3)));
+                    int adj = ((px + y & 1) - (px & y & 1)) * (strength + (((px + y ^ px + y >>> 1) & 3)) * (1 + ((px ^ y) >>> 1 & 1)));
                     int rr = Math.min(Math.max(((color >>> 24)       ) + adj, 0), 255);
                     int gg = Math.min(Math.max(((color >>> 16) & 0xFF) + adj, 0), 255);
                     int bb = Math.min(Math.max(((color >>> 8)  & 0xFF) + adj, 0), 255);
