@@ -2489,6 +2489,37 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+    /**
+     * An intentionally low-fidelity dither, meant for pixel art.
+     * @param pixmap
+     * @return
+     */
+    public Pixmap reduceLoaf3(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        final int strength = (int) (8 * ditherStrength / (populationBias * populationBias) + 0.5);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int adj = ((px + y << 1 & 2) - 1) * (strength + (((px ^ y) << 1 & 4) - 5 + ((px + px + y ^ y - px) & 3) + (px - y & 3)));
+                    int rr = Math.min(Math.max(((color >>> 24)       ) + adj, 0), 255);
+                    int gg = Math.min(Math.max(((color >>> 16) & 0xFF) + adj, 0), 255);
+                    int bb = Math.min(Math.max(((color >>> 8)  & 0xFF) + adj, 0), 255);
+                    int rgb555 = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[rgb555] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
 
 //                    int adj = (int)((px + y & 1) << 3);
 // ^ (RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] & 255) >>> 4
@@ -4882,9 +4913,12 @@ public class PaletteReducer {
                     rdiff = ((color>>>24)-    (used>>>24)    ) * strength;
                     gdiff = ((color>>>16&255)-(used>>>16&255)) * strength;
                     bdiff = ((color>>>8&255)- (used>>>8&255) ) * strength;
-                    r1 = rdiff * 16f / (float)Math.sqrt(2048f + rdiff * rdiff);
-                    g1 = gdiff * 16f / (float)Math.sqrt(2048f + gdiff * gdiff);
-                    b1 = bdiff * 16f / (float)Math.sqrt(2048f + bdiff * bdiff);
+                    r1 = rdiff * 16f / (45f + Math.abs(rdiff));
+                    g1 = gdiff * 16f / (45f + Math.abs(gdiff));
+                    b1 = bdiff * 16f / (45f + Math.abs(bdiff));
+//                    r1 = rdiff * 16f / (float)Math.sqrt(2048f + rdiff * rdiff);
+//                    g1 = gdiff * 16f / (float)Math.sqrt(2048f + gdiff * gdiff);
+//                    b1 = bdiff * 16f / (float)Math.sqrt(2048f + bdiff * bdiff);
                     r2 = r1 + r1;
                     g2 = g1 + g1;
                     b2 = b1 + b1;

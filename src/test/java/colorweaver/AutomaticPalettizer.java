@@ -209,9 +209,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                    String subname = targetDir + "/" + sample.nameWithoutExtension();
                     String subname = targetDir + name + "/" + sample.nameWithoutExtension();
 ////lousy but important
-//                    pm.drawPixmap(sam, 0, 0);
-//                    pm = reducer.reduceSolid(pm);
-//                    png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
+                    pm.drawPixmap(sam, 0, 0);
+                    pm = reducer.reduceSolid(pm);
+                    png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
 
                     reducer.setDitherStrength(1f);
                     drawPart(pm, sam, reducer, png8, subname, suffix);
@@ -387,22 +387,26 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceDodgy(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Dodgy4" + suffix + ".png"), pm, PALETTE, false, 0);
-//////retro, doesn't have to be classically good
+////////retro, doesn't have to be classically good
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceLoaf(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
-////retro, doesn't have to be classically good
+//////retro, doesn't have to be classically good
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceLoaf2(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Loaf2" + suffix + ".png"), pm, PALETTE, false, 0);
+////retro, doesn't have to be classically good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceLoaf3(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Loaf3" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////stylistic, not a traditional dither
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSchmidt(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
-////////
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceOverboard2(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Overboard2" + suffix + ".png"), pm, PALETTE, false, 0);
+////////yay!
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceOverboard2(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Overboard3" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////I'm in love
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceWean(pm);
