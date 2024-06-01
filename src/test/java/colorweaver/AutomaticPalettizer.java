@@ -395,10 +395,14 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceLoaf2(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Loaf2" + suffix + ".png"), pm, PALETTE, false, 0);
+//////retro, doesn't have to be classically good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceLoaf3(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Loaf3" + suffix + ".png"), pm, PALETTE, false, 0);
 ////retro, doesn't have to be classically good
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceLoaf3(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Loaf3" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceLeaf(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Leaf" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////stylistic, not a traditional dither
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSchmidt(pm);

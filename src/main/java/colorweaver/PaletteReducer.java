@@ -2520,6 +2520,46 @@ public class PaletteReducer {
         return pixmap;
     }
 
+    /**
+     * An intentionally low-fidelity dither, meant for pixel art. Like Loaf, but with diagonal components.
+     * @param pixmap
+     * @return
+     */
+    public Pixmap reduceLeaf(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        final double strength = (7.5f * ditherStrength / (populationBias * populationBias) + 0.5f);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    float pos = (y * 0.06711056f + px * 0.00583715f);
+                    pos -= (int) pos;
+                    pos *= 52.9829189f;
+                    pos -= (int) pos;
+//                    int adj = (int)(((px + y & 1) - (px & y & 1) - pos * 0.5f)
+//                                    * (strength + (((px + y ^ px + y >>> 1) & 3))));
+//                    int adj = (int)(((px + y & 1) + (px & y & 1) - (px * 0xC13FA9A902A6328FL - y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1.8p-23)
+//                                    * (strength + (((px + y ^ px + y >>> 1) & 3))));
+                    int adj = (int)(((px & y & 1) - (px + y << 1 & 2) - (px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1p-23 + pos)
+                                    * (strength + (((px + y ^ px + y >>> 1) & 3))));
+                    int rr = Math.min(Math.max(((color >>> 24)       ) + adj, 0), 255);
+                    int gg = Math.min(Math.max(((color >>> 16) & 0xFF) + adj, 0), 255);
+                    int bb = Math.min(Math.max(((color >>> 8)  & 0xFF) + adj, 0), 255);
+                    int rgb555 = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[rgb555] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
 
 //                    int adj = (int)((px + y & 1) << 3);
 // ^ (RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] & 255) >>> 4
