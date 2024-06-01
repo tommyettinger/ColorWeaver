@@ -2538,7 +2538,7 @@ public class PaletteReducer {
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    float pos = (y * 0.06711056f + px * 0.00583715f);
+                    float pos = (y * 6.711056f + px * 0.583715f);
                     pos -= (int) pos;
                     pos *= 52.9829189f;
                     pos -= (int) pos;
