@@ -788,7 +788,36 @@ public class PaletteReducer {
      */
     public static final ColorMetric oklabSmoothMetric = oklabCarefulMetric;
 
-    public static double[] fillOklab(double[] toFill, double r, double g, double b){
+    /**
+     * Returns true if the given Oklab values are valid to convert losslessly back to RGBA.
+     * @param L lightness channel, as a double from 0 to 1
+     * @param A green-to-red chromatic channel, as a double from 0 to 1
+     * @param B blue-to-yellow chromatic channel, as a double from 0 to 1
+     * @return true if the given Oklab channels can be converted back and forth to RGBA
+     */
+    public static boolean inGamut(double L, double A, double B)
+    {
+        L = reverseLight(L);
+
+        double l = (L + +0.3963377774 * A + +0.2158037573 * B);
+        l *= l * l;
+        double m = (L + -0.1055613458 * A + -0.0638541728 * B);
+        m *= m * m;
+        double s = (L + -0.0894841775 * A + -1.2914855480 * B);
+        s *= s * s;
+
+        double dr = Math.sqrt(+4.0767245293 * l - 3.3072168827 * m + 0.2307590544 * s)*255.0;
+        final int r = (int)dr;
+        if(Double.isNaN(dr) || r < 0 || r > 255) return false;
+        double dg = Math.sqrt(-1.2681437731 * l + 2.6093323231 * m - 0.3411344290 * s)*255.0;
+        final int g = (int)dg;
+        if(Double.isNaN(dg) || g < 0 || g > 255) return false;
+        double db = Math.sqrt(-0.0041119885 * l - 0.7034763098 * m + 1.7068625689 * s)*255.0;
+        final int b = (int)db;
+        return (!Double.isNaN(db) && b >= 0 && b <= 255);
+    }
+
+    public static boolean fillOklab(double[] toFill, double r, double g, double b){
         r *= r;
         g *= g;
         b *= b;
@@ -801,7 +830,7 @@ public class PaletteReducer {
         toFill[1] = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
         toFill[2] = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
 
-        return toFill;
+        return inGamut(toFill[0], toFill[1], toFill[2]);
     }
 
     public static int oklabToRGB(double L, double A, double B)
@@ -2542,10 +2571,6 @@ public class PaletteReducer {
                     pos -= (int) pos;
                     pos *= 52.9829189f;
                     pos -= (int) pos;
-//                    int adj = (int)(((px + y & 1) - (px & y & 1) - pos * 0.5f)
-//                                    * (strength + (((px + y ^ px + y >>> 1) & 3))));
-//                    int adj = (int)(((px + y & 1) + (px & y & 1) - (px * 0xC13FA9A902A6328FL - y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1.8p-23)
-//                                    * (strength + (((px + y ^ px + y >>> 1) & 3))));
                     int adj = (int)(((px & y & 1) - (px + y << 1 & 2) - (px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1p-23 + pos)
                                     * (strength + (((px + y ^ px + y >>> 1) & 3))));
                     int rr = Math.min(Math.max(((color >>> 24)       ) + adj, 0), 255);
@@ -2559,6 +2584,10 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+//                    int adj = (int)(((px + y & 1) - (px & y & 1) - pos * 0.5f)
+//                                    * (strength + (((px + y ^ px + y >>> 1) & 3))));
+//                    int adj = (int)(((px + y & 1) + (px & y & 1) - (px * 0xC13FA9A902A6328FL - y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1.8p-23)
+//                                    * (strength + (((px + y ^ px + y >>> 1) & 3))));
 
 
 //                    int adj = (int)((px + y & 1) << 3);

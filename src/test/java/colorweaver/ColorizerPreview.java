@@ -270,6 +270,70 @@ public class ColorizerPreview extends ApplicationAdapter {
 		return this.palette;
 	}
 
+	public int[] lloydCentralOklab(int[] palette) {
+		PaletteReducer pr = new PaletteReducer(palette, HexGenerator.METRIC);
+		double[][] centroids = new double[4][palette.length];
+		byte[] pm = pr.paletteMapping;
+		int index;
+		double count;
+		double[][] oklabPalette = new double[palette.length][3];
+		for (int i = 1; i < palette.length; i++) {
+			PaletteReducer.fillOklab(oklabPalette[i], (palette[i] >>> 24)/255.0, (palette[i] >>> 16 & 255)/255.0, (palette[i] >>> 8 & 255)/255.0);
+		}
+		double[] ok = new double[3];
+		for (int i = 0; i < 0x8000; i++) {
+			index = pm[i] & 0xFF;
+			PaletteReducer.fillOklab(ok,
+					(i >>> 10) / 31.0,
+					(i >>> 5 & 0x1F) / 31.0,
+					(i & 0x1F) / 31.0);
+			centroids[0][index] += ok[0];
+			centroids[1][index] += ok[1];
+			centroids[2][index] += ok[2];
+			centroids[3][index]++;
+		}
+		state = Arrays.hashCode(palette);
+		mixingPalette.clear();
+		mixingPalette.addAll(palette, 0, 1);
+		for (int i = 1; i < palette.length; i++) {
+//			if (palette[i] == 0)
+//			{
+//				mixingPalette.add(0, 0);
+//				continue;
+//			}
+			count = centroids[3][i];
+//			count2 = count * 0.9375f;
+
+//			mix = MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10
+//					| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5
+//					| MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
+//			mixingPalette.add(CIELABConverter.puff(mix));
+//			double l = PaletteReducer.lab15[0][mix],
+//					a = PaletteReducer.lab15[1][mix] * 0.8,
+//					b = PaletteReducer.lab15[2][mix] * 0.8;
+
+
+//			mixingPalette.add(CIELABConverter.rgba8888(centroids[0][i] / count,
+//					centroids[1][i] / count,
+//					centroids[2][i] / count));
+			if(count == 0 || oklabPalette[i][1] * oklabPalette[i][1] + oklabPalette[i][2] * oklabPalette[i][2] < 0x1p-13)
+				mixingPalette.add(palette[i]);
+			else
+				mixingPalette.add(PaletteReducer.oklabToRGB(centroids[0][i] / count,
+					centroids[1][i] / count,
+					centroids[2][i] / count));
+		}
+		mixPalette(0, false);
+		/*
+		Collections.sort(mixingPalette, hueComparator);
+		palette = new int[mixingPalette.size()];
+		for (int i = 0; i < palette.length; i++) {
+			palette[i] = mixingPalette.get(i);
+		}
+		 */
+		return this.palette;
+	}
+
 	private int[] emphasize (int[] palette) {
 		int rd = 1, gd = 1, bd = 1;
 		for (int i = 0; i < palette.length; i++) {
@@ -530,7 +594,43 @@ public class ColorizerPreview extends ApplicationAdapter {
 		mona.draw(monaWIP, 0, 0);
 	}
 	public void create () {
-		palette = Coloring.AURORA;
+		palette =
+//				Coloring.AURORA;
+				new int[]{
+						0x00000000, 0x000000FF, 0xFFFFFFFF, 0x888888FF, 0x444444FF, 0xCCCCCCFF, 0x222222FF, 0xAAAAAAFF,
+						0x666666FF, 0xEEEEEEFF, 0x111111FF, 0x999999FF, 0x555555FF, 0xDDDDDDFF, 0x333333FF, 0xBBBBBBFF,
+						0x777777FF, 0xFE31AEFF, 0xD3E358FF, 0xA6917AFF, 0x723D77FF, 0x51D1CFFF, 0x4477CBFF, 0xF7B362FF,
+						0xBD6078FF, 0x4D9D3BFF, 0xFB44FDFF, 0xB5F9BFFF, 0x2C4B47FF, 0x94A3CBFF, 0x6D46C0FF, 0xC71573FF,
+						0x797240FF, 0xE4C9C0FF, 0x42233EFF, 0xB471C5FF, 0xC8940AFF, 0x8B4540FF, 0xC630BDFF, 0x86D981FF,
+						0x66858FFF, 0x402C7EFF, 0xDB6127FF, 0xE1FD5BFF, 0xB6AB84FF, 0x12060AFF, 0x855788FF, 0x57ECDBFF,
+						0xE30731FF, 0x4B93DDFF, 0x3E2AC6FF, 0xD17A84FF, 0x91187EFF, 0x57B741FF, 0x386555FF, 0xA0BDD9FF,
+						0x16103DFF, 0x7C62D3FF, 0xE03D80FF, 0x898C48FF, 0xF3E3CAFF, 0x563C4FFF, 0xC68CD4FF, 0x9221C7FF,
+						0xDAAD03FF, 0xA05E4BFF, 0xDC51CDFF, 0x90F389FF, 0x719F9CFF, 0x4F4892FF, 0xF17B2BFF, 0xAA2249FF,
+						0xC5C58DFF, 0x281E1AFF, 0x967197FF, 0xFD3A37FF, 0x52AEEDFF, 0x464CDDFF, 0x704009FF, 0xE4948EFF,
+						0xA83B90FF, 0x5FD146FF, 0x437F62FF, 0xACD8E5FF, 0x232B54FF, 0x8A7EE5FF, 0xF85A8DFF, 0x97A550FF,
+						0x68555DFF, 0xD6A6E2FF, 0xA546DBFF, 0x193097FF, 0xB47754FF, 0x742255FF, 0xF06EDDFF, 0x075C2AFF,
+						0x7DB9A8FF, 0x5C63A5FF, 0xC34154FF, 0xD3DF95FF, 0x0A27E3FF, 0x3B3628FF, 0xA78BA5FF, 0x742F99FF,
+						0x58C9FCFF, 0x4E6AF2FF, 0x855811FF, 0xF7AE98FF, 0x400120FF, 0xBE579FFF, 0x67EC4AFF, 0x4D996DFF,
+						0xB6F3F1FF, 0x2F4568FF, 0x9799F6FF, 0x732FE5FF, 0x8E241CFF, 0xA5BF56FF, 0x796E6BFF, 0xE6C1EFFF,
+						0x44175AFF, 0xB764EEFF, 0x1A4EAEFF, 0xC7915CFF, 0x8B3E65FF, 0x147633FF, 0x87D4B3FF, 0x697DB6FF,
+						0x46139EFF, 0xDA5C5EFF, 0xE0F99CFF, 0x4C4E34FF, 0xB6A5B2FF, 0x874CADFF, 0x987216FF, 0x59232FFF,
+						0xD272AEFF, 0x56B377FF, 0x3B5F79FF, 0x8251FAFF, 0xA64023FF, 0xE12CA7FF, 0xB2D95BFF, 0x888777FF,
+						0xF4DBFBFF, 0x58336EFF, 0xC880FFFF, 0x1C6AC3FF, 0xD9AA63FF, 0xA05873FF, 0x1D903CFF, 0xDE3CF6FF,
+						0x90EEBDFF, 0x7498C6FF, 0x5439B5FF, 0xF07767FF, 0xAA106CFF, 0x5C683EFF, 0xC5BFBDFF, 0x291834FF,
+						0x9867BEFF, 0xFD3168FF, 0xAA8B19FF, 0x703C3CFF, 0xE58CBBFF, 0xAA27B4FF, 0x5FCE80FF, 0x457989FF,
+						0x2A1E71FF, 0xBD5A2AFF, 0xF84FB6FF, 0xBFF45FFF, 0x97A182FF, 0x6A4D80FF, 0xC50A30FF, 0x1D85D5FF,
+						0xE9C46AFF, 0x2A10B9FF, 0xB47280FF, 0x760D75FF, 0x24AB43FF, 0x0C584FFF, 0x7FB2D4FF, 0x6256CAFF,
+						0xC3387BFF, 0x6B8147FF, 0xD3D9C8FF, 0x3C3146FF, 0xA982CEFF, 0x780EBCFF, 0xBBA41BFF, 0x845547FF,
+						0xF7A7C7FF, 0xBF49C6FF, 0x67E889FF, 0x4F9397FF, 0x353B88FF, 0xD3742FFF, 0x8D1D44FF, 0xA5BB8BFF,
+						0x7A6791FF, 0xDF3738FF, 0x1DA1E6FF, 0xF9DE6FFF, 0x2C3CD2FF, 0x55360CFF, 0xC78B8BFF, 0x8C3388FF,
+						0x2AC549FF, 0x16725DFF, 0x89CDE2FF, 0x081D48FF, 0x6E72DDFF, 0xDA5589FF, 0x789B50FF, 0xE0F4D2FF,
+						0x4D4A57FF, 0xB89DDDFF, 0x8B3AD2FF, 0xCBBE1BFF, 0x976E52FF, 0x5A1A4DFF, 0xD366D7FF, 0x58AEA4FF,
+						0x40569CFF, 0xE78E34FF, 0xA63B50FF, 0xB2D594FF, 0x222A22FF, 0x8A81A0FF, 0x5B238FFF, 0xF7553FFF,
+						0x1CBCF6FF, 0x2E5BE8FF, 0x694F14FF, 0xD8A596FF, 0xA14F99FF, 0x2FE04EFF, 0x1E8D69FF, 0x93E8EEFF,
+						0x0E385EFF, 0x798EEFFF, 0x5C1AD9FF, 0x711E1AFF, 0xF07095FF, 0x85B557FF, 0x5C6365FF, 0xC7B7EBFF,
+						0x2C054DFF, 0x9C59E5FF, 0xFC2091FF, 0xDAD818FF, 0xA9885BFF, 0x70365EFF, 0xE682E6FF, 0x60C8B0FF,
+				};
+
 //				new int[]{
 //						0x00000000, 0x000000FF, 0x121212FF, 0x222222FF, 0x313131FF, 0x3F3F3FFF, 0x4E4E4EFF, 0x5D5D5DFF,
 //						0x6C6C6CFF, 0x7C7C7CFF, 0x8C8C8CFF, 0x9C9C9CFF, 0xADADACFF, 0xBEBEBDFF, 0xCFCFCFFF, 0xE1E1E1FF,
