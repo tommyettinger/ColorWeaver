@@ -91,9 +91,9 @@ public class PreloadCodeGenerator extends ApplicationAdapter {
 //                0xE4338AFF, 0xB00070FF, 0x730052FF, 0xD74B8EFF, 0x922D61FF, 0x631244FF, 0xCB97ABFF, 0xBD638AFF,
 //        };
 
-        PaletteReducer reducer = new PaletteReducer(Coloring.AURORA, PaletteReducer.oklabCarefulMetric);
-        generatePreloadCode(reducer.paletteMapping, "AuroraOklabPreload.txt");
-        Gdx.files.local("AuroraOklabPreload.dat").writeBytes(reducer.paletteMapping, false);
+        PaletteReducer reducer = new PaletteReducer(Coloring.SNUGGLY255, PaletteReducer.oklabCarefulMetric);
+        generatePreloadCode(reducer.paletteMapping, "SnugglyOklabPreload.txt");
+        Gdx.files.local("SnugglyOklabPreload.dat").writeBytes(reducer.paletteMapping, false);
         Gdx.app.exit();
     }
     /**
