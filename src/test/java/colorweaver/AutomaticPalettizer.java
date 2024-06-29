@@ -136,7 +136,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/fruitpunch-24.hex"),
 //                Gdx.files.local("palettes/hex/fractals-die-die-die-32.hex"),
 //        }) {
-
         for(FileHandle hex : new FileHandle[]{
                 Gdx.files.local("palettes/hex/bw-2.hex"),
                 Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
@@ -154,6 +153,37 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                 Gdx.files.local("palettes/hex/ayy-4.hex"),
                 Gdx.files.local("palettes/hex/gray-15.hex"),
                 Gdx.files.local("palettes/hex/vinik-24.hex"),
+//        }) {
+//
+//        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/uncured-official-112.hex"),
+                Gdx.files.local("palettes/hex/sendhelp-50.hex"),
+                Gdx.files.local("palettes/hex/cormorant-14.hex"),
+                Gdx.files.local("palettes/hex/sanguepear-24.hex"),
+                Gdx.files.local("palettes/hex/sage-57.hex"),
+                Gdx.files.local("palettes/hex/nanner2022-29.hex"),
+                Gdx.files.local("palettes/hex/nostalgic-dreams-8.hex"),
+                Gdx.files.local("palettes/hex/the-crow-67.hex"),
+                Gdx.files.local("palettes/hex/jehkoba-32.hex"),
+                Gdx.files.local("palettes/hex/aren-32.hex"),
+                Gdx.files.local("palettes/hex/archimedes-64.hex"),
+                Gdx.files.local("palettes/hex/minty-steel-4.hex"),
+                Gdx.files.local("palettes/hex/rgr-proto-16.hex"),
+                Gdx.files.local("palettes/hex/nostalgic-memories-12.hex"),
+                Gdx.files.local("palettes/hex/kiwami-v1-64.hex"),
+                Gdx.files.local("palettes/hex/rgr-papercut-4.hex"),
+                Gdx.files.local("palettes/hex/eris-18.hex"),
+                Gdx.files.local("palettes/hex/woodspark-16.hex"),
+                Gdx.files.local("palettes/hex/absolutley-18.hex"),
+                Gdx.files.local("palettes/hex/viewline-64.hex"),
+                Gdx.files.local("palettes/hex/greyteen-18.hex"),
+                Gdx.files.local("palettes/hex/asympix-18.hex"),
+                Gdx.files.local("palettes/hex/glomzy-6.hex"),
+                Gdx.files.local("palettes/hex/miyazaki-16.hex"),
+                Gdx.files.local("palettes/hex/atropoeia-48.hex"),
+                Gdx.files.local("palettes/hex/ludpiratepalette-128.hex"),
+                Gdx.files.local("palettes/hex/pixel-lands-38.hex"),
+                Gdx.files.local("palettes/hex/paulette-56.hex"),
         }) {
 
 //        for(FileHandle hex : new FileHandle[]{
@@ -327,14 +357,14 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 
         // main block
 
-//////////very good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceIGN(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////good enough
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceSierraLite(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////very good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceIGN(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_IGN" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////good enough
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceSierraLite(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////rather good
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceFloydSteinberg(pm);
@@ -359,22 +389,22 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBluish(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Neuter" + suffix + ".png"), pm, PALETTE, false, 0);
-////////very good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceScatter(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////very good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceScatter(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////YAY YIPPEE WOO NO BANDING
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceNeue(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
-////////////incredible
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceKnoll(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////??? error diffusion with IGN
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceIgneous(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Igneous2" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////////incredible
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceKnoll(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////??? error diffusion with IGN
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceIgneous(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Igneous2" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////very good, error-diffusion, per-channel color
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceWeave(pm);
@@ -387,34 +417,34 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceDodgy(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_Dodgy4" + suffix + ".png"), pm, PALETTE, false, 0);
+////////retro, doesn't have to be classically good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceLoaf(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
 //////retro, doesn't have to be classically good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceLoaf(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
-////retro, doesn't have to be classically good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceLoaf2(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Loaf2" + suffix + ".png"), pm, PALETTE, false, 0);
-////retro, doesn't have to be classically good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceLoaf3(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Loaf3" + suffix + ".png"), pm, PALETTE, false, 0);
-////retro, doesn't have to be classically good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceLeaf(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Leaf" + suffix + ".png"), pm, PALETTE, false, 0);
-//////stylistic, not a traditional dither
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceSchmidt(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceLoaf2(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Loaf2" + suffix + ".png"), pm, PALETTE, false, 0);
+//////retro, doesn't have to be classically good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceLoaf3(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Loaf3" + suffix + ".png"), pm, PALETTE, false, 0);
+//////retro, doesn't have to be classically good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceLeaf(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Leaf" + suffix + ".png"), pm, PALETTE, false, 0);
+////////stylistic, not a traditional dither
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceSchmidt(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
 //////yay!
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceOverboard2(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_Overboard3" + suffix + ".png"), pm, PALETTE, false, 0);
-//////I'm in love
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceWean(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Wean" + suffix + ".png"), pm, PALETTE, false, 0);
+////////I'm in love
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceWean(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Wean" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////more love!
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBlubber(pm);
