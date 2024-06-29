@@ -119,72 +119,63 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         png8.setCompression(2);
         png8.setFlipY(false);
         PaletteReducer reducer = new PaletteReducer();
-//        int i = 0;
+
+        // do everything
 //        for(FileHandle hex : hexes) {
 
+        // just do the one in HexGenerator
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
+        // the default
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/bw-2.hex"),
-//                Gdx.files.local("palettes/hex/gray-16.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+//                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+//                Gdx.files.local("palettes/hex/gb-4.hex"),
+//                Gdx.files.local("palettes/hex/septembit23-6.hex"),
+//                Gdx.files.local("palettes/hex/hyper-8.hex"),
+//                Gdx.files.local("palettes/hex/gb-16.hex"),
+//                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+//                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+//                Gdx.files.local("palettes/hex/americana-4.hex"),
+//                Gdx.files.local("palettes/hex/prospecal-8.hex"),
+//                Gdx.files.local("palettes/hex/ayy-4.hex"),
 //                Gdx.files.local("palettes/hex/gray-15.hex"),
-//                Gdx.files.local("palettes/hex/grayfull-256.hex"),
+//                Gdx.files.local("palettes/hex/vinik-24.hex"),
+////        }) {
+////
+////        for(FileHandle hex : new FileHandle[]{
+//                Gdx.files.local("palettes/hex/uncured-official-112.hex"),
+//                Gdx.files.local("palettes/hex/sendhelp-50.hex"),
+//                Gdx.files.local("palettes/hex/cormorant-14.hex"),
+//                Gdx.files.local("palettes/hex/sanguepear-24.hex"),
+//                Gdx.files.local("palettes/hex/sage-57.hex"),
+//                Gdx.files.local("palettes/hex/nanner2022-29.hex"),
+//                Gdx.files.local("palettes/hex/nostalgic-dreams-8.hex"),
+//                Gdx.files.local("palettes/hex/the-crow-67.hex"),
+//                Gdx.files.local("palettes/hex/jehkoba-32.hex"),
+//                Gdx.files.local("palettes/hex/aren-32.hex"),
+//                Gdx.files.local("palettes/hex/archimedes-64.hex"),
+//                Gdx.files.local("palettes/hex/minty-steel-4.hex"),
+//                Gdx.files.local("palettes/hex/rgr-proto-16.hex"),
+//                Gdx.files.local("palettes/hex/nostalgic-memories-12.hex"),
+//                Gdx.files.local("palettes/hex/kiwami-v1-64.hex"),
+//                Gdx.files.local("palettes/hex/rgr-papercut-4.hex"),
+//                Gdx.files.local("palettes/hex/eris-18.hex"),
+//                Gdx.files.local("palettes/hex/woodspark-16.hex"),
+//                Gdx.files.local("palettes/hex/absolutley-18.hex"),
+//                Gdx.files.local("palettes/hex/viewline-64.hex"),
+//                Gdx.files.local("palettes/hex/greyteen-18.hex"),
+//                Gdx.files.local("palettes/hex/asympix-18.hex"),
+//                Gdx.files.local("palettes/hex/glomzy-6.hex"),
+//                Gdx.files.local("palettes/hex/miyazaki-16.hex"),
+//                Gdx.files.local("palettes/hex/atropoeia-48.hex"),
+//                Gdx.files.local("palettes/hex/ludpiratepalette-128.hex"),
+//                Gdx.files.local("palettes/hex/pixel-lands-38.hex"),
+//                Gdx.files.local("palettes/hex/paulette-56.hex"),
 //        }) {
-
-//        for(FileHandle hex : new FileHandle[]{
-//                Gdx.files.local("palettes/hex/retrobubble-16.hex"),
-//                Gdx.files.local("palettes/hex/fruitpunch-24.hex"),
-//                Gdx.files.local("palettes/hex/fractals-die-die-die-32.hex"),
-//        }) {
-        for(FileHandle hex : new FileHandle[]{
-                Gdx.files.local("palettes/hex/bw-2.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
-                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
-                Gdx.files.local("palettes/hex/gb-4.hex"),
-                Gdx.files.local("palettes/hex/septembit23-6.hex"),
-                Gdx.files.local("palettes/hex/hyper-8.hex"),
-                Gdx.files.local("palettes/hex/gb-16.hex"),
-                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
-                Gdx.files.local("palettes/hex/azurestar-32.hex"),
-                Gdx.files.local("palettes/hex/americana-4.hex"),
-                Gdx.files.local("palettes/hex/prospecal-8.hex"),
-                Gdx.files.local("palettes/hex/ayy-4.hex"),
-                Gdx.files.local("palettes/hex/gray-15.hex"),
-                Gdx.files.local("palettes/hex/vinik-24.hex"),
-//        }) {
-//
-//        for(FileHandle hex : new FileHandle[]{
-                Gdx.files.local("palettes/hex/uncured-official-112.hex"),
-                Gdx.files.local("palettes/hex/sendhelp-50.hex"),
-                Gdx.files.local("palettes/hex/cormorant-14.hex"),
-                Gdx.files.local("palettes/hex/sanguepear-24.hex"),
-                Gdx.files.local("palettes/hex/sage-57.hex"),
-                Gdx.files.local("palettes/hex/nanner2022-29.hex"),
-                Gdx.files.local("palettes/hex/nostalgic-dreams-8.hex"),
-                Gdx.files.local("palettes/hex/the-crow-67.hex"),
-                Gdx.files.local("palettes/hex/jehkoba-32.hex"),
-                Gdx.files.local("palettes/hex/aren-32.hex"),
-                Gdx.files.local("palettes/hex/archimedes-64.hex"),
-                Gdx.files.local("palettes/hex/minty-steel-4.hex"),
-                Gdx.files.local("palettes/hex/rgr-proto-16.hex"),
-                Gdx.files.local("palettes/hex/nostalgic-memories-12.hex"),
-                Gdx.files.local("palettes/hex/kiwami-v1-64.hex"),
-                Gdx.files.local("palettes/hex/rgr-papercut-4.hex"),
-                Gdx.files.local("palettes/hex/eris-18.hex"),
-                Gdx.files.local("palettes/hex/woodspark-16.hex"),
-                Gdx.files.local("palettes/hex/absolutley-18.hex"),
-                Gdx.files.local("palettes/hex/viewline-64.hex"),
-                Gdx.files.local("palettes/hex/greyteen-18.hex"),
-                Gdx.files.local("palettes/hex/asympix-18.hex"),
-                Gdx.files.local("palettes/hex/glomzy-6.hex"),
-                Gdx.files.local("palettes/hex/miyazaki-16.hex"),
-                Gdx.files.local("palettes/hex/atropoeia-48.hex"),
-                Gdx.files.local("palettes/hex/ludpiratepalette-128.hex"),
-                Gdx.files.local("palettes/hex/pixel-lands-38.hex"),
-                Gdx.files.local("palettes/hex/paulette-56.hex"),
-        }) {
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/septembit23-6.hex"),
@@ -214,6 +205,20 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        FileHandle hex = Gdx.files.local("palettes/hex/tater-255.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/yam2-255.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/dbpaip-18.hex");{
+
+//        for(FileHandle hex : new FileHandle[]{
+//                Gdx.files.local("palettes/hex/bw-2.hex"),
+//                Gdx.files.local("palettes/hex/gray-16.hex"),
+//                Gdx.files.local("palettes/hex/gray-15.hex"),
+//                Gdx.files.local("palettes/hex/grayfull-256.hex"),
+//        }) {
+
+        for(FileHandle hex : new FileHandle[]{
+//                Gdx.files.local("palettes/hex/snuggly-15.hex"),
+                Gdx.files.local("palettes/hex/snuggly-31.hex"),
+                Gdx.files.local("palettes/hex/snuggly-63.hex"),
+                Gdx.files.local("palettes/hex/snuggly-255.hex"),
+        }) {
 
 //            if(i++ > 12) break;
 
