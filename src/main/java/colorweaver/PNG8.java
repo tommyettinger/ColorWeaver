@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.Deflater;
@@ -360,7 +361,7 @@ public class PNG8 implements Disposable {
         int hasTransparent = 0;
         final int w = pixmap.getWidth(), h = pixmap.getHeight();
         int[] paletteArray;
-        if(exactPalette == null) {
+        if (exactPalette == null) {
             for (int y = 0; y < h; y++) {
                 int py = flipY ? (h - y - 1) : y;
                 for (int px = 0; px < w; px++) {
@@ -387,9 +388,7 @@ public class PNG8 implements Disposable {
             for (IntIntMap.Entry ent : colorToIndex) {
                 paletteArray[ent.value] = ent.key;
             }
-        }
-        else
-        {
+        } else {
             hasTransparent = (exactPalette[0] == 0) ? 1 : 0;
             paletteArray = exactPalette;
             for (int i = hasTransparent; i < paletteArray.length; i++) {
@@ -398,6 +397,7 @@ public class PNG8 implements Disposable {
         }
         DeflaterOutputStream deflaterOutput = new DeflaterOutputStream(buffer, deflater);
         DataOutputStream dataOutput = new DataOutputStream(output);
+
         dataOutput.write(SIGNATURE);
 
         buffer.writeInt(IHDR);
@@ -413,13 +413,13 @@ public class PNG8 implements Disposable {
         buffer.writeInt(PLTE);
         for (int i = 0; i < paletteArray.length; i++) {
             int p = paletteArray[i];
-            buffer.write(p>>>24);
-            buffer.write(p>>>16);
-            buffer.write(p>>>8);
+            buffer.write(p >>> 24);
+            buffer.write(p >>> 16);
+            buffer.write(p >>> 8);
         }
         buffer.endChunk(dataOutput);
 
-        if(hasTransparent == 1) {
+        if (hasTransparent == 1) {
             buffer.writeInt(TRNS);
             buffer.write(0);
             buffer.endChunk(dataOutput);
@@ -428,22 +428,13 @@ public class PNG8 implements Disposable {
         deflater.reset();
 
         int lineLen = pixmap.getWidth();
-        byte[] lineOut, curLine, prevLine;
-        if (lineOutBytes == null) {
-            lineOut = (lineOutBytes = new ByteArray(lineLen)).items;
+//            byte[] lineOut, curLine, prevLine;
+        byte[] curLine;
+        if (curLineBytes == null) {
             curLine = (curLineBytes = new ByteArray(lineLen)).items;
-            prevLine = (prevLineBytes = new ByteArray(lineLen)).items;
         } else {
-            lineOut = lineOutBytes.ensureCapacity(lineLen);
             curLine = curLineBytes.ensureCapacity(lineLen);
-            prevLine = prevLineBytes.ensureCapacity(lineLen);
-            for (int i = 0, n = lastLineLen; i < n; i++)
-            {
-                prevLine[i] = 0;
-            }
         }
-
-        lastLineLen = lineLen;
 
         for (int y = 0; y < h; y++) {
             int py = flipY ? (h - y - 1) : y;
@@ -452,33 +443,32 @@ public class PNG8 implements Disposable {
                 curLine[px] = (byte) colorToIndex.get(color, 0);
             }
 
-            lineOut[0] = (byte)(curLine[0] - prevLine[0]);
+//                lineOut[0] = (byte) (curLine[0] - prevLine[0]);
+//
+//                //Paeth
+//                for (int x = 1; x < lineLen; x++) {
+//                    int a = curLine[x - 1] & 0xff;
+//                    int b = prevLine[x] & 0xff;
+//                    int c = prevLine[x - 1] & 0xff;
+//                    int p = a + b - c;
+//                    int pa = p - a;
+//                    if (pa < 0) pa = -pa;
+//                    int pb = p - b;
+//                    if (pb < 0) pb = -pb;
+//                    int pc = p - c;
+//                    if (pc < 0) pc = -pc;
+//                    if (pa <= pb && pa <= pc)
+//                        c = a;
+//                    else if (pb <= pc)
+//                        c = b;
+//                    lineOut[x] = (byte) (curLine[x] - c);
+//                }
+//
+//                deflaterOutput.write(PAETH);
+//                deflaterOutput.write(lineOut, 0, lineLen);
 
-            //Paeth
-            for (int x = 1; x < lineLen; x++) {
-                int a = curLine[x - 1] & 0xff;
-                int b = prevLine[x] & 0xff;
-                int c = prevLine[x - 1] & 0xff;
-                int p = a + b - c;
-                int pa = p - a;
-                if (pa < 0) pa = -pa;
-                int pb = p - b;
-                if (pb < 0) pb = -pb;
-                int pc = p - c;
-                if (pc < 0) pc = -pc;
-                if (pa <= pb && pa <= pc)
-                    c = a;
-                else if (pb <= pc)
-                    c = b;
-                lineOut[x] = (byte)(curLine[x] - c);
-            }
-
-            deflaterOutput.write(PAETH);
-            deflaterOutput.write(lineOut, 0, lineLen);
-
-            byte[] temp = curLine;
-            curLine = prevLine;
-            prevLine = temp;
+            deflaterOutput.write(FILTER_NONE);
+            deflaterOutput.write(curLine, 0, lineLen);
         }
         deflaterOutput.finish();
         buffer.endChunk(dataOutput);
@@ -487,7 +477,6 @@ public class PNG8 implements Disposable {
         buffer.endChunk(dataOutput);
 
         output.flush();
-
     }
     /**
      * Attempts to write the given Pixmap exactly as a PNG-8 image to file; this attempt will only succeed if there
@@ -592,23 +581,14 @@ public class PNG8 implements Disposable {
         buffer.writeInt(IDAT);
         deflater.reset();
 
-        int lineLen = width;
-        byte[] lineOut, curLine, prevLine;
+        byte[] curLine;
         if (lineOutBytes == null) {
-            lineOut = (lineOutBytes = new ByteArray(lineLen)).items;
-            curLine = (curLineBytes = new ByteArray(lineLen)).items;
-            prevLine = (prevLineBytes = new ByteArray(lineLen)).items;
+            curLine = (curLineBytes = new ByteArray(width)).items;
         } else {
-            lineOut = lineOutBytes.ensureCapacity(lineLen);
-            curLine = curLineBytes.ensureCapacity(lineLen);
-            prevLine = prevLineBytes.ensureCapacity(lineLen);
-            for (int i = 0, n = lastLineLen; i < n; i++)
-            {
-                prevLine[i] = 0;
-            }
+            curLine = curLineBytes.ensureCapacity(width);
         }
 
-        lastLineLen = lineLen;
+        lastLineLen = width;
 
         for (int y = startY; y < h; y++) {
             int py = flipY ? (pixmap.getHeight() - y - 1) : y;
@@ -617,33 +597,32 @@ public class PNG8 implements Disposable {
                 curLine[px - startX] = (byte) colorToIndex.get(color, 0);
             }
 
-            lineOut[0] = (byte)(curLine[0] - prevLine[0]);
+//                lineOut[0] = (byte) (curLine[0] - prevLine[0]);
+//
+//                //Paeth
+//                for (int x = 1; x < lineLen; x++) {
+//                    int a = curLine[x - 1] & 0xff;
+//                    int b = prevLine[x] & 0xff;
+//                    int c = prevLine[x - 1] & 0xff;
+//                    int p = a + b - c;
+//                    int pa = p - a;
+//                    if (pa < 0) pa = -pa;
+//                    int pb = p - b;
+//                    if (pb < 0) pb = -pb;
+//                    int pc = p - c;
+//                    if (pc < 0) pc = -pc;
+//                    if (pa <= pb && pa <= pc)
+//                        c = a;
+//                    else if (pb <= pc)
+//                        c = b;
+//                    lineOut[x] = (byte) (curLine[x] - c);
+//                }
+//
+//                deflaterOutput.write(PAETH);
+//                deflaterOutput.write(lineOut, 0, lineLen);
 
-            //Paeth
-            for (int x = 1; x < lineLen; x++) {
-                int a = curLine[x - 1] & 0xff;
-                int b = prevLine[x] & 0xff;
-                int c = prevLine[x - 1] & 0xff;
-                int p = a + b - c;
-                int pa = p - a;
-                if (pa < 0) pa = -pa;
-                int pb = p - b;
-                if (pb < 0) pb = -pb;
-                int pc = p - c;
-                if (pc < 0) pc = -pc;
-                if (pa <= pb && pa <= pc)
-                    c = a;
-                else if (pb <= pc)
-                    c = b;
-                lineOut[x] = (byte)(curLine[x] - c);
-            }
-
-            deflaterOutput.write(PAETH);
-            deflaterOutput.write(lineOut, 0, lineLen);
-
-            byte[] temp = curLine;
-            curLine = prevLine;
-            prevLine = temp;
+            deflaterOutput.write(FILTER_NONE);
+            deflaterOutput.write(curLine, 0, width);
         }
         deflaterOutput.finish();
         buffer.endChunk(dataOutput);
@@ -655,7 +634,7 @@ public class PNG8 implements Disposable {
 
     }
 
-    private void writeSolid (OutputStream output, Pixmap pixmap) throws IOException{
+    public void writeSolid (OutputStream output, Pixmap pixmap) throws IOException {
         final int[] paletteArray = palette.paletteArray;
         final byte[] paletteMapping = palette.paletteMapping;
 
@@ -676,14 +655,14 @@ public class PNG8 implements Disposable {
         buffer.writeInt(PLTE);
         for (int i = 0; i < paletteArray.length; i++) {
             int p = paletteArray[i];
-            buffer.write(p>>>24);
-            buffer.write(p>>>16);
-            buffer.write(p>>>8);
+            buffer.write(p >>> 24);
+            buffer.write(p >>> 16);
+            buffer.write(p >>> 8);
         }
         buffer.endChunk(dataOutput);
 
         boolean hasTransparent = false;
-        if(paletteArray[0] == 0) {
+        if (paletteArray[0] == 0) {
             hasTransparent = true;
             buffer.writeInt(TRNS);
             buffer.write(0);
@@ -693,22 +672,13 @@ public class PNG8 implements Disposable {
         deflater.reset();
 
         int lineLen = pixmap.getWidth();
-        byte[] lineOut, curLine, prevLine;
-        if (lineOutBytes == null) {
-            lineOut = (lineOutBytes = new ByteArray(lineLen)).items;
+//        byte[] lineOut, curLine, prevLine;
+        byte[] curLine;
+        if (curLineBytes == null) {
             curLine = (curLineBytes = new ByteArray(lineLen)).items;
-            prevLine = (prevLineBytes = new ByteArray(lineLen)).items;
         } else {
-            lineOut = lineOutBytes.ensureCapacity(lineLen);
             curLine = curLineBytes.ensureCapacity(lineLen);
-            prevLine = prevLineBytes.ensureCapacity(lineLen);
-            for (int i = 0, n = lastLineLen; i < n; i++)
-            {
-                prevLine[i] = 0;
-            }
         }
-
-        lastLineLen = lineLen;
 
         int color;
         final int w = pixmap.getWidth(), h = pixmap.getHeight();
@@ -719,42 +689,41 @@ public class PNG8 implements Disposable {
                 if ((color & 0x80) == 0 && hasTransparent)
                     curLine[px] = 0;
                 else {
-                    int rr = ((color >>> 24)       );
+                    int rr = ((color >>> 24));
                     int gg = ((color >>> 16) & 0xFF);
-                    int bb = ((color >>> 8)  & 0xFF);
+                    int bb = ((color >>> 8) & 0xFF);
                     curLine[px] = paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))];
                 }
             }
 
-            lineOut[0] = (byte)(curLine[0] - prevLine[0]);
+//            lineOut[0] = (byte)(curLine[0] - prevLine[0]);
+//
+//            //Paeth
+//            for (int x = 1; x < lineLen; x++) {
+//                int a = curLine[x - 1] & 0xff;
+//                int b = prevLine[x] & 0xff;
+//                int c = prevLine[x - 1] & 0xff;
+//                int p = a + b - c;
+//                int pa = p - a;
+//                if (pa < 0) pa = -pa;
+//                int pb = p - b;
+//                if (pb < 0) pb = -pb;
+//                int pc = p - c;
+//                if (pc < 0) pc = -pc;
+//                if (pa <= pb && pa <= pc)
+//                    c = a;
+//                else if (pb <= pc)
+//                    c = b;
+//                lineOut[x] = (byte)(curLine[x] - c);
+//            }
+//
+//            deflaterOutput.write(FILTER_PAETH);
+//            deflaterOutput.write(lineOut, 0, lineLen);
 
-            //Paeth
-            for (int x = 1; x < lineLen; x++) {
-                int a = curLine[x - 1] & 0xff;
-                int b = prevLine[x] & 0xff;
-                int c = prevLine[x - 1] & 0xff;
-                int p = a + b - c;
-                int pa = p - a;
-                if (pa < 0) pa = -pa;
-                int pb = p - b;
-                if (pb < 0) pb = -pb;
-                int pc = p - c;
-                if (pc < 0) pc = -pc;
-                if (pa <= pb && pa <= pc)
-                    c = a;
-                else if (pb <= pc)
-                    c = b;
-                lineOut[x] = (byte)(curLine[x] - c);
-            }
-
-            deflaterOutput.write(PAETH);
-            deflaterOutput.write(lineOut, 0, lineLen);
-
-            byte[] temp = curLine;
-            curLine = prevLine;
-            prevLine = temp;
+            deflaterOutput.write(FILTER_NONE);
+            deflaterOutput.write(curLine, 0, lineLen);
         }
         deflaterOutput.finish();
         buffer.endChunk(dataOutput);
@@ -904,29 +873,32 @@ public class PNG8 implements Disposable {
                     }
                 }
             }
-            lineOut[0] = (byte)(curLine[0] - prevLine[0]);
+//                lineOut[0] = (byte) (curLine[0] - prevLine[0]);
+//
+//                //Paeth
+//                for (int x = 1; x < lineLen; x++) {
+//                    int a = curLine[x - 1] & 0xff;
+//                    int b = prevLine[x] & 0xff;
+//                    int c = prevLine[x - 1] & 0xff;
+//                    int p = a + b - c;
+//                    int pa = p - a;
+//                    if (pa < 0) pa = -pa;
+//                    int pb = p - b;
+//                    if (pb < 0) pb = -pb;
+//                    int pc = p - c;
+//                    if (pc < 0) pc = -pc;
+//                    if (pa <= pb && pa <= pc)
+//                        c = a;
+//                    else if (pb <= pc)
+//                        c = b;
+//                    lineOut[x] = (byte) (curLine[x] - c);
+//                }
+//
+//                deflaterOutput.write(PAETH);
+//                deflaterOutput.write(lineOut, 0, w);
 
-            //Paeth
-            for (int x = 1; x < w; x++) {
-                int a = curLine[x - 1] & 0xff;
-                int b = prevLine[x] & 0xff;
-                int c = prevLine[x - 1] & 0xff;
-                int p = a + b - c;
-                int pa = p - a;
-                if (pa < 0) pa = -pa;
-                int pb = p - b;
-                if (pb < 0) pb = -pb;
-                int pc = p - c;
-                if (pc < 0) pc = -pc;
-                if (pa <= pb && pa <= pc)
-                    c = a;
-                else if (pb <= pc)
-                    c = b;
-                lineOut[x] = (byte)(curLine[x] - c);
-            }
-
-            deflaterOutput.write(PAETH);
-            deflaterOutput.write(lineOut, 0, w);
+            deflaterOutput.write(FILTER_NONE);
+            deflaterOutput.write(curLine, 0, w);
 
             byte[] temp = curLine;
             curLine = prevLine;
@@ -1009,20 +981,22 @@ public class PNG8 implements Disposable {
 
     /**
      * Simple PNG IO from https://www.java-tips.org/java-se-tips-100019/23-java-awt-image/2283-png-file-format-decoder-in-java.html .
-     * @param outStream
-     * @param chunks
+     * @param outStream an output stream; will be closed when this method ends
+     * @param chunks an OrderedMap of chunks, almost always produced by {@link #readChunks(InputStream)}
      */
     protected static void writeChunks(OutputStream outStream, OrderedMap<String, byte[]> chunks) {
         DataOutputStream out = new DataOutputStream(outStream);
         CRC32 crc = new CRC32();
         try {
             out.writeLong(0x89504e470d0a1a0aL);
+            byte[] k;
             for (ObjectMap.Entry<String, byte[]> ent : chunks.entries()) {
                 out.writeInt(ent.value.length);
-                out.writeBytes(ent.key);
-                crc.update(ent.key.getBytes("UTF8"));
+                k = ent.key.getBytes(StandardCharsets.UTF_8);
+                out.write(k);
+                crc.update(k, 0, k.length);
                 out.write(ent.value);
-                crc.update(ent.value);
+                crc.update(ent.value, 0, ent.value.length);
                 out.writeInt((int) crc.getValue());
                 crc.reset();
             }
