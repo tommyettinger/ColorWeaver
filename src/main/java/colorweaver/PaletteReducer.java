@@ -1620,21 +1620,7 @@ public class PaletteReducer {
     }
     public static double BURKES_MULTIPLIER = 0.1;
 
-    /**
-     * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can using
-     * Burkes dithering instead of the Floyd-Steinberg dithering that {@link #reduce(Pixmap)} uses.
-     * If you want to reduce the colors in a Pixmap based on what it currently contains, call
-     * {@link #analyze(Pixmap)} with {@code pixmap} as its argument, then call this method with the same
-     * Pixmap. You may instead want to use a known palette instead of one computed from a Pixmap;
-     * {@link #exact(int[])} is the tool for that job.
-     * <p>
-     * This method is not incredibly fast because of the extra calculations it has to do for dithering, but if you can
-     * compute the PaletteReducer once and reuse it, that will save some time. Burkes dithering probably takes about as
-     * much time as Floyd-Steinberg, and has pretty close quality.
-     * @param pixmap a Pixmap that will be modified in place
-     * @return the given Pixmap, for chaining
-     */
-    public Pixmap reduceBurkes (Pixmap pixmap) {
+    public Pixmap reduceBurkes0 (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         float r4, r2, r1, g4, g2, g1, b4, b2, b1;
@@ -1752,6 +1738,136 @@ public class PaletteReducer {
                 }
             }
 
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    /**
+     * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can using
+     * Burkes dithering instead of the Floyd-Steinberg dithering that {@link #reduce(Pixmap)} uses.
+     * If you want to reduce the colors in a Pixmap based on what it currently contains, call
+     * {@link #analyze(Pixmap)} with {@code pixmap} as its argument, then call this method with the same
+     * Pixmap. You may instead want to use a known palette instead of one computed from a Pixmap;
+     * {@link #exact(int[])} is the tool for that job.
+     * <p>
+     * This method is not incredibly fast because of the extra calculations it has to do for dithering, but if you can
+     * compute the PaletteReducer once and reuse it, that will save some time. Burkes dithering probably takes about as
+     * much time as Floyd-Steinberg, and has pretty close quality.
+     * @param pixmap a Pixmap that will be modified in place
+     * @return the given Pixmap, for chaining
+     */
+    public Pixmap reduceBurkes (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        float r4, r2, r1, g4, g2, g1, b4, b2, b1;
+//        float strength = (float) (BURKES_MULTIPLIER * ditherStrength * (populationBias * populationBias));
+        float strength = 0.14f * (float) Math.tanh(ditherStrength / (populationBias * populationBias));
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedFloats == null) {
+            curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(lineLen)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(lineLen)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(lineLen)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(lineLen)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(lineLen)).items;
+        } else {
+            curErrorRed = curErrorRedFloats.ensureCapacity(lineLen);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(lineLen);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(lineLen);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(lineLen);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(lineLen);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(lineLen);
+
+            Arrays.fill(nextErrorRed, 0, lineLen, 0);
+            Arrays.fill(nextErrorGreen, 0, lineLen, 0);
+            Arrays.fill(nextErrorBlue, 0, lineLen, 0);
+        }
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        for (int py = 0; py < h; py++) {
+            int ny = py + 1;
+
+            System.arraycopy(nextErrorRed, 0, curErrorRed, 0, lineLen);
+            System.arraycopy(nextErrorGreen, 0, curErrorGreen, 0, lineLen);
+            System.arraycopy(nextErrorBlue, 0, curErrorBlue, 0, lineLen);
+
+            Arrays.fill(nextErrorRed, 0, lineLen, 0);
+            Arrays.fill(nextErrorGreen, 0, lineLen, 0);
+            Arrays.fill(nextErrorBlue, 0, lineLen, 0);
+
+            for (int px = 0; px < lineLen; px++) {
+                int color = pixmap.getPixel(px, py);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, py, 0);
+                else {
+                    float er = curErrorRed[px];
+                    float eg = curErrorGreen[px];
+                    float eb = curErrorBlue[px];
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + er + 0.5f), 0), 0xFF);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0), 0xFF);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0), 0xFF);
+                    byte paletteIndex = paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))];
+                    int used = paletteArray[paletteIndex & 0xFF];
+                    pixmap.drawPixel(px, py, used);
+                    int rdiff = (color >>> 24) - (used >>> 24);
+                    int gdiff = (color >>> 16 & 255) - (used >>> 16 & 255);
+                    int bdiff = (color >>> 8 & 255) - (used >>> 8 & 255);
+                    r1 = rdiff * strength;
+                    g1 = gdiff * strength;
+                    b1 = bdiff * strength;
+                    r2 = r1 + r1;
+                    g2 = g1 + g1;
+                    b2 = b1 + b1;
+                    r4 = r2 + r2;
+                    g4 = g2 + g2;
+                    b4 = b2 + b2;
+                    if(px < lineLen - 1)
+                    {
+                        curErrorRed[px+1]   += r4;
+                        curErrorGreen[px+1] += g4;
+                        curErrorBlue[px+1]  += b4;
+                        if(px < lineLen - 2)
+                        {
+                            curErrorRed[px+2]   += r2;
+                            curErrorGreen[px+2] += g2;
+                            curErrorBlue[px+2]  += b2;
+                        }
+                    }
+                    if(ny < h)
+                    {
+                        if(px > 0)
+                        {
+                            nextErrorRed[px-1]   += r2;
+                            nextErrorGreen[px-1] += g2;
+                            nextErrorBlue[px-1]  += b2;
+                            if(px > 1)
+                            {
+                                nextErrorRed[px-2]   += r1;
+                                nextErrorGreen[px-2] += g1;
+                                nextErrorBlue[px-2]  += b1;
+                            }
+                        }
+                        nextErrorRed[px]   += r4;
+                        nextErrorGreen[px] += g4;
+                        nextErrorBlue[px]  += b4;
+                        if(px < lineLen - 1)
+                        {
+                            nextErrorRed[px+1]   += r2;
+                            nextErrorGreen[px+1] += g2;
+                            nextErrorBlue[px+1]  += b2;
+                            if(px < lineLen - 2)
+                            {
+                                nextErrorRed[px+2]   += r1;
+                                nextErrorGreen[px+2] += g1;
+                                nextErrorBlue[px+2]  += b1;
+                            }
+                        }
+                    }
+                }
+            }
         }
         pixmap.setBlending(blending);
         return pixmap;
