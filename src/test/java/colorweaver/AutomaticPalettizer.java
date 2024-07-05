@@ -459,13 +459,17 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceBlubber(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Blubber" + suffix + ".png"), pm, PALETTE, false, 0);
 ///////////great, especially for error diffusion
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBurkes(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBurkes(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
+///////////
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBurkes0(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Burkes0" + suffix + ".png"), pm, PALETTE, false, 0);
 /////////
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBurkes0(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Burkes0" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceCyanic(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Cyanic" + suffix + ".png"), pm, PALETTE, false, 0);
 
 ////////???
 //        pm.drawPixmap(sam, 0, 0);

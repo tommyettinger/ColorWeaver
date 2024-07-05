@@ -1872,6 +1872,125 @@ public class PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+    public Pixmap reduceCyanic (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        float r1, g1, b1;
+//        float strength = (1f / 512f) * (float) Math.tanh(ditherStrength / (populationBias * populationBias));
+        float strength = (float) ((2f / 1024f) * ditherStrength * (populationBias * populationBias));
+
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedFloats == null) {
+            curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(lineLen)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(lineLen)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(lineLen)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(lineLen)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(lineLen)).items;
+        } else {
+            curErrorRed = curErrorRedFloats.ensureCapacity(lineLen);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(lineLen);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(lineLen);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(lineLen);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(lineLen);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(lineLen);
+
+            Arrays.fill(nextErrorRed, 0, lineLen, 0);
+            Arrays.fill(nextErrorGreen, 0, lineLen, 0);
+            Arrays.fill(nextErrorBlue, 0, lineLen, 0);
+        }
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        for (int py = 0; py < h; py++) {
+            int ny = py + 1;
+
+            System.arraycopy(nextErrorRed, 0, curErrorRed, 0, lineLen);
+            System.arraycopy(nextErrorGreen, 0, curErrorGreen, 0, lineLen);
+            System.arraycopy(nextErrorBlue, 0, curErrorBlue, 0, lineLen);
+
+            Arrays.fill(nextErrorRed, 0, lineLen, 0);
+            Arrays.fill(nextErrorGreen, 0, lineLen, 0);
+            Arrays.fill(nextErrorBlue, 0, lineLen, 0);
+
+            for (int px = 0; px < lineLen; px++) {
+                int color = pixmap.getPixel(px, py);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, py, 0);
+                else {
+                    float er = curErrorRed[px];
+                    float eg = curErrorGreen[px];
+                    float eb = curErrorBlue[px];
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + er + 0.5f), 0), 0xFF);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0), 0xFF);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0), 0xFF);
+                    byte paletteIndex = paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))];
+                    int used = paletteArray[paletteIndex & 0xFF];
+                    pixmap.drawPixel(px, py, used);
+                    int rdiff = (color >>> 24) - (used >>> 24);
+                    int gdiff = (color >>> 16 & 255) - (used >>> 16 & 255);
+                    int bdiff = (color >>> 8 & 255) - (used >>> 8 & 255);
+                    int idx = (px & 63) | ((py << 6) & 0xFC0);
+                    r1 = (rdiff + (BlueNoise.TILE_TRI_NOISE[1][idx] + 0.5f) * 0x1p-7f) * strength;
+                    g1 = (gdiff + (BlueNoise.TILE_TRI_NOISE[2][idx] + 0.5f) * 0x1p-7f) * strength;
+                    b1 = (bdiff + (BlueNoise.TILE_TRI_NOISE[3][idx] + 0.5f) * 0x1p-7f) * strength;
+                    float modifier;
+                    if(px < lineLen - 1)
+                    {
+                        modifier = 255 & TRI_BLUE_NOISE[(px + 1 & 63) | ((py << 6) & 0xFC0)];
+                        curErrorRed[px+1]   += r1 * modifier;
+                        curErrorGreen[px+1] += g1 * modifier;
+                        curErrorBlue[px+1]  += b1 * modifier;
+//                        if(px < lineLen - 2)
+//                        {
+//                            modifier = TRI_BLUE_NOISE_MULTIPLIERS[(px + 2 & 63) | ((py << 6) & 0xFC0)];
+//                            curErrorRed[px+2]   += r1 * modifier;
+//                            curErrorGreen[px+2] += g1 * modifier;
+//                            curErrorBlue[px+2]  += b1 * modifier;
+//                        }
+                    }
+                    if(ny < h)
+                    {
+                        if(px > 0)
+                        {
+                            modifier = 255 & TRI_BLUE_NOISE[(px - 1 & 63) | ((ny << 6) & 0xFC0)];
+                            nextErrorRed[px-1]   += r1 * modifier;
+                            nextErrorGreen[px-1] += g1 * modifier;
+                            nextErrorBlue[px-1]  += b1 * modifier;
+//                            if(px > 1)
+//                            {
+//                                modifier = TRI_BLUE_NOISE_MULTIPLIERS[(px - 2 & 63) | ((ny << 6) & 0xFC0)];
+//                                nextErrorRed[px-2]   += r1 * modifier;
+//                                nextErrorGreen[px-2] += g1 * modifier;
+//                                nextErrorBlue[px-2]  += b1 * modifier;
+//                            }
+                        }
+                        modifier = 255 & TRI_BLUE_NOISE[(px & 63) | ((ny << 6) & 0xFC0)];
+                        nextErrorRed[px]   += r1 * modifier;
+                        nextErrorGreen[px] += g1 * modifier;
+                        nextErrorBlue[px]  += b1 * modifier;
+                        if(px < lineLen - 1)
+                        {
+                            modifier = 255 & TRI_BLUE_NOISE[(px + 1 & 63) | ((ny << 6) & 0xFC0)];
+                            nextErrorRed[px+1]   += r1 * modifier;
+                            nextErrorGreen[px+1] += g1 * modifier;
+                            nextErrorBlue[px+1]  += b1 * modifier;
+//                            if(px < lineLen - 2)
+//                            {
+//                                modifier = TRI_BLUE_NOISE_MULTIPLIERS[(px + 2 & 63) | ((ny << 6) & 0xFC0)];
+//                                nextErrorRed[px+2]   += r1 * modifier;
+//                                nextErrorGreen[px+2] += g1 * modifier;
+//                                nextErrorBlue[px+2]  += b1 * modifier;
+//                            }
+                        }
+                    }
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
 
     /**
      * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can using a
