@@ -1996,6 +1996,7 @@ public class PaletteReducer {
     public Pixmap reduceOceanic (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        final float[] noise = TRI_BLUE_NOISE_MULTIPLIERS;
         float r4, r2, r1, g4, g2, g1, b4, b2, b1;
         final float s = (float) (0.175 * ditherStrength * (populationBias * populationBias * populationBias)),
                 strength = s * 0.29f / (0.19f + s);
@@ -2068,13 +2069,13 @@ public class PaletteReducer {
                     float modifier;
                     if(px < lineLen - 1)
                     {
-                        modifier = TRI_BLUE_NOISE_MULTIPLIERS[(px + 1 & 63) | ((py << 6) & 0xFC0)];
+                        modifier = noise[(px + 1 & 63) | ((py << 6) & 0xFC0)];
                         curErrorRed[px+1]   += r4 * modifier;
                         curErrorGreen[px+1] += g4 * modifier;
                         curErrorBlue[px+1]  += b4 * modifier;
                         if(px < lineLen - 2)
                         {
-                            modifier = TRI_BLUE_NOISE_MULTIPLIERS[(px + 2 & 63) | ((py << 6) & 0xFC0)];
+                            modifier = noise[(px + 2 & 63) | ((py << 6) & 0xFC0)];
                             curErrorRed[px+2]   += r2 * modifier;
                             curErrorGreen[px+2] += g2 * modifier;
                             curErrorBlue[px+2]  += b2 * modifier;
@@ -2084,31 +2085,31 @@ public class PaletteReducer {
                     {
                         if(px > 0)
                         {
-                            modifier = TRI_BLUE_NOISE_MULTIPLIERS[(px - 1 & 63) | ((ny << 6) & 0xFC0)];
+                            modifier = noise[(px - 1 & 63) | ((ny << 6) & 0xFC0)];
                             nextErrorRed[px-1]   += r2 * modifier;
                             nextErrorGreen[px-1] += g2 * modifier;
                             nextErrorBlue[px-1]  += b2 * modifier;
                             if(px > 1)
                             {
-                                modifier = TRI_BLUE_NOISE_MULTIPLIERS[(px - 1 & 63) | ((ny << 6) & 0xFC0)];
+                                modifier = noise[(px - 2 & 63) | ((ny << 6) & 0xFC0)];
                                 nextErrorRed[px-2]   += r1 * modifier;
                                 nextErrorGreen[px-2] += g1 * modifier;
                                 nextErrorBlue[px-2]  += b1 * modifier;
                             }
                         }
-                        modifier = TRI_BLUE_NOISE_MULTIPLIERS[(px & 63) | ((ny << 6) & 0xFC0)];
+                        modifier = noise[(px & 63) | ((ny << 6) & 0xFC0)];
                         nextErrorRed[px]   += r4 * modifier;
                         nextErrorGreen[px] += g4 * modifier;
                         nextErrorBlue[px]  += b4 * modifier;
                         if(px < lineLen - 1)
                         {
-                            modifier = TRI_BLUE_NOISE_MULTIPLIERS[(px + 1 & 63) | ((ny << 6) & 0xFC0)];
+                            modifier = noise[(px + 1 & 63) | ((ny << 6) & 0xFC0)];
                             nextErrorRed[px+1]   += r2 * modifier;
                             nextErrorGreen[px+1] += g2 * modifier;
                             nextErrorBlue[px+1]  += b2 * modifier;
                             if(px < lineLen - 2)
                             {
-                                modifier = TRI_BLUE_NOISE_MULTIPLIERS[(px + 1 & 63) | ((ny << 6) & 0xFC0)];
+                                modifier = noise[(px + 2 & 63) | ((ny << 6) & 0xFC0)];
                                 nextErrorRed[px+2]   += r1 * modifier;
                                 nextErrorGreen[px+2] += g1 * modifier;
                                 nextErrorBlue[px+2]  += b1 * modifier;
