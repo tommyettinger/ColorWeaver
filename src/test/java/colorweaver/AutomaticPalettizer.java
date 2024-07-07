@@ -466,6 +466,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBurkes0(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Burkes0" + suffix + ".png"), pm, PALETTE, false, 0);
+/////////
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes2(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes2" + suffix + ".png"), pm, PALETTE, false, 0);
 /////////meh...
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceCyanic(pm);
