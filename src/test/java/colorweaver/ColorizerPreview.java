@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.utils.UIUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.github.tommyettinger.digital.BitConversion;
@@ -232,26 +233,9 @@ public class ColorizerPreview extends ApplicationAdapter {
 		mixingPalette.clear();
 		mixingPalette.addAll(palette, 0, 1);
 		for (int i = 1; i < palette.length; i++) {
-//			if (palette[i] == 0)
-//			{
-//				mixingPalette.add(0, 0);
-//				continue;
-//			}
 			count = centroids[3][i];
-//			count2 = count * 0.9375f;
-
-//			mix = MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10
-//					| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5
-//					| MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
-//			mixingPalette.add(CIELABConverter.puff(mix));
-//			double l = PaletteReducer.lab15[0][mix], 
-//					a = PaletteReducer.lab15[1][mix] * 0.8, 
-//					b = PaletteReducer.lab15[2][mix] * 0.8;
 
 
-//			mixingPalette.add(CIELABConverter.rgba8888(centroids[0][i] / count,
-//					centroids[1][i] / count,
-//					centroids[2][i] / count));
 			if(count == 0 || oklabPalette[i][1] * oklabPalette[i][1] + oklabPalette[i][2] * oklabPalette[i][2] < 0x1p-13)
 				mixingPalette.add(palette[i]);
 			else
@@ -260,13 +244,6 @@ public class ColorizerPreview extends ApplicationAdapter {
 					centroids[2][i] / count));
 		}
 		mixPalette(0, false);
-		/*
-		Collections.sort(mixingPalette, hueComparator);
-		palette = new int[mixingPalette.size()];
-		for (int i = 0; i < palette.length; i++) {
-			palette[i] = mixingPalette.get(i);
-		}
-		 */
 		return this.palette;
 	}
 
@@ -333,6 +310,63 @@ public class ColorizerPreview extends ApplicationAdapter {
 		 */
 		return this.palette;
 	}
+
+
+	public int[] lloydCompletely(int[] basePalette) {
+		PaletteReducer pr = new PaletteReducer();
+		double[] centroids = new double[basePalette.length << 2];
+		if(this.palette.length != basePalette.length)
+			this.palette = new int[basePalette.length];
+		for (int it = 1; it <= 1024; it++) {
+			pr.exact(basePalette, HexGenerator.METRIC);
+			byte[] pm = pr.paletteMapping;
+			int index;
+			double count;
+			for (int i = 0; i < 0x8000; i++) {
+				index = (pm[i] & 0xFF) << 2;
+				double r = (i >>> 10) / 31.0;
+				double g = (i >>> 5 & 0x1F) / 31.0;
+				double b = (i & 0x1F) / 31.0;
+
+				r *= r;
+				g *= g;
+				b *= b;
+
+				double l = Math.cbrt(0.4121656120 * r + 0.5362752080 * g + 0.0514575653 * b);
+				double m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
+				double s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
+
+				centroids[0+index] += PaletteReducer.forwardLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
+				centroids[1+index] += 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
+				centroids[2+index] += 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+				centroids[3+index]++;
+			}
+			mixingPalette.clear();
+			mixingPalette.addAll(palette, 0, 1);
+			for (int i = 1; i < palette.length; i++) {
+				count = centroids[i<<2|3];
+
+
+				if(count == 0 || MathTools.isEqual(palette[i] >>> 24, palette[i] >>> 16 & 255, 3) &&
+						MathTools.isEqual(palette[i] >>> 16 & 255, palette[i] >>> 8 & 255, 3))
+					mixingPalette.add(palette[i]);
+				else
+					mixingPalette.add(PaletteReducer.oklabToRGB(centroids[i<<2] / count,
+							centroids[i<<2|1] / count,
+							centroids[i<<2|2] / count));
+			}
+			mixPalette(0, false);
+			if(Arrays.equals(this.palette, basePalette))
+			{
+				System.out.println("Palette completely Lloyd-ed in " + it + " iterations");
+				return this.palette;
+			}
+			System.arraycopy(this.palette, 0, basePalette, 0, basePalette.length);
+		}
+		System.out.println("Palette not completely Lloyd-ed...");
+		return this.palette;
+	}
+
 
 	private int[] emphasize (int[] palette) {
 		int rd = 1, gd = 1, bd = 1;
@@ -790,7 +824,10 @@ public class ColorizerPreview extends ApplicationAdapter {
 						refreshTexture();
 						break;
 					case Input.Keys.C:
-						palette = lloydCentral(palette);
+						if(UIUtils.shift())
+							palette = lloydCompletely(palette);
+						else
+							palette = lloydCentral(palette);
 						refreshTexture();
 						break;
 					case Input.Keys.E:
