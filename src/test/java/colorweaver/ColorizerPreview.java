@@ -115,7 +115,8 @@ public class ColorizerPreview extends ApplicationAdapter {
 			else               return (1f + (2f / 3f) + gDelta - rDelta) - (int)(1f + (2f / 3f) + gDelta - rDelta);
 		}
 	}
-	
+	public static final IntComparator hueComparator = (o1, o2) -> Float.compare(hue(o1), hue(o2));
+
 	private static double roughBrightness(int color)
 	{
 		return PaletteReducer.OKLAB[0][PaletteReducer.shrink(color)];
@@ -146,8 +147,6 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 		return res;
 	}
-
-	public static final IntComparator hueComparator = (o1, o2) -> Float.compare(hue(o1), hue(o2));
 
 	private static final IntComparator lightnessComparator = (o1, o2) -> {
 		if(o1 == 0) return -1;
@@ -466,14 +465,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		mixPalette(doRemove, true);
 	}
 	public void mixPalette (int doRemove, boolean doSort){
-//		ArrayList<double[]> labs = new ArrayList<>(mixingPalette.size());
 		IntSet removalSet = new IntSet(16);
-//		for (int i = 0; i < mixingPalette.size(); i++) {
-//			double[] d = new double[4];
-//			System.arraycopy(PaletteReducer.OKLAB[PaletteReducer.shrink(mixingPalette.get(i))], 0, d, 0, 3);
-//			d[3] = mixingPalette.get(i) & 255;
-//			labs.add(d);
-//		}
 		int size = mixingPalette.size();
 		double closest = Double.MAX_VALUE;
 		for (int i = 0; i < size; i++) {
