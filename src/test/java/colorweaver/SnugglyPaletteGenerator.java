@@ -16,9 +16,11 @@
 
 package colorweaver;
 
+import colorweaver.tools.StringKit;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 import com.badlogic.gdx.utils.*;
+import com.github.tommyettinger.digital.Base;
 import com.github.tommyettinger.digital.MathTools;
 import com.github.tommyettinger.ds.IntList;
 import com.github.tommyettinger.ds.support.sort.IntComparator;
@@ -428,12 +430,24 @@ The same palette, but unsorted:
 
  */
 public class SnugglyPaletteGenerator {
-    private static final int LIMIT = 1024;
+    public static int LIMIT = 31;
     private static final boolean SORT = false;
-    private static final IntList rgba = new IntList(LIMIT);
-    private static final IntList mixingPalette = new IntList(LIMIT);
-    private static int idx = 1;
-    private static long LL = 0xD1B54A32D192ED03L, AA = 0xABC98388FB8FAC03L, BB = 0x8CB92BA72F3D8DD7L;
+    private static final IntList rgba = new IntList(256);
+
+    private static final IntList mixingPalette = new IntList(256);
+    private static int idx;
+    private static long LL;
+    private static long AA;
+    private static long BB;
+
+    public static void reset() {
+        rgba.clear();
+        mixingPalette.clear();
+        idx = 1;
+        LL = 0xD1B54A32D192ED03L;
+        AA = 0xABC98388FB8FAC03L;
+        BB = 0x8CB92BA72F3D8DD7L;
+    }
 
     private static void addGray(float lightness){
         float oklab = oklab(lightness, 0.5f, 0.5f, 1f);
@@ -480,6 +494,8 @@ public class SnugglyPaletteGenerator {
         rgba.add(rgb);
     }
     public static void main(String[] args) {
+        if(args != null && args.length > 0)
+            LIMIT = Base.BASE10.readInt(args[0]);
         rgba.add(0);
 
         addGray(0f);
@@ -508,9 +524,23 @@ public class SnugglyPaletteGenerator {
         }
         sb.append('}');
         System.out.println(sb);
-        GdxNativesLoader.load();
-        Gdx.files = new Lwjgl3Files();
-        Gdx.files.local("snuggly-" + (LIMIT -1) + ".txt").writeString(sb.toString(), false, "UTF-8");
+
+//        GdxNativesLoader.load();
+//        Gdx.files = new Lwjgl3Files();
+//        Gdx.files.local("snuggly-" + (LIMIT -1) + ".txt").writeString(sb.toString(), false, "UTF-8");
+
+        sb = new StringBuilder(rgba.size() * 7);
+        for (int i = 1; i < rgba.size(); i++) {
+            sb.append(String.format("%06x\n", rgba.get(i) >>> 8));
+        }
+        Gdx.files.local("palettes/hex/snuggly-"+ LIMIT +".hex").writeString(sb.toString(), false);
+//        System.out.println("new int[] {");
+//        for (int i = 0; i < rgba.size(); i++) {
+//            System.out.print("0x" + StringKit.hex(rgba.get(i)) + ", ");
+//            if((i & 7) == 7)
+//                System.out.println();
+//        }
+//        System.out.println("};");
 
     }
 
@@ -589,9 +619,6 @@ public class SnugglyPaletteGenerator {
     public static int[] lloydCompletely(int[] basePalette) {
         PaletteReducer pr = new PaletteReducer();
         double[] centroids = new double[basePalette.length << 2];
-        if(rgba.items.length != basePalette.length)
-            rgba.setSize(basePalette.length);
-        int[] palette = rgba.items;
         for (int it = 1; it <= 1024; it++) {
             pr.exact(basePalette, HexGenerator.METRIC);
             byte[] pm = pr.paletteMapping;
@@ -617,20 +644,20 @@ public class SnugglyPaletteGenerator {
                 centroids[3+index]++;
             }
             mixingPalette.clear();
-            mixingPalette.addAll(palette, 0, 1);
-            for (int i = 1; i < palette.length; i++) {
+            mixingPalette.addAll(rgba.items, 0, 1);
+            for (int i = 1; i < rgba.size(); i++) {
                 count = centroids[i<<2|3];
 
-
-                if(count == 0 || MathTools.isEqual(palette[i] >>> 24, palette[i] >>> 16 & 255, 3) &&
-                        MathTools.isEqual(palette[i] >>> 16 & 255, palette[i] >>> 8 & 255, 3))
-                    mixingPalette.add(palette[i]);
+                if(count == 0 || MathTools.isEqual(rgba.get(i) >>> 24, rgba.get(i) >>> 16 & 255, 3) &&
+                        MathTools.isEqual(rgba.get(i) >>> 16 & 255, rgba.get(i) >>> 8 & 255, 3))
+                    mixingPalette.add(rgba.get(i));
                 else
                     mixingPalette.add(PaletteReducer.oklabToRGB(centroids[i<<2] / count,
                             centroids[i<<2|1] / count,
                             centroids[i<<2|2] / count));
             }
             mixPalette(0, false);
+            int[] palette = rgba.toArray();
             if(Arrays.equals(palette, basePalette))
             {
                 System.out.println("Palette completely Lloyd-ed in " + it + " iterations");
@@ -639,7 +666,7 @@ public class SnugglyPaletteGenerator {
             System.arraycopy(palette, 0, basePalette, 0, basePalette.length);
         }
         System.out.println("Palette not completely Lloyd-ed...");
-        return palette;
+        return rgba.toArray();
     }
     private static float hue(final int color) {
         final float r = (color >>> 24       ) * 0x1.010102p-8f;
