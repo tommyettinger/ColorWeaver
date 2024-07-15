@@ -52,13 +52,18 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
 //        Gdx.files.local("palettes/genRgbStupider/").mkdirs();
 //        Gdx.files.local("palettes/genRgbSlippery/").mkdirs();
 //        for(FileHandle hex : hexes) {
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("lospec2000-182.hex"),
 //                Gdx.files.local("zenit-241.hex"),
 //                Gdx.files.local("project-ruzikb-86.hex"),
 //        }) {
+        FileHandle[] snugglies = new FileHandle[32];
+        for (int i = 7, idx = 0; i < 256; i += 8) {
+            snugglies[idx++] = Gdx.files.local("snuggly-"+i+".hex");
+        }
+        for(FileHandle hex : snugglies) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/blknx-64.hex");{
             String name = hex.nameWithoutExtension().toLowerCase();
