@@ -59,8 +59,10 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
 //                Gdx.files.local("zenit-241.hex"),
 //                Gdx.files.local("project-ruzikb-86.hex"),
 //        }) {
-        FileHandle[] snugglies = new FileHandle[32];
-        for (int i = 7, idx = 0; i < 256; i += 8) {
+        FileHandle[] snugglies = new FileHandle[7];
+        for (int i = 8, idx = 0; i < 15; i++) {
+//        FileHandle[] snugglies = new FileHandle[32];
+//        for (int i = 7, idx = 0; i < 256; i += 8) {
             snugglies[idx++] = Gdx.files.local("snuggly-"+i+".hex");
         }
         for(FileHandle hex : snugglies) {

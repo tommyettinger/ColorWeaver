@@ -150,8 +150,8 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/snuggly-255.hex"),
 //        }) {
 
-        FileHandle[] snugglies = new FileHandle[32];
-        for (int i = 7, idx = 0; i < 256; i += 8) {
+        FileHandle[] snugglies = new FileHandle[7];
+        for (int i = 8, idx = 0; i < 15; i++) {
             snugglies[idx++] = Gdx.files.local("snuggly-"+i+".hex");
         }
         for(FileHandle hex : snugglies) {
@@ -389,18 +389,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceTrueBlue3(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer3" + suffix + ".png"), pm, PALETTE, false, 0);
-//////better?
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceTrueBlue4(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer4" + suffix + ".png"), pm, PALETTE, false, 0);
-////////better?
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceTrueBlue5(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer5" + suffix + ".png"), pm, PALETTE, false, 0);
-////pretty bad
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceChaoticNoise(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Chaotic" + suffix + ".png"), pm, PALETTE, false, 0);
 //////great
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBluish(pm);
@@ -477,15 +465,27 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBurkes2(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_Burkes2" + suffix + ".png"), pm, PALETTE, false, 0);
-///////meh...
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceCyanic(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Cyanic" + suffix + ".png"), pm, PALETTE, false, 0);
 ///////great!
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceOceanic(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
 
+////////better?
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceTrueBlue4(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer4" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////better?
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceTrueBlue5(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer5" + suffix + ".png"), pm, PALETTE, false, 0);
+//////pretty bad
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceChaoticNoise(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Chaotic" + suffix + ".png"), pm, PALETTE, false, 0);
+/////////meh...
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceCyanic(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Cyanic" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////???
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceShuffle(pm);
