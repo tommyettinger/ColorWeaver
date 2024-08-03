@@ -150,11 +150,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/snuggly-255.hex"),
 //        }) {
 
-        FileHandle[] snugglies = new FileHandle[7];
-        for (int i = 8, idx = 0; i < 15; i++) {
-            snugglies[idx++] = Gdx.files.local("snuggly-"+i+".hex");
-        }
-        for(FileHandle hex : snugglies) {
+        // auto-generated Snuggly palettes
+//        FileHandle[] snugglies = new FileHandle[7];
+//        for (int i = 8, idx = 0; i < 15; i++) {
+//            snugglies[idx++] = Gdx.files.local("snuggly-"+i+".hex");
+//        }
+//        for(FileHandle hex : snugglies) {
 
 
 //        for(FileHandle hex : new FileHandle[]{
@@ -198,6 +199,14 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/rosemoss-8.hex"),
 //                Gdx.files.local("palettes/hex/viewline-64.hex"),
 //        }) {
+
+        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/dharm-32.hex"),
+                Gdx.files.local("palettes/hex/bjg-sw-poster-7.hex"),
+                Gdx.files.local("palettes/hex/sunlit-days-22.hex"),
+                Gdx.files.local("palettes/hex/zee-ze-ze-ze-ze-14.hex"),
+                Gdx.files.local("palettes/hex/soft-thirty-30.hex"),
+        }) {
 
 //                Gdx.files.local("palettes/hex/retrobubble-16.hex"),
 //                Gdx.files.local("palettes/hex/fruitpunch-24.hex"),
