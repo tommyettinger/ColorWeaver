@@ -42,10 +42,30 @@ public class HexGenerator extends ApplicationAdapter {
             }
         }
     }
+    private static int[] sixeightfiveroot255 = new int[256];
+    static {
+        int idx = 1;
+        for (int i = 0; i < 17; i++) {
+            int level = (int) (Math.pow(i / 16.0, 2.0/3.0) * 255.0 + 0.5);
+            sixeightfiveroot255[idx++] = level * 0x01010100 | 0xFF;
+        }
+        for (int ri = 0; ri < 6; ri++) {
+            int r = (int) (Math.pow(ri / 5.0, 2.0/3.0) * 255.0 + 0.5);
+            for (int gi = 0; gi < 8; gi++) {
+                int g = (int) (Math.pow(gi / 7.0, 2.0/3.0) * 255.0 + 0.5);
+                for (int bi = 0; bi < 5; bi++) {
+                    int b = (int) (Math.pow(bi / 4.0, 2.0/3.0) * 255.0 + 0.5);
+                    int color = r << 24 | g << 16 | b << 8 | 0xFF;
+                    if(color != 255 && color != -1)
+                        sixeightfiveroot255[idx++] = color;
+                }
+            }
+        }
+    }
 
 
-    public static int[] PALETTE = sixeightfive255;
-    public static String NAME = "sixeightfive-255";
+    public static int[] PALETTE = sixeightfiveroot255;
+    public static String NAME = "sixeightfiveroot-255";
     public static String SPACE = "OkSmooth";
     public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabSmoothMetric;
 
