@@ -23,11 +23,29 @@ public class HexGenerator extends ApplicationAdapter {
             0x67F5E1FF, 0x34878EFF, 0x59D7E2FF, 0x4FB5DFFF, 0x438FDAFF, 0x2D5691FF, 0x3766DEFF, 0x252CE3FF,
             0x1B1B5BFF, 0x2222A1FF, 0x9D92DFFF, 0x5B29CEFF, 0x795BAEFF, 0x9867E3FF, 0x882CE2FF, 0x531F71FF,
             0xB82AD5FF, 0x861F90FF, 0xE730E9FF, 0xE193DFFF, 0xE366D8FF, 0xE62EAAFF, 0xE4B6D5FF, 0x81416BFF,
-            0xB9277EFF, 0xB36691FF, 0xEC3570FF, 0x451524FF, 0xE57D92FF, 0x791E2CFF, 0xAD242FFF, 0xE2282EFF        };
+            0xB9277EFF, 0xB36691FF, 0xEC3570FF, 0x451524FF, 0xE57D92FF, 0x791E2CFF, 0xAD242FFF, 0xE2282EFF
+    };
+
+    private static int[] sixeightfive255 = new int[256];
+    static {
+        int idx = 1;
+        for (int i = 0; i < 17; i++) {
+            sixeightfive255[idx++] = (i * 15) * 0x01010100 | 0xFF;
+        }
+        for (int r : new int[]{0x00, 0x33, 0x66, 0x99, 0xCC, 0xFF}) {
+            for (int g : new int[]{0x00, 0x24, 0x49, 0x6D, 0x92, 0xB6, 0xDB, 0xFF}) {
+                for (int b : new int[]{0x00, 0x40, 0x80, 0xBF, 0xFF}) {
+                    int color = r << 24 | g << 16 | b << 8 | 0xFF;
+                    if(color != 255 && color != -1)
+                        sixeightfive255[idx++] = color;
+                }
+            }
+        }
+    }
 
 
-    public static int[] PALETTE = snuggly63;
-    public static String NAME = "snuggly-63";
+    public static int[] PALETTE = sixeightfive255;
+    public static String NAME = "sixeightfive-255";
     public static String SPACE = "OkSmooth";
     public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabSmoothMetric;
 
