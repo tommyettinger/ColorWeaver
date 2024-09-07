@@ -119,34 +119,42 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         PaletteReducer reducer = new PaletteReducer();
 
         // do everything
-        for(FileHandle hex : hexes) {
+//        for(FileHandle hex : hexes) {
 
         // just do the one in HexGenerator
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
         // the default
-//        for(FileHandle hex : new FileHandle[]{
-//                Gdx.files.local("palettes/hex/bw-2.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
-//                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
-//                Gdx.files.local("palettes/hex/gb-4.hex"),
-//                Gdx.files.local("palettes/hex/prospecal-8.hex"),
-//                Gdx.files.local("palettes/hex/septembit23-6.hex"),
-//                Gdx.files.local("palettes/hex/gb-16.hex"),
-//                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
-//                Gdx.files.local("palettes/hex/azurestar-32.hex"),
-//                Gdx.files.local("palettes/hex/americana-4.hex"),
-//                Gdx.files.local("palettes/hex/ayy-4.hex"),
-//                Gdx.files.local("palettes/hex/gray-15.hex"),
-//                Gdx.files.local("palettes/hex/vinik-24.hex"),
-//                Gdx.files.local("palettes/hex/hyper-8.hex"),
-//                Gdx.files.local("palettes/hex/snuggly-15.hex"),
-//                Gdx.files.local("palettes/hex/snuggly-31.hex"),
-//                Gdx.files.local("palettes/hex/snuggly-63.hex"),
-//                Gdx.files.local("palettes/hex/snuggly-255.hex"),
-//        }) {
+        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/bw-2.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+                Gdx.files.local("palettes/hex/gb-4.hex"),
+                Gdx.files.local("palettes/hex/prospecal-8.hex"),
+                Gdx.files.local("palettes/hex/septembit23-6.hex"),
+                Gdx.files.local("palettes/hex/gb-16.hex"),
+                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+                Gdx.files.local("palettes/hex/americana-4.hex"),
+                Gdx.files.local("palettes/hex/ayy-4.hex"),
+                Gdx.files.local("palettes/hex/gray-15.hex"),
+                Gdx.files.local("palettes/hex/vinik-24.hex"),
+                Gdx.files.local("palettes/hex/hyper-8.hex"),
+                Gdx.files.local("palettes/hex/snuggly-15.hex"),
+                Gdx.files.local("palettes/hex/snuggly-31.hex"),
+                Gdx.files.local("palettes/hex/snuggly-63.hex"),
+                Gdx.files.local("palettes/hex/snuggly-255.hex"),
+                Gdx.files.local("palettes/hex/headpat-15.hex"),
+                Gdx.files.local("palettes/hex/headpat-31.hex"),
+                Gdx.files.local("palettes/hex/headpat-63.hex"),
+                Gdx.files.local("palettes/hex/headpat-255.hex"),
+                Gdx.files.local("palettes/hex/hug-15.hex"),
+                Gdx.files.local("palettes/hex/hug-31.hex"),
+                Gdx.files.local("palettes/hex/hug-63.hex"),
+                Gdx.files.local("palettes/hex/hug-255.hex"),
+        }) {
 
 //        // auto-generated Snuggly palettes
 //        FileHandle[] snugglies = new FileHandle[6];
