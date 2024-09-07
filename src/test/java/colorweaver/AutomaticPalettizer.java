@@ -78,7 +78,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedRgbStupider/"; //
 //        final String targetDir = "samples/reducedEmpty"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedDiffusion"+HexGenerator.SPACE+"/"; //
-        final String targetDir = "samples/reducedLow"+HexGenerator.SPACE+"/"; //
+        final String targetDir = "samples/reduced"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedOkOnce/"; //
 //        final String targetDir = "samples/reducedRgbSqrt/"; //
 
@@ -164,12 +164,21 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        }
 //        for(FileHandle hex : headpats) {
 
+//        // auto-generated Hug palettes
+//        FileHandle[] headpats = new FileHandle[6];
+//        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
+//            headpats[idx++] = Gdx.files.local("hug-"+(i-1)+".hex");
+//        }
+//        for(FileHandle hex : headpats) {
+
         // auto-generated Hug palettes
-        FileHandle[] headpats = new FileHandle[6];
+        FileHandle[] awws = new FileHandle[18];
         for (int i = 8, idx = 0; i <= 256; i <<= 1) {
-            headpats[idx++] = Gdx.files.local("hug-"+(i-1)+".hex");
+            awws[idx++] = Gdx.files.local("snuggly-"+(i-1)+".hex");
+            awws[idx++] = Gdx.files.local("headpat-"+(i-1)+".hex");
+            awws[idx++] = Gdx.files.local("hug-"+(i-1)+".hex");
         }
-        for(FileHandle hex : headpats) {
+        for(FileHandle hex : awws) {
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/uncured-official-112.hex"),

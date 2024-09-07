@@ -66,8 +66,10 @@ public class HexGenerator extends ApplicationAdapter {
 
     public static int[] PALETTE = sixeightfiveroot255;
     public static String NAME = "sixeightfiveroot-255";
-    public static String SPACE = "OkSmooth";
-    public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabSmoothMetric;
+    public static String SPACE = "OkGamma";
+    public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabGammaMetric;
+//    public static String SPACE = "OkSmooth";
+//    public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabSmoothMetric;
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
