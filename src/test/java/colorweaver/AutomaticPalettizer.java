@@ -124,7 +124,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        for(FileHandle hex : hexes) {
 
         // just do the one in HexGenerator
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
         // the default
 //        for(FileHandle hex : new FileHandle[]{
@@ -150,12 +150,19 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/snuggly-255.hex"),
 //        }) {
 
-        // auto-generated Snuggly palettes
-//        FileHandle[] snugglies = new FileHandle[7];
-//        for (int i = 8, idx = 0; i < 15; i++) {
-//            snugglies[idx++] = Gdx.files.local("snuggly-"+i+".hex");
+//        // auto-generated Snuggly palettes
+//        FileHandle[] snugglies = new FileHandle[6];
+//        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
+//            snugglies[idx++] = Gdx.files.local("snuggly-"+(i-1)+".hex");
 //        }
 //        for(FileHandle hex : snugglies) {
+
+        // auto-generated Headpat palettes
+        FileHandle[] headpats = new FileHandle[6];
+        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
+            headpats[idx++] = Gdx.files.local("headpat-"+(i-1)+".hex");
+        }
+        for(FileHandle hex : headpats) {
 
 
 //        for(FileHandle hex : new FileHandle[]{

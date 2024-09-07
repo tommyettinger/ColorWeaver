@@ -11,7 +11,8 @@ public class SnugglyBulkPaletteGenerator {
         Gdx.files = new Lwjgl3Files();
 
         String[] a = new String[1];
-        for (int i = 8; i < 15; i++) {
+        for (int i = 8; i <= 256; i <<= 1) {
+//        for (int i = 8; i < 15; i++) {
 //        for (int i = 7; i < 256; i+= 8) {
             a[0] = Base.BASE10.signed(i);
             SnugglyPaletteGenerator.reset();

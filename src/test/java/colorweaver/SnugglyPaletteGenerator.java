@@ -16,7 +16,6 @@
 
 package colorweaver;
 
-import colorweaver.tools.StringKit;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 import com.badlogic.gdx.utils.*;
@@ -27,9 +26,6 @@ import com.github.tommyettinger.ds.support.sort.IntComparator;
 
 import java.lang.StringBuilder;
 import java.util.Arrays;
-
-import static colorweaver.PaletteReducer.forwardLight;
-import static colorweaver.PaletteReducer.oklabToRGB;
 
 /*
 First complete result:
@@ -430,7 +426,7 @@ The same palette, but unsorted:
 
  */
 public class SnugglyPaletteGenerator {
-    public static int LIMIT = 31;
+    public static int LIMIT = 256;
     private static final boolean SORT = false;
     private static final IntList rgba = new IntList(256);
 
@@ -525,15 +521,14 @@ public class SnugglyPaletteGenerator {
         sb.append('}');
         System.out.println(sb);
 
-//        GdxNativesLoader.load();
-//        Gdx.files = new Lwjgl3Files();
-//        Gdx.files.local("snuggly-" + (LIMIT -1) + ".txt").writeString(sb.toString(), false, "UTF-8");
-
         sb = new StringBuilder(rgba.size() * 7);
         for (int i = 1; i < rgba.size(); i++) {
             sb.append(String.format("%06x\n", rgba.get(i) >>> 8));
         }
-        Gdx.files.local("palettes/hex/snuggly-"+ LIMIT +".hex").writeString(sb.toString(), false);
+
+        GdxNativesLoader.load();
+        Gdx.files = new Lwjgl3Files();
+        Gdx.files.local("palettes/hex/headpat-"+ (LIMIT-1) +".hex").writeString(sb.toString(), false);
 //        System.out.println("new int[] {");
 //        for (int i = 0; i < rgba.size(); i++) {
 //            System.out.print("0x" + StringKit.hex(rgba.get(i)) + ", ");
@@ -567,38 +562,29 @@ public class SnugglyPaletteGenerator {
         return r << 24 | g << 16 | b << 8 | (decoded & 0xfe000000) >>> 24 | decoded >>> 31;
     }
 
-
-    public static double reverseLight(double L) {
-        return Math.pow(L, 2.0/3.0);
+    public static double forwardLight(final double L) {
+        return L;
+//        return Math.pow(L, 1.5);
     }
 
-    /**
-     * Returns true if the given Oklab values are valid to convert losslessly back to RGBA.
-     * @param L lightness channel, as a double from 0 to 1
-     * @param A green-to-red chromatic channel, as a double from 0 to 1
-     * @param B blue-to-yellow chromatic channel, as a double from 0 to 1
-     * @return true if the given Oklab channels can be converted back and forth to RGBA
-     */
-    public static boolean inGamut(double L, double A, double B)
+    public static double reverseLight(double L) {
+        return L;
+//        return Math.pow(L, 2.0/3.0);
+    }
+
+    public static int oklabToRGB(double L, double A, double B)
     {
         L = reverseLight(L);
-
-        double l = (L + +0.3963377774 * A + +0.2158037573 * B);
+        double l = (L + 0.3963377774 * A + 0.2158037573 * B);
+        double m = (L - 0.1055613458 * A - 0.0638541728 * B);
+        double s = (L - 0.0894841775 * A - 1.2914855480 * B);
         l *= l * l;
-        double m = (L + -0.1055613458 * A + -0.0638541728 * B);
         m *= m * m;
-        double s = (L + -0.0894841775 * A + -1.2914855480 * B);
         s *= s * s;
-
-        double dr = Math.sqrt(+4.0767245293 * l - 3.3072168827 * m + 0.2307590544 * s)*255.0;
-        final int r = (int)dr;
-        if(Double.isNaN(dr) || r < 0 || r > 255) return false;
-        double dg = Math.sqrt(-1.2681437731 * l + 2.6093323231 * m - 0.3411344290 * s)*255.0;
-        final int g = (int)dg;
-        if(Double.isNaN(dg) || g < 0 || g > 255) return false;
-        double db = Math.sqrt(-0.0041119885 * l - 0.7034763098 * m + 1.7068625689 * s)*255.0;
-        final int b = (int)db;
-        return (!Double.isNaN(db) && b >= 0 && b <= 255);
+        final int r = (int)(Math.sqrt(Math.min(Math.max(+4.0767245293 * l - 3.3072168827 * m + 0.2307590544 * s, 0.0), 1.0)) * 255.9999);
+        final int g = (int)(Math.sqrt(Math.min(Math.max(-1.2681437731 * l + 2.6093323231 * m - 0.3411344290 * s, 0.0), 1.0)) * 255.9999);
+        final int b = (int)(Math.sqrt(Math.min(Math.max(-0.0041119885 * l - 0.7034763098 * m + 1.7068625689 * s, 0.0), 1.0)) * 255.9999);
+        return r << 24 | g << 16 | b << 8 | 255;
     }
 
     /**
@@ -652,7 +638,7 @@ public class SnugglyPaletteGenerator {
                         MathTools.isEqual(rgba.get(i) >>> 16 & 255, rgba.get(i) >>> 8 & 255, 3))
                     mixingPalette.add(rgba.get(i));
                 else
-                    mixingPalette.add(PaletteReducer.oklabToRGB(centroids[i<<2] / count,
+                    mixingPalette.add(oklabToRGB(centroids[i<<2] / count,
                             centroids[i<<2|1] / count,
                             centroids[i<<2|2] / count));
             }
