@@ -157,13 +157,19 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        }
 //        for(FileHandle hex : snugglies) {
 
-        // auto-generated Headpat palettes
+//        // auto-generated Headpat palettes
+//        FileHandle[] headpats = new FileHandle[6];
+//        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
+//            headpats[idx++] = Gdx.files.local("headpat-"+(i-1)+".hex");
+//        }
+//        for(FileHandle hex : headpats) {
+
+        // auto-generated Hug palettes
         FileHandle[] headpats = new FileHandle[6];
         for (int i = 8, idx = 0; i <= 256; i <<= 1) {
-            headpats[idx++] = Gdx.files.local("headpat-"+(i-1)+".hex");
+            headpats[idx++] = Gdx.files.local("hug-"+(i-1)+".hex");
         }
         for(FileHandle hex : headpats) {
-
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/uncured-official-112.hex"),

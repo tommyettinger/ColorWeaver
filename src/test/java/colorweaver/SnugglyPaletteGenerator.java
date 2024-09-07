@@ -528,7 +528,9 @@ public class SnugglyPaletteGenerator {
 
         GdxNativesLoader.load();
         Gdx.files = new Lwjgl3Files();
-        Gdx.files.local("palettes/hex/headpat-"+ (LIMIT-1) +".hex").writeString(sb.toString(), false);
+//        Gdx.files.local("palettes/hex/snuggly-"+ (LIMIT-1) +".hex").writeString(sb.toString(), false);
+//        Gdx.files.local("palettes/hex/headpat-"+ (LIMIT-1) +".hex").writeString(sb.toString(), false);
+        Gdx.files.local("palettes/hex/hug-"+ (LIMIT-1) +".hex").writeString(sb.toString(), false);
 //        System.out.println("new int[] {");
 //        for (int i = 0; i < rgba.size(); i++) {
 //            System.out.print("0x" + StringKit.hex(rgba.get(i)) + ", ");
@@ -563,12 +565,14 @@ public class SnugglyPaletteGenerator {
     }
 
     public static double forwardLight(final double L) {
-        return L;
+//        return L;
+        return Math.pow(L, 2.2);
 //        return Math.pow(L, 1.5);
     }
 
     public static double reverseLight(double L) {
-        return L;
+//        return L;
+        return Math.pow(L, 1.0/2.2);
 //        return Math.pow(L, 2.0/3.0);
     }
 
