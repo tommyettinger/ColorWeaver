@@ -1522,7 +1522,7 @@ public class PaletteReducer {
      * @param pixmap a Pixmap to analyze, making a palette which can be used by this to {@link #reduce(Pixmap)} or by PNG8
      */
     public void analyze(Pixmap pixmap) {
-        analyze(pixmap, 150, 256, rgbStupidMetric);
+        analyze(pixmap, 150, 256, oklabCarefulMetric);
     }
 
     private static final Comparator<IntIntMap.Entry> entryComparator = new Comparator<IntIntMap.Entry>() {
@@ -1641,9 +1641,9 @@ public class PaletteReducer {
             for (int g = 0; g < 32; g++) {
                 int gg = (g << 3 | g >>> 2);
                 for (int b = 0; b < 32; b++) {
-                    int bb = (b << 3 | b >>> 2);
                     c2 = r << 10 | g << 5 | b;
                     if (paletteMapping[c2] == 0) {
+                        int bb = (b << 3 | b >>> 2);
                         dist = Double.POSITIVE_INFINITY;
                         for (int i = 1; i < limit; i++) {
                             if (dist > (dist = Math.min(dist, metric.difference(reds[i], greens[i], blues[i], rr, gg, bb))))
@@ -1690,10 +1690,10 @@ public class PaletteReducer {
                 color = e.key;
                 paletteArray[i] = color;
                 color = (color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F);
-                Ls[i] = Math.min(Math.max((int)(OKLAB[0][color] * 31.999), 0), 31);
-                As[i] = Math.min(Math.max((int)((OKLAB[1][color] + 0.5) * 31.999), 0), 31);
-                Bs[i] = Math.min(Math.max((int)((OKLAB[2][color] + 0.5) * 31.999), 0), 31);
-                color = Ls[i] << 10 | As[i] << 5 | Bs[i];
+                Ls[i] = Math.min(Math.max((int)(OKLAB[0][color] * 255.999), 0), 255);
+                As[i] = Math.min(Math.max((int)((OKLAB[1][color] + 0.5) * 255.999), 0), 255);
+                Bs[i] = Math.min(Math.max((int)((OKLAB[2][color] + 0.5) * 255.999), 0), 255);
+                color = (Ls[i] << 7 & 0x7C00) | (As[i] << 2 & 0x3E0) | (Bs[i] >>> 3);
                 paletteMapping[color] = (byte) i;
                 i++;
             }
@@ -1711,10 +1711,10 @@ public class PaletteReducer {
                 }
                 paletteArray[i] = color;
                 color = (color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F);
-                Ls[i] = Math.min(Math.max((int)(OKLAB[0][color] * 31.999), 0), 31);
-                As[i] = Math.min(Math.max((int)((OKLAB[1][color] + 0.5) * 31.999), 0), 31);
-                Bs[i] = Math.min(Math.max((int)((OKLAB[2][color] + 0.5) * 31.999), 0), 31);
-                color = Ls[i] << 10 | As[i] << 5 | Bs[i];
+                Ls[i] = Math.min(Math.max((int)(OKLAB[0][color] * 255.999), 0), 255);
+                As[i] = Math.min(Math.max((int)((OKLAB[1][color] + 0.5) * 255.999), 0), 255);
+                Bs[i] = Math.min(Math.max((int)((OKLAB[2][color] + 0.5) * 255.999), 0), 255);
+                color = (Ls[i] << 7 & 0x7C00) | (As[i] << 2 & 0x3E0) | (Bs[i] >>> 3);
                 paletteMapping[color] = (byte) i;
 
                 i++;
@@ -1729,9 +1729,9 @@ public class PaletteReducer {
             for (int A = 0; A < 32; A++) {
                 int AA = (A << 3 | A >>> 2);
                 for (int B = 0; B < 32; B++) {
-                    int BB = (B << 3 | B >>> 2);
                     c2 = L << 10 | A << 5 | B;
                     if (paletteMapping[c2] == 0) {
+                        int BB = (B << 3 | B >>> 2);
                         dist = Double.POSITIVE_INFINITY;
                         for (int i = 1; i < limit; i++) {
                             if (dist > (dist = Math.min(dist, oklabLABMetric.difference(Ls[i], As[i], Bs[i], LL, AA, BB))))
