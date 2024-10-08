@@ -2078,6 +2078,9 @@ public class PaletteReducer {
                             paletteMapping[((rr << 7) & 0x7C00)
                                     | ((gg << 2) & 0x3E0)
                                     | ((bb >>> 3))];
+                    // TODO: REMOVE
+                    System.out.printf("% 4d", paletteIndex & 0xFF);
+                    
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, y, used);
                     shrunk = shrink(used);
@@ -2142,7 +2145,8 @@ public class PaletteReducer {
                     }
                 }
             }
-
+            // TODO: REMOVE
+            System.out.println();
         }
         pixmap.setBlending(blending);
         return pixmap;
