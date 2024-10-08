@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * Created by Tommy Ettinger on 1/21/2018.
  */
-public class AutomaticPalettizer extends ApplicationAdapter {
+public class AutomaticPalettizerLAB extends ApplicationAdapter {
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -22,7 +22,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         config.setWindowedMode(640, 320);
         config.setIdleFPS(10);
         config.setResizable(true);
-        new Lwjgl3Application(new AutomaticPalettizer(), config);
+        new Lwjgl3Application(new AutomaticPalettizerLAB(), config);
     }
     
     private int[] PALETTE;
@@ -78,7 +78,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedRgbStupider/"; //
 //        final String targetDir = "samples/reducedEmpty"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedDiffusion"+HexGenerator.SPACE+"/"; //
-        final String targetDir = "samples/reducedLimited"+HexGenerator.SPACE+"/"; //
+        final String targetDir = "samples/reducedExperiment"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedOkOnce/"; //
 //        final String targetDir = "samples/reducedRgbSqrt/"; //
 
@@ -285,7 +285,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                continue;
 
             Gdx.files.local(targetDir).mkdirs();
-            reducer.exact(PALETTE, HexGenerator.METRIC);
+            reducer.exactLAB(PALETTE, 256);
             png8.palette = reducer;
             try {
                 for(FileHandle sample : samples) {
@@ -295,7 +295,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                     reducer.setDitherStrength(1f);
 //                    String subname = targetDir + "/" + sample.nameWithoutExtension();
                     String subname = targetDir + name + "/" + sample.nameWithoutExtension();
-////lousy but important
+////lousy but important...?
                     pm.drawPixmap(sam, 0, 0);
                     pm = reducer.reduceSolid(pm);
                     png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
@@ -511,9 +511,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceBurkes2(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Burkes2" + suffix + ".png"), pm, PALETTE, false, 0);
 ///////great!
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceOceanic(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceOceanic(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
 
 ////////better?
 //        pm.drawPixmap(sam, 0, 0);
@@ -563,5 +563,12 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceGarbage(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Garbage.png"), pm, PALETTE, false, 0);
+
+
+
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes0LAB(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Burkes0LAB" + suffix + ".png"), pm, PALETTE, false, 0);
+
     }
 }
