@@ -1606,13 +1606,16 @@ public class PaletteReducer {
         int c2;
         double dist;
         for (int r = 0; r < 32; r++) {
+            int rr = (r << 3 | r >>> 2);
             for (int g = 0; g < 32; g++) {
+                int gg = (g << 3 | g >>> 2);
                 for (int b = 0; b < 32; b++) {
+                    int bb = (b << 3 | b >>> 2);
                     c2 = r << 10 | g << 5 | b;
                     if (paletteMapping[c2] == 0) {
                         dist = Double.POSITIVE_INFINITY;
                         for (int i = 1; i < limit; i++) {
-                            if (dist > (dist = Math.min(dist, metric.difference(reds[i], greens[i], blues[i], r, g, b))))
+                            if (dist > (dist = Math.min(dist, metric.difference(reds[i], greens[i], blues[i], rr, gg, bb))))
                                 paletteMapping[c2] = (byte) i;
                         }
                     }
