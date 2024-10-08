@@ -1389,7 +1389,52 @@ public class PaletteReducer {
                 }
             }
         }
-//        generatePreloadCode(paletteMapping);
+    }
+
+    public void exactLAB(int[] rgbaPalette, int limit) {
+        if (rgbaPalette == null || rgbaPalette.length < 2 || limit < 2) {
+            exact(Coloring.AURORA, ENCODED_AURORA);
+            return;
+        }
+        Arrays.fill(paletteArray, 0);
+        Arrays.fill(paletteMapping, (byte) 0);
+        final int plen = Math.min(Math.min(256, limit), rgbaPalette.length);
+        colorCount = plen;
+        populationBias = Math.exp(-1.375/colorCount);
+        int color, c2;
+        double dist;
+        int[] Ls = new int[plen], As = new int[plen], Bs = new int[plen];
+        for (int i = 0; i < plen; i++) {
+            color = rgbaPalette[i];
+            if ((color & 0x80) != 0) {
+                paletteArray[i] = color;
+                paletteMapping[(color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F)] = (byte) i;
+            }
+            paletteArray[i] = color;
+            color = shrink(color);
+            Ls[i] = Math.min(Math.max((int)(OKLAB[0][color] * 255.999), 0), 255);
+            As[i] = Math.min(Math.max((int)((OKLAB[1][color] + 0.5) * 255.999), 0), 255);
+            Bs[i] = Math.min(Math.max((int)((OKLAB[2][color] + 0.5) * 255.999), 0), 255);
+            color = (Ls[i] << 7 & 0x7C00) | (As[i] << 2 & 0x3E0) | (Bs[i] >>> 3);
+            paletteMapping[color] = (byte) i;
+        }
+        for (int L = 0; L < 32; L++) {
+            int LL = (L << 3 | L >>> 2);
+            for (int A = 0; A < 32; A++) {
+                int AA = (A << 3 | A >>> 2);
+                for (int B = 0; B < 32; B++) {
+                    c2 = L << 10 | A << 5 | B;
+                    if (paletteMapping[c2] == 0) {
+                        int BB = (B << 3 | B >>> 2);
+                        dist = Double.MAX_VALUE;
+                        for (int i = 1; i < plen; i++) {
+                            if (dist > (dist = Math.min(dist, oklabLABMetric.difference(Ls[i], As[i], Bs[i], LL, AA, BB))))
+                                paletteMapping[c2] = (byte) i;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -1499,6 +1544,47 @@ public class PaletteReducer {
                         dist = 0x7FFFFFFF;
                         for (int i = 1; i < plen; i++) {
                             if (dist > (dist = Math.min(dist, metric.difference(paletteArray[i], rr, gg, bb))))
+                                paletteMapping[c2] = (byte) i;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public void exactLAB(Color[] colorPalette, int limit) {
+        if (colorPalette == null || colorPalette.length < 2 || limit < 2) {
+            exact(Coloring.AURORA, ENCODED_AURORA);
+            return;
+        }
+        Arrays.fill(paletteArray, 0);
+        Arrays.fill(paletteMapping, (byte) 0);
+        final int plen = Math.min(Math.min(256, colorPalette.length), limit);
+        colorCount = plen;
+        populationBias = Math.exp(-1.125/colorCount);
+        int color, c2;
+        double dist;
+        int[] Ls = new int[plen], As = new int[plen], Bs = new int[plen];
+        for (int i = 0; i < plen; i++) {
+            color = Color.rgba8888(colorPalette[i]);
+            paletteArray[i] = color;
+            color = shrink(color);
+            Ls[i] = Math.min(Math.max((int)(OKLAB[0][color] * 255.999), 0), 255);
+            As[i] = Math.min(Math.max((int)((OKLAB[1][color] + 0.5) * 255.999), 0), 255);
+            Bs[i] = Math.min(Math.max((int)((OKLAB[2][color] + 0.5) * 255.999), 0), 255);
+            color = (Ls[i] << 7 & 0x7C00) | (As[i] << 2 & 0x3E0) | (Bs[i] >>> 3);
+            paletteMapping[color] = (byte) i;
+        }
+        for (int L = 0; L < 32; L++) {
+            int LL = (L << 3 | L >>> 2);
+            for (int A = 0; A < 32; A++) {
+                int AA = (A << 3 | A >>> 2);
+                for (int B = 0; B < 32; B++) {
+                    c2 = L << 10 | A << 5 | B;
+                    if (paletteMapping[c2] == 0) {
+                        int BB = (B << 3 | B >>> 2);
+                        dist = Double.MAX_VALUE;
+                        for (int i = 1; i < plen; i++) {
+                            if (dist > (dist = Math.min(dist, oklabLABMetric.difference(Ls[i], As[i], Bs[i], LL, AA, BB))))
                                 paletteMapping[c2] = (byte) i;
                         }
                     }
