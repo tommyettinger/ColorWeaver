@@ -710,6 +710,37 @@ public class PaletteReducer {
         }
     };
 
+    /**
+     * For colors stored as ints with 8 bits each of L, A, B, and alpha, in that order.
+     */
+    public static final ColorMetric oklabLABMetric = new ColorMetric(){
+        public double difference(int color1, int color2) {
+            if(((color1 ^ color2) & 0x80) == 0x80) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, color2 >>> 24, color2 >>> 16 & 0xFF, color2 >>> 8 & 0xFF);
+        }
+
+        public double difference(int color1, int r2, int g2, int b2) {
+            if((color1 & 0x80) == 0) return Double.POSITIVE_INFINITY;
+            return difference(color1 >>> 24, color1 >>> 16 & 0xFF, color1 >>> 8 & 0xFF, r2, g2, b2);
+        }
+
+        public double difference(int l1, int a1, int b1, int l2, int a2, int b2) {
+            double L1 = l1 * 0.00392156862745098;
+            double A1 = a1 * 0.00392156862745098;
+            double B1 = b1 * 0.00392156862745098;
+
+            double L2 = l2 * 0.00392156862745098;
+            double A2 = a2 * 0.00392156862745098;
+            double B2 = b2 * 0.00392156862745098;
+
+            double L = (L1 - L2);
+            double A = (A1 - A2);
+            double B = (B1 - B2);
+
+            return (L * L + A * A + B * B) * 0x1p+21;
+        }
+    };
+
 
     public static final ColorMetric oklabGammaMetric = new ColorMetric(){
         public double difference(int color1, int color2) {
@@ -1616,6 +1647,94 @@ public class PaletteReducer {
                         dist = Double.POSITIVE_INFINITY;
                         for (int i = 1; i < limit; i++) {
                             if (dist > (dist = Math.min(dist, metric.difference(reds[i], greens[i], blues[i], rr, gg, bb))))
+                                paletteMapping[c2] = (byte) i;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void analyzeLAB(Pixmap pixmap, int threshold, int limit) {
+        Arrays.fill(paletteArray, 0);
+        Arrays.fill(paletteMapping, (byte) 0);
+        int color;
+        final int width = pixmap.getWidth(), height = pixmap.getHeight();
+        IntIntMap counts = new IntIntMap(limit);
+        int hasTransparent = 0;
+        int[] Ls = new int[limit], As = new int[limit], Bs = new int[limit];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                color = pixmap.getPixel(x, y);
+                if ((color & 0x80) != 0) {
+//                    color |= (color >>> 5 & 0x07070700) | 0xFE;
+                    counts.getAndIncrement(color, 0, 1);
+                } else {
+                    hasTransparent = 1;
+                }
+            }
+        }
+        final int cs = counts.size;
+        ArrayList<IntIntMap.Entry> es = new ArrayList<>(cs);
+        for(IntIntMap.Entry e : counts)
+        {
+            IntIntMap.Entry e2 = new IntIntMap.Entry();
+            e2.key = e.key;
+            e2.value = e.value;
+            es.add(e2);
+        }
+        Collections.sort(es, entryComparator);
+        if (cs + hasTransparent <= limit) {
+            int i = hasTransparent;
+            for(IntIntMap.Entry e : es) {
+                color = e.key;
+                paletteArray[i] = color;
+                color = (color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F);
+                Ls[i] = Math.min(Math.max((int)(OKLAB[0][color] * 31.999), 0), 31);
+                As[i] = Math.min(Math.max((int)((OKLAB[1][color] + 0.5) * 31.999), 0), 31);
+                Bs[i] = Math.min(Math.max((int)((OKLAB[2][color] + 0.5) * 31.999), 0), 31);
+                color = Ls[i] << 10 | As[i] << 5 | Bs[i];
+                paletteMapping[color] = (byte) i;
+                i++;
+            }
+            colorCount = i;
+            populationBias = Math.exp(-1.375/colorCount);
+        } else // reduce color count
+        {
+            int i = 1, c = 0;
+            PER_BEST:
+            for (; i < limit && c < cs;) {
+                color = es.get(c++).key;
+                for (int j = 1; j < i; j++) {
+                    if (oklabCarefulMetric.difference(color, paletteArray[j]) < threshold)
+                        continue PER_BEST;
+                }
+                paletteArray[i] = color;
+                color = (color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F);
+                Ls[i] = Math.min(Math.max((int)(OKLAB[0][color] * 31.999), 0), 31);
+                As[i] = Math.min(Math.max((int)((OKLAB[1][color] + 0.5) * 31.999), 0), 31);
+                Bs[i] = Math.min(Math.max((int)((OKLAB[2][color] + 0.5) * 31.999), 0), 31);
+                color = Ls[i] << 10 | As[i] << 5 | Bs[i];
+                paletteMapping[color] = (byte) i;
+
+                i++;
+            }
+            colorCount = i;
+            populationBias = Math.exp(-1.375/colorCount);
+        }
+        int c2;
+        double dist;
+        for (int L = 0; L < 32; L++) {
+            int LL = (L << 3 | L >>> 2);
+            for (int A = 0; A < 32; A++) {
+                int AA = (A << 3 | A >>> 2);
+                for (int B = 0; B < 32; B++) {
+                    int BB = (B << 3 | B >>> 2);
+                    c2 = L << 10 | A << 5 | B;
+                    if (paletteMapping[c2] == 0) {
+                        dist = Double.POSITIVE_INFINITY;
+                        for (int i = 1; i < limit; i++) {
+                            if (dist > (dist = Math.min(dist, oklabLABMetric.difference(Ls[i], As[i], Bs[i], LL, AA, BB))))
                                 paletteMapping[c2] = (byte) i;
                         }
                     }
