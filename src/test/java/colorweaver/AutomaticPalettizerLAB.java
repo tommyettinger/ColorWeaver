@@ -558,5 +558,9 @@ public class AutomaticPalettizerLAB extends ApplicationAdapter {
         pm = reducer.reduceOceanicLAB(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_OceanicLAB" + suffix + ".png"), pm, PALETTE, false, 0);
 
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSeasideLAB(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_SeasideLAB" + suffix + ".png"), pm, PALETTE, false, 0);
+
     }
 }
