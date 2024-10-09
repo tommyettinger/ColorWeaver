@@ -66,8 +66,8 @@ public class HexGenerator extends ApplicationAdapter {
 
     public static int[] PALETTE = snuggly63;
     public static String NAME = "snuggly-63";
-    public static String SPACE = "OkLABLAB";
-    public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabLABMetric;
+    public static String SPACE = "OklabCareful";
+    public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabCarefulMetric;
 //    public static String SPACE = "OkSmooth";
 //    public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabSmoothMetric;
 

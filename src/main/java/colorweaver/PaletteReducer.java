@@ -2076,9 +2076,6 @@ public class PaletteReducer {
                             paletteMapping[((rr << 7) & 0x7C00)
                                     | ((gg << 2) & 0x3E0)
                                     | ((bb >>> 3))];
-                    // TODO: REMOVE
-                    System.out.printf("% 4d", paletteIndex & 0xFF);
-                    
                     used = paletteArray[paletteIndex & 0xFF];
                     pixmap.drawPixel(px, y, used);
                     shrunk = shrink(used);
@@ -2143,8 +2140,7 @@ public class PaletteReducer {
                     }
                 }
             }
-            // TODO: REMOVE
-            System.out.println();
+
         }
         pixmap.setBlending(blending);
         return pixmap;
@@ -2580,6 +2576,145 @@ public class PaletteReducer {
                     rdiff = (color>>>24)-    (used>>>24);
                     gdiff = (color>>>16&255)-(used>>>16&255);
                     bdiff = (color>>>8&255)- (used>>>8&255);
+                    r1 = rdiff * strength;
+                    g1 = gdiff * strength;
+                    b1 = bdiff * strength;
+                    r2 = r1 + r1;
+                    g2 = g1 + g1;
+                    b2 = b1 + b1;
+                    r4 = r2 + r2;
+                    g4 = g2 + g2;
+                    b4 = b2 + b2;
+                    float modifier;
+                    if(px < lineLen - 1)
+                    {
+                        modifier = noise[(px + 1 & 63) | ((py << 6) & 0xFC0)];
+                        curErrorRed[px+1]   += r4 * modifier;
+                        curErrorGreen[px+1] += g4 * modifier;
+                        curErrorBlue[px+1]  += b4 * modifier;
+                        if(px < lineLen - 2)
+                        {
+                            modifier = noise[(px + 2 & 63) | ((py << 6) & 0xFC0)];
+                            curErrorRed[px+2]   += r2 * modifier;
+                            curErrorGreen[px+2] += g2 * modifier;
+                            curErrorBlue[px+2]  += b2 * modifier;
+                        }
+                    }
+                    if(ny < h)
+                    {
+                        if(px > 0)
+                        {
+                            modifier = noise[(px - 1 & 63) | ((ny << 6) & 0xFC0)];
+                            nextErrorRed[px-1]   += r2 * modifier;
+                            nextErrorGreen[px-1] += g2 * modifier;
+                            nextErrorBlue[px-1]  += b2 * modifier;
+                            if(px > 1)
+                            {
+                                modifier = noise[(px - 2 & 63) | ((ny << 6) & 0xFC0)];
+                                nextErrorRed[px-2]   += r1 * modifier;
+                                nextErrorGreen[px-2] += g1 * modifier;
+                                nextErrorBlue[px-2]  += b1 * modifier;
+                            }
+                        }
+                        modifier = noise[(px & 63) | ((ny << 6) & 0xFC0)];
+                        nextErrorRed[px]   += r4 * modifier;
+                        nextErrorGreen[px] += g4 * modifier;
+                        nextErrorBlue[px]  += b4 * modifier;
+                        if(px < lineLen - 1)
+                        {
+                            modifier = noise[(px + 1 & 63) | ((ny << 6) & 0xFC0)];
+                            nextErrorRed[px+1]   += r2 * modifier;
+                            nextErrorGreen[px+1] += g2 * modifier;
+                            nextErrorBlue[px+1]  += b2 * modifier;
+                            if(px < lineLen - 2)
+                            {
+                                modifier = noise[(px + 2 & 63) | ((ny << 6) & 0xFC0)];
+                                nextErrorRed[px+2]   += r1 * modifier;
+                                nextErrorGreen[px+2] += g1 * modifier;
+                                nextErrorBlue[px+2]  += b1 * modifier;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reduceOceanicLAB (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        final float[] noise = TRI_BLUE_NOISE_MULTIPLIERS;
+        float r4, r2, r1, g4, g2, g1, b4, b2, b1;
+        final float s = (float) (0.175f * ditherStrength * (populationBias * populationBias * populationBias)),
+                strength = s * 0.25f / (0.19f + s);
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedFloats == null) {
+            curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(lineLen)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(lineLen)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(lineLen)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(lineLen)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(lineLen)).items;
+        } else {
+            curErrorRed = curErrorRedFloats.ensureCapacity(lineLen);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(lineLen);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(lineLen);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(lineLen);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(lineLen);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(lineLen);
+
+            Arrays.fill(nextErrorRed, 0, lineLen, 0);
+            Arrays.fill(nextErrorGreen, 0, lineLen, 0);
+            Arrays.fill(nextErrorBlue, 0, lineLen, 0);
+        }
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used, rdiff, gdiff, bdiff;
+        float er, eg, eb;
+        byte paletteIndex;
+        for (int py = 0; py < h; py++) {
+            int ny = py + 1;
+
+            System.arraycopy(nextErrorRed, 0, curErrorRed, 0, lineLen);
+            System.arraycopy(nextErrorGreen, 0, curErrorGreen, 0, lineLen);
+            System.arraycopy(nextErrorBlue, 0, curErrorBlue, 0, lineLen);
+
+            Arrays.fill(nextErrorRed, 0, lineLen, 0);
+            Arrays.fill(nextErrorGreen, 0, lineLen, 0);
+            Arrays.fill(nextErrorBlue, 0, lineLen, 0);
+
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, py);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, py, 0);
+                else {
+                    er = curErrorRed[px];
+                    eg = curErrorGreen[px];
+                    eb = curErrorBlue[px];
+                    int shrunk = shrink(color);
+                    int L = Math.min(Math.max((int)(OKLAB[0][shrunk] * 256), 0), 255);
+                    int A = Math.min(Math.max((int)(OKLAB[1][shrunk] * 256 + 128), 0), 255);
+                    int B = Math.min(Math.max((int)(OKLAB[2][shrunk] * 256 + 128), 0), 255);
+
+                    int rr = Math.min(Math.max((int)(L + er + 0.5f), 0), 0xFF);
+                    int gg = Math.min(Math.max((int)(A + eg + 0.5f), 0), 0xFF);
+                    int bb = Math.min(Math.max((int)(B + eb + 0.5f), 0), 0xFF);
+
+                    paletteIndex =
+                            paletteMapping[((rr << 7) & 0x7C00)
+                                    | ((gg << 2) & 0x3E0)
+                                    | ((bb >>> 3))];
+                    used = paletteArray[paletteIndex & 0xFF];
+                    pixmap.drawPixel(px, py, used);
+                    shrunk = shrink(used);
+                    int Lu = Math.min(Math.max((int)(OKLAB[0][shrunk] * 256), 0), 255);
+                    int Au = Math.min(Math.max((int)(OKLAB[1][shrunk] * 256 + 128), 0), 255);
+                    int Bu = Math.min(Math.max((int)(OKLAB[2][shrunk] * 256 + 128), 0), 255);
+                    rdiff = L - Lu;
+                    gdiff = A - Au;
+                    bdiff = B - Bu;
                     r1 = rdiff * strength;
                     g1 = gdiff * strength;
                     b1 = bdiff * strength;
