@@ -79,7 +79,7 @@ public class HexGenerator extends ApplicationAdapter {
         config.useVsync(true);
         config.setResizable(false);
         new Lwjgl3Application(new HexGenerator(), config);
-        AutomaticPaletteTransformer.main(arg);
+        PaletteCubeGenerator.main(arg);
         AutomaticPalettizer.main(arg);
     }
 

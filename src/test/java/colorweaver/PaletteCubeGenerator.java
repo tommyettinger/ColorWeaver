@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * Created by Tommy Ettinger on 1/21/2018.
  */
-public class AutomaticPaletteTransformer extends ApplicationAdapter {
+public class PaletteCubeGenerator extends ApplicationAdapter {
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -22,7 +22,7 @@ public class AutomaticPaletteTransformer extends ApplicationAdapter {
         config.setWindowedMode(640, 320);
         config.setIdleFPS(10);
         config.setResizable(true);
-        new Lwjgl3Application(new AutomaticPaletteTransformer(), config);
+        new Lwjgl3Application(new PaletteCubeGenerator(), config);
     }
     
     private int[] PALETTE;
