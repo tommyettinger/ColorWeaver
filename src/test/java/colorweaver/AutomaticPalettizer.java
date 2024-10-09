@@ -514,6 +514,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceOceanic(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
+///////
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSeaside(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
 
 ////////better?
 //        pm.drawPixmap(sam, 0, 0);
