@@ -1408,15 +1408,13 @@ public class PaletteReducer {
             color = rgbaPalette[i];
             if ((color & 0x80) != 0) {
                 paletteArray[i] = color;
-                paletteMapping[(color >>> 17 & 0x7C00) | (color >>> 14 & 0x3E0) | (color >>> 11 & 0x1F)] = (byte) i;
+                color = shrink(color);
+                Ls[i] = Math.min(Math.max((int) (OKLAB[0][color] * 255.999), 0), 255);
+                As[i] = Math.min(Math.max((int) ((OKLAB[1][color] + 0.5) * 255.999), 0), 255);
+                Bs[i] = Math.min(Math.max((int) ((OKLAB[2][color] + 0.5) * 255.999), 0), 255);
+                color = (Ls[i] << 7 & 0x7C00) | (As[i] << 2 & 0x3E0) | (Bs[i] >>> 3);
+                paletteMapping[color] = (byte) i;
             }
-            paletteArray[i] = color;
-            color = shrink(color);
-            Ls[i] = Math.min(Math.max((int)(OKLAB[0][color] * 255.999), 0), 255);
-            As[i] = Math.min(Math.max((int)((OKLAB[1][color] + 0.5) * 255.999), 0), 255);
-            Bs[i] = Math.min(Math.max((int)((OKLAB[2][color] + 0.5) * 255.999), 0), 255);
-            color = (Ls[i] << 7 & 0x7C00) | (As[i] << 2 & 0x3E0) | (Bs[i] >>> 3);
-            paletteMapping[color] = (byte) i;
         }
         for (int L = 0; L < 32; L++) {
             int LL = (L << 3 | L >>> 2);
