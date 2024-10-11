@@ -503,21 +503,25 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceBurkes(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
 ///////////great, especially for error diffusion
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBurkes0(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Burkes0" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBurkes0(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Burkes0" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////even better!
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBurkes2(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Burkes2" + suffix + ".png"), pm, PALETTE, false, 0);
 ///////great!
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceOceanic(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceOceanic(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
+/////// basically the same as Oceanic
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceSeaside(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
 ///////
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceSeaside(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceCuatro(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Cuatro" + suffix + ".png"), pm, PALETTE, false, 0);
 
 ////////better?
 //        pm.drawPixmap(sam, 0, 0);

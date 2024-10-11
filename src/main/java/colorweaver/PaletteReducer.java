@@ -3886,6 +3886,83 @@ public class PaletteReducer {
 //                    int adj = (int)((px + y & 1) << 3);
 // ^ (RAW_BLUE_NOISE[(px & 63) | (y & 63) << 6] & 255) >>> 4
 
+    public Pixmap reduceCuatro(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int w = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color0, color1, color2, color3, count, used, cr, cg, cb, or, og, ob, usedIndex, placeIndex;
+        final float errorMul = (float) (ditherStrength * 0.6 * populationBias * populationBias);
+        for (int y = 0; y < h; y+= 2) {
+            for (int x = 0; x < w; x+= 2) {
+                count = 0;
+                placeIndex = 0;
+                color0 = pixmap.getPixel(x, y);
+                if ((color0 & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(x, y, color0 = 0);
+                else {
+                    ++count;
+                    placeIndex |= 1;
+                }
+                if(x + 1 < w) {
+                    color1 = pixmap.getPixel(x + 1, y);
+                    if ((color1 & 0x80) == 0 && hasTransparent)
+                        pixmap.drawPixel(x, y, color1 = 0);
+                    else {
+                        ++count;
+                        placeIndex |= 2;
+                    }
+                } else color1 = 0;
+                if(y + 1 < h) {
+                    color2 = pixmap.getPixel(x, y + 1);
+                    if ((color2 & 0x80) == 0 && hasTransparent)
+                        pixmap.drawPixel(x, y, color2 = 0);
+                    else {
+                        ++count;
+                        placeIndex |= 4;
+                    }
+                } else color2 = 0;
+                if(x + 1 < w && y + 1 < h) {
+                    color3 = pixmap.getPixel(x + 1, y + 1);
+                    if ((color3 & 0x80) == 0 && hasTransparent)
+                        pixmap.drawPixel(x, y, color3 = 0);
+                    else {
+                        ++count;
+                        placeIndex |= 8;
+                    }
+                } else color3 = 0;
+                if(count != 0) {
+                    double er = 0, eg = 0, eb = 0;
+                    cr = ((color0 >>> 24)        + (color1 >>> 24)        + (color2 >>> 24)        + (color3 >>> 24)       ) / count;
+                    cg = ((color0 >>> 16 & 0xFF) + (color1 >>> 16 & 0xFF) + (color2 >>> 16 & 0xFF) + (color3 >>> 16 & 0xFF)) / count;
+                    cb = ((color0 >>> 8 & 0xFF)  + (color1 >>> 8 & 0xFF)  + (color2 >>> 8 & 0xFF)  + (color3 >>> 8 & 0xFF) ) / count;
+                    float em = errorMul;
+                    for (int i = 0; i < count; i++) {
+                        int place = placeIndex & -placeIndex;
+                        placeIndex ^= place;
+                        int rr = Math.min(Math.max((int) (cr + er * em), 0), 255);
+                        int gg = Math.min(Math.max((int) (cg + eg * em), 0), 255);
+                        int bb = Math.min(Math.max((int) (cb + eb * em), 0), 255);
+                        usedIndex = paletteMapping[((rr << 7) & 0x7C00)
+                                | ((gg << 2) & 0x3E0)
+                                | ((bb >>> 3))] & 0xFF;
+                        used = paletteArray[usedIndex];
+                        or = 10 + cr - (used >>> 24);        er = er + Math.copySign(Math.pow(Math.abs(or), 1.2), or);
+                        og = 10 + cg - (used >>> 16 & 0xFF); eg = eg + Math.copySign(Math.pow(Math.abs(og), 1.2), og);
+                        ob = 10 + cb - (used >>> 8 & 0xFF);  eb = eb + Math.copySign(Math.pow(Math.abs(ob), 1.2), ob);
+                        
+                        int idx = Integer.numberOfTrailingZeros(place);
+                        int ax = (idx ^ idx >>> 1) & 1;
+                        int ay = idx & 1;
+                        pixmap.drawPixel(x + ax, y + ay, used);
+                    }
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
     /**
      * Uses Interleaved Gradient Noise, by Jorge Jimenez.
      * @param pixmap
@@ -5386,7 +5463,7 @@ public class PaletteReducer {
         return pixmap;
     }
 
-    void computePaletteGamma(){
+//    void computePaletteGamma(){
         //// unused now, this was the only line before
 //        System.arraycopy(paletteArray, 0, gammaArray, 0, paletteArray.length);
 
@@ -5401,7 +5478,7 @@ public class PaletteReducer {
 //            int a = color & 0xFF;
 //            gammaArray[i] = (int)(r * 255.999) << 24 | (int)(g * 255.999) << 16 | (int)(b * 255.999) << 8 | a;
 //        }
-    }
+//    }
 
     /**
      * Given by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
@@ -5605,7 +5682,6 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
         final float errorMul = (float) (ditherStrength * 0.5 / populationBias);
-        computePaletteGamma();
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -5657,7 +5733,6 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
         final float errorMul = (float) (ditherStrength * populationBias * 0.6);
-        computePaletteGamma();
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -5699,7 +5774,6 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
         final float errorMul = (float) (ditherStrength * populationBias);
-        computePaletteGamma();
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -5855,7 +5929,6 @@ public class PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
         final float errorMul = (float) (ditherStrength * 0.25 / (populationBias * populationBias));
-        computePaletteGamma();
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
