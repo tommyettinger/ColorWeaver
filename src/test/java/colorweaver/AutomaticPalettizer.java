@@ -116,6 +116,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         PNG8 png8 = new PNG8();
         png8.setCompression(2);
         png8.setFlipY(false);
+        long startTime = System.currentTimeMillis();
         PaletteReducer reducer = new PaletteReducer();
 
         // do everything
@@ -289,7 +290,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
             png8.palette = reducer;
             try {
                 for(FileHandle sample : samples) {
-                    long startTime = System.currentTimeMillis();
+
                     Pixmap pm, sam = new Pixmap(sample);
                     pm = new Pixmap(sam.getWidth(), sam.getHeight(), sam.getFormat());
                     reducer.setDitherStrength(1f);
@@ -303,7 +304,6 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                     reducer.setDitherStrength(1f);
                     drawPart(pm, sam, reducer, png8, subname, suffix);
 //
-//                    System.out.println("Took " + (System.currentTimeMillis() - startTime) + " ms");
 
                     //// used by non-limited code
 
@@ -334,6 +334,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
                 e.printStackTrace();
             }
         }
+        System.out.println("Took " + (System.currentTimeMillis() - startTime) + " ms");
 
         Gdx.app.exit();
     }
@@ -447,9 +448,15 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceNeue(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////////incredible
+        //Took 106929 ms
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceKnoll(pm);
-//        png8.writePrecisely(Gdx.files.local(subname + "_Knoll_H" + suffix + ".png"), pm, PALETTE, false, 0);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Knoll" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////////
+        //Took 98748 ms
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceKnoll2(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Knoll2" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////??? error diffusion with IGN
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceIgneous(pm);
@@ -519,9 +526,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceSeaside(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
 ///////
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceCuatro(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Cuatro" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceCuatro(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Cuatro" + suffix + ".png"), pm, PALETTE, false, 0);
 
 ////////better?
 //        pm.drawPixmap(sam, 0, 0);

@@ -1127,6 +1127,7 @@ public class PaletteReducer {
     public static final LABRoughColorMetric labRoughMetric = new LABRoughColorMetric();
     public byte[] paletteMapping;
     public final int[] paletteArray = new int[256];
+    public final double[] paletteLightness = new double[256];
     FloatArray curErrorRedFloats, nextErrorRedFloats, curErrorGreenFloats, nextErrorGreenFloats, curErrorBlueFloats, nextErrorBlueFloats;
     public int colorCount;
     double ditherStrength = 1.0, populationBias = 0.5;
@@ -3947,9 +3948,9 @@ public class PaletteReducer {
                                 | ((gg << 2) & 0x3E0)
                                 | ((bb >>> 3))] & 0xFF;
                         used = paletteArray[usedIndex];
-                        or = 10 + cr - (used >>> 24);        er = er + Math.copySign(Math.pow(Math.abs(or), 1.2), or);
-                        og = 10 + cg - (used >>> 16 & 0xFF); eg = eg + Math.copySign(Math.pow(Math.abs(og), 1.2), og);
-                        ob = 10 + cb - (used >>> 8 & 0xFF);  eb = eb + Math.copySign(Math.pow(Math.abs(ob), 1.2), ob);
+                        or = cr - (used >>> 24);        er = er + Math.copySign(Math.pow(Math.abs(or) * 1.1, 1.2), or);
+                        og = cg - (used >>> 16 & 0xFF); eg = eg + Math.copySign(Math.pow(Math.abs(og) * 1.1, 1.2), og);
+                        ob = cb - (used >>> 8 & 0xFF);  eb = eb + Math.copySign(Math.pow(Math.abs(ob) * 1.1, 1.2), ob);
                         
                         int idx = Integer.numberOfTrailingZeros(place);
                         int ax = (idx ^ idx >>> 1) & 1;
@@ -5536,6 +5537,13 @@ public class PaletteReducer {
             ints[b] = t;
         }
     }
+    protected void compareSwapIndices(final int[] indices, final int a, final int b) {
+        if(paletteLightness[indices[a]] > paletteLightness[indices[b]]) {
+            final int t = indices[a];
+            indices[a] = indices[b];
+            indices[b] = t;
+        }
+    }
 
     /**
      * Sorting network, found by http://pages.ripco.net/~jgamble/nw.html , considered the best known for length 8.
@@ -5662,6 +5670,70 @@ public class PaletteReducer {
         compareSwap(i16, 6, 7);
         compareSwap(i16, 8, 9);
     }
+    
+    private void sort16Indices(final int[] i16)
+    {
+        compareSwapIndices(i16, 0, 1);
+        compareSwapIndices(i16, 2, 3);
+        compareSwapIndices(i16, 4, 5);
+        compareSwapIndices(i16, 6, 7);
+        compareSwapIndices(i16, 8, 9);
+        compareSwapIndices(i16, 10, 11);
+        compareSwapIndices(i16, 12, 13);
+        compareSwapIndices(i16, 14, 15);
+        compareSwapIndices(i16, 0, 2);
+        compareSwapIndices(i16, 4, 6);
+        compareSwapIndices(i16, 8, 10);
+        compareSwapIndices(i16, 12, 14);
+        compareSwapIndices(i16, 1, 3);
+        compareSwapIndices(i16, 5, 7);
+        compareSwapIndices(i16, 9, 11);
+        compareSwapIndices(i16, 13, 15);
+        compareSwapIndices(i16, 0, 4);
+        compareSwapIndices(i16, 8, 12);
+        compareSwapIndices(i16, 1, 5);
+        compareSwapIndices(i16, 9, 13);
+        compareSwapIndices(i16, 2, 6);
+        compareSwapIndices(i16, 10, 14);
+        compareSwapIndices(i16, 3, 7);
+        compareSwapIndices(i16, 11, 15);
+        compareSwapIndices(i16, 0, 8);
+        compareSwapIndices(i16, 1, 9);
+        compareSwapIndices(i16, 2, 10);
+        compareSwapIndices(i16, 3, 11);
+        compareSwapIndices(i16, 4, 12);
+        compareSwapIndices(i16, 5, 13);
+        compareSwapIndices(i16, 6, 14);
+        compareSwapIndices(i16, 7, 15);
+        compareSwapIndices(i16, 5, 10);
+        compareSwapIndices(i16, 6, 9);
+        compareSwapIndices(i16, 3, 12);
+        compareSwapIndices(i16, 13, 14);
+        compareSwapIndices(i16, 7, 11);
+        compareSwapIndices(i16, 1, 2);
+        compareSwapIndices(i16, 4, 8);
+        compareSwapIndices(i16, 1, 4);
+        compareSwapIndices(i16, 7, 13);
+        compareSwapIndices(i16, 2, 8);
+        compareSwapIndices(i16, 11, 14);
+        compareSwapIndices(i16, 2, 4);
+        compareSwapIndices(i16, 5, 6);
+        compareSwapIndices(i16, 9, 10);
+        compareSwapIndices(i16, 11, 13);
+        compareSwapIndices(i16, 3, 8);
+        compareSwapIndices(i16, 7, 12);
+        compareSwapIndices(i16, 6, 8);
+        compareSwapIndices(i16, 10, 12);
+        compareSwapIndices(i16, 3, 5);
+        compareSwapIndices(i16, 7, 9);
+        compareSwapIndices(i16, 3, 4);
+        compareSwapIndices(i16, 5, 6);
+        compareSwapIndices(i16, 7, 8);
+        compareSwapIndices(i16, 9, 10);
+        compareSwapIndices(i16, 11, 12);
+        compareSwapIndices(i16, 6, 7);
+        compareSwapIndices(i16, 8, 9);
+    }
 
     /**
      * Reduces a Pixmap to the palette this knows by using Thomas Knoll's pattern dither, which is out-of-patent since
@@ -5706,6 +5778,48 @@ public class PaletteReducer {
                     }
                     sort16(candidates);
                     pixmap.drawPixel(px, y, candidates[thresholdMatrix[((px & 3) | (y & 3) << 2)]]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reduceKnoll2 (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        for (int i = 0; i < colorCount; i++) {
+            paletteLightness[i] = labs[0][shrink(paletteArray[i])];
+        }
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used, cr, cg, cb, usedIndex;
+        final float errorMul = (float) (ditherStrength * 0.5 / populationBias);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int er = 0, eg = 0, eb = 0;
+                    cr = (color >>> 24);
+                    cg = (color >>> 16 & 0xFF);
+                    cb = (color >>> 8 & 0xFF);
+                    for (int i = 0; i < 16; i++) {
+                        int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
+                        int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
+                        int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
+                        candidates[i] = usedIndex = paletteMapping[
+                                ((rr << 7) & 0x7C00)
+                                        | ((gg << 2) & 0x3E0)
+                                        | ((bb >>> 3))] & 0xFF;
+                        used = paletteArray[usedIndex];
+                        er += cr - (used >>> 24);
+                        eg += cg - (used >>> 16 & 0xFF);
+                        eb += cb - (used >>> 8 & 0xFF);
+                    }
+                    sort16Indices(candidates);
+                    pixmap.drawPixel(px, y, paletteArray[candidates[thresholdMatrix[((px & 3) | (y & 3) << 2)]]]);
                 }
             }
         }
