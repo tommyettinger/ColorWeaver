@@ -3051,6 +3051,189 @@ public class PaletteReducer {
         return pixmap;
     }
 
+    public Pixmap reduceCoastal (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        final float[] matrix = MATRIX_MULTIPLIERS;
+        float r4, r2, r1, g4, g2, g1, b4, b2, b1;
+        final float s = (float) (0.2 * ditherStrength * (populationBias * populationBias * populationBias)),
+                strength = s * 0.3f / (0.19f + s);
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedFloats == null) {
+            curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(lineLen)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(lineLen)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(lineLen)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(lineLen)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(lineLen)).items;
+        } else {
+            curErrorRed = curErrorRedFloats.ensureCapacity(lineLen);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(lineLen);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(lineLen);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(lineLen);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(lineLen);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(lineLen);
+
+            Arrays.fill(nextErrorRed, 0, lineLen, 0);
+            Arrays.fill(nextErrorGreen, 0, lineLen, 0);
+            Arrays.fill(nextErrorBlue, 0, lineLen, 0);
+        }
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used, rdiff, gdiff, bdiff;
+        float er, eg, eb;
+        byte paletteIndex;
+        for (int py = 0; py < h; py++) {
+            int ny = py + 1;
+
+            System.arraycopy(nextErrorRed, 0, curErrorRed, 0, lineLen);
+            System.arraycopy(nextErrorGreen, 0, curErrorGreen, 0, lineLen);
+            System.arraycopy(nextErrorBlue, 0, curErrorBlue, 0, lineLen);
+
+            Arrays.fill(nextErrorRed, 0, lineLen, 0);
+            Arrays.fill(nextErrorGreen, 0, lineLen, 0);
+            Arrays.fill(nextErrorBlue, 0, lineLen, 0);
+
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, py);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, py, 0);
+                else {
+                    er = curErrorRed[px];
+                    eg = curErrorGreen[px];
+                    eb = curErrorBlue[px];
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + er + 0.5f), 0), 0xFF);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0), 0xFF);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + eb + 0.5f), 0), 0xFF);
+
+                    paletteIndex =
+                            paletteMapping[((rr << 7) & 0x7C00)
+                                    | ((gg << 2) & 0x3E0)
+                                    | ((bb >>> 3))];
+                    used = paletteArray[paletteIndex & 0xFF];
+                    pixmap.drawPixel(px, py, used);
+                    rdiff = (color>>>24)-    (used>>>24);
+                    gdiff = (color>>>16&255)-(used>>>16&255);
+                    bdiff = (color>>>8&255)- (used>>>8&255);
+                    r1 = rdiff * strength;
+                    g1 = gdiff * strength;
+                    b1 = bdiff * strength;
+                    r2 = r1 + r1;
+                    g2 = g1 + g1;
+                    b2 = b1 + b1;
+                    r4 = r2 + r2;
+                    g4 = g2 + g2;
+                    b4 = b2 + b2;
+
+                    float modifier;
+                    if(px < lineLen - 1)
+                    {
+                        modifier = matrix[(px + 1 & 7) | ((py << 3) & 56)];
+                        curErrorRed[px+1]   += r4 * modifier;
+                        curErrorGreen[px+1] += g4 * modifier;
+                        curErrorBlue[px+1]  += b4 * modifier;
+                        if(px < lineLen - 2)
+                        {
+                            modifier = matrix[(px + 2 & 7) | ((py << 3) & 56)];
+                            curErrorRed[px+2]   += r2 * modifier;
+                            curErrorGreen[px+2] += g2 * modifier;
+                            curErrorBlue[px+2]  += b2 * modifier;
+                        }
+                    }
+                    if(ny < h)
+                    {
+                        if(px > 0)
+                        {
+                            modifier = matrix[(px - 1 & 7) | ((ny << 3) & 56)];
+                            nextErrorRed[px-1]   += r2 * modifier;
+                            nextErrorGreen[px-1] += g2 * modifier;
+                            nextErrorBlue[px-1]  += b2 * modifier;
+                            if(px > 1)
+                            {
+                                modifier = matrix[(px - 2 & 7) | ((ny << 3) & 56)];
+                                nextErrorRed[px-2]   += r1 * modifier;
+                                nextErrorGreen[px-2] += g1 * modifier;
+                                nextErrorBlue[px-2]  += b1 * modifier;
+                            }
+                        }
+                        modifier = matrix[(px & 7) | ((ny << 3) & 56)];
+                        nextErrorRed[px]   += r4 * modifier;
+                        nextErrorGreen[px] += g4 * modifier;
+                        nextErrorBlue[px]  += b4 * modifier;
+                        if(px < lineLen - 1)
+                        {
+                            modifier = matrix[(px + 1 & 7) | ((ny << 3) & 56)];
+                            nextErrorRed[px+1]   += r2 * modifier;
+                            nextErrorGreen[px+1] += g2 * modifier;
+                            nextErrorBlue[px+1]  += b2 * modifier;
+                            if(px < lineLen - 2)
+                            {
+                                modifier = matrix[(px + 2 & 7) | ((ny << 3) & 56)];
+                                nextErrorRed[px+2]   += r1 * modifier;
+                                nextErrorGreen[px+2] += g1 * modifier;
+                                nextErrorBlue[px+2]  += b1 * modifier;
+                            }
+                        }
+                    }
+
+//                    float modifier;
+//                    if(px < lineLen - 1)
+//                    {
+//                        modifier = matrix[(px + 1 & 3) | ((py << 2) & 0xC)];
+//                        curErrorRed[px+1]   += r4 * modifier;
+//                        curErrorGreen[px+1] += g4 * modifier;
+//                        curErrorBlue[px+1]  += b4 * modifier;
+//                        if(px < lineLen - 2)
+//                        {
+//                            modifier = matrix[(px + 2 & 3) | ((py << 2) & 12)];
+//                            curErrorRed[px+2]   += r2 * modifier;
+//                            curErrorGreen[px+2] += g2 * modifier;
+//                            curErrorBlue[px+2]  += b2 * modifier;
+//                        }
+//                    }
+//                    if(ny < h)
+//                    {
+//                        if(px > 0)
+//                        {
+//                            modifier = matrix[(px - 1 & 3) | ((ny << 2) & 12)];
+//                            nextErrorRed[px-1]   += r2 * modifier;
+//                            nextErrorGreen[px-1] += g2 * modifier;
+//                            nextErrorBlue[px-1]  += b2 * modifier;
+//                            if(px > 1)
+//                            {
+//                                modifier = matrix[(px - 2 & 3) | ((ny << 2) & 12)];
+//                                nextErrorRed[px-2]   += r1 * modifier;
+//                                nextErrorGreen[px-2] += g1 * modifier;
+//                                nextErrorBlue[px-2]  += b1 * modifier;
+//                            }
+//                        }
+//                        modifier = matrix[(px & 3) | ((ny << 2) & 12)];
+//                        nextErrorRed[px]   += r4 * modifier;
+//                        nextErrorGreen[px] += g4 * modifier;
+//                        nextErrorBlue[px]  += b4 * modifier;
+//                        if(px < lineLen - 1)
+//                        {
+//                            modifier = matrix[(px + 1 & 3) | ((ny << 2) & 12)];
+//                            nextErrorRed[px+1]   += r2 * modifier;
+//                            nextErrorGreen[px+1] += g2 * modifier;
+//                            nextErrorBlue[px+1]  += b2 * modifier;
+//                            if(px < lineLen - 2)
+//                            {
+//                                modifier = matrix[(px + 2 & 3) | ((ny << 2) & 12)];
+//                                nextErrorRed[px+2]   += r1 * modifier;
+//                                nextErrorGreen[px+2] += g1 * modifier;
+//                                nextErrorBlue[px+2]  += b1 * modifier;
+//                            }
+//                        }
+//                    }
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+
     /**
      * Modifies the given Pixmap so it only uses colors present in this PaletteReducer, dithering when it can using a
      * modified version of the algorithm presented in "Simple gradient-based error-diffusion method" by Xaingyu Y. Hu in
@@ -5520,6 +5703,13 @@ public class PaletteReducer {
 
     private final int[] candidates = new int[16];
 
+    private static final float[] MATRIX_MULTIPLIERS = new float[64];
+    static {
+        for (int i = 0; i < MATRIX_MULTIPLIERS.length; i++) {
+            MATRIX_MULTIPLIERS[i] = (float)Math.pow(1.618, (thresholdMatrix64[i] - 31.5) * 0.03);
+        }
+    }
+
     /**
      * Compares items in ints by their luma, looking up items by the indices a and b, and swaps the two given indices if
      * the item at a has higher luma than the item at b. This is protected rather than private because it's more likely
@@ -5535,13 +5725,6 @@ public class PaletteReducer {
             final int t = ints[a];
             ints[a] = ints[b];
             ints[b] = t;
-        }
-    }
-    protected void compareSwapIndices(final int[] indices, final int a, final int b) {
-        if(paletteLightness[indices[a]] > paletteLightness[indices[b]]) {
-            final int t = indices[a];
-            indices[a] = indices[b];
-            indices[b] = t;
         }
     }
 
@@ -5670,7 +5853,15 @@ public class PaletteReducer {
         compareSwap(i16, 6, 7);
         compareSwap(i16, 8, 9);
     }
-    
+
+    protected void compareSwapIndices(final int[] indices, final int a, final int b) {
+        if(paletteLightness[indices[a]] > paletteLightness[indices[b]]) {
+            final int t = indices[a];
+            indices[a] = indices[b];
+            indices[b] = t;
+        }
+    }
+
     private void sort16Indices(final int[] i16)
     {
         compareSwapIndices(i16, 0, 1);
@@ -5788,7 +5979,7 @@ public class PaletteReducer {
     public Pixmap reduceKnoll2 (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         for (int i = 0; i < colorCount; i++) {
-            paletteLightness[i] = labs[0][shrink(paletteArray[i])];
+            paletteLightness[i] = OKLAB[0][shrink(paletteArray[i])];
         }
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
@@ -5806,9 +5997,9 @@ public class PaletteReducer {
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
                     for (int i = 0; i < 16; i++) {
-                        int rr = MathUtils.clamp((int) (cr + er * errorMul), 0, 255);
-                        int gg = MathUtils.clamp((int) (cg + eg * errorMul), 0, 255);
-                        int bb = MathUtils.clamp((int) (cb + eb * errorMul), 0, 255);
+                        int rr = Math.min(Math.max((int) (cr + er * errorMul), 0), 255);
+                        int gg = Math.min(Math.max((int) (cg + eg * errorMul), 0), 255);
+                        int bb = Math.min(Math.max((int) (cb + eb * errorMul), 0), 255);
                         candidates[i] = usedIndex = paletteMapping[
                                 ((rr << 7) & 0x7C00)
                                         | ((gg << 2) & 0x3E0)

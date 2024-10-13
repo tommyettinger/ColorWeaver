@@ -454,9 +454,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        png8.writePrecisely(Gdx.files.local(subname + "_Knoll" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////////
         //Took 98748 ms
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceKnoll2(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Knoll2" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceKnoll2(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Knoll2" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////??? error diffusion with IGN
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceIgneous(pm);
@@ -525,6 +525,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSeaside(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
+///// oceanic meets pattern dither
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceCoastal(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Coastal" + suffix + ".png"), pm, PALETTE, false, 0);
 ///////
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceCuatro(pm);
