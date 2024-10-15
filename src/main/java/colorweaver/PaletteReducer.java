@@ -5706,7 +5706,7 @@ public class PaletteReducer {
     private static final float[] MATRIX_MULTIPLIERS = new float[64];
     static {
         for (int i = 0; i < MATRIX_MULTIPLIERS.length; i++) {
-            MATRIX_MULTIPLIERS[i] = (float)Math.pow(1.618, (thresholdMatrix64[i] - 31.5) * 0.03);
+            MATRIX_MULTIPLIERS[i] = (float)Math.pow(1.4, (thresholdMatrix64[i] - 31.5) * 0.03);
         }
     }
 
