@@ -526,9 +526,13 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceSeaside(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
 ///// oceanic meets pattern dither
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceCoastal(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Coastal" + suffix + ".png"), pm, PALETTE, false, 0);
+/////
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceCoastal(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Coastal" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reducePatternish(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm, PALETTE, false, 0);
 ///////
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceCuatro(pm);

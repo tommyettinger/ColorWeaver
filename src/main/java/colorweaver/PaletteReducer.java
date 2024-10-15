@@ -6018,6 +6018,40 @@ public class PaletteReducer {
         return pixmap;
     }
 
+    public Pixmap reducePatternish (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, cr, cg, cb;
+        final float errorMul = (float) (ditherStrength * 7.0 / populationBias);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    cr = (color >>> 24);
+                    cg = (color >>> 16 & 0xFF);
+                    cb = (color >>> 8 & 0xFF);
+                    int loc = thresholdMatrix[((px & 3) | (y & 3) << 2)];
+                    for (int i = 0; i <= loc; i++) {
+                        int rr = Math.min(Math.max((int) (cr + (i - 7.5f) * errorMul + 0.5f), 0), 255);
+                        int gg = Math.min(Math.max((int) (cg + (i - 7.5f) * errorMul + 0.5f), 0), 255);
+                        int bb = Math.min(Math.max((int) (cb + (i - 7.5f) * errorMul + 0.5f), 0), 255);
+                        candidates[i] = paletteMapping[
+                                ((rr << 7) & 0x7C00)
+                                        | ((gg << 2) & 0x3E0)
+                                        | ((bb >>> 3))] & 0xFF;
+                    }
+                    pixmap.drawPixel(px, y, paletteArray[candidates[loc]]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
     /**
      * Reduces a Pixmap to the palette this knows by using a skewed version of Thomas Knoll's pattern dither, which is
      * out-of-patent since late 2019, using the harmonious numbers rediscovered by Martin Roberts to handle the skew.
