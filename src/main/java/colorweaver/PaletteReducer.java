@@ -2786,7 +2786,6 @@ public class PaletteReducer {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         final float[] noise = TRI_BLUE_NOISE_MULTIPLIERS;
-        float r4, r2, r1, g4, g2, g1, b4, b2, b1;
         final float s = (float) (0.175 * ditherStrength * (populationBias * populationBias * populationBias)),
                 strength = s * 0.29f / (0.19f + s);
         float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
@@ -2846,16 +2845,17 @@ public class PaletteReducer {
                     rdiff = (color>>>24)-    (used>>>24);
                     gdiff = (color>>>16&255)-(used>>>16&255);
                     bdiff = (color>>>8&255)- (used>>>8&255);
-                    r1 = rdiff * strength;
-                    g1 = gdiff * strength;
-                    b1 = bdiff * strength;
-                    r2 = r1 + r1;
-                    g2 = g1 + g1;
-                    b2 = b1 + b1;
-                    r4 = r2 + r2;
-                    g4 = g2 + g2;
-                    b4 = b2 + b2;
-                    int modifier;
+                    int modifier = ((px & 63) | (py << 6 & 0xFC0));
+                    final float r1 = rdiff * strength * noise[modifier];
+                    final float g1 = gdiff * strength * noise[modifier ^ 0x528];
+                    final float b1 = bdiff * strength * noise[modifier ^ 0xA14];
+                    final float r2 = r1 + r1;
+                    final float g2 = g1 + g1;
+                    final float b2 = b1 + b1;
+                    final float r4 = r2 + r2;
+                    final float g4 = g2 + g2;
+                    final float b4 = b2 + b2;
+
                     if(px < lineLen - 1)
                     {
                         modifier = ((px + 1 & 63) | (py << 6 & 0xFC0));
