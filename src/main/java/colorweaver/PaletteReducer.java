@@ -6777,7 +6777,8 @@ public class PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        final float strength = (float)(0x1p-12f * ditherStrength * populationBias);
+        final float strength = (float)(0x1p-8f * ditherStrength * populationBias);
+//        final float strength = (float)(0x1p-12f * ditherStrength * populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -6786,7 +6787,8 @@ public class PaletteReducer {
                 else {
 
                     float matrix = (thresholdMatrix64[(px & 7) | (y & 7) << 3] - 31.5f);
-                    float adj = matrix * Math.abs(matrix) * strength;
+                    float adj = matrix * strength;
+//                    float adj = matrix * Math.abs(matrix) * strength;
                     int rr = Math.min(Math.max((int)(signPreservingSquare(Math.sqrt(((color >>> 24)       ) * (1f/255f)) + adj) * 255), 0), 255);
                     int gg = Math.min(Math.max((int)(signPreservingSquare(Math.sqrt(((color >>> 16) & 0xFF) * (1f/255f)) + adj) * 255), 0), 255);
                     int bb = Math.min(Math.max((int)(signPreservingSquare(Math.sqrt(((color >>> 8)  & 0xFF) * (1f/255f)) + adj) * 255), 0), 255);
