@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.*;
+import com.github.tommyettinger.digital.MathTools;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -2784,7 +2785,7 @@ public class PaletteReducer {
 
     public Pixmap reduceSeaside (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
-        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        final int w = pixmap.getWidth(), h = pixmap.getHeight();
         final float[] noiseA = TRI_BLUE_NOISE_MULTIPLIERS;
         final float[] noiseB = TRI_BLUE_NOISE_MULTIPLIERS_B;
         final float[] noiseC = TRI_BLUE_NOISE_MULTIPLIERS_C;
@@ -2792,23 +2793,23 @@ public class PaletteReducer {
                 strength = s * 0.29f / (0.18f + s);
         float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
         if (curErrorRedFloats == null) {
-            curErrorRed = (curErrorRedFloats = new FloatArray(lineLen)).items;
-            nextErrorRed = (nextErrorRedFloats = new FloatArray(lineLen)).items;
-            curErrorGreen = (curErrorGreenFloats = new FloatArray(lineLen)).items;
-            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(lineLen)).items;
-            curErrorBlue = (curErrorBlueFloats = new FloatArray(lineLen)).items;
-            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(lineLen)).items;
+            curErrorRed = (curErrorRedFloats = new FloatArray(w)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(w)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(w)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(w)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(w)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(w)).items;
         } else {
-            curErrorRed = curErrorRedFloats.ensureCapacity(lineLen);
-            nextErrorRed = nextErrorRedFloats.ensureCapacity(lineLen);
-            curErrorGreen = curErrorGreenFloats.ensureCapacity(lineLen);
-            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(lineLen);
-            curErrorBlue = curErrorBlueFloats.ensureCapacity(lineLen);
-            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(lineLen);
+            curErrorRed = curErrorRedFloats.ensureCapacity(w);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(w);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(w);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(w);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(w);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(w);
 
-            Arrays.fill(nextErrorRed, 0, lineLen, 0);
-            Arrays.fill(nextErrorGreen, 0, lineLen, 0);
-            Arrays.fill(nextErrorBlue, 0, lineLen, 0);
+            Arrays.fill(nextErrorRed, 0, w, 0);
+            Arrays.fill(nextErrorGreen, 0, w, 0);
+            Arrays.fill(nextErrorBlue, 0, w, 0);
         }
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
@@ -2818,15 +2819,15 @@ public class PaletteReducer {
         for (int py = 0; py < h; py++) {
             int ny = py + 1;
 
-            System.arraycopy(nextErrorRed, 0, curErrorRed, 0, lineLen);
-            System.arraycopy(nextErrorGreen, 0, curErrorGreen, 0, lineLen);
-            System.arraycopy(nextErrorBlue, 0, curErrorBlue, 0, lineLen);
+            System.arraycopy(nextErrorRed, 0, curErrorRed, 0, w);
+            System.arraycopy(nextErrorGreen, 0, curErrorGreen, 0, w);
+            System.arraycopy(nextErrorBlue, 0, curErrorBlue, 0, w);
 
-            Arrays.fill(nextErrorRed, 0, lineLen, 0);
-            Arrays.fill(nextErrorGreen, 0, lineLen, 0);
-            Arrays.fill(nextErrorBlue, 0, lineLen, 0);
+            Arrays.fill(nextErrorRed, 0, w, 0);
+            Arrays.fill(nextErrorGreen, 0, w, 0);
+            Arrays.fill(nextErrorBlue, 0, w, 0);
 
-            for (int px = 0; px < lineLen; px++) {
+            for (int px = 0; px < w; px++) {
                 color = pixmap.getPixel(px, py);
                 if ((color & 0x80) == 0 && hasTransparent)
                     pixmap.drawPixel(px, py, 0);
@@ -2858,20 +2859,20 @@ public class PaletteReducer {
                     final float g4 = g2 + g2;
                     final float b4 = b2 + b2;
 
-                    if(px < lineLen - 1)
+                    if(px < w - 1)
                     {
                         modifier = ((px + 1 & 63) | (py << 6 & 0xFC0));
                         curErrorRed[px+1]   += r4 * noiseA[modifier];
                         curErrorGreen[px+1] += g4 * noiseB[modifier];
                         curErrorBlue[px+1]  += b4 * noiseC[modifier];
-                        if(px < lineLen - 2)
+                        if(px < w - 2)
                         {
                             modifier = ((px + 2 & 63) | ((py << 6) & 0xFC0));
                             curErrorRed[px+2]   += r2 * noiseA[modifier];
                             curErrorGreen[px+2] += g2 * noiseB[modifier];
                             curErrorBlue[px+2]  += b2 * noiseC[modifier];
                         }
-                        if(px < lineLen - 3)
+                        if(px < w - 3)
                         {
                             modifier = ((px + 3 & 63) | ((py << 6) & 0xFC0));
                             curErrorRed[px+2]   += r1 * noiseA[modifier];
@@ -2899,13 +2900,13 @@ public class PaletteReducer {
                         nextErrorRed[px]   += r4 * noiseA[modifier];
                         nextErrorGreen[px] += g4 * noiseB[modifier];
                         nextErrorBlue[px]  += b4 * noiseC[modifier];
-                        if(px < lineLen - 1)
+                        if(px < w - 1)
                         {
                             modifier = (px + 1 & 63) | ((ny << 6) & 0xFC0);
                             nextErrorRed[px+1]   += r2 * noiseA[modifier];
                             nextErrorGreen[px+1] += g2 * noiseB[modifier];
                             nextErrorBlue[px+1]  += b2 * noiseC[modifier];
-                            if(px < lineLen - 2)
+                            if(px < w - 2)
                             {
                                 modifier = (px + 2 & 63) | ((ny << 6) & 0xFC0);
                                 nextErrorRed[px+2]   += r1 * noiseA[modifier];
@@ -6757,6 +6758,37 @@ public class PaletteReducer {
                 }
             }
 
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+    /**
+     * An intentionally low-fidelity dither, meant for pixel art.
+     * @param pixmap
+     * @return
+     */
+    public Pixmap reduceGourd(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        final float strength = (float)(0x1p-8f * ditherStrength / populationBias);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if ((color & 0x80) == 0 && hasTransparent)
+                    pixmap.drawPixel(px, y, 0);
+                else {
+//                    int adj = (int)((((px + y & 1) << 5) - 16) * strength);
+                    float adj = (thresholdMatrix64[(px & 7) | (y & 7) << 3] - 31.5f) * strength;
+                    int rr = Math.min(Math.max((int)(MathTools.square(Math.sqrt(((color >>> 24)       ) * (1f/255f)) + adj) * 255), 0), 255);
+                    int gg = Math.min(Math.max((int)(MathTools.square(Math.sqrt(((color >>> 16) & 0xFF) * (1f/255f)) + adj) * 255), 0), 255);
+                    int bb = Math.min(Math.max((int)(MathTools.square(Math.sqrt(((color >>> 8)  & 0xFF) * (1f/255f)) + adj) * 255), 0), 255);
+                    int rgb555 = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[rgb555] & 0xFF]);
+                }
+            }
         }
         pixmap.setBlending(blending);
         return pixmap;

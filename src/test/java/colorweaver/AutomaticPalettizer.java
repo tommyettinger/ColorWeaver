@@ -126,36 +126,36 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
         // the default
-//        for(FileHandle hex : new FileHandle[]{
-//                Gdx.files.local("palettes/hex/bw-2.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
-//                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
-//                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
-//                Gdx.files.local("palettes/hex/gb-4.hex"),
-//                Gdx.files.local("palettes/hex/prospecal-8.hex"),
-//                Gdx.files.local("palettes/hex/septembit23-6.hex"),
-//                Gdx.files.local("palettes/hex/gb-16.hex"),
-//                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
-//                Gdx.files.local("palettes/hex/azurestar-32.hex"),
-//                Gdx.files.local("palettes/hex/americana-4.hex"),
-//                Gdx.files.local("palettes/hex/ayy-4.hex"),
-//                Gdx.files.local("palettes/hex/gray-15.hex"),
-//                Gdx.files.local("palettes/hex/vinik-24.hex"),
-//                Gdx.files.local("palettes/hex/hyper-8.hex"),
-//                Gdx.files.local("palettes/hex/snuggly-15.hex"),
-//                Gdx.files.local("palettes/hex/snuggly-31.hex"),
-//                Gdx.files.local("palettes/hex/snuggly-63.hex"),
-//                Gdx.files.local("palettes/hex/snuggly-255.hex"),
-//                Gdx.files.local("palettes/hex/headpat-15.hex"),
-//                Gdx.files.local("palettes/hex/headpat-31.hex"),
-//                Gdx.files.local("palettes/hex/headpat-63.hex"),
-//                Gdx.files.local("palettes/hex/headpat-255.hex"),
-//                Gdx.files.local("palettes/hex/hug-15.hex"),
-//                Gdx.files.local("palettes/hex/hug-31.hex"),
-//                Gdx.files.local("palettes/hex/hug-63.hex"),
-//                Gdx.files.local("palettes/hex/hug-255.hex"),
-//        }) {
+        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/bw-2.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+                Gdx.files.local("palettes/hex/gb-4.hex"),
+                Gdx.files.local("palettes/hex/prospecal-8.hex"),
+                Gdx.files.local("palettes/hex/septembit23-6.hex"),
+                Gdx.files.local("palettes/hex/gb-16.hex"),
+                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+                Gdx.files.local("palettes/hex/americana-4.hex"),
+                Gdx.files.local("palettes/hex/ayy-4.hex"),
+                Gdx.files.local("palettes/hex/gray-15.hex"),
+                Gdx.files.local("palettes/hex/vinik-24.hex"),
+                Gdx.files.local("palettes/hex/hyper-8.hex"),
+                Gdx.files.local("palettes/hex/snuggly-15.hex"),
+                Gdx.files.local("palettes/hex/snuggly-31.hex"),
+                Gdx.files.local("palettes/hex/snuggly-63.hex"),
+                Gdx.files.local("palettes/hex/snuggly-255.hex"),
+                Gdx.files.local("palettes/hex/headpat-15.hex"),
+                Gdx.files.local("palettes/hex/headpat-31.hex"),
+                Gdx.files.local("palettes/hex/headpat-63.hex"),
+                Gdx.files.local("palettes/hex/headpat-255.hex"),
+                Gdx.files.local("palettes/hex/hug-15.hex"),
+                Gdx.files.local("palettes/hex/hug-31.hex"),
+                Gdx.files.local("palettes/hex/hug-63.hex"),
+                Gdx.files.local("palettes/hex/hug-255.hex"),
+        }) {
 
 //        // auto-generated Snuggly palettes
 //        FileHandle[] snugglies = new FileHandle[6];
@@ -218,15 +218,15 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/paulette-56.hex"),
 //        }) {
 
-        for(FileHandle hex : new FileHandle[]{
-                Gdx.files.local("palettes/hex/septembit23-6.hex"),
-                Gdx.files.local("palettes/hex/prospecal-8.hex"),
-                Gdx.files.local("palettes/hex/bw-2.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
-                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
-                }) {
+//        for(FileHandle hex : new FileHandle[]{
+//                Gdx.files.local("palettes/hex/septembit23-6.hex"),
+//                Gdx.files.local("palettes/hex/prospecal-8.hex"),
+//                Gdx.files.local("palettes/hex/bw-2.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+//                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+//                }) {
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/dharm-32.hex"),
@@ -488,6 +488,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceLeaf(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Leaf" + suffix + ".png"), pm, PALETTE, false, 0);
+//////retro, doesn't have to be classically good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceGourd(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Gourd" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////stylistic, not a traditional dither
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSchmidt(pm);
@@ -521,9 +525,9 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceOceanic(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
 /////// basically the same as Oceanic, but without the Burkes constants
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceSeaside(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceSeaside(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
 ///// oceanic meets pattern dither
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceCoastal(pm);
