@@ -489,13 +489,19 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        pm = reducer.reduceLeaf(pm);
 //        png8.writePrecisely(Gdx.files.local(subname + "_Leaf" + suffix + ".png"), pm, PALETTE, false, 0);
 //////retro, doesn't have to be classically good
+//        // 27994 ms for just this
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceGourd(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_Gourd" + suffix + ".png"), pm, PALETTE, false, 0);
+//////experimenting with LUTs to allow proper gamma correction
+        // 26523 ms for just this
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceGourd(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_Gourd" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceGourdLUT(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_GourdLUT" + suffix + ".png"), pm, PALETTE, false, 0);
 //////experimenting to see what this looks like without gamma correction
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceGourdNoGamma(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_GourdNoGamma" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceGourdNoGamma(pm);
+//        png8.writePrecisely(Gdx.files.local(subname + "_GourdNoGamma" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////stylistic, not a traditional dither
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSchmidt(pm);

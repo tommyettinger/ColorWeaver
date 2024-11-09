@@ -1875,7 +1875,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int rr = ((color >>> 24)       );
@@ -1937,7 +1937,7 @@ public class PaletteReducer {
 
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     er = curErrorRed[px];
@@ -2060,7 +2060,7 @@ public class PaletteReducer {
 
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     er = curErrorRed[px];
@@ -2203,7 +2203,7 @@ public class PaletteReducer {
 
             for (int px = 0; px < lineLen; px++) {
                 int color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     float er = curErrorRed[px];
@@ -2319,7 +2319,7 @@ public class PaletteReducer {
 
             for (int px = 0; px < lineLen; px++) {
                 int color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     float er = curErrorRed[px];
@@ -2436,7 +2436,7 @@ public class PaletteReducer {
 
             for (int px = 0; px < lineLen; px++) {
                 int color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     float er = curErrorRed[px];
@@ -2559,7 +2559,7 @@ public class PaletteReducer {
 
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     er = curErrorRed[px];
@@ -2689,7 +2689,7 @@ public class PaletteReducer {
 
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     er = curErrorRed[px];
@@ -2829,7 +2829,7 @@ public class PaletteReducer {
 
             for (int px = 0; px < w; px++) {
                 color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     er = curErrorRed[px];
@@ -2967,7 +2967,7 @@ public class PaletteReducer {
 
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     er = curErrorRed[px];
@@ -3106,7 +3106,7 @@ public class PaletteReducer {
 
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     er = curErrorRed[px];
@@ -3315,7 +3315,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     er = curErrorRed[px];
@@ -3442,7 +3442,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     er = curErrorRed[px];
@@ -3540,7 +3540,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     er = curErrorRed[px];
@@ -3632,7 +3632,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int rr = Math.min(Math.max((int)(((color >>> 24)       ) + curErrorRed[px]   + 0.5f), 0), 0xFF);
@@ -3694,7 +3694,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     adj = (int)((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >> 57) * ditherStrength);
@@ -3730,7 +3730,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
 //                    adj = (((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >> 40) * 0x1.Fp-26f) * ditherStrength) + 1f;
@@ -3785,7 +3785,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
 //                    adj = (px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL >>> 41) * 0x1.8p-23f - 0x1.8p-1f;
@@ -3903,7 +3903,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int rr = ((color >>> 24)       );
@@ -3958,7 +3958,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int adj = ((px & 1) + (y & 1) - 1) * strength * (2 + (((px ^ y) & 2) - 1));
@@ -3990,7 +3990,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int adj = (int)((((px + y & 1) << 5) - 16) * strength);
@@ -4020,7 +4020,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int adj = ((px + y & 1) - (px & y & 1)) * (strength + (((px + y ^ px + y >>> 1) & 3)) * (1 + ((px * 5 ^ y * 3) >>> 1 & 3)));
@@ -4051,7 +4051,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     float pos = (y * 6.711056f + px * 0.583715f);
@@ -4173,7 +4173,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     pos = (px * 0.06711056f + y * 0.00583715f);
@@ -4247,7 +4247,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     adj = (px * 0.06711056f + y * 0.00583715f);
@@ -4329,7 +4329,7 @@ public class PaletteReducer {
 //            sy = MathUtils.sinDeg(y * 90f);
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     pos = (MathUtils.sinDeg((px + y + y) * 40f) + MathUtils.cosDeg((px + px - y) * 40f)) * strength;
@@ -4380,7 +4380,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     float pos = (PaletteReducer.thresholdMatrix64[(px & 7) | (y & 7) << 3] - 31.5f) * 0.2f;
@@ -4418,7 +4418,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int ti = (px & 63) | (y & 63) << 6;
@@ -4460,7 +4460,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
 //                    float pos = (PaletteReducer.thresholdMatrix64[(px & 7) | (y & 7) << 3] - 31.5f) * 0.2f + 0.5f;
@@ -4494,7 +4494,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
 //                    float pos = (PaletteReducer.thresholdMatrix64[(px & 7) | (y & 7) << 3] - 31.5f) * 1.5f + 0.5f;
@@ -4537,7 +4537,7 @@ public class PaletteReducer {
 //        for (int y = 0; y < h; y++) {
 //            for (int px = 0; px < lineLen; px++) {
 //                color = pixmap.getPixel(px, y);
-//                if ((color & 0x80) == 0 && hasTransparent)
+//                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
 //                    pixmap.drawPixel(px, y, 0);
 //                else {
 ////                    color |= (color >>> 5 & 0x07070700) | 0xFE;
@@ -4623,7 +4623,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     adj = ((TRI_BLUE_NOISE[(px + 32 & 63) | (y + 32 & 63) << 6] + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
@@ -4737,7 +4737,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     adj = ((TRI_BLUE_NOISE[(px & 63) | (py & 63) << 6] + 0.5f) * strength); // plus or minus 255/400
@@ -4838,7 +4838,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     er = Math.min(Math.max(((BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorRed[px]);
@@ -4937,7 +4937,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     adj = ((TRI_BLUE_NOISE[(px & 63) | (py & 63) << 6] + 0.5f) * strength); // plus or minus 255/400
@@ -5034,7 +5034,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
                     er = Math.min(Math.max(((((px+1) * 0xC13FA9A902A6328FL + (py+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-23f - 0x1.4p-1f) * strength, -limit), limit) + (curErrorRed[px]);
@@ -5098,7 +5098,7 @@ public class PaletteReducer {
 //        for (int y = 0; y < h; y++) {
 //            for (int px = 0; px < lineLen; px++) {
 //                color = pixmap.getPixel(px, y);
-//                if ((color & 0x80) == 0 && hasTransparent)
+//                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
 //                    pixmap.drawPixel(px, y, 0);
 //                else {
 //                    int rr = ((color >>> 24)       );
@@ -5127,7 +5127,7 @@ public class PaletteReducer {
 //        for (int y = 0; y < h; y++) {
 //            for (int px = 0; px < lineLen; px++) {
 //                color = pixmap.getPixel(px, y);
-//                if ((color & 0x80) == 0 && hasTransparent)
+//                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
 //                    pixmap.drawPixel(px, y, 0);
 //                else {
 //                    adj = ((BlueNoise.get(px + 29, y + 31, BlueNoise.TILE_TRI_NOISE[0]) + 0.5f)) * 0x1p-4f;
@@ -5176,7 +5176,7 @@ public class PaletteReducer {
 //        for (int y = 0; y < h; y++) {
 //            for (int px = 0; px < lineLen; px++) {
 //                color = pixmap.getPixel(px, y);
-//                if ((color & 0x80) == 0 && hasTransparent)
+//                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
 //                    pixmap.drawPixel(px, y, 0);
 //                else {
 ////                    color |= (color >>> 5 & 0x07070700) | 0xFE;
@@ -5256,7 +5256,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, py);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
 
@@ -5361,7 +5361,7 @@ public class PaletteReducer {
             }
             for (int x = 0; x < lineLen; x++) {
                 color = pixmap.getPixel(x, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(x, y, 0);
                 else {
                     er = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[0][(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+1) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[x]);
@@ -5463,7 +5463,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
 //                    color |= (color >>> 5 & 0x07070700) | 0xFF;
@@ -5603,7 +5603,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     //                    adj = ((TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007f); // slightly inside -1 to 1 range, should be +/- 0.8925
@@ -5960,7 +5960,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int er = 0, eg = 0, eb = 0;
@@ -6001,7 +6001,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int er = 0, eg = 0, eb = 0;
@@ -6040,7 +6040,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     cr = (color >>> 24);
@@ -6087,7 +6087,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int er = 0, eg = 0, eb = 0;
@@ -6128,7 +6128,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int er = 0, eg = 0, eb = 0;
@@ -6171,7 +6171,7 @@ public class PaletteReducer {
 //        for (int y = 0; y < h; y++) {
 //            for (int px = 0; px < lineLen; px++) {
 //                color = pixmap.getPixel(px, y);
-//                if ((color & 0x80) == 0 && hasTransparent)
+//                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
 //                    pixmap.drawPixel(px, y, 0);
 //                else {
 //                    int er = 0, eg = 0, eb = 0;
@@ -6232,7 +6232,7 @@ public class PaletteReducer {
 //        for (int y = 0; y < h; y++) {
 //            for (int px = 0; px < lineLen; px++) {
 //                color = pixmap.getPixel(px, y);
-//                if ((color & 0x80) == 0 && hasTransparent)
+//                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
 //                    pixmap.drawPixel(px, y, 0);
 //                else {
 //                    int er = 0, eg = 0, eb = 0;
@@ -6283,7 +6283,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int er = 0, eg = 0, eb = 0;
@@ -6382,7 +6382,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     er = curErrorRed[px];
@@ -6475,7 +6475,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     er = curErrorRed[px];
@@ -6644,7 +6644,7 @@ public class PaletteReducer {
             }
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     float er = 0f;
@@ -6781,13 +6781,53 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     float adj = (thresholdMatrix64[(px & 7) | (y & 7) << 3] - 31.5f) * strength;
                     int rr = Math.min(Math.max((int)(signPreservingSquare(Math.sqrt(((color >>> 24)       ) * (1f/255f)) + adj) * 255), 0), 255);
                     int gg = Math.min(Math.max((int)(signPreservingSquare(Math.sqrt(((color >>> 16) & 0xFF) * (1f/255f)) + adj) * 255), 0), 255);
                     int bb = Math.min(Math.max((int)(signPreservingSquare(Math.sqrt(((color >>> 8)  & 0xFF) * (1f/255f)) + adj) * 255), 0), 255);
+                    int rgb555 = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[rgb555] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    private static final float[] tempThresholdMatrix = new float[64];
+    private static final float[] toLinearLUT = new float[256];
+    private static final byte[] fromLinearLUT = new byte[1024];
+    static {
+        for (int i = 0; i < 256; i++) {
+            toLinearLUT[i] = (float) Math.pow(i / 255.0, 1.0/2.2) * 767 + 127.5f;
+        }
+        for (int i = 0; i < 1024; i++) {
+            fromLinearLUT[i] = (byte) (Math.pow(Math.min(Math.max(i - 127.5, 0), 767) / 767.0, 2.2) * 255);
+        }
+    }
+    public Pixmap reduceGourdLUT(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        final float strength = (float)(3 * ditherStrength / populationBias);
+        for (int i = 0; i < 64; i++) {
+            tempThresholdMatrix[i] = Math.min(Math.max((PaletteReducer.thresholdMatrix64[i] - 31.5f) * strength, -127), 127);
+        }
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    float adj = tempThresholdMatrix[(px & 7) | (y & 7) << 3];
+                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + adj)] & 255;
+                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + adj)] & 255;
+                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + adj)] & 255;
                     int rgb555 = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[rgb555] & 0xFF]);
                 }
@@ -6807,7 +6847,7 @@ public class PaletteReducer {
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
-                if ((color & 0x80) == 0 && hasTransparent)
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
                     float adj = (thresholdMatrix64[(px & 7) | (y & 7) << 3] - 31.5f) * strength;
