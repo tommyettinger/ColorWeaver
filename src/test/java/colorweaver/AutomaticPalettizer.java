@@ -492,6 +492,10 @@ public class AutomaticPalettizer extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceGourd(pm);
         png8.writePrecisely(Gdx.files.local(subname + "_Gourd" + suffix + ".png"), pm, PALETTE, false, 0);
+//////experimenting to see what this looks like without gamma correction
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceGourdNoGamma(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_GourdNoGamma" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////stylistic, not a traditional dither
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSchmidt(pm);
