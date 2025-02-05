@@ -78,13 +78,14 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedRgbStupider/"; //
 //        final String targetDir = "samples/reducedEmpty"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedDiffusion"+HexGenerator.SPACE+"/"; //
-        final String targetDir = "samples/reducedExperiment"+HexGenerator.SPACE+"/"; //
+//        final String targetDir = "samples/reducedExperiment"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedOkOnce/"; //
 //        final String targetDir = "samples/reducedRgbSqrt/"; //
 
-//        final String targetDir = "samples/reduced"+HexGenerator.SPACE+"/"; //
+        final String targetDir = "samples/reduced"+HexGenerator.SPACE+"/"; //
 
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
+
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
 //                , Gdx.files.local("samples/Painting_by_Henri_Biva.jpg")
 //                , Gdx.files.local("samples/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg")
@@ -123,7 +124,7 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        for(FileHandle hex : hexes) {
 
         // just do the one in HexGenerator
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
 //        // the default
 //        for(FileHandle hex : new FileHandle[]{
@@ -188,11 +189,11 @@ public class AutomaticPalettizer extends ApplicationAdapter {
 //        for(FileHandle hex : awws) {
 
         // auto-generated Snuggly palettes
-        FileHandle[] snorglies = new FileHandle[6];
-        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
-            snorglies[idx++] = Gdx.files.local("snorgly-"+(i-1)+".hex");
-        }
-        for(FileHandle hex : snorglies) {
+//        FileHandle[] snorglies = new FileHandle[6];
+//        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
+//            snorglies[idx++] = Gdx.files.local("snorgly-"+(i-1)+".hex");
+//        }
+//        for(FileHandle hex : snorglies) {
 
 
 //        for(FileHandle hex : new FileHandle[]{

@@ -150,18 +150,14 @@ public class ShaderPalettizer extends ApplicationAdapter {
             if(!sh.equals(defaultShader)) {
                 batch.setPackedColor(-0x1.fffffep126f); // packed white
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE1);
-//                if(sh != shaderBlueNoise) {
-                    palette.bind();
-//                }
-//                else
+                palette.bind();
                 if(sh == shaderBlueNoise) {
                     Gdx.gl.glActiveTexture(GL20.GL_TEXTURE2);
                     blueNoise.bind(2);
                     blueNoise.unsafeSetWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
                 }
                 batch.begin();
-//                if(sh != shaderBlueNoise)
-                    sh.setUniformi("u_palette", 1);
+                sh.setUniformi("u_palette", 1);
                 if(sh == shaderBlueNoise)
                     sh.setUniformi("u_blue", 2);
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);

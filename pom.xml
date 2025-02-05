@@ -67,7 +67,7 @@
         <maven.gpg.version>1.6</maven.gpg.version>
         <jdk.version>1.8</jdk.version>
         <junit.version>4.13.2</junit.version>
-        <gdx.version>1.12.1</gdx.version>
+        <gdx.version>1.13.1</gdx.version>
     </properties>
 
 
@@ -91,7 +91,7 @@
         <dependency>
             <groupId>com.github.tommyettinger</groupId>
             <artifactId>jdkgdxds</artifactId>
-            <version>1.4.1</version>
+            <version>1.8.0</version>
         </dependency>
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>

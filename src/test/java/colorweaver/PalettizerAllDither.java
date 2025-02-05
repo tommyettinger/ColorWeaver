@@ -78,11 +78,11 @@ public class PalettizerAllDither extends ApplicationAdapter {
 //        final String targetDir = "samples/reducedRgbStupider/"; //
 //        final String targetDir = "samples/reducedEmpty"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedDiffusion"+HexGenerator.SPACE+"/"; //
-        final String targetDir = "samples/reducedExperiment"+HexGenerator.SPACE+"/"; //
+//        final String targetDir = "samples/reducedExperiment"+HexGenerator.SPACE+"/"; //
 //        final String targetDir = "samples/reducedOkOnce/"; //
 //        final String targetDir = "samples/reducedRgbSqrt/"; //
 
-//        final String targetDir = "samples/reduced"+HexGenerator.SPACE+"/"; //
+        final String targetDir = "samples/reduced"+HexGenerator.SPACE+"/"; //
 
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
@@ -123,17 +123,22 @@ public class PalettizerAllDither extends ApplicationAdapter {
 //        for(FileHandle hex : hexes) {
 
         // just do the one in HexGenerator
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
-        // auto-generated Snorgly palettes
-        FileHandle[] snorglies = new FileHandle[6];
-        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
-            snorglies[idx++] = Gdx.files.local("snorgly-"+(i-1)+".hex");
-        }
-        for(FileHandle hex : snorglies) {
+//        // auto-generated Snorgly palettes
+//        FileHandle[] snorglies = new FileHandle[6];
+//        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
+//            snorglies[idx++] = Gdx.files.local("snorgly-"+(i-1)+".hex");
+//        }
+//        for(FileHandle hex : snorglies) {
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/sm-septembit-4.hex"),
+//        }) {
+
+//        for(FileHandle hex : new FileHandle[]{
+//                Gdx.files.local("palettes/hex/meadowvale-70.hex"),
+//                Gdx.files.local("palettes/hex/eighexplore-32.hex"),
 //        }) {
 
             String name = hex.nameWithoutExtension().toLowerCase(), suffix = "_" + name;

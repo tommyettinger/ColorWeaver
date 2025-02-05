@@ -26,6 +26,14 @@ public class HexGenerator extends ApplicationAdapter {
             0xB9277EFF, 0xB36691FF, 0xEC3570FF, 0x451524FF, 0xE57D92FF, 0x791E2CFF, 0xAD242FFF, 0xE2282EFF
     };
 
+    private static int[] daisy36 = {
+            0x00000000, 0x000000FF, 0x555555FF, 0x2C1728FF, 0xDDA6D5FF, 0xCF6EFAFF, 0x430B58FF, 0xC4005FFF,
+            0xFF5796FF, 0xF6CAC2FF, 0x86302CFF, 0x694E37FF, 0xF9ECE1FF, 0xFFC5ACFF, 0xA44210FF, 0xAE8500FF,
+            0xF5BA00FF, 0xD8F478FF, 0x5A6531FF, 0x304D39FF, 0xBCF0C1FF, 0x81F928FF, 0x3C7315FF, 0x007766FF,
+            0x00B89FFF, 0x64C2CFFF, 0x172E31FF, 0x0C1116FF, 0x09313EFF, 0x2100C5FF, 0x201135FF, 0xAC90E0FF,
+            0x4661FFFF, 0x18AFE1FF, 0x85B2D3FF, 0xAAAAAAFF, 0xFFFFFFFF,
+    };
+
     private static int[] sixeightfive255 = new int[256];
     static {
         int idx = 1;
@@ -64,8 +72,8 @@ public class HexGenerator extends ApplicationAdapter {
     }
 
 
-    public static int[] PALETTE = snuggly63;
-    public static String NAME = "snuggly-63";
+    public static int[] PALETTE = daisy36;
+    public static String NAME = "daisy-36";
     public static String SPACE = "OklabCareful";
     public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabCarefulMetric;
 //    public static String SPACE = "OkSmooth";
@@ -80,7 +88,7 @@ public class HexGenerator extends ApplicationAdapter {
         config.setResizable(false);
         new Lwjgl3Application(new HexGenerator(), config);
         PaletteCubeGenerator.main(arg);
-        AutomaticPalettizer.main(arg);
+        PalettizerAllDither.main(arg);
     }
 
     @Override
