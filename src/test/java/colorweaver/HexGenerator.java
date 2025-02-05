@@ -34,6 +34,14 @@ public class HexGenerator extends ApplicationAdapter {
             0x4661FFFF, 0x18AFE1FF, 0x85B2D3FF, 0xAAAAAAFF, 0xFFFFFFFF,
     };
 
+    private static int[] daiisy36 = {
+            0x00000000, 0x000000FF, 0x555555FF, 0x5D4362FF, 0xAE8AB7FF, 0x9D6CDDFF, 0x68349FFF, 0x9D4B75FF,
+            0xD074A2FF, 0xD29D9FFF, 0x9C5656FF, 0x906751FF, 0xDAB29CFF, 0xE89581FF, 0xC54F37FF, 0xB27700FF,
+            0xEE9F00FF, 0xBCBC6CFF, 0x7A7A46FF, 0x576F54FF, 0x98BE8FFF, 0x97BD55FF, 0x67833AFF, 0x427666FF,
+            0x67A58CFF, 0x6E9E9FFF, 0x3F5958FF, 0x324851FF, 0x2D5B66FF, 0x0049B6FF, 0x493693FF, 0x837ED1FF,
+            0x2374FFFF, 0x4396A9FF, 0x6896AAFF, 0xAAAAAAFF, 0xFFFFFFFF,
+    };
+
     private static int[] sixeightfive255 = new int[256];
     static {
         int idx = 1;
@@ -72,8 +80,8 @@ public class HexGenerator extends ApplicationAdapter {
     }
 
 
-    public static int[] PALETTE = daisy36;
-    public static String NAME = "daisy-36";
+    public static int[] PALETTE = daiisy36;
+    public static String NAME = "daiisy-36";
     public static String SPACE = "OklabCareful";
     public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabCarefulMetric;
 //    public static String SPACE = "OkSmooth";
