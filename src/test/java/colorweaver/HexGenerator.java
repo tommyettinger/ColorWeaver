@@ -126,6 +126,16 @@ public class HexGenerator extends ApplicationAdapter {
             0x0052FFFF, 0x0800FFFF, 0x6600FFFF, 0xC800FFFF, 0xFF00D3FF, 0xFF006BFF,
     };
 
+    private static int[] hatchet49 = {
+            0x00000000, 0x000000FF, 0x1F1F1FFF, 0x3F3F3FFF, 0x5F5F5FFF, 0x7F7F7FFF, 0x9F9F9FFF, 0xBFBFBFFF,
+            0xDFDFDFFF, 0xFFFFFFFF, 0x7F0000FF, 0x7F1600FF, 0x7F4800FF, 0x6F7F00FF, 0x137F00FF, 0x007F59FF,
+            0x00297FFF, 0x64007FFF, 0xBF3F3FFF, 0xBF563FFF, 0xBF883FFF, 0xAFBF3FFF, 0x53BF3FFF, 0x3FBF99FF,
+            0x3F69BFFF, 0xA43FBFFF, 0xFF7F7FFF, 0xFF967FFF, 0xFFC87FFF, 0xEFFF7FFF, 0x93FF7FFF, 0x7FFFD9FF,
+            0x7FA9FFFF, 0xE47FFFFF, 0xFF0000FF, 0xFF0D00FF, 0xFF2C00FF, 0xFF5900FF, 0xFF9100FF, 0xFFD400FF,
+            0xDEFF00FF, 0x87FF00FF, 0x27FF00FF, 0x00FF41FF, 0x00FFB2FF, 0x00D3FFFF, 0x0052FFFF, 0x3700FFFF,
+            0xC800FFFF, 0xFF009FFF,
+    };
+
     private static int[] daiisy36 = {
             0x00000000, 0x000000FF, 0x5A5A5AFF, 0x50303EFF, 0xCC91C0FF, 0xE925FBFF, 0x730D5DFF, 0xC0001FFF,
             0xFF5DABFF, 0xE4B1A5FF, 0x725D37FF, 0x5D6C4EFF, 0xE0D0A4FF, 0xFFAC49FF, 0x7C7304FF, 0x009F52FF,
@@ -172,8 +182,8 @@ public class HexGenerator extends ApplicationAdapter {
     }
 
 
-    public static int[] PALETTE = handaxe126;
-    public static String NAME = "handaxe-126";
+    public static int[] PALETTE = hatchet49;
+    public static String NAME = "hatchet-49";
     public static String SPACE = "OklabCareful";
     public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabCarefulMetric;
 //    public static String SPACE = "OkSmooth";
