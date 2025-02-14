@@ -1,5 +1,6 @@
 package colorweaver;
 
+import colorweaver.a8.A8PNG;
 import colorweaver.a8.A8PNG8;
 import colorweaver.a8.A8PaletteReducer;
 import colorweaver.tools.StringKit;
@@ -61,7 +62,7 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //                Gdx.files.local("samples/Rome-Seagull.jpg"),
 //        };
 
-        FileHandle[] samples = {Gdx.files.local("samples/McBlocks_2_5_b.png")};
+        FileHandle[] samples = {Gdx.files.local("samples/other/crispy-pixels.png")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Watching.png")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Rooster.png")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")};
@@ -81,14 +82,20 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
         A8PNG8 a8png8 = new A8PNG8();
         a8png8.setCompression(2);
         a8png8.setFlipY(false);
+
+        A8PNG a8png = new A8PNG();
+        a8png.setFlipY(false);
+
         long startTime = System.currentTimeMillis();
         OkCarefulReducer reducer = new OkCarefulReducer();
+        reducer.analyze(new Pixmap(Gdx.files.local("samples/other/IsometricTRPG.png")));
 
         // do everything
-        for(FileHandle hex : hexes) {
+//        for(FileHandle hex : hexes) {
 
         // just do the one in HexGenerator
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/IsometricTRPG.hex");{
 
 //        // auto-generated Snorgly palettes
 //        FileHandle[] snorglies = new FileHandle[6];
@@ -109,12 +116,48 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
             String name = hex.nameWithoutExtension().toLowerCase(), suffix = "_" + name;
 
             System.out.println(name);
-            loadPalette(name);
+//            loadPalette(name);
 
             Gdx.files.local(targetDir).mkdirs();
-            reducer.exact(PALETTE);
+//            reducer.exact(PALETTE);
             a8png8.palette = reducer;
             try {
+//                for(FileHandle sample : samples) {
+//
+//                    Pixmap pm, sam = new Pixmap(sample);
+//                    pm = new Pixmap(sam.getWidth(), sam.getHeight(), sam.getFormat());
+//                    reducer.setDitherStrength(1f);
+//                    String subname = targetDir + name + "/" + sample.nameWithoutExtension();
+//////lousy but important
+//                    pm.drawPixmap(sam, 0, 0);
+//                    pm = reducer.reduceSolid(pm);
+//                    a8png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
+//
+//                    reducer.setDitherStrength(1f);
+//                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
+//
+//
+//                    reducer.setDitherStrength(0.5f);
+//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
+//
+//                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
+//
+//                    reducer.setDitherStrength(1.5f);
+//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_bonus";
+//
+//                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
+//
+//                    reducer.setDitherStrength(2f);
+//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_heavy";
+//
+//                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
+//
+////                    reducer.setDitherStrength(0.25f);
+////                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_quarter";
+////
+////                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
+//
+//                }
                 for(FileHandle sample : samples) {
 
                     Pixmap pm, sam = new Pixmap(sample);
@@ -122,28 +165,28 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
                     reducer.setDitherStrength(1f);
                     String subname = targetDir + name + "/" + sample.nameWithoutExtension();
 ////lousy but important
-                    pm.drawPixmap(sam, 0, 0);
-                    pm = reducer.reduceSolid(pm);
-                    a8png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
+//                    pm.drawPixmap(sam, 0, 0);
+//                    pm = reducer.reduceSolid(pm);
+//                    a8png.write(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm);
 
                     reducer.setDitherStrength(1f);
-                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
+                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
 
 
                     reducer.setDitherStrength(0.5f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
 
-                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
+                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
 
                     reducer.setDitherStrength(1.5f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_bonus";
 
-                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
+                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
 
                     reducer.setDitherStrength(2f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_heavy";
 
-                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
+                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
 
 //                    reducer.setDitherStrength(0.25f);
 //                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_quarter";
@@ -292,6 +335,139 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reducePatternish(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm, PALETTE, false, 0);
+
+    }
+    private void drawPartFullColor(Pixmap pm, Pixmap sam, A8PaletteReducer reducer, A8PNG a8png8, String subname, String suffix) throws IOException {
+
+        // main block
+
+////////////very good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceJimenez(pm);
+//        a8png8.write(Gdx.files.local(subname + "_GradientNoise" + suffix + ".png"), pm);
+////////////good enough
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceSierraLite(pm);
+//        a8png8.write(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm);
+////////////rather good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceFloydSteinberg(pm);
+//        a8png8.write(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm);
+////////ok
+////        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBlueNoise(pm);
+//        a8png8.write(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm);
+//////////great
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceBluish(pm);
+////        a8png8.write(Gdx.files.local(subname + "_Neuter" + suffix + ".png"), pm);
+//////////very good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceScatter(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm);
+//////////YAY YIPPEE WOO NO BANDING
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceNeue(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm);
+//////////////incredible
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceKnoll(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Pattern" + suffix + ".png"), pm);
+////////////////
+////        //Took 98748 ms
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceKnollFull(pm);
+        a8png8.write(Gdx.files.local(subname + "_PatternFull" + suffix + ".png"), pm);
+////////////??? error diffusion with IGN
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceIgneous(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Igneous" + suffix + ".png"), pm);
+////////////very good, error-diffusion, per-channel color
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceWoven(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Woven" + suffix + ".png"), pm);
+////////////fairly good, low banding, some other artifacts, per-channel color
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceRoberts(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Roberts" + suffix + ".png"), pm);
+//////very good!
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceDodgy(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Dodgy" + suffix + ".png"), pm);
+////////retro, doesn't have to be classically good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceLoaf(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm);
+////////retro, doesn't have to be classically good
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceLoaf2(pm);
+////        a8png8.write(Gdx.files.local(subname + "_Loaf2" + suffix + ".png"), pm);
+//////////retro, doesn't have to be classically good
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceLoaf3(pm);
+////        a8png8.write(Gdx.files.local(subname + "_Loaf3" + suffix + ".png"), pm);
+////////retro, doesn't have to be classically good, but this sucks
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceLeaf(pm);
+////        a8png8.write(Gdx.files.local(subname + "_Leaf" + suffix + ".png"), pm);
+//////retro, doesn't have to be classically good
+//        // 27994 ms for just this
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceGourd(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Gourd" + suffix + ".png"), pm);
+////////experimenting with LUTs to allow proper gamma correction
+////        // 26523 ms for just this
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceGourdLUT(pm);
+////        a8png8.write(Gdx.files.local(subname + "_GourdLUT" + suffix + ".png"), pm);
+////////experimenting to see what this looks like without gamma correction
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceGourdNoGamma(pm);
+////        a8png8.write(Gdx.files.local(subname + "_GourdNoGamma" + suffix + ".png"), pm);
+////////stylistic, not a traditional dither
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceSchmidt(pm);
+////        a8png8.write(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm);
+//////yay!
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceOverboard(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Overboard" + suffix + ".png"), pm);
+////////I'm in love
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceWren(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Wren" + suffix + ".png"), pm);
+////////////more love!
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceBlubber(pm);
+////        a8png8.write(Gdx.files.local(subname + "_Blubber" + suffix + ".png"), pm);
+///////////has some issues, maybe?
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBurkes(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm);
+/////////////great, especially for error diffusion
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceBurkes0(pm);
+////        a8png8.write(Gdx.files.local(subname + "_Burkes0" + suffix + ".png"), pm);
+////////////even better!
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceBurkes2(pm);
+////        a8png8.write(Gdx.files.local(subname + "_Burkes2" + suffix + ".png"), pm);
+///////great!
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceOceanic(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm);
+/////// basically the same as Oceanic, but without the Burkes constants
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceSeaside(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm);
+//////// oceanic meets pattern dither
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceCoastal(pm);
+////        a8png8.write(Gdx.files.local(subname + "_Coastal" + suffix + ".png"), pm);
+////// nice and griddy, for things that can use that
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reducePatternish(pm);
+//        a8png8.write(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm);
 
     }
 }

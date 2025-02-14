@@ -5475,6 +5475,40 @@ public class A8PaletteReducer {
         return pixmap;
     }
 
+    public Pixmap reduceKnollFull (Pixmap pixmap) {
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used, cr, cg, cb, ca, usedIndex;
+        final float errorMul = (ditherStrength * 0.5f / populationBias);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                int er = 0, eg = 0, eb = 0;
+                cr = (color >>> 24);
+                cg = (color >>> 16 & 0xFF);
+                cb = (color >>> 8 & 0xFF);
+                ca = (color & 0xFF);
+                for (int i = 0; i < 16; i++) {
+                    int rr = Math.min(Math.max((int) (cr + er * errorMul), 0), 255);
+                    int gg = Math.min(Math.max((int) (cg + eg * errorMul), 0), 255);
+                    int bb = Math.min(Math.max((int) (cb + eb * errorMul), 0), 255);
+                    usedIndex = paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF;
+                    candidates[i | 16] = shrink(candidates[i] = used = paletteArray[usedIndex]);
+                    er += cr - (used >>> 24);
+                    eg += cg - (used >>> 16 & 0xFF);
+                    eb += cb - (used >>> 8 & 0xFF);
+                }
+                sort16(candidates);
+                pixmap.drawPixel(px, y, (candidates[thresholdMatrix16[((px & 3) | (y & 3) << 2)]] & 0xFFFFFF00) | ca);
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
     /**
      * Reduces a Pixmap to the palette this knows by using a skewed version of Thomas Knoll's pattern dither, which is
      * out-of-patent since late 2019, using the harmonious numbers rediscovered by Martin Roberts to handle the skew.
