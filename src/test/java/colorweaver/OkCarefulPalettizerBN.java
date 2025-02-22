@@ -187,21 +187,25 @@ public class OkCarefulPalettizerBN extends ApplicationAdapter {
 
     private void drawPart(Pixmap pm, Pixmap sam, A8PaletteReducer reducer, A8PNG8 a8png8, String subname, String suffix) throws IOException {
 
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueNoise(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBlueNoise(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
+//
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBlueNoiseOmni64(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseOmni64" + suffix + ".png"), pm, PALETTE, false, 0);
+//
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBlueNoiseOmni128(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseOmni128" + suffix + ".png"), pm, PALETTE, false, 0);
+//
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBlueNoiseDuel128(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseDuel128" + suffix + ".png"), pm, PALETTE, false, 0);
 
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueNoiseOmni64(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseOmni64" + suffix + ".png"), pm, PALETTE, false, 0);
-
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueNoiseOmni128(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseOmni128" + suffix + ".png"), pm, PALETTE, false, 0);
-
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueNoiseDuel128(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseDuel128" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceBlueNoiseBrawl128(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseBrawl128" + suffix + ".png"), pm, PALETTE, false, 0);
 
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reducePatternish(pm);
