@@ -37,7 +37,8 @@ public class BlueNoiseOther extends ApplicationAdapter {
 //        Pixmap pix = new Pixmap(Gdx.files.internal("LDR_LLL1_0.png"));
         for (int x = 0; x < 4; x++) {
         for (int y = 0; y < 4; y++) {
-            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseTriOmniTiling_"+x+"x"+y+".png"));
+            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseOmniTiling_"+x+"x"+y+".png"));
+//            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseTriOmniTiling_"+x+"x"+y+".png"));
             ByteBuffer buf = pix.getPixels();
             final int len = pix.getWidth() * pix.getHeight();
             byte[] brights = new byte[len];
@@ -73,7 +74,7 @@ public class BlueNoiseOther extends ApplicationAdapter {
      */
     public static void generatePreloadCode(final byte[] data, String filename){
         StringBuilder sb = new StringBuilder(data.length + 400);
-        sb.append('"');
+        sb.append("new StringBuilder(\"");
         for (int i = 0; i < data.length;) {
             for (int j = 0; j < 0x1200 && i < data.length; j++) {
                 byte b = data[i++];
@@ -106,8 +107,8 @@ public class BlueNoiseOther extends ApplicationAdapter {
                 sb.append(".append(\"");
 
         }
-        sb.append("\".getBytes(\"ISO-8859-1\"),\n");
-//        sb.append("\".getBytes(StandardCharsets.ISO_8859_1),\n");
+//        sb.append(".toString().getBytes(\"ISO-8859-1\"),\n");
+        sb.append(".toString().getBytes(StandardCharsets.ISO_8859_1),\n");
         Gdx.files.local(filename).writeString(sb.toString(), true, "ISO-8859-1");
         System.out.println("Wrote code snippet to " + filename);
     }
