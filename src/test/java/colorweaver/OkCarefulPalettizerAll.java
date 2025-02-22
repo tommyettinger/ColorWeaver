@@ -62,7 +62,7 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //                Gdx.files.local("samples/Rome-Seagull.jpg"),
 //        };
 
-        FileHandle[] samples = {Gdx.files.local("samples/other/crispy-pixels.png")};
+//        FileHandle[] samples = {Gdx.files.local("samples/other/crispy-pixels.png")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Watching.png")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Rooster.png")};
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")};
@@ -77,7 +77,7 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        };
 
         //// USE THIS TO RENDER ALL SAMPLES
-//        FileHandle[] samples = Gdx.files.local("samples/").list(pathname -> !pathname.isDirectory());
+        FileHandle[] samples = Gdx.files.local("samples/").list(pathname -> !pathname.isDirectory());
 
         A8PNG8 a8png8 = new A8PNG8();
         a8png8.setCompression(2);
@@ -88,14 +88,14 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 
         long startTime = System.currentTimeMillis();
         OkCarefulReducer reducer = new OkCarefulReducer();
-        reducer.analyze(new Pixmap(Gdx.files.local("samples/other/IsometricTRPG.png")));
+//        reducer.analyze(new Pixmap(Gdx.files.local("samples/other/IsometricTRPG.png")));
 
         // do everything
 //        for(FileHandle hex : hexes) {
 
         // just do the one in HexGenerator
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
-        FileHandle hex = Gdx.files.local("palettes/hex/IsometricTRPG.hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/IsometricTRPG.hex");{
 
 //        // auto-generated Snorgly palettes
 //        FileHandle[] snorglies = new FileHandle[6];
@@ -116,48 +116,12 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
             String name = hex.nameWithoutExtension().toLowerCase(), suffix = "_" + name;
 
             System.out.println(name);
-//            loadPalette(name);
+            loadPalette(name);
 
             Gdx.files.local(targetDir).mkdirs();
-//            reducer.exact(PALETTE);
+            reducer.exact(PALETTE);
             a8png8.palette = reducer;
             try {
-//                for(FileHandle sample : samples) {
-//
-//                    Pixmap pm, sam = new Pixmap(sample);
-//                    pm = new Pixmap(sam.getWidth(), sam.getHeight(), sam.getFormat());
-//                    reducer.setDitherStrength(1f);
-//                    String subname = targetDir + name + "/" + sample.nameWithoutExtension();
-//////lousy but important
-//                    pm.drawPixmap(sam, 0, 0);
-//                    pm = reducer.reduceSolid(pm);
-//                    a8png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//                    reducer.setDitherStrength(1f);
-//                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
-//
-//
-//                    reducer.setDitherStrength(0.5f);
-//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
-//
-//                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
-//
-//                    reducer.setDitherStrength(1.5f);
-//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_bonus";
-//
-//                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
-//
-//                    reducer.setDitherStrength(2f);
-//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_heavy";
-//
-//                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
-//
-////                    reducer.setDitherStrength(0.25f);
-////                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_quarter";
-////
-////                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
-//
-//                }
                 for(FileHandle sample : samples) {
 
                     Pixmap pm, sam = new Pixmap(sample);
@@ -165,28 +129,28 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
                     reducer.setDitherStrength(1f);
                     String subname = targetDir + name + "/" + sample.nameWithoutExtension();
 ////lousy but important
-//                    pm.drawPixmap(sam, 0, 0);
-//                    pm = reducer.reduceSolid(pm);
-//                    a8png.write(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm);
+                    pm.drawPixmap(sam, 0, 0);
+                    pm = reducer.reduceSolid(pm);
+                    a8png8.writePrecisely(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm, PALETTE, false, 0);
 
                     reducer.setDitherStrength(1f);
-                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
+                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
 
 
                     reducer.setDitherStrength(0.5f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
 
-                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
+                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
 
                     reducer.setDitherStrength(1.5f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_bonus";
 
-                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
+                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
 
                     reducer.setDitherStrength(2f);
                     subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_heavy";
 
-                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
+                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
 
 //                    reducer.setDitherStrength(0.25f);
 //                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_quarter";
@@ -194,6 +158,42 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
 
                 }
+//                for(FileHandle sample : samples) {
+//
+//                    Pixmap pm, sam = new Pixmap(sample);
+//                    pm = new Pixmap(sam.getWidth(), sam.getHeight(), sam.getFormat());
+//                    reducer.setDitherStrength(1f);
+//                    String subname = targetDir + name + "/" + sample.nameWithoutExtension();
+//////lousy but important
+////                    pm.drawPixmap(sam, 0, 0);
+////                    pm = reducer.reduceSolid(pm);
+////                    a8png.write(Gdx.files.local(subname + "_Solid" + suffix + ".png"), pm);
+//
+//                    reducer.setDitherStrength(1f);
+//                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
+//
+//
+//                    reducer.setDitherStrength(0.5f);
+//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_half";
+//
+//                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
+//
+//                    reducer.setDitherStrength(1.5f);
+//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_bonus";
+//
+//                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
+//
+//                    reducer.setDitherStrength(2f);
+//                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_heavy";
+//
+//                    drawPartFullColor(pm, sam, reducer, a8png, subname, suffix);
+//
+////                    reducer.setDitherStrength(0.25f);
+////                    subname = targetDir + name + "/" + sample.nameWithoutExtension() + "_quarter";
+////
+////                    drawPart(pm, sam, reducer, a8png8, subname, suffix);
+//
+//                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
