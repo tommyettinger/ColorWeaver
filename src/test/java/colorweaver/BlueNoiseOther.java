@@ -35,18 +35,32 @@ public class BlueNoiseOther extends ApplicationAdapter {
 //            generatePreloadCode(brights, "BlueNoiseOmniTri.txt");
 //        }
 //        Pixmap pix = new Pixmap(Gdx.files.internal("LDR_LLL1_0.png"));
-        for (int idx = 0; idx < 64; idx++) {
-            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/blueTri64_"+idx+".png"));
+        for (int x = 0; x < 4; x++) {
+        for (int y = 0; y < 4; y++) {
+            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseTriOmniTiling_"+x+"x"+y+".png"));
             ByteBuffer buf = pix.getPixels();
             final int len = pix.getWidth() * pix.getHeight();
             byte[] brights = new byte[len];
-            for (int i = 0; i < len; i++) {
-                brights[i] = buf.get(i);
+            for (int i = 0, j=0; i < len; i++, j+=4) {
+                brights[i] = buf.get(j);
                 brights[i] += -128;
             }
             generatePreloadCode(brights, "BlueNoise.txt");
-//            generatePreloadCode(brights, "BlueNoise"+idx+".txt");
         }
+        }
+
+
+//        for (int idx = 0; idx < 64; idx++) {
+//            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/blueTri64_"+idx+".png"));
+//            ByteBuffer buf = pix.getPixels();
+//            final int len = pix.getWidth() * pix.getHeight();
+//            byte[] brights = new byte[len];
+//            for (int i = 0; i < len; i++) {
+//                brights[i] = buf.get(i);
+//                brights[i] += -128;
+//            }
+//            generatePreloadCode(brights, "BlueNoise.txt");
+//        }
         Gdx.app.exit();
     }
     /**
@@ -61,7 +75,7 @@ public class BlueNoiseOther extends ApplicationAdapter {
         StringBuilder sb = new StringBuilder(data.length + 400);
         sb.append('"');
         for (int i = 0; i < data.length;) {
-            for (int j = 0; j < 0x80 && i < data.length; j++) {
+            for (int j = 0; j < 0x1200 && i < data.length; j++) {
                 byte b = data[i++];
                 switch (b)
                 {
@@ -87,8 +101,12 @@ public class BlueNoiseOther extends ApplicationAdapter {
                         break;
                 }
             }
+            sb.append("\")");
+            if(i != data.length)
+                sb.append(".append(\"");
+
         }
-        sb.append("\".getBytes(\"ISO-8859-1\");\n");
+        sb.append("\".getBytes(\"ISO-8859-1\"),\n");
 //        sb.append("\".getBytes(StandardCharsets.ISO_8859_1),\n");
         Gdx.files.local(filename).writeString(sb.toString(), true, "ISO-8859-1");
         System.out.println("Wrote code snippet to " + filename);
