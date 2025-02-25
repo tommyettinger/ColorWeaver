@@ -37,7 +37,7 @@ public class BlueNoiseOther extends ApplicationAdapter {
 //        Pixmap pix = new Pixmap(Gdx.files.internal("LDR_LLL1_0.png"));
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
-                Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_24_2025/BlueNoiseFastTiling_" + x + "x" + y + ".png"));
+                Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_24_2025/BlueNoiseTriFastTiling_" + x + "x" + y + ".png"));
 //                Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/zero_first/BlueNoiseFastTiling128x128.png"));
 //                Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseOmniTiling_" + x + "x" + y + ".png"));
 //                Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseTriOmniTiling_" + x + "x" + y + ".png"));
@@ -47,7 +47,6 @@ public class BlueNoiseOther extends ApplicationAdapter {
                 for (int i = 0, j = 0; i < len; i++, j += 4) {
                     brights[i] = buf.get(j);
                     brights[i] += -128;
-                    brights[i] &= (byte) 255;
                 }
                 generatePreloadCode(brights, "BlueNoise.txt");
             }
@@ -99,7 +98,7 @@ public class BlueNoiseOther extends ApplicationAdapter {
                     case '\\': sb.append("\\\\");
                         break;
                     case 0: sb.append("\\000");
-//                        System.out.println("Found lowest value at index " + (i-1) + ", count #" + (++count));
+                        System.out.println("Found lowest value at index " + (i-1) + ", count #" + (++count));
                         break;
                     case -128:
                          System.out.println("Found upper-middle value at index " + (i-1) + ", count #" + (++count128));
