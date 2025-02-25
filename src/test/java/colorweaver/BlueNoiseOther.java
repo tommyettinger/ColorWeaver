@@ -36,19 +36,21 @@ public class BlueNoiseOther extends ApplicationAdapter {
 //        }
 //        Pixmap pix = new Pixmap(Gdx.files.internal("LDR_LLL1_0.png"));
         for (int x = 0; x < 8; x++) {
-        for (int y = 0; y < 8; y++) {
-            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_24_2025/BlueNoiseFastTiling_"+x+"x"+y+".png"));
-//            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseOmniTiling_"+x+"x"+y+".png"));
-//            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseTriOmniTiling_"+x+"x"+y+".png"));
-            ByteBuffer buf = pix.getPixels();
-            final int len = pix.getWidth() * pix.getHeight();
-            byte[] brights = new byte[len];
-            for (int i = 0, j=0; i < len; i++, j+=4) {
-                brights[i] = buf.get(j);
-                brights[i] += -128;
+            for (int y = 0; y < 8; y++) {
+                Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_24_2025/BlueNoiseFastTiling_" + x + "x" + y + ".png"));
+//                Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/zero_first/BlueNoiseFastTiling128x128.png"));
+//                Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseOmniTiling_" + x + "x" + y + ".png"));
+//                Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseTriOmniTiling_" + x + "x" + y + ".png"));
+                ByteBuffer buf = pix.getPixels();
+                final int len = pix.getWidth() * pix.getHeight();
+                byte[] brights = new byte[len];
+                for (int i = 0, j = 0; i < len; i++, j += 4) {
+                    brights[i] = buf.get(j);
+                    brights[i] += -128;
+                    brights[i] &= (byte) 255;
+                }
+                generatePreloadCode(brights, "BlueNoise.txt");
             }
-            generatePreloadCode(brights, "BlueNoise.txt");
-        }
         }
 
 
@@ -74,6 +76,7 @@ public class BlueNoiseOther extends ApplicationAdapter {
      * @param filename the name of the text file to append to
      */
     public static void generatePreloadCode(final byte[] data, String filename){
+        int count = 0, count128 = 0;
         StringBuilder sb = new StringBuilder(data.length + 400);
         sb.append("new StringBuilder(\"");
         for (int i = 0; i < data.length;) {
@@ -95,6 +98,11 @@ public class BlueNoiseOther extends ApplicationAdapter {
                         break;
                     case '\\': sb.append("\\\\");
                         break;
+                    case 0: sb.append("\\000");
+//                        System.out.println("Found lowest value at index " + (i-1) + ", count #" + (++count));
+                        break;
+                    case -128:
+                         System.out.println("Found upper-middle value at index " + (i-1) + ", count #" + (++count128));
                     default:
 //                        if(Character.isISOControl(b))
 //                            sb.append(String.format("\\%03o", b));
@@ -112,6 +120,8 @@ public class BlueNoiseOther extends ApplicationAdapter {
         sb.append(".toString().getBytes(StandardCharsets.ISO_8859_1),\n");
         Gdx.files.local(filename).writeString(sb.toString(), true, "ISO-8859-1");
         System.out.println("Wrote code snippet to " + filename);
+
+//        System.out.println(sb.charAt(19) + " is " + (int)sb.charAt(19));
     }
 
 }
