@@ -35,9 +35,10 @@ public class BlueNoiseOther extends ApplicationAdapter {
 //            generatePreloadCode(brights, "BlueNoiseOmniTri.txt");
 //        }
 //        Pixmap pix = new Pixmap(Gdx.files.internal("LDR_LLL1_0.png"));
-        for (int x = 0; x < 4; x++) {
-        for (int y = 0; y < 4; y++) {
-            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseOmniTiling_"+x+"x"+y+".png"));
+        for (int x = 0; x < 8; x++) {
+        for (int y = 0; y < 8; y++) {
+            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_24_2025/BlueNoiseFastTiling_"+x+"x"+y+".png"));
+//            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseOmniTiling_"+x+"x"+y+".png"));
 //            Pixmap pix = new Pixmap(Gdx.files.local("blueNoise/Feb_21_2025/BlueNoiseTriOmniTiling_"+x+"x"+y+".png"));
             ByteBuffer buf = pix.getPixels();
             final int len = pix.getWidth() * pix.getHeight();
