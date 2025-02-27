@@ -50,7 +50,7 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
     public void create() {
         final String targetDir = "samples/reducedOkCareful/"; //
 
-        FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
+//        FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
 //                , Gdx.files.local("samples/Painting_by_Henri_Biva.jpg")
 //                , Gdx.files.local("samples/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg")
@@ -94,15 +94,15 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        for(FileHandle hex : hexes) {
 
         // just do the one in HexGenerator
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/IsometricTRPG.hex");{
 
-//        // auto-generated Snorgly palettes
-//        FileHandle[] snorglies = new FileHandle[6];
-//        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
-//            snorglies[idx++] = Gdx.files.local("snorgly-"+(i-1)+".hex");
-//        }
-//        for(FileHandle hex : snorglies) {
+        // auto-generated Huggly palettes
+        FileHandle[] hugglies = new FileHandle[6];
+        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
+            hugglies[idx++] = Gdx.files.local("huggly-"+(i-1)+".hex");
+        }
+        for(FileHandle hex : hugglies) {
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/sm-septembit-4.hex"),

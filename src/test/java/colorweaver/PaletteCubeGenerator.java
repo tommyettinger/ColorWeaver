@@ -52,7 +52,7 @@ public class PaletteCubeGenerator extends ApplicationAdapter {
 //        Gdx.files.local("palettes/genRgbStupider/").mkdirs();
 //        Gdx.files.local("palettes/genRgbSlippery/").mkdirs();
 //        for(FileHandle hex : hexes) {
-        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("lospec2000-182.hex"),
@@ -64,12 +64,12 @@ public class PaletteCubeGenerator extends ApplicationAdapter {
 //        for (int i = 8, idx = 0; i < 15; i++) {
 //            snugglies[idx++] = Gdx.files.local("snuggly-"+i+".hex");
 //        }
-//        FileHandle[] snugglies = new FileHandle[32];
-//        for (int i = 7, idx = 0; i < 256; i += 8) {
-//            snugglies[idx++] = Gdx.files.local("snuggly-"+i+".hex");
-//        }
+        FileHandle[] hugglies = new FileHandle[6];
+        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
+            hugglies[idx++] = Gdx.files.local("huggly-"+(i-1)+".hex");
+        }
 
-//        for(FileHandle hex : snugglies) {
+        for(FileHandle hex : hugglies) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/blknx-64.hex");{
             String name = hex.nameWithoutExtension().toLowerCase();
