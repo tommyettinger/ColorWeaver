@@ -29,6 +29,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
     }
     
     private int[] PALETTE;
+    private final A8PNG full = new A8PNG();
+    {
+        full.setFlipY(false);
+    }
 
     public void loadPalette(String name) {
         try {
@@ -207,10 +211,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 
         // main block
 
-//////////very good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceJimenez(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_GradientNoise" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////very good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceJimenez(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_GradientNoise" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////good enough
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceSierraLite(pm);
@@ -220,8 +224,9 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
         pm = reducer.reduceFloydSteinberg(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
 //////ok
-//        pm.drawPixmap(sam, 0, 0);
+        pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBlueNoise(pm);
+        full.write(Gdx.files.local(subname + "_0_BlueNoise" + suffix + ".png").write(false), pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////great
 //        pm.drawPixmap(sam, 0, 0);
@@ -235,106 +240,106 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceNeue(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
-////////////incredible
-        //Took 106929 ms
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceKnoll(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Pattern" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////////
-//        //Took 98748 ms
+//////////////incredible
+//        //Took 106929 ms
 //        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceKnoll2(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Knoll2" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////??? error diffusion with IGN
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceIgneous(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Igneous" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////very good, error-diffusion, per-channel color
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceWoven(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Woven" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////fairly good, low banding, some other artifacts, per-channel color
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceRoberts(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Roberts" + suffix + ".png"), pm, PALETTE, false, 0);
-////very good!
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceDodgy(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Dodgy" + suffix + ".png"), pm, PALETTE, false, 0);
-//////retro, doesn't have to be classically good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceLoaf(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
-//////retro, doesn't have to be classically good
+//        pm = reducer.reduceKnoll(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Pattern" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////////
+////        //Took 98748 ms
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceKnoll2(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_Knoll2" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////??? error diffusion with IGN
 //        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceLoaf2(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Loaf2" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm = reducer.reduceIgneous(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Igneous" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////very good, error-diffusion, per-channel color
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceWoven(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Woven" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////fairly good, low banding, some other artifacts, per-channel color
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceRoberts(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Roberts" + suffix + ".png"), pm, PALETTE, false, 0);
+//////very good!
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceDodgy(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Dodgy" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////retro, doesn't have to be classically good
 //        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceLoaf3(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Loaf3" + suffix + ".png"), pm, PALETTE, false, 0);
-//////retro, doesn't have to be classically good, but this sucks
+//        pm = reducer.reduceLoaf(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
+////////retro, doesn't have to be classically good
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceLoaf2(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_Loaf2" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////retro, doesn't have to be classically good
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceLoaf3(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_Loaf3" + suffix + ".png"), pm, PALETTE, false, 0);
+////////retro, doesn't have to be classically good, but this sucks
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceLeaf(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_Leaf" + suffix + ".png"), pm, PALETTE, false, 0);
+//////retro, doesn't have to be classically good
+//        // 27994 ms for just this
 //        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceLeaf(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Leaf" + suffix + ".png"), pm, PALETTE, false, 0);
-////retro, doesn't have to be classically good
-        // 27994 ms for just this
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceGourd(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Gourd" + suffix + ".png"), pm, PALETTE, false, 0);
-//////experimenting with LUTs to allow proper gamma correction
-//        // 26523 ms for just this
+//        pm = reducer.reduceGourd(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Gourd" + suffix + ".png"), pm, PALETTE, false, 0);
+////////experimenting with LUTs to allow proper gamma correction
+////        // 26523 ms for just this
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceGourdLUT(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_GourdLUT" + suffix + ".png"), pm, PALETTE, false, 0);
+////////experimenting to see what this looks like without gamma correction
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceGourdNoGamma(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_GourdNoGamma" + suffix + ".png"), pm, PALETTE, false, 0);
+////////stylistic, not a traditional dither
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceSchmidt(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
+//////yay!
 //        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceGourdLUT(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_GourdLUT" + suffix + ".png"), pm, PALETTE, false, 0);
-//////experimenting to see what this looks like without gamma correction
+//        pm = reducer.reduceOverboard(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Overboard" + suffix + ".png"), pm, PALETTE, false, 0);
+////////I'm in love
 //        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceGourdNoGamma(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_GourdNoGamma" + suffix + ".png"), pm, PALETTE, false, 0);
-//////stylistic, not a traditional dither
+//        pm = reducer.reduceWren(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Wren" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////more love!
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceBlubber(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_Blubber" + suffix + ".png"), pm, PALETTE, false, 0);
+///////////has some issues, maybe?
 //        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceSchmidt(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
-////yay!
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceOverboard(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Overboard" + suffix + ".png"), pm, PALETTE, false, 0);
-//////I'm in love
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceWren(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Wren" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////more love!
+//        pm = reducer.reduceBurkes(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
+/////////////great, especially for error diffusion
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceBurkes0(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes0" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////even better!
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceBurkes2(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes2" + suffix + ".png"), pm, PALETTE, false, 0);
+///////great!
 //        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlubber(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Blubber" + suffix + ".png"), pm, PALETTE, false, 0);
-/////////has some issues, maybe?
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBurkes(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
-///////////great, especially for error diffusion
+//        pm = reducer.reduceOceanic(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
+/////// basically the same as Oceanic, but without the Burkes constants
 //        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBurkes0(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes0" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////even better!
+//        pm = reducer.reduceSeaside(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
+//////// oceanic meets pattern dither
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceCoastal(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_Coastal" + suffix + ".png"), pm, PALETTE, false, 0);
+////// nice and griddy, for things that can use that
 //        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBurkes2(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes2" + suffix + ".png"), pm, PALETTE, false, 0);
-/////great!
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceOceanic(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
-///// basically the same as Oceanic, but without the Burkes constants
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceSeaside(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
-////// oceanic meets pattern dither
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceCoastal(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Coastal" + suffix + ".png"), pm, PALETTE, false, 0);
-//// nice and griddy, for things that can use that
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reducePatternish(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm = reducer.reducePatternish(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm, PALETTE, false, 0);
 
     }
     private void drawPartFullColor(Pixmap pm, Pixmap sam, A8PaletteReducer reducer, A8PNG a8png8, String subname, String suffix) throws IOException {

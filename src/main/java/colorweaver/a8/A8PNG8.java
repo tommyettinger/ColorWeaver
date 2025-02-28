@@ -554,8 +554,8 @@ public class A8PNG8 implements Dithered, Disposable {
             dataOutput.write(SIGNATURE);
 
             buffer.writeInt(IHDR);
-            buffer.writeInt(pixmap.getWidth());
-            buffer.writeInt(pixmap.getHeight());
+            buffer.writeInt(w);
+            buffer.writeInt(h);
             buffer.writeByte(8); // 8 bits per component.
             buffer.writeByte(COLOR_INDEXED);
             buffer.writeByte(COMPRESSION_DEFLATE);
@@ -580,13 +580,12 @@ public class A8PNG8 implements Dithered, Disposable {
             buffer.writeInt(IDAT);
             deflater.reset();
 
-            int lineLen = pixmap.getWidth();
-//            byte[] lineOut, curLine, prevLine;
+            //            byte[] lineOut, curLine, prevLine;
             byte[] curLine;
             if (curLineBytes == null) {
-                curLine = (curLineBytes = new ByteArray(lineLen)).items;
+                curLine = (curLineBytes = new ByteArray(w)).items;
             } else {
-                curLine = curLineBytes.ensureCapacity(lineLen);
+                curLine = curLineBytes.ensureCapacity(w);
             }
 
             for (int y = 0; y < h; y++) {
@@ -621,7 +620,7 @@ public class A8PNG8 implements Dithered, Disposable {
 //                deflaterOutput.write(lineOut, 0, lineLen);
 
                 deflaterOutput.write(FILTER_NONE);
-                deflaterOutput.write(curLine, 0, lineLen);
+                deflaterOutput.write(curLine, 0, w);
             }
             deflaterOutput.finish();
             buffer.endChunk(dataOutput);
@@ -1726,13 +1725,12 @@ public class A8PNG8 implements Dithered, Disposable {
         final int w = pixmap.getWidth(), h = pixmap.getHeight();
 //        byte[] lineOut, curLine, prevLine;
         byte[] curLine;
-            if (curLineBytes == null) {
+        if (curLineBytes == null) {
             curLine = (curLineBytes = new ByteArray(w)).items;
         } else {
             curLine = curLineBytes.ensureCapacity(w);
         }
-
-            int color, used;
+        int color, used;
         int cr, cg, cb,  usedIndex;
         final float errorMul = ditherStrength * 0.5f / palette.populationBias;
         for (int y = 0; y < h; y++) {

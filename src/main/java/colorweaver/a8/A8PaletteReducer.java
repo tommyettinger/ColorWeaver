@@ -4305,9 +4305,9 @@ public class A8PaletteReducer {
                     pixmap.drawPixel(px, y, 0);
                 else {
                     adj = ((px + y & 1) << 8) - 127.5f; // incorporates the `+ 0.5f` blue noise lookups usually have
-                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_B[(px & 63) | (y & 63) << 6] + adj) * strength), -100), 100))] & 255;
-                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_C[(px & 63) | (y & 63) << 6] + adj) * strength), -100), 100))] & 255;
-                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE  [(px & 63) | (y & 63) << 6] + adj) * strength), -100), 100))] & 255;
+                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px, y, 0x123) + adj) * strength), -100), 100))] & 255;
+                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px, y, 0x456) + adj) * strength), -100), 100))] & 255;
+                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px, y, 0x789) + adj) * strength), -100), 100))] & 255;
 //                    adj = ((PaletteReducer.TRI_BLUE_NOISE_B[(px & 63) | (y & 63) << 6] + 0.5f));
 //                    adj = adj * strength / (12f + Math.abs(adj)) + 0.5f;
 //                    int rr = Math.min(Math.max((int) (adj + ((color >>> 24)       )), 0), 255);
@@ -4554,15 +4554,15 @@ public class A8PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color;
+
         float strength = 0.3125f * ditherStrength / (populationBias * populationBias * populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y);
+                int color = pixmap.getPixel(px, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    int adj = BlueNoise.getSeededTriangular(px + 62, y + 66, 0xF01) + ((px + y & 1) << 8) - 128;
+                    int adj = BlueNoise.getSeededTriangular(px + 62, y + 66, 0x7F01) + ((px + y & 1) << 8) - 128;
                     int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px     , y      , 0x65BC) - adj) * strength), -100), 100))] & 255;
                     int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px + 31, y + 113, 0x57D6) - adj) * strength), -100), 100))] & 255;
                     int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px + 71, y + 41 , 0x3EA9) - adj) * strength), -100), 100))] & 255;

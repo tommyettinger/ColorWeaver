@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.*;
-import com.github.tommyettinger.digital.MathTools;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -2454,9 +2453,9 @@ public class PaletteReducer {
                     int gdiff = (color >>> 16 & 255) - (used >>> 16 & 255);
                     int bdiff = (color >>> 8 & 255) - (used >>> 8 & 255);
                     int idx = (px & 63) | ((py << 6) & 0xFC0);
-                    r1 = (rdiff + (BlueNoise.TILE_TRI_NOISE[1][idx] + 0.5f) * 0x1p-7f) * strength;
-                    g1 = (gdiff + (BlueNoise.TILE_TRI_NOISE[2][idx] + 0.5f) * 0x1p-7f) * strength;
-                    b1 = (bdiff + (BlueNoise.TILE_TRI_NOISE[3][idx] + 0.5f) * 0x1p-7f) * strength;
+                    r1 = (rdiff + (BlueNoise.TRIANGULAR_BLUE_NOISE[1][idx] + 0.5f) * 0x1p-7f) * strength;
+                    g1 = (gdiff + (BlueNoise.TRIANGULAR_BLUE_NOISE[2][idx] + 0.5f) * 0x1p-7f) * strength;
+                    b1 = (bdiff + (BlueNoise.TRIANGULAR_BLUE_NOISE[3][idx] + 0.5f) * 0x1p-7f) * strength;
                     float modifier;
                     if(px < lineLen - 1)
                     {
@@ -4354,9 +4353,9 @@ public class PaletteReducer {
     public static final float[] TRI_BLUE_NOISE_MULTIPLIERS_C = new float[4096];
     static {
         for (int i = 0; i < 4096; i++) {
-            TRI_BLUE_NOISE_MULTIPLIERS[i]   = (float)Math.exp(OtherMath.probit((BlueNoise.TILE_TRI_NOISE[0][i] + 128.5) * 0x1p-8) * 0.5);
-            TRI_BLUE_NOISE_MULTIPLIERS_B[i] = (float)Math.exp(OtherMath.probit((BlueNoise.TILE_TRI_NOISE[1][i] + 128.5) * 0x1p-8) * 0.5);
-            TRI_BLUE_NOISE_MULTIPLIERS_C[i] = (float)Math.exp(OtherMath.probit((BlueNoise.TILE_TRI_NOISE[2][i] + 128.5) * 0x1p-8) * 0.5);
+            TRI_BLUE_NOISE_MULTIPLIERS[i]   = (float)Math.exp(OtherMath.probit((BlueNoise.TRIANGULAR_BLUE_NOISE[0][i] + 128.5) * 0x1p-8) * 0.5);
+            TRI_BLUE_NOISE_MULTIPLIERS_B[i] = (float)Math.exp(OtherMath.probit((BlueNoise.TRIANGULAR_BLUE_NOISE[1][i] + 128.5) * 0x1p-8) * 0.5);
+            TRI_BLUE_NOISE_MULTIPLIERS_C[i] = (float)Math.exp(OtherMath.probit((BlueNoise.TRIANGULAR_BLUE_NOISE[2][i] + 128.5) * 0x1p-8) * 0.5);
         }
     }
 
@@ -4841,9 +4840,9 @@ public class PaletteReducer {
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
-                    er = Math.min(Math.max(((BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorRed[px]);
-                    eg = Math.min(Math.max(((BlueNoise.TILE_TRI_NOISE[1][(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorGreen[px]);
-                    eb = Math.min(Math.max(((BlueNoise.TILE_TRI_NOISE[2][(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorBlue[px]);
+                    er = Math.min(Math.max(((BlueNoise.TRIANGULAR_BLUE_NOISE[0][(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorRed[px]);
+                    eg = Math.min(Math.max(((BlueNoise.TRIANGULAR_BLUE_NOISE[1][(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorGreen[px]);
+                    eb = Math.min(Math.max(((BlueNoise.TRIANGULAR_BLUE_NOISE[2][(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorBlue[px]);
 //                    double mag = 0.5/Math.sqrt(er * er + eg * eg + eb * eb);
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5), 0, 0xFF);
@@ -5260,9 +5259,9 @@ public class PaletteReducer {
                     pixmap.drawPixel(px, py, 0);
                 else {
 
-                    er = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+1) * 0xC13FA9A902A6328FL + (py+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorRed[px]), -limit), limit);
-                    eg = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[1][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+3) * 0xC13FA9A902A6328FL + (py-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorGreen[px]), -limit), limit);
-                    eb = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[2][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+2) * 0xC13FA9A902A6328FL + (py-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorBlue[px]), -limit), limit);
+                    er = Math.min(Math.max(( ( (BlueNoise.TRIANGULAR_BLUE_NOISE[0][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+1) * 0xC13FA9A902A6328FL + (py+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorRed[px]), -limit), limit);
+                    eg = Math.min(Math.max(( ( (BlueNoise.TRIANGULAR_BLUE_NOISE[1][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+3) * 0xC13FA9A902A6328FL + (py-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorGreen[px]), -limit), limit);
+                    eb = Math.min(Math.max(( ( (BlueNoise.TRIANGULAR_BLUE_NOISE[2][(px & 63) | (py & 63) << 6] + 0.5f) + ((((px+2) * 0xC13FA9A902A6328FL + (py-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorBlue[px]), -limit), limit);
 
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
@@ -5364,9 +5363,9 @@ public class PaletteReducer {
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(x, y, 0);
                 else {
-                    er = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[0][(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+1) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[x]);
-                    eg = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[1][(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+3) * 0xC13FA9A902A6328FL + (y-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorGreen[x]);
-                    eb = Math.min(Math.max(( ( (BlueNoise.TILE_TRI_NOISE[2][(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+2) * 0xC13FA9A902A6328FL + (y-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorBlue[x]);
+                    er = Math.min(Math.max(( ( (BlueNoise.TRIANGULAR_BLUE_NOISE[0][(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+1) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[x]);
+                    eg = Math.min(Math.max(( ( (BlueNoise.TRIANGULAR_BLUE_NOISE[1][(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+3) * 0xC13FA9A902A6328FL + (y-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorGreen[x]);
+                    eb = Math.min(Math.max(( ( (BlueNoise.TRIANGULAR_BLUE_NOISE[2][(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+2) * 0xC13FA9A902A6328FL + (y-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorBlue[x]);
 
                     int rr = MathUtils.clamp((int)(((color >>> 24)       ) + er + 0.5f), 0, 0xFF);
                     int gg = MathUtils.clamp((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0, 0xFF);
@@ -6497,11 +6496,11 @@ public class PaletteReducer {
                             noise += ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
                             break;
                         case 1:
-                            noise += (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
+                            noise += (BlueNoise.TRIANGULAR_BLUE_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
                             noise += ((px * -0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
                             break;
                         case 2:
-                            noise += (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
+                            noise += (BlueNoise.TRIANGULAR_BLUE_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
                             noise += ((y * 0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                             break;
                         default: // case 3:
@@ -6654,21 +6653,21 @@ public class PaletteReducer {
                         case 0:
                             er += ((px ^ y) % 9 - 4);
                             er += ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
-                            eg += (BlueNoise.TILE_TRI_NOISE[1][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
+                            eg += (BlueNoise.TRIANGULAR_BLUE_NOISE[1][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
                             eg += ((px * -0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
-                            eb += (BlueNoise.TILE_TRI_NOISE[2][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
+                            eb += (BlueNoise.TRIANGULAR_BLUE_NOISE[2][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
                             eb += ((y * 0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                             break;
                         case 1:
-                            er += (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
+                            er += (BlueNoise.TRIANGULAR_BLUE_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
                             er += ((px * -0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
-                            eg += (BlueNoise.TILE_TRI_NOISE[1][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
+                            eg += (BlueNoise.TRIANGULAR_BLUE_NOISE[1][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
                             eg += ((y * 0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                             eb += ((px ^ y) % 11 - 5);
                             eb += ((y * -0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-21f;
                             break;
                         case 2:
-                            er += (BlueNoise.TILE_TRI_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
+                            er += (BlueNoise.TRIANGULAR_BLUE_NOISE[0][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
                             er += ((y * 0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                             eg += ((px ^ y) % 11 - 5);
                             eg += ((y * -0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-21f;
@@ -6680,7 +6679,7 @@ public class PaletteReducer {
                             er += ((y * -0xC13FA9A902A6328FL + px * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-21f;
                             eg += ((px ^ y) % 9 - 4);
                             eg += ((px * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
-                            eb += (BlueNoise.TILE_TRI_NOISE[2][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
+                            eb += (BlueNoise.TRIANGULAR_BLUE_NOISE[2][(px & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
                             eb += ((px * -0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
                             break;
                     }
