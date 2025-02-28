@@ -1337,7 +1337,7 @@ public class A8PNG8 implements Dithered, Disposable {
                         adj = ((px + y & 1) << 8) - 127.5f;
                         int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_B[(px & 63) | (y & 63) << 6] + adj) * strength), -100), 100))] & 255;
                         int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_C[(px & 63) | (y & 63) << 6] + adj) * strength), -100), 100))] & 255;
-                        int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE  [(px & 63) | (y & 63) << 6] + adj) * strength), -100), 100))] & 255;
+                        int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_A[(px & 63) | (y & 63) << 6] + adj) * strength), -100), 100))] & 255;
 
                         curLine[px] = paletteMapping[((rr << 7) & 0x7C00)
                                 | ((gg << 2) & 0x3E0)
@@ -1451,7 +1451,7 @@ public class A8PNG8 implements Dithered, Disposable {
                                         | ((gg << 2) & 0x3E0)
                                         | ((bb >>> 3))];
                         used = paletteArray[paletteIndex & 0xFF];
-                        adj = ((A8PaletteReducer.TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007843138f);
+                        adj = ((A8PaletteReducer.TRI_BLUE_NOISE_A[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007843138f);
                         adj *= adj * adj;
                         //// Complicated... This starts with a checkerboard of -0.5 and 0.5, times a tiny fraction.
                         //// The next 3 lines generate 3 low-quality-random numbers based on s, which should be
@@ -1891,7 +1891,7 @@ public class A8PNG8 implements Dithered, Disposable {
                     if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                         curLine[px] = 0;
                     else {
-                        float tbn = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS[(px & 63) | ((y << 6) & 0xFC0)];
+                        float tbn = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS_A[(px & 63) | ((y << 6) & 0xFC0)];
                         er = curErrorRed[px] * tbn;
                         eg = curErrorGreen[px] * tbn;
                         eb = curErrorBlue[px] * tbn;
@@ -2065,7 +2065,7 @@ public class A8PNG8 implements Dithered, Disposable {
                     if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                         curLine[px] = 0;
                     else {
-                        adj = ((A8PaletteReducer.TRI_BLUE_NOISE[(px & 63) | (py & 63) << 6] + 0.5f) * 0.005f); // plus or minus 255/400
+                        adj = ((A8PaletteReducer.TRI_BLUE_NOISE_A[(px & 63) | (py & 63) << 6] + 0.5f) * 0.005f); // plus or minus 255/400
                         adj = Math.min(Math.max(adj * strength, -limit), limit);
                         er = adj + (curErrorRed[px]);
                         eg = adj + (curErrorGreen[px]);
@@ -2241,7 +2241,7 @@ public class A8PNG8 implements Dithered, Disposable {
                     if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                         curLine[px] = 0;
                     else {
-                        er = Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE  [(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorRed[px]);
+                        er = Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_A[(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorRed[px]);
                         eg = Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_B[(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorGreen[px]);
                         eb = Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_C[(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorBlue[px]);
 
@@ -2567,7 +2567,7 @@ public class A8PNG8 implements Dithered, Disposable {
                     if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                         curLine[px] = 0;
                     else {
-                        er = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE  [(px & 63) | (y & 63) << 6] + 0.5f) + ((((px+1) * 0xC13FA9A902A6328FL + (y +1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-15f - 0x1p+7f)) * strength) + (curErrorRed[px]), -limit), limit);
+                        er = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_A[(px & 63) | (y & 63) << 6] + 0.5f) + ((((px+1) * 0xC13FA9A902A6328FL + (y +1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-15f - 0x1p+7f)) * strength) + (curErrorRed[px]), -limit), limit);
                         eg = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_B[(px & 63) | (y & 63) << 6] + 0.5f) + ((((px+3) * 0xC13FA9A902A6328FL + (y -1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-15f - 0x1p+7f)) * strength) + (curErrorGreen[px]), -limit), limit);
                         eb = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_C[(px & 63) | (y & 63) << 6] + 0.5f) + ((((px+2) * 0xC13FA9A902A6328FL + (y -4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-15f - 0x1p+7f)) * strength) + (curErrorBlue[px]), -limit), limit);
 
@@ -2716,7 +2716,7 @@ public class A8PNG8 implements Dithered, Disposable {
                     if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                         curLine[x] = 0;
                     else {
-                        er = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE  [(x & 63) | (by & 63) << 6] + 0.5f) * blueStrength + ((((x+1) * 0xC13FA9A902A6328FL + (by+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[x]);
+                        er = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_A[(x & 63) | (by & 63) << 6] + 0.5f) * blueStrength + ((((x+1) * 0xC13FA9A902A6328FL + (by+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[x]);
                         eg = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_B[(x & 63) | (by & 63) << 6] + 0.5f) * blueStrength + ((((x+3) * 0xC13FA9A902A6328FL + (by-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorGreen[x]);
                         eb = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_C[(x & 63) | (by & 63) << 6] + 0.5f) * blueStrength + ((((x+2) * 0xC13FA9A902A6328FL + (by-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorBlue[x]);
 
@@ -2900,7 +2900,7 @@ public class A8PNG8 implements Dithered, Disposable {
                                 eb += ((y * 0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                                 break;
                             case 1:
-                                er += (A8PaletteReducer.TRI_BLUE_NOISE[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
+                                er += (A8PaletteReducer.TRI_BLUE_NOISE_A[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
                                 er += ((x * -0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
                                 eg += (A8PaletteReducer.TRI_BLUE_NOISE_B[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
                                 eg += ((y * 0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
@@ -2908,7 +2908,7 @@ public class A8PNG8 implements Dithered, Disposable {
                                 eb += ((y * -0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-21f;
                                 break;
                             case 2:
-                                er += (A8PaletteReducer.TRI_BLUE_NOISE[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
+                                er += (A8PaletteReducer.TRI_BLUE_NOISE_A[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
                                 er += ((y * 0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                                 eg += ((x ^ y) % 11 - 5);
                                 eg += ((y * -0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-21f;
@@ -3187,7 +3187,7 @@ public class A8PNG8 implements Dithered, Disposable {
         DeflaterOutputStream deflaterOutput = new DeflaterOutputStream(buffer, deflater);
         final int[] paletteArray = palette.paletteArray;
         final byte[] paletteMapping = palette.paletteMapping;
-        final float[] noise = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS;
+        final float[] noise = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS_A;
 
         DataOutputStream dataOutput = new DataOutputStream(output);
         try {
@@ -3369,7 +3369,7 @@ public class A8PNG8 implements Dithered, Disposable {
         DeflaterOutputStream deflaterOutput = new DeflaterOutputStream(buffer, deflater);
         final int[] paletteArray = palette.paletteArray;
         final byte[] paletteMapping = palette.paletteMapping;
-        final float[] noiseA = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS;
+        final float[] noiseA = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS_A;
         final float[] noiseB = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS_B;
         final float[] noiseC = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS_C;
 
@@ -4415,7 +4415,7 @@ public class A8PNG8 implements Dithered, Disposable {
                             adj = ((px + y & 1) << 8) - 127.5f;
                             int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_B[(px & 63) | (y & 63) << 6] + adj) * strength), -100), 100))] & 255;
                             int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_C[(px & 63) | (y & 63) << 6] + adj) * strength), -100), 100))] & 255;
-                            int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE  [(px & 63) | (y & 63) << 6] + adj) * strength), -100), 100))] & 255;
+                            int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_A[(px & 63) | (y & 63) << 6] + adj) * strength), -100), 100))] & 255;
 
                             curLine[px] = paletteMapping[((rr << 7) & 0x7C00)
                                     | ((gg << 2) & 0x3E0)
@@ -4557,7 +4557,7 @@ public class A8PNG8 implements Dithered, Disposable {
                                             | ((gg << 2) & 0x3E0)
                                             | ((bb >>> 3))];
                             used = paletteArray[paletteIndex & 0xFF];
-                            adj = ((A8PaletteReducer.TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007843138f);
+                            adj = ((A8PaletteReducer.TRI_BLUE_NOISE_A[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007843138f);
                             adj *= adj * adj;
                             //// Complicated... This starts with a checkerboard of -0.5 and 0.5, times a tiny fraction.
                             //// The next 3 lines generate 3 low-quality-random numbers based on s, which should be
@@ -5095,7 +5095,7 @@ public class A8PNG8 implements Dithered, Disposable {
                         if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                             curLine[px] = 0;
                         else {
-                            float tbn = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS[(px & 63) | ((y << 6) & 0xFC0)];
+                            float tbn = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS_A[(px & 63) | ((y << 6) & 0xFC0)];
                             er = curErrorRed[px] * tbn;
                             eg = curErrorGreen[px] * tbn;
                             eb = curErrorBlue[px] * tbn;
@@ -5304,7 +5304,7 @@ public class A8PNG8 implements Dithered, Disposable {
                         if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                             curLine[px] = 0;
                         else {
-                            adj = ((A8PaletteReducer.TRI_BLUE_NOISE[(px & 63) | (py & 63) << 6] + 0.5f) * 0.005f); // plus or minus 255/400
+                            adj = ((A8PaletteReducer.TRI_BLUE_NOISE_A[(px & 63) | (py & 63) << 6] + 0.5f) * 0.005f); // plus or minus 255/400
                             adj = Math.min(Math.max(adj * strength, -limit), limit);
                             er = adj + (curErrorRed[px]);
                             eg = adj + (curErrorGreen[px]);
@@ -5515,7 +5515,7 @@ public class A8PNG8 implements Dithered, Disposable {
                         if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                             curLine[px] = 0;
                         else {
-                            er = Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE  [(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorRed[px]);
+                            er = Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_A[(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorRed[px]);
                             eg = Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_B[(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorGreen[px]);
                             eb = Math.min(Math.max(((A8PaletteReducer.TRI_BLUE_NOISE_C[(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorBlue[px]);
 
@@ -5908,7 +5908,7 @@ public class A8PNG8 implements Dithered, Disposable {
                         if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                             curLine[px] = 0;
                         else {
-                            er = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE  [(px & 63) | (y & 63) << 6] + 0.5f) + ((((px+1) * 0xC13FA9A902A6328FL + (y +1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-15f - 0x1p+7f)) * strength) + (curErrorRed[px]), -limit), limit);
+                            er = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_A[(px & 63) | (y & 63) << 6] + 0.5f) + ((((px+1) * 0xC13FA9A902A6328FL + (y +1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-15f - 0x1p+7f)) * strength) + (curErrorRed[px]), -limit), limit);
                             eg = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_B[(px & 63) | (y & 63) << 6] + 0.5f) + ((((px+3) * 0xC13FA9A902A6328FL + (y -1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-15f - 0x1p+7f)) * strength) + (curErrorGreen[px]), -limit), limit);
                             eb = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_C[(px & 63) | (y & 63) << 6] + 0.5f) + ((((px+2) * 0xC13FA9A902A6328FL + (y -4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-15f - 0x1p+7f)) * strength) + (curErrorBlue[px]), -limit), limit);
 
@@ -6091,7 +6091,7 @@ public class A8PNG8 implements Dithered, Disposable {
                         if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                             curLine[x] = 0;
                         else {
-                            er = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE  [(x & 63) | (by & 63) << 6] + 0.5f) * blueStrength + ((((x+1) * 0xC13FA9A902A6328FL + (by+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[x]);
+                            er = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_A[(x & 63) | (by & 63) << 6] + 0.5f) * blueStrength + ((((x+1) * 0xC13FA9A902A6328FL + (by+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[x]);
                             eg = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_B[(x & 63) | (by & 63) << 6] + 0.5f) * blueStrength + ((((x+3) * 0xC13FA9A902A6328FL + (by-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorGreen[x]);
                             eb = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_C[(x & 63) | (by & 63) << 6] + 0.5f) * blueStrength + ((((x+2) * 0xC13FA9A902A6328FL + (by-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorBlue[x]);
 
@@ -6309,7 +6309,7 @@ public class A8PNG8 implements Dithered, Disposable {
                                     eb += ((y * 0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                                     break;
                                 case 1:
-                                    er += (A8PaletteReducer.TRI_BLUE_NOISE[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
+                                    er += (A8PaletteReducer.TRI_BLUE_NOISE_A[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
                                     er += ((x * -0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
                                     eg += (A8PaletteReducer.TRI_BLUE_NOISE_B[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
                                     eg += ((y * 0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
@@ -6317,7 +6317,7 @@ public class A8PNG8 implements Dithered, Disposable {
                                     eb += ((y * -0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-21f;
                                     break;
                                 case 2:
-                                    er += (A8PaletteReducer.TRI_BLUE_NOISE[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
+                                    er += (A8PaletteReducer.TRI_BLUE_NOISE_A[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
                                     er += ((y * 0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                                     eg += ((x ^ y) % 11 - 5);
                                     eg += ((y * -0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-21f;
@@ -6615,7 +6615,7 @@ public class A8PNG8 implements Dithered, Disposable {
         Pixmap pixmap = frames.first();
         final int[] paletteArray = palette.paletteArray;
         final byte[] paletteMapping = palette.paletteMapping;
-        final float[] noise = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS;
+        final float[] noise = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS_A;
 
         DeflaterOutputStream deflaterOutput = new DeflaterOutputStream(buffer, deflater);
         DataOutputStream dataOutput = new DataOutputStream(output);
@@ -6828,7 +6828,7 @@ public class A8PNG8 implements Dithered, Disposable {
         Pixmap pixmap = frames.first();
         final int[] paletteArray = palette.paletteArray;
         final byte[] paletteMapping = palette.paletteMapping;
-        final float[] noiseA = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS;
+        final float[] noiseA = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS_A;
         final float[] noiseB = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS_B;
         final float[] noiseC = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS_C;
 

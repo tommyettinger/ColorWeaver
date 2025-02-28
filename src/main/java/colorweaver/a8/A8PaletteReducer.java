@@ -644,18 +644,18 @@ public class A8PaletteReducer {
     public static final float[][] OKLAB = new float[4][0x8000];
 
     /**
-     * A 4096-element byte array as a 64x64 grid of bytes. When arranged into a grid, the bytes will follow a blue noise
+     * A 16384-element byte array as a 128x128 grid of bytes. When arranged into a grid, the bytes will follow a blue noise
      * frequency (in this case, they will have a triangular distribution for its bytes, so values near 0 are much more
-     * common). This is used inside this library to create {@link #TRI_BLUE_NOISE_MULTIPLIERS}, which is used in
+     * common). This is used inside this library to create {@link #TRI_BLUE_NOISE_MULTIPLIERS_A}, which is used in
      * {@link #reduceScatter(Pixmap)}. It is also used directly by {@link #reduceBlueNoise(Pixmap)},
      * {@link #reduceNeue(Pixmap)}, and {@link #reduceChaoticNoise(Pixmap)}.
      * <br>
      * While, for some reason, you could change the contents to some other distribution of bytes, I don't know why this
      * would be needed.
      */
-    public static final byte[] TRI_BLUE_NOISE = ConstantData.TRI_BLUE_NOISE_A;
+    public static final byte[] TRI_BLUE_NOISE_A = ConstantData.TRI_BLUE_NOISE_A;
     /**
-     * A 4096-element byte array as a 64x64 grid of bytes. When arranged into a grid, the bytes will follow a blue noise
+     * A 16384-element byte array as a 128x128 grid of bytes. When arranged into a grid, the bytes will follow a blue noise
      * frequency (in this case, they will have a triangular distribution for its bytes, so values near 0 are much more
      * common). This is used inside this library by {@link #reduceBlueNoise(Pixmap)}.
      * <br>
@@ -664,7 +664,7 @@ public class A8PaletteReducer {
      */
     public static final byte[] TRI_BLUE_NOISE_B = ConstantData.TRI_BLUE_NOISE_B;
     /**
-     * A 4096-element byte array as a 64x64 grid of bytes. When arranged into a grid, the bytes will follow a blue noise
+     * A 16384-element byte array as a 128x128 grid of bytes. When arranged into a grid, the bytes will follow a blue noise
      * frequency (in this case, they will have a triangular distribution for its bytes, so values near 0 are much more
      * common). This is used inside this library by {@link #reduceBlueNoise(Pixmap)}.
      * <br>
@@ -674,21 +674,21 @@ public class A8PaletteReducer {
     public static final byte[] TRI_BLUE_NOISE_C = ConstantData.TRI_BLUE_NOISE_C;
 
     /**
-     * A 64x64 grid of floats, with a median value of about 1.0, generated using the triangular-distributed blue noise
-     * from {@link #TRI_BLUE_NOISE}. If you randomly selected two floats from this and multiplied them, the average
-     * result should be 1.0; half of the items in this should be between 1 and {@code 4.232604}, and the other half should
-     * be the inverses of the first half (between {@code 0.23626116}, which is {@code 1.0/4.232604}, and 1).
+     * A 128x128 grid of floats, with a median value of about 1.0, generated using the triangular-distributed blue noise
+     * from {@link #TRI_BLUE_NOISE_A}. If you randomly selected two floats from this and multiplied them, the average
+     * result should be 1.0; half of the items in this should be between 1 and {@code 4.232422}, and the other half should
+     * be the inverses of the first half (between {@code 0.23625374}, which is {@code 1.0/4.232422}, and 1).
      * <br>
      * While, for some reason, you could change the contents to some other distribution of floats, I don't know why this
      * would be needed.
      */
-    public static final float[] TRI_BLUE_NOISE_MULTIPLIERS   = ConstantData.TRI_BLUE_NOISE_MULTIPLIERS_A;
+    public static final float[] TRI_BLUE_NOISE_MULTIPLIERS_A = ConstantData.TRI_BLUE_NOISE_MULTIPLIERS_A;
 
     /**
-     * A 64x64 grid of floats, with a median value of about 1.0, generated using the triangular-distributed blue noise
+     * A 128x128 grid of floats, with a median value of about 1.0, generated using the triangular-distributed blue noise
      * from {@link #TRI_BLUE_NOISE_B}. If you randomly selected two floats from this and multiplied them, the average
-     * result should be 1.0; half of the items in this should be between 1 and {@code 4.232604}, and the other half should
-     * be the inverses of the first half (between {@code 0.23626116}, which is {@code 1.0/4.232604}, and 1).
+     * result should be 1.0; half of the items in this should be between 1 and {@code 4.232422}, and the other half should
+     * be the inverses of the first half (between {@code 0.23625374}, which is {@code 1.0/4.232422}, and 1).
      * <br>
      * While, for some reason, you could change the contents to some other distribution of floats, I don't know why this
      * would be needed.
@@ -696,17 +696,16 @@ public class A8PaletteReducer {
 
     public static final float[] TRI_BLUE_NOISE_MULTIPLIERS_B = ConstantData.TRI_BLUE_NOISE_MULTIPLIERS_B;
     /**
-     * A 64x64 grid of floats, with a median value of about 1.0, generated using the triangular-distributed blue noise
+     * A 128x128 grid of floats, with a median value of about 1.0, generated using the triangular-distributed blue noise
      * from {@link #TRI_BLUE_NOISE_C}. If you randomly selected two floats from this and multiplied them, the average
-     * result should be 1.0; half of the items in this should be between 1 and {@code 4.232604}, and the other half should
-     * be the inverses of the first half (between {@code 0.23626116}, which is {@code 1.0/4.232604}, and 1).
+     * result should be 1.0; half of the items in this should be between 1 and {@code 4.232422}, and the other half should
+     * be the inverses of the first half (between {@code 0.23625374}, which is {@code 1.0/4.232422}, and 1).
      * <br>
      * While, for some reason, you could change the contents to some other distribution of floats, I don't know why this
      * would be needed.
      */
     public static final float[] TRI_BLUE_NOISE_MULTIPLIERS_C = ConstantData.TRI_BLUE_NOISE_MULTIPLIERS_C;
 
-    public static final float[] TRIANGULAR_BYTE_LOOKUP = new float[256];
     static {
         float rf, gf, bf, lf, mf, sf;
         int idx = 0;
@@ -729,10 +728,6 @@ public class A8PaletteReducer {
 
                     idx++;
                 }
-            }
-
-            for (int i = 0; i < 256; i++) {
-                TRIANGULAR_BYTE_LOOKUP[i] = OtherMath.triangularRemap(i + 0.5f, 256);
             }
         }
 //        for (int i = 1; i < 256; i++) {
@@ -4106,9 +4101,9 @@ public class A8PaletteReducer {
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    er = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE  [(px & 63) | (y & 63) << 6] + 0.5f) + ((((px+1) * 0xC13FA9A902A6328FL + (y +1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorRed[px]), -limit), limit);
-                    eg = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_B[(px & 63) | (y & 63) << 6] + 0.5f) + ((((px+3) * 0xC13FA9A902A6328FL + (y -1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorGreen[px]), -limit), limit);
-                    eb = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_C[(px & 63) | (y & 63) << 6] + 0.5f) + ((((px+2) * 0xC13FA9A902A6328FL + (y -4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorBlue[px]), -limit), limit);
+                    er = Math.min(Math.max(( ( (BlueNoise.getSeededTriangular(px, y, 0x11111) + 0.5f) + ((((px+1) * 0xC13FA9A902A6328FL + (y +1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorRed[px]), -limit), limit);
+                    eg = Math.min(Math.max(( ( (BlueNoise.getSeededTriangular(px, y, 0x22222) + 0.5f) + ((((px+3) * 0xC13FA9A902A6328FL + (y -1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorGreen[px]), -limit), limit);
+                    eb = Math.min(Math.max(( ( (BlueNoise.getSeededTriangular(px, y, 0x33333) + 0.5f) + ((((px+2) * 0xC13FA9A902A6328FL + (y -4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1p-16f - 0x1p+6f)) * strength) + (curErrorBlue[px]), -limit), limit);
 
                     int rr = Math.min(Math.max((int)(((color >>> 24)       ) + er + 0.5f), 0), 0xFF);
                     int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + eg + 0.5f), 0), 0xFF);
@@ -4204,9 +4199,9 @@ public class A8PaletteReducer {
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(x, y, 0);
                 else {
-                    er = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE  [(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+1) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[x]);
-                    eg = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_B[(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+3) * 0xC13FA9A902A6328FL + (y-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorGreen[x]);
-                    eb = Math.min(Math.max(( ( (A8PaletteReducer.TRI_BLUE_NOISE_C[(x & 63) | (y & 63) << 6] + 0.5f) * blueStrength + ((((x+2) * 0xC13FA9A902A6328FL + (y-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorBlue[x]);
+                    er = Math.min(Math.max(( ( (BlueNoise.getSeededTriangular(x, y, 0xAAAAA) + 0.5f) * blueStrength + ((((x+1) * 0xC13FA9A902A6328FL + (y+1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorRed[x]);
+                    eg = Math.min(Math.max(( ( (BlueNoise.getSeededTriangular(x, y, 0xBBBBB) + 0.5f) * blueStrength + ((((x+3) * 0xC13FA9A902A6328FL + (y-1) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorGreen[x]);
+                    eb = Math.min(Math.max(( ( (BlueNoise.getSeededTriangular(x, y, 0xCCCCC) + 0.5f) * blueStrength + ((((x+2) * 0xC13FA9A902A6328FL + (y-4) * 0x91E10DA5C79E7B1DL) >>> 41) * 0x1.4p-24f - 0x1.4p-2f) * strength)), -limit), limit) + (curErrorBlue[x]);
 
                     int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + er, 0), 1023)] & 255;
                     int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + eg, 0), 1023)] & 255;
@@ -4283,11 +4278,11 @@ public class A8PaletteReducer {
 
     /**
      * A blue-noise-based dither; does not diffuse error, and uses a tiling blue noise pattern (which can be accessed
-     * with {@link #TRI_BLUE_NOISE}, but shouldn't usually be modified) as well as a checkerboard pattern of light and
-     * dark. Because it is an
+     * with {@link BlueNoise#getSeededTriangular(int, int, int)}) as well as a
+     * checkerboard pattern of light and dark. Because it is an
      * ordered dither, it avoids "swimming" patterns in animations with large flat sections of one color; these swimming
      * effects can appear in all the error-diffusion dithers here. If you can tolerate "spongy" artifacts appearing
-     * (which look worse on small palettes) and the checkerboard doesn't distract too much, this may work OK.
+     * (which look worse on small palettes) and the checkerboard doesn't distract too much, this may work well.
      * @param pixmap will be modified in-place and returned
      * @return pixmap, after modifications
      */
@@ -4611,7 +4606,7 @@ public class A8PaletteReducer {
                     used = paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF];
-                    adj = ((A8PaletteReducer.TRI_BLUE_NOISE[(px & 63) | (y & 63) << 6] + 0.5f) * 0.007843138f);
+                    adj = ((BlueNoise.getSeededTriangular(px, y, 0x11111) + 0.5f) * 0.007843138f);
                     adj *= adj * adj;
                     //// Complicated... This starts with a checkerboard of -0.5 and 0.5, times a tiny fraction.
                     //// The next 3 lines generate 3 low-quality-random numbers based on s, which should be
@@ -4692,7 +4687,7 @@ public class A8PaletteReducer {
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    float tbn = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS[(px & 63) | ((y << 6) & 0xFC0)];
+                    float tbn = A8PaletteReducer.TRI_BLUE_NOISE_MULTIPLIERS_A[(px & 127) | (y & 127) << 7];
                     er = curErrorRed[px] * tbn;
                     eg = curErrorGreen[px] * tbn;
                     eb = curErrorBlue[px] * tbn;
@@ -4804,7 +4799,7 @@ public class A8PaletteReducer {
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
-                    adj = ((TRI_BLUE_NOISE[(px & 63) | (py & 63) << 6] + 0.5f) * 0.005f); // plus or minus 255/400
+                    adj = ((BlueNoise.getSeededTriangular(px, py, 0x2357B) + 0.5f) * 0.005f); // plus or minus 255/400
                     adj = Math.min(Math.max(adj * strength, -limit), limit);
                     er = adj + (curErrorRed[px]);
                     eg = adj + (curErrorGreen[px]);
@@ -4917,9 +4912,9 @@ public class A8PaletteReducer {
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
-                    er = Math.min(Math.max(((TRI_BLUE_NOISE  [(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorRed[px]);
-                    eg = Math.min(Math.max(((TRI_BLUE_NOISE_B[(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorGreen[px]);
-                    eb = Math.min(Math.max(((TRI_BLUE_NOISE_C[(px & 63) | (py & 63) << 6] + 0.5f) * strength), -limit), limit) + (curErrorBlue[px]);
+                    er = Math.min(Math.max(((BlueNoise.getSeededTriangular(px, py, 0xAAAAA) + 0.5f) * strength), -limit), limit) + (curErrorRed[px]);
+                    eg = Math.min(Math.max(((BlueNoise.getSeededTriangular(px, py, 0xBBBBB) + 0.5f) * strength), -limit), limit) + (curErrorGreen[px]);
+                    eb = Math.min(Math.max(((BlueNoise.getSeededTriangular(px, py, 0xCCCCC) + 0.5f) * strength), -limit), limit) + (curErrorBlue[px]);
                     int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + er, 0), 1023)] & 255;
                     int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + eg, 0), 1023)] & 255;
                     int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + eb, 0), 1023)] & 255;
@@ -4975,7 +4970,7 @@ public class A8PaletteReducer {
      * <ul>
      * <li>An R2 dither value (as used by {@link #reduceRoberts(Pixmap)}) is used for each pixel, but the four corners
      * of the 2x2 square each use a different angle for the artifacts.</li>
-     * <li>Blue noise from {@link #TRI_BLUE_NOISE} is incorporated into two corners, with different strength.</li>
+     * <li>Blue noise from {@link #TRI_BLUE_NOISE_A} is incorporated into two corners, with different strength.</li>
      * <li>XOR-Mod patterns are incorporated when blue noise isn't. They consist of diagonal lines. These are:
      * <ul>
      *     <li>{@code ((px ^ y) % 9 - 4)}</li>
@@ -5042,21 +5037,21 @@ public class A8PaletteReducer {
                         case 0:
                             er += ((x ^ y) % 9 - 4);
                             er += ((x * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
-                            eg += (TRI_BLUE_NOISE_B[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
+                            eg += (BlueNoise.getSeededTriangular(x, y, 0xBBBBB) + 0.5f) * 0x1p-5f;
                             eg += ((x * -0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
-                            eb += (TRI_BLUE_NOISE_C[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
+                            eb += (BlueNoise.getSeededTriangular(x, y, 0xCCCCC) + 0.5f) * 0x1p-6f;
                             eb += ((y * 0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                             break;
                         case 1:
-                            er += (TRI_BLUE_NOISE[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
+                            er += (BlueNoise.getSeededTriangular(x, y, 0xAAAAA) + 0.5f) * 0x1p-5f;
                             er += ((x * -0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
-                            eg += (TRI_BLUE_NOISE_B[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
+                            eg += (BlueNoise.getSeededTriangular(x, y, 0xBBBBB) + 0.5f) * 0x1p-6f;
                             eg += ((y * 0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                             eb += ((x ^ y) % 11 - 5);
                             eb += ((y * -0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-21f;
                             break;
                         case 2:
-                            er += (TRI_BLUE_NOISE[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-6f;
+                            er += (BlueNoise.getSeededTriangular(x, y, 0xAAAAA) + 0.5f) * 0x1p-6f;
                             er += ((y * 0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-20f;
                             eg += ((x ^ y) % 11 - 5);
                             eg += ((y * -0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-21f;
@@ -5068,7 +5063,7 @@ public class A8PaletteReducer {
                             er += ((y * -0xC13FA9A902A6328FL + x * -0x91E10DA5C79E7B1DL) >> 41) * 0x1.8p-21f;
                             eg += ((x ^ y) % 9 - 4);
                             eg += ((x * 0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
-                            eb += (TRI_BLUE_NOISE_C[(x & 63) | (y & 63) << 6] + 0.5f) * 0x1p-5f;
+                            eb += (BlueNoise.getSeededTriangular(x, y, 0xCCCCC) + 0.5f) * 0x1p-5f;
                             eb += ((x * -0xC13FA9A902A6328FL + y * 0x91E10DA5C79E7B1DL) >> 41) * 0x1p-20f;
                             break;
                     }
@@ -5275,7 +5270,7 @@ public class A8PaletteReducer {
 
     /**
      * A variant on {@link #reduceBurkes(Pixmap)} that multiplies the diffused error per-pixel using
-     * {@link #TRI_BLUE_NOISE_MULTIPLIERS}. This does a good job of breaking up artifacts in sections
+     * {@link #TRI_BLUE_NOISE_MULTIPLIERS_A}. This does a good job of breaking up artifacts in sections
      * of flat color, where with Burkes, there could be ugly repetitive areas with seams.
      * @param pixmap a Pixmap that will be modified in place
      * @return the given Pixmap, for chaining
@@ -5283,7 +5278,7 @@ public class A8PaletteReducer {
     public Pixmap reduceOceanic (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int w = pixmap.getWidth(), h = pixmap.getHeight();
-        final float[] noise = TRI_BLUE_NOISE_MULTIPLIERS;
+        final float[] noise = TRI_BLUE_NOISE_MULTIPLIERS_A;
         float r4, r2, r1, g4, g2, g1, b4, b2, b1;
         final float s = (0.13f * ditherStrength / (populationBias * populationBias)),
                 strength = s * 0.58f / (0.3f + s);
@@ -5357,13 +5352,13 @@ public class A8PaletteReducer {
                     float modifier;
                     if(px < w - 1)
                     {
-                        modifier = noise[(px + 1 & 63) | ((py << 6) & 0xFC0)];
+                        modifier = noise[(px + 1 & 127) | (py & 127) << 7];
                         curErrorRed[px+1]   += r4 * modifier;
                         curErrorGreen[px+1] += g4 * modifier;
                         curErrorBlue[px+1]  += b4 * modifier;
                         if(px < w - 2)
                         {
-                            modifier = noise[(px + 2 & 63) | ((py << 6) & 0xFC0)];
+                            modifier = noise[(px + 2 & 127) | (py & 127) << 7];
                             curErrorRed[px+2]   += r2 * modifier;
                             curErrorGreen[px+2] += g2 * modifier;
                             curErrorBlue[px+2]  += b2 * modifier;
@@ -5373,31 +5368,31 @@ public class A8PaletteReducer {
                     {
                         if(px > 0)
                         {
-                            modifier = noise[(px - 1 & 63) | ((ny << 6) & 0xFC0)];
+                            modifier = noise[(px - 1 & 127) | (ny & 127) << 7];
                             nextErrorRed[px-1]   += r2 * modifier;
                             nextErrorGreen[px-1] += g2 * modifier;
                             nextErrorBlue[px-1]  += b2 * modifier;
                             if(px > 1)
                             {
-                                modifier = noise[(px - 2 & 63) | ((ny << 6) & 0xFC0)];
+                                modifier = noise[(px - 2 & 127) | (ny & 127) << 7];
                                 nextErrorRed[px-2]   += r1 * modifier;
                                 nextErrorGreen[px-2] += g1 * modifier;
                                 nextErrorBlue[px-2]  += b1 * modifier;
                             }
                         }
-                        modifier = noise[(px & 63) | ((ny << 6) & 0xFC0)];
+                        modifier = noise[(px & 127) | (ny & 127) << 7];
                         nextErrorRed[px]   += r4 * modifier;
                         nextErrorGreen[px] += g4 * modifier;
                         nextErrorBlue[px]  += b4 * modifier;
                         if(px < w - 1)
                         {
-                            modifier = noise[(px + 1 & 63) | ((ny << 6) & 0xFC0)];
+                            modifier = noise[(px + 1 & 127) | (ny & 127) << 7];
                             nextErrorRed[px+1]   += r2 * modifier;
                             nextErrorGreen[px+1] += g2 * modifier;
                             nextErrorBlue[px+1]  += b2 * modifier;
                             if(px < w - 2)
                             {
-                                modifier = noise[(px + 2 & 63) | ((ny << 6) & 0xFC0)];
+                                modifier = noise[(px + 2 & 127) | (ny & 127) << 7];
                                 nextErrorRed[px+2]   += r1 * modifier;
                                 nextErrorGreen[px+2] += g1 * modifier;
                                 nextErrorBlue[px+2]  += b1 * modifier;
@@ -5423,7 +5418,7 @@ public class A8PaletteReducer {
     public Pixmap reduceSeaside (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int w = pixmap.getWidth(), h = pixmap.getHeight();
-        final float[] noiseA = TRI_BLUE_NOISE_MULTIPLIERS;
+        final float[] noiseA = TRI_BLUE_NOISE_MULTIPLIERS_A;
         final float[] noiseB = TRI_BLUE_NOISE_MULTIPLIERS_B;
         final float[] noiseC = TRI_BLUE_NOISE_MULTIPLIERS_C;
         final float s = (0.13f * ditherStrength / (populationBias * populationBias)),
@@ -5485,7 +5480,7 @@ public class A8PaletteReducer {
                     rdiff = (color>>>24)-    (used>>>24);
                     gdiff = (color>>>16&255)-(used>>>16&255);
                     bdiff = (color>>>8&255)- (used>>>8&255);
-                    int modifier = ((px & 63) | (py << 6 & 0xFC0));
+                    int modifier = ((px & 127) | (py << 6 & 0xFC0));
                     final float r1 = rdiff * strength * noiseA[modifier];
                     final float g1 = gdiff * strength * noiseB[modifier];
                     final float b1 = bdiff * strength * noiseC[modifier];
@@ -5498,20 +5493,20 @@ public class A8PaletteReducer {
 
                     if(px < w - 1)
                     {
-                        modifier = ((px + 1 & 63) | (py << 6 & 0xFC0));
+                        modifier = ((px + 1 & 127) | (py << 6 & 0xFC0));
                         curErrorRed[px+1]   += r4 * noiseA[modifier];
                         curErrorGreen[px+1] += g4 * noiseB[modifier];
                         curErrorBlue[px+1]  += b4 * noiseC[modifier];
                         if(px < w - 2)
                         {
-                            modifier = ((px + 2 & 63) | ((py << 6) & 0xFC0));
+                            modifier = ((px + 2 & 127) | (py & 127) << 7);
                             curErrorRed[px+2]   += r2 * noiseA[modifier];
                             curErrorGreen[px+2] += g2 * noiseB[modifier];
                             curErrorBlue[px+2]  += b2 * noiseC[modifier];
                         }
                         if(px < w - 3)
                         {
-                            modifier = ((px + 3 & 63) | ((py << 6) & 0xFC0));
+                            modifier = ((px + 3 & 127) | (py & 127) << 7);
                             curErrorRed[px+2]   += r1 * noiseA[modifier];
                             curErrorGreen[px+2] += g1 * noiseB[modifier];
                             curErrorBlue[px+2]  += b1 * noiseC[modifier];
@@ -5521,31 +5516,31 @@ public class A8PaletteReducer {
                     {
                         if(px > 0)
                         {
-                            modifier = (px - 1 & 63) | ((ny << 6) & 0xFC0);
+                            modifier = (px - 1 & 127) | (ny & 127) << 7;
                             nextErrorRed[px-1]   += r2 * noiseA[modifier];
                             nextErrorGreen[px-1] += g2 * noiseB[modifier];
                             nextErrorBlue[px-1]  += b2 * noiseC[modifier];
                             if(px > 1)
                             {
-                                modifier = (px - 2 & 63) | ((ny << 6) & 0xFC0);
+                                modifier = (px - 2 & 127) | (ny & 127) << 7;
                                 nextErrorRed[px-2]   += r1 * noiseA[modifier];
                                 nextErrorGreen[px-2] += g1 * noiseB[modifier];
                                 nextErrorBlue[px-2]  += b1 * noiseC[modifier];
                             }
                         }
-                        modifier = (px & 63) | ((ny << 6) & 0xFC0);
+                        modifier = (px & 127) | (ny & 127) << 7;
                         nextErrorRed[px]   += r4 * noiseA[modifier];
                         nextErrorGreen[px] += g4 * noiseB[modifier];
                         nextErrorBlue[px]  += b4 * noiseC[modifier];
                         if(px < w - 1)
                         {
-                            modifier = (px + 1 & 63) | ((ny << 6) & 0xFC0);
+                            modifier = (px + 1 & 127) | (ny & 127) << 7;
                             nextErrorRed[px+1]   += r2 * noiseA[modifier];
                             nextErrorGreen[px+1] += g2 * noiseB[modifier];
                             nextErrorBlue[px+1]  += b2 * noiseC[modifier];
                             if(px < w - 2)
                             {
-                                modifier = (px + 2 & 63) | ((ny << 6) & 0xFC0);
+                                modifier = (px + 2 & 127) | (ny & 127) << 7;
                                 nextErrorRed[px+2]   += r1 * noiseA[modifier];
                                 nextErrorGreen[px+2] += g1 * noiseB[modifier];
                                 nextErrorBlue[px+2]  += b1 * noiseC[modifier];

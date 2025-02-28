@@ -231,14 +231,14 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBluish(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Neuter" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////very good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceScatter(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////YAY YIPPEE WOO NO BANDING
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceNeue(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
+////////very good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceScatter(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
+////////YAY YIPPEE WOO NO BANDING
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceNeue(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////////incredible
 //        //Took 106929 ms
 //        pm.drawPixmap(sam, 0, 0);
@@ -262,9 +262,9 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm = reducer.reduceRoberts(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Roberts" + suffix + ".png"), pm, PALETTE, false, 0);
 //////very good!
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceDodgy(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Dodgy" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceDodgy(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Dodgy" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////retro, doesn't have to be classically good
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceLoaf(pm);
@@ -300,13 +300,13 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 ////        pm = reducer.reduceSchmidt(pm);
 ////        a8png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
 //////yay!
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceOverboard(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Overboard" + suffix + ".png"), pm, PALETTE, false, 0);
-////////I'm in love
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceWren(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Wren" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceOverboard(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Overboard" + suffix + ".png"), pm, PALETTE, false, 0);
+//////I'm in love
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceWren(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Wren" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////more love!
 ////        pm.drawPixmap(sam, 0, 0);
 ////        pm = reducer.reduceBlubber(pm);
@@ -324,13 +324,13 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 ////        pm = reducer.reduceBurkes2(pm);
 ////        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes2" + suffix + ".png"), pm, PALETTE, false, 0);
 ///////great!
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceOceanic(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
-/////// basically the same as Oceanic, but without the Burkes constants
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceSeaside(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceOceanic(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
+///// basically the same as Oceanic, but without the Burkes constants
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSeaside(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
 //////// oceanic meets pattern dither
 ////        pm.drawPixmap(sam, 0, 0);
 ////        pm = reducer.reduceCoastal(pm);
