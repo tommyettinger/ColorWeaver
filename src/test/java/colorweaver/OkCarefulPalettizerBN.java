@@ -224,7 +224,7 @@ public class OkCarefulPalettizerBN extends ApplicationAdapter {
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseRook128" + suffix + ".png"), pm, PALETTE, false, 0);
 
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueNoisePrawn128(pm);
+        pm = reducer.reduceBlueCrab(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoisePrawn128" + suffix + ".png"), pm, PALETTE, false, 0);
 
 //        pm.drawPixmap(sam, 0, 0);
