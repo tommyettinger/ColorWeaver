@@ -43,6 +43,18 @@ public final class OtherMath {
 }
 
     /**
+     * Approximates {@code Math.pow(Math.E, p)} with single-precision, somewhat roughly.
+     * @param p the power to raise E to; can be any float
+     * @return an approximation of E raised to the p power; can be any float greater or equal to than -126
+     */
+    public static float expRough (float p)
+    {
+        final float euler = p * 1.442695040f;
+        final float z = euler - (int)(euler + 126.0f) + 126.0f;
+        return NumberUtils.intBitsToFloat((int) ( (1 << 23) * (euler + 121.2740575f + 27.7280233f / (4.84252568f - z) - 1.49012907f * z)));
+    }
+
+    /**
      * Approximates the natural logarithm of {@code x} (that is, with base E), using single-precision, somewhat roughly.
      * @param x the argument to the logarithm; must be greater than 0
      * @return an approximation of the logarithm of x with base E; can be any float
@@ -54,7 +66,7 @@ public final class OtherMath {
         return vx * 8.262958E-8f - 86.10657f - 1.0383555f * mx - 1.1962888f / (0.3520887068f + mx);
     }
 
-    // constants used by probitI() and probitF()
+    /* constants used by probitF() */
     private static final float
             a0f = 0.195740115269792f,
             a1f = -0.652871358365296f,
@@ -68,8 +80,30 @@ public final class OtherMath {
             d0f = 7.173787663925508066f,
             d1f = 8.759693508958633869f;
 
+    /**
+     * A single-precision probit() approximation that takes a float between 0 and 1 inclusive and returns an
+     * approximately-Gaussian-distributed float between -9.080134 and 9.080134 .
+     * The function maps the lowest inputs to the most negative outputs, the highest inputs to the most
+     * positive outputs, and inputs near 0.5 to outputs near 0.
+     * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
+     * @param p should be between 0 and 1, inclusive.
+     * @return an approximately-Gaussian-distributed float between -9.080134 and 9.080134
+     */
+    public static float probitF(float p) {
+        if(0.0465f > p){
+            float r = (float)Math.sqrt(logRough(1f / (p * p)));
+            return c3f * r + c2f + (c1f * r + c0f) / (r * (r + d1f) + d0f);
+        } else if(0.9535f < p) {
+            float q = 1f - p, r = (float)Math.sqrt(logRough(1f / (q * q)));
+            return -c3f * r - c2f - (c1f * r + c0f) / (r * (r + d1f) + d0f);
+        } else {
+            float q = p - 0.5f, r = q * q;
+            return q * (a2f + (a1f * r + a0f) / (r * (r + b1f) + b0f));
+        }
+    }
 
-    // constants used by probitL() and probitD()
+    /* constants used by probit() */
     private static final double
             a0 = 0.195740115269792,
             a1 = -0.652871358365296,
@@ -84,42 +118,21 @@ public final class OtherMath {
             d1 = 8.759693508958633869;
 
     /**
-     * A single-precision probit() approximation that takes a float between 0 and 1 inclusive and returns an
-     * approximately-Gaussian-distributed float between -9.080134 and 9.080134 .
-     * The function maps the lowest inputs to the most negative outputs, the highest inputs to the most
-     * positive outputs, and inputs near 0.5 to outputs near 0.
-     * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
-     * @param p should be between 0 and 1, inclusive.
-     * @return an approximately-Gaussian-distributed float between -9.080134 and 9.080134
-     */
-    public static float probitF(float p) {
-        if(0.0465f > p){
-            float r = (float)Math.sqrt(logRough(1f/(p*p)));
-            return c3f * r + c2f + (c1f * r + c0f) / (r * (r + d1f) + d0f);
-        } else if(0.9535f < p) {
-            float q = 1f - p, r = (float)Math.sqrt(logRough(1f/(q*q)));
-            return -c3f * r - c2f - (c1f * r + c0f) / (r * (r + d1f) + d0f);
-        } else {
-            float q = p - 0.5f, r = q * q;
-            return q * (a2f + (a1f * r + a0f) / (r * (r + b1f) + b0f));
-        }
-    }
-
-    /**
      * A double-precision probit() approximation that takes a double between 0 and 1 inclusive and returns an
      * approximately-Gaussian-distributed double between -26.48372928592822 and 26.48372928592822 .
      * The function maps the lowest inputs to the most negative outputs, the highest inputs to the most
      * positive outputs, and inputs near 0.5 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param p should be between 0 and 1, inclusive.
      * @return an approximately-Gaussian-distributed double between -26.48372928592822 and 26.48372928592822
      */
     public static double probit(double p) {
         if(0.0465 > p){
-            double q = p + 7.458340731200208E-155, r = Math.sqrt(Math.log(1.0/(q*q)));
+            double r = Math.sqrt(Math.log(1.0 / (p * p + 5.56268464626801E-309)));
             return c3 * r + c2 + (c1 * r + c0) / (r * (r + d1) + d0);
         } else if(0.9535 < p) {
-            double q = 1.0 - p + 7.458340731200208E-155, r = Math.sqrt(Math.log(1.0/(q*q)));
+            double q = 1.0 - p, r = Math.sqrt(Math.log(1.0 / (q * q + 5.56268464626801E-309)));
             return -c3 * r - c2 - (c1 * r + c0) / (r * (r + d1) + d0);
         } else {
             double q = p - 0.5, r = q * q;

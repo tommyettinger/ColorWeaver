@@ -29,10 +29,6 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
     }
     
     private int[] PALETTE;
-    private final A8PNG full = new A8PNG();
-    {
-        full.setFlipY(false);
-    }
 
     public void loadPalette(String name) {
         try {
@@ -226,7 +222,6 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //////ok
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBlueNoise(pm);
-        full.write(Gdx.files.local(subname + "_0_BlueNoise" + suffix + ".png").write(false), pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////great
 //        pm.drawPixmap(sam, 0, 0);
