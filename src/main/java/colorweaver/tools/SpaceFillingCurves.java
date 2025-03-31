@@ -87,7 +87,37 @@ public final class SpaceFillingCurves {
         hilbert3X[hilbert] = (byte) x;
         hilbert3Y[hilbert] = (byte) y;
         hilbert3Z[hilbert] = (byte) z;
-        hilbert3Distances[x | y << 5 | z << 10] = (char) hilbert;
+        hilbert3Distances[x | y << 4 | z << 8] = (char) hilbert;
     }
 
+    /**
+     * Gets the x-position on the 32x32x32 "Pealbert Curve" at the given distance.
+     * The Pealbert Curve travels from [0,0,0] to [31,31,31] after touching 32768 vertices.
+     * It uses eight Hilbert Curves, each 16x16x16, to move the way a Peano Curve does.
+     * @param distance between 0 and 32767, inclusive, but higher values wrap
+     * @return the x-position of the vertex at the given distance
+     */
+    public static int getPealbertX(int distance) {
+        final int section = distance >>> 12 & 7;
+        switch (section) {
+            case 0:
+            case 5: return hilbert3Z[distance & 0xFFF];
+            case 1:
+            case 2: return hilbert3X[distance & 0xFFF] + 16;
+            case 3: return 15 - hilbert3Z[distance & 0xFFF];
+            case 4: return hilbert3X[distance & 0xFFF];
+            case 6: return hilbert3Z[distance & 0xFFF] + 16;
+            default: return 31 - hilbert3X[distance & 0xFFF];
+        }
+    }
+
+    public static void main(String[] args) {
+        init3D();
+        int prevX = 0, nextX = 0;
+        for (int i = 0; i < 0x4000; i++) {
+            if(Math.abs((prevX) - (nextX = getPealbertX(i))) > 1)
+                System.out.println("X PROBLEM AT " + prevX + " into " + nextX + " with distance " + i);
+            prevX = nextX;
+        }
+    }
 }
