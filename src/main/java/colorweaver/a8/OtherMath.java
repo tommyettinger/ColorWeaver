@@ -142,33 +142,35 @@ public final class OtherMath {
 
     /**
      * An approximation of the cube-root function for float inputs and outputs.
-     * This can be about twice as fast as {@link Math#cbrt(double)}. It
+     * This can be over twice as fast as {@link Math#cbrt(double)}. It
      * correctly returns negative results when given negative inputs.
      * <br>
      * Has very low relative error (less than 1E-9) when inputs are uniformly
      * distributed between -512 and 512, and absolute mean error of less than
      * 1E-6 in the same scenario. Uses a bit-twiddling method similar to one
      * presented in Hacker's Delight and also used in early 3D graphics (see
-     * <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia: Fast inverse square root</a>
-     * for more, but this code approximates cbrt(x) and not 1/sqrt(x)). This specific code
-     * was originally by Marc B. Reynolds, posted in his
-     * <a href="https://github.com/Marc-B-Reynolds/Stand-alone-junk/blob/master/src/Posts/ballcube.c#L182-L197">"Stand-alone-junk" repo</a> .
-     * @param x any finite float to find the cube root of
-     * @return the cube root of x, approximated
+     * <a href="https://en.wikipedia.org/wiki/Fast_inverse_square_root">Wikipedia</a> for more, but
+     * this code approximates cbrt(x) and not 1/sqrt(x)). This specific code
+     * mixes an approach originally by Marc B. Reynolds, posted in his
+     * <a href="https://github.com/Marc-B-Reynolds/Stand-alone-junk/blob/7d8d1e19b2ab09743f46964f60244906e1023f6a/src/Posts/ballcube.c#L182-L197">"Stand-alone-junk" repo</a>,
+     * with the evaluator for accuracy from <a href="https://github.com/EvanBalster/root-cellar/">Root-Cellar</a>, and
+     * ends up not using either version's cbrt() exactly.
+     * <br>
+     * This was adjusted very slightly so {@code cbrt(1f) == 1f}. While this corrects the behavior for one of the most
+     * commonly-expected inputs, it may change results for (very) large positive or negative inputs.
+     * <br>
+     * If you need to work with doubles, or need higher precision, use {@link Math#cbrt(double)}.
+     * @param cube any finite float to find the cube root of
+     * @return the cube root of {@code cube}, approximated
      */
-    public static float cbrt(float x) {
-        int ix = NumberUtils.floatToIntBits(x);
-        final int sign = ix & 0x80000000;
-        ix &= 0x7FFFFFFF;
-        final float x0 = x;
-        ix = (ix>>>2) + (ix>>>4);
-        ix += (ix>>>4);
-        ix = ix + (ix>>>8) + 0x2A5137A0 | sign;
-        x  = NumberUtils.intBitsToFloat(ix);
-        x  = 0.33333334f*(2f * x + x0/(x*x));
-        x  = 0.33333334f*(2f * x + x0/(x*x));
+    public static float cbrt(float cube) {
+        final int ix = NumberUtils.floatToIntBits(cube);
+        float x = NumberUtils.intBitsToFloat((ix & 0x7FFFFFFF) / 3 + 0x2A51379A | (ix & 0x80000000));
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
         return x;
     }
+
     /**
      * An approximation of the cube-root function for float inputs and outputs.
      * This can be about twice as fast as {@link Math#cbrt(double)}. This
@@ -190,18 +192,13 @@ public final class OtherMath {
      * optimization on current hardware, this does seem to help.
      * <br>
      * This is used when converting from RGB to Oklab, as an intermediate step.
-     * @param x any non-negative finite float to find the cube root of
+     * @param cube any positive finite float to find the cube root of
      * @return the cube root of x, approximated
      */
-    public static float cbrtPositive(float x) {
-        int ix = NumberUtils.floatToIntBits(x);
-        final float x0 = x;
-        ix = (ix>>>2) + (ix>>>4);
-        ix += (ix>>>4);
-        ix += (ix>>>8) + 0x2A5137A0;
-        x  = NumberUtils.intBitsToFloat(ix);
-        x  = 0.33333334f*(2f * x + x0/(x*x));
-        x  = 0.33333334f*(1.9999999f * x + x0/(x*x));
+    public static float cbrtPositive(float cube) {
+        float x = NumberUtils.intBitsToFloat(NumberUtils.floatToIntBits(cube) / 3 + 0x2A51379A);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
+        x = 0.66666657f * x + 0.333333334f * cube / (x * x);
         return x;
     }
 
@@ -270,39 +267,6 @@ public final class OtherMath {
         final float c7 = c5 * c2;
         return Math.signum(i) * (0.7853981633974483f +
                 (0.999215f * c - 0.3211819f * c3 + 0.1462766f * c5 - 0.0389929f * c7));
-    }
-
-    /**
-     * Close approximation of the frequently-used trigonometric method atan2, with higher precision than libGDX's atan2
-     * approximation. Maximum error is below 0.00009 radians.
-     * Takes y and x (in that unusual order) as floats, and returns the angle from the origin to that point in radians.
-     * It is about 5 times faster than {@link Math#atan2(double, double)} (roughly 12 ns instead of roughly 62 ns for
-     * Math, on Java 8 HotSpot). It is slightly faster than libGDX' MathUtils approximation of the same method;
-     * MathUtils seems to have worse average error, though.
-     * <br>
-     * Credit for this goes to the 1955 research study "Approximations for Digital Computers," by RAND Corporation. This
-     * is sheet 9's algorithm, which is the second-fastest and second-least precise. The algorithm on sheet 8 is faster,
-     * but only by a very small degree, and is considerably less precise. That study provides an atan(float)
-     * method, and the small code to make that work as atan2() was worked out from Wikipedia.
-     * @param y y-component of the point to find the angle towards; note the parameter order is unusual by convention
-     * @param x x-component of the point to find the angle towards; note the parameter order is unusual by convention
-     * @return the angle to the given point, in radians as a float; ranges from -PI to PI
-     */
-    public static float atan2(final float y, float x) {
-        float n = y / x;
-        if(n != n) n = (y == x ? 1f : -1f); // if both y and x are infinite, n would be NaN
-        else if(n - n != n - n) x = 0f; // if n is infinite, y is infinitely larger than x.
-        if(x > 0)
-            return atanUnchecked(n);
-        else if(x < 0) {
-            if(y >= 0)
-                return atanUnchecked(n) + 3.14159265358979323846f;
-            else
-                return atanUnchecked(n) - 3.14159265358979323846f;
-        }
-        else if(y > 0) return x + 1.5707963267948966f;
-        else if(y < 0) return x - 1.5707963267948966f;
-        else return x + y; // returns 0 for 0,0 or NaN if either y or x is NaN
     }
 
     /**

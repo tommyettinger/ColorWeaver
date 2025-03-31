@@ -218,7 +218,7 @@ public class PalettizerOneDither extends ApplicationAdapter {
 
     private void drawPart(Pixmap pm, Pixmap sam, PaletteReducer reducer, PNG8 png8, String subname, String suffix) throws IOException {
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceTrueBlue5(pm);
-        png8.writePrecisely(Gdx.files.local(subname + "_BlueNewer5" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceSchmidt(pm);
+        png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
     }
 }

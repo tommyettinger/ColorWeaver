@@ -24,6 +24,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.*;
 
 import java.util.Arrays;
@@ -724,7 +725,7 @@ public class A8PaletteReducer {
                                     0.2104542553f * lf + 0.7936177850f * mf - 0.0040720468f * sf);
                     OKLAB[1][idx] = 1.9779984951f * lf - 2.4285922050f * mf + 0.4505937099f * sf;
                     OKLAB[2][idx] = 0.0259040371f * lf + 0.7827717662f * mf - 0.8086757660f * sf;
-                    OKLAB[3][idx] = OtherMath.atan2(OKLAB[2][idx], OKLAB[1][idx]);
+                    OKLAB[3][idx] = MathUtils.atan2(OKLAB[2][idx], OKLAB[1][idx]);
 
                     idx++;
                 }
