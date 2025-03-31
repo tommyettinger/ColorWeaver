@@ -1036,28 +1036,4 @@ public class StringKit {
         }
         return data;
     }
-
-    public static String hexHash(boolean... array) {
-        return hex(CrossHash.hash64(array));
-    }
-
-    public static String hexHash(byte... array) {
-        return hex(CrossHash.hash64(array));
-    }
-
-    public static String hexHash(short... array) {
-        return hex(CrossHash.hash64(array));
-    }
-
-    public static String hexHash(char... array) {
-        return hex(CrossHash.hash64(array));
-    }
-
-    public static String hexHash(int... array) {
-        return hex(CrossHash.hash64(array));
-    }
-
-    public static String hexHash(long... array) {
-        return hex(CrossHash.hash64(array));
-    }
 }
