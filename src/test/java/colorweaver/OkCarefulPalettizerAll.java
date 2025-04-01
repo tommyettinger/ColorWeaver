@@ -97,12 +97,42 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/IsometricTRPG.hex");{
 
+        // the default
+        for(FileHandle hex : new FileHandle[]{
+                Gdx.files.local("palettes/hex/bw-2.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+                Gdx.files.local("palettes/hex/gb-4.hex"),
+                Gdx.files.local("palettes/hex/prospecal-8.hex"),
+                Gdx.files.local("palettes/hex/septembit23-6.hex"),
+                Gdx.files.local("palettes/hex/gb-16.hex"),
+                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+                Gdx.files.local("palettes/hex/americana-4.hex"),
+                Gdx.files.local("palettes/hex/ayy-4.hex"),
+                Gdx.files.local("palettes/hex/gray-15.hex"),
+                Gdx.files.local("palettes/hex/vinik-24.hex"),
+                Gdx.files.local("palettes/hex/hyper-8.hex"),
+                Gdx.files.local("palettes/hex/snuggly-15.hex"),
+                Gdx.files.local("palettes/hex/snuggly-31.hex"),
+                Gdx.files.local("palettes/hex/snuggly-63.hex"),
+                Gdx.files.local("palettes/hex/snuggly-255.hex"),
+                Gdx.files.local("palettes/hex/huggly-15.hex"),
+                Gdx.files.local("palettes/hex/huggly-31.hex"),
+                Gdx.files.local("palettes/hex/huggly-63.hex"),
+                Gdx.files.local("palettes/hex/huggly-255.hex"),
+        }) {
+
+
         // auto-generated Huggly palettes
-        FileHandle[] hugglies = new FileHandle[6];
-        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
-            hugglies[idx++] = Gdx.files.local("huggly-"+(i-1)+".hex");
-        }
-        for(FileHandle hex : hugglies) {
+//        FileHandle[] hugglies = new FileHandle[6];
+//        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
+//            hugglies[idx++] = Gdx.files.local("huggly-"+(i-1)+".hex");
+//        }
+//        for(FileHandle hex : hugglies) {
+
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("palettes/hex/sm-septembit-4.hex"),
@@ -219,10 +249,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceFloydSteinberg(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
-//////ok
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueNoise(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
+////////ok
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBlueNoise(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// ???
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBlueCrab(pm);
@@ -231,14 +261,14 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBluish(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Neuter" + suffix + ".png"), pm, PALETTE, false, 0);
-////////very good
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceScatter(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
-////////YAY YIPPEE WOO NO BANDING
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceNeue(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////very good
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceScatter(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////YAY YIPPEE WOO NO BANDING
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceNeue(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////////incredible
 //        //Took 106929 ms
 //        pm.drawPixmap(sam, 0, 0);
@@ -261,10 +291,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceRoberts(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Roberts" + suffix + ".png"), pm, PALETTE, false, 0);
-//////very good!
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceDodgy(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Dodgy" + suffix + ".png"), pm, PALETTE, false, 0);
+////////very good!
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceDodgy(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Dodgy" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////retro, doesn't have to be classically good
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceLoaf(pm);
@@ -299,14 +329,14 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 ////        pm.drawPixmap(sam, 0, 0);
 ////        pm = reducer.reduceSchmidt(pm);
 ////        a8png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
-//////yay!
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceOverboard(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Overboard" + suffix + ".png"), pm, PALETTE, false, 0);
-//////I'm in love
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceWren(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Wren" + suffix + ".png"), pm, PALETTE, false, 0);
+////////yay!
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceOverboard(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Overboard" + suffix + ".png"), pm, PALETTE, false, 0);
+////////I'm in love
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceWren(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Wren" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////////more love!
 ////        pm.drawPixmap(sam, 0, 0);
 ////        pm = reducer.reduceBlubber(pm);
@@ -327,10 +357,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceOceanic(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
-///// basically the same as Oceanic, but without the Burkes constants
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceSeaside(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
+/////// basically the same as Oceanic, but without the Burkes constants
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceSeaside(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
 //////// oceanic meets pattern dither
 ////        pm.drawPixmap(sam, 0, 0);
 ////        pm = reducer.reduceCoastal(pm);
@@ -339,6 +369,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reducePatternish(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm, PALETTE, false, 0);
+////// ???
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSkitter(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Skitter" + suffix + ".png"), pm, PALETTE, false, 0);
 
     }
     private void drawPartFullColor(Pixmap pm, Pixmap sam, A8PaletteReducer reducer, A8PNG a8png8, String subname, String suffix) throws IOException {
@@ -379,9 +413,9 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        a8png8.write(Gdx.files.local(subname + "_Pattern" + suffix + ".png"), pm);
 ////////////////
 ////        //Took 98748 ms
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceKnollFull(pm);
-        a8png8.write(Gdx.files.local(subname + "_PatternFull" + suffix + ".png"), pm);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceKnollFull(pm);
+//        a8png8.write(Gdx.files.local(subname + "_PatternFull" + suffix + ".png"), pm);
 ////////////??? error diffusion with IGN
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceIgneous(pm);

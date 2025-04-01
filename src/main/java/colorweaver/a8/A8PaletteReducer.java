@@ -19,6 +19,7 @@
 package colorweaver.a8;
 
 import colorweaver.BlueNoise;
+import colorweaver.tools.SpaceFillingCurves;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -4572,6 +4573,35 @@ public class A8PaletteReducer {
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reduceSkitter(Pixmap pixmap) {
+        SpaceFillingCurves.init3D();
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+
+        float strength = 0.1875f * ditherStrength / (populationBias * populationBias * populationBias);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                int color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int adj = (int)((BlueNoise.getSeededTriangular(px, y, 0x37F01) - BlueNoise.getSeededTriangular(px + 62, y + 66 , 0x265BC)) * strength);
+                    int rr = (color >>> 27)       ;
+                    int gg = (color >>> 19) & 0x1F;
+                    int bb = (color >>> 11) & 0x1F;
+                    int adjDistance = Math.min(Math.max(SpaceFillingCurves.getPealbertDistance(rr, gg, bb) + adj, 0), 0x7FFF);
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[(SpaceFillingCurves.getPealbertX(adjDistance) << 10)
+                            | (SpaceFillingCurves.getPealbertY(adjDistance) << 5)
+                            | (SpaceFillingCurves.getPealbertZ(adjDistance))] & 0xFF]);
                 }
             }
         }
