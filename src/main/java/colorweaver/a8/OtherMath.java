@@ -56,6 +56,7 @@ public final class OtherMath {
 
     /**
      * Approximates the natural logarithm of {@code x} (that is, with base E), using single-precision, somewhat roughly.
+     * 
      * @param x the argument to the logarithm; must be greater than 0
      * @return an approximation of the logarithm of x with base E; can be any float
      */
@@ -66,7 +67,18 @@ public final class OtherMath {
         return vx * 8.262958E-8f - 86.10657f - 1.0383555f * mx - 1.1962888f / (0.3520887068f + mx);
     }
 
-    /* constants used by probitF() */
+    /**
+     * Approximates the natural logarithm of {@code x} (that is, with base E), using single-precision, very roughly.
+     * Mostly useful when {@code x} changes by a large amount between arguments and th exact logarithm isn't needed.
+     *
+     * @param x the argument to the logarithm; must be greater than 0
+     * @return an approximation of the logarithm of x with base E; can be any float
+     */
+    public static float logRougher (float x){
+        return NumberUtils.floatToIntBits(x) * 8.2629582881927490e-8f - 87.989971088f;
+    }
+
+    /* constants used by probitF() and probitI() */
     private static final float
             a0f = 0.195740115269792f,
             a1f = -0.652871358365296f,
@@ -79,27 +91,51 @@ public final class OtherMath {
             c2f = 0.029814187308200211f,
             d0f = 7.173787663925508066f,
             d1f = 8.759693508958633869f;
-
     /**
      * A single-precision probit() approximation that takes a float between 0 and 1 inclusive and returns an
-     * approximately-Gaussian-distributed float between -9.080134 and 9.080134 .
+     * approximately-Gaussian-distributed float between -9.082295 and 9.082295 .
      * The function maps the lowest inputs to the most negative outputs, the highest inputs to the most
      * positive outputs, and inputs near 0.5 to outputs near 0.
      * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
      * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
      * @param p should be between 0 and 1, inclusive.
-     * @return an approximately-Gaussian-distributed float between -9.080134 and 9.080134
+     * @return an approximately-Gaussian-distributed float between -9.082295 and 9.082295
      */
     public static float probitF(float p) {
         if(0.0465f > p){
-            float r = (float)Math.sqrt(logRough(1f / (p * p)));
+            final float r = (float)Math.sqrt(logRougher(1f / (p * p)));
             return c3f * r + c2f + (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else if(0.9535f < p) {
-            float q = 1f - p, r = (float)Math.sqrt(logRough(1f / (q * q)));
+            final float q = 1f - p, r = (float)Math.sqrt(logRougher(1f / (q * q)));
             return -c3f * r - c2f - (c1f * r + c0f) / (r * (r + d1f) + d0f);
         } else {
-            float q = p - 0.5f, r = q * q;
+            final float q = p - 0.5f, r = q * q;
             return q * (a2f + (a1f * r + a0f) / (r * (r + b1f) + b0f));
+        }
+    }
+
+    /**
+     * A single-precision probit() approximation that takes any int and returns an
+     * approximately-Gaussian-distributed float between -9.082295 and 9.082295 .
+     * The function maps the most negative inputs to the most negative outputs, the most positive inputs to the most
+     * positive outputs, and inputs near 0 to outputs near 0.
+     * <a href="https://www.researchgate.net/publication/46462650_A_New_Approximation_to_the_Normal_Distribution_Quantile_Function">Uses this algorithm by Paul Voutier</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/Probit_function">Wikipedia has a page on the probit function.</a>
+     * @param i may be any int, though very close ints will not produce different results
+     * @return an approximately-Gaussian-distributed float between -9.082295 and 9.082295
+     */
+    public static float probitI(int i) {
+        /* 2.3283064E-10f is 0x1p-32f */
+        final float h = 2.3283064E-10f * i;
+        if(-0.4535f > h){
+            final float q = h + 0.5f, r = (float)Math.sqrt(logRougher(1f / (q * q)));
+            return c3f * r + c2f + (c1f * r + c0f) / (r * (r + d1f) + d0f);
+        } else if(0.4535f < h) {
+            final float q = 0.5f - h, r = (float)Math.sqrt(logRougher(1f / (q * q)));
+            return -c3f * r - c2f - (c1f * r + c0f) / (r * (r + d1f) + d0f);
+        } else {
+            final float r = h * h;
+            return h * (a2f + (a1f * r + a0f) / (r * (r + b1f) + b0f));
         }
     }
 
