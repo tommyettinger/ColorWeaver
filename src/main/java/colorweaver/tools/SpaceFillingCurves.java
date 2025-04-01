@@ -132,16 +132,40 @@ public final class SpaceFillingCurves {
         }
     }
 
-    public static void main(String[] args) {
-        init3D();
-        int prevX = 0, nextX = 0, prevY = 0, nextY = 0;
-        for (int i = 0; i < 0x4000; i++) {
-            if(Math.abs((prevX) - (nextX = getPealbertX(i))) > 1)
-                System.out.println("X PROBLEM AT " + prevX + " into " + nextX + " with distance " + i);
-            prevX = nextX;
-            if(Math.abs((prevY) - (nextY = getPealbertY(i))) > 1)
-                System.out.println("Y PROBLEM AT " + prevY + " into " + nextY + " with distance " + i);
-            prevY = nextY;
+    /**
+     * Gets the z-position on the 32x32x32 "Pealbert Curve" at the given distance.
+     * The Pealbert Curve travels from [0,0,0] to [31,31,31] after touching 32768 vertices.
+     * It uses eight Hilbert Curves, each 16x16x16, to move the way a Peano Curve does.
+     * @param distance between 0 and 32767, inclusive, but higher values wrap
+     * @return the z-position of the vertex at the given distance
+     */
+    public static int getPealbertZ(int distance) {
+        final int section = distance >>> 12 & 7;
+        switch (section) {
+            case 0: return hilbert3X[distance & 0xFFF];
+            case 1: return hilbert3Y[distance & 0xFFF];
+            case 2: return hilbert3Z[distance & 0xFFF];
+            case 3: return 15 - hilbert3X[distance & 0xFFF];
+            case 4: return hilbert3Z[distance & 0xFFF] + 16;
+            case 5:
+            case 6: return 31 - hilbert3X[distance & 0xFFF];
+            default: return 31 - hilbert3Y[distance & 0xFFF];
         }
     }
+
+//    public static void main(String[] args) {
+//        init3D();
+//        int prevX = 0, nextX = 0, prevY = 0, nextY = 0, prevZ = 0, nextZ = 0;
+//        for (int i = 0; i < 0x4000; i++) {
+//            if(Math.abs((prevX) - (nextX = getPealbertX(i))) > 1)
+//                System.out.println("X PROBLEM AT " + prevX + " into " + nextX + " with distance " + i);
+//            prevX = nextX;
+//            if(Math.abs((prevY) - (nextY = getPealbertY(i))) > 1)
+//                System.out.println("Y PROBLEM AT " + prevY + " into " + nextY + " with distance " + i);
+//            prevY = nextY;
+//            if(Math.abs((prevZ) - (nextZ = getPealbertZ(i))) > 1)
+//                System.out.println("Z PROBLEM AT " + prevZ + " into " + nextZ + " with distance " + i);
+//            prevZ = nextZ;
+//        }
+//    }
 }
