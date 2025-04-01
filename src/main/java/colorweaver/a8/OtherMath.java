@@ -56,7 +56,7 @@ public final class OtherMath {
 
     /**
      * Approximates the natural logarithm of {@code x} (that is, with base E), using single-precision, somewhat roughly.
-     * 
+     *
      * @param x the argument to the logarithm; must be greater than 0
      * @return an approximation of the logarithm of x with base E; can be any float
      */
