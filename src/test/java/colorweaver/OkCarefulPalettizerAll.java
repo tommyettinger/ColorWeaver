@@ -250,9 +250,9 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm = reducer.reduceFloydSteinberg(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////ok
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueNoise(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBlueNoise(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// ???
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBlueCrab(pm);
@@ -369,10 +369,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reducePatternish(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm, PALETTE, false, 0);
-////// ???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceSkitter(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Skitter" + suffix + ".png"), pm, PALETTE, false, 0);
+////// Absolutely terrible!
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceSkitter(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Skitter" + suffix + ".png"), pm, PALETTE, false, 0);
 
     }
     private void drawPartFullColor(Pixmap pm, Pixmap sam, A8PaletteReducer reducer, A8PNG a8png8, String subname, String suffix) throws IOException {
