@@ -153,18 +153,76 @@ public final class SpaceFillingCurves {
         }
     }
 
+    public static int getPealbertDistance(int x, int y, int z) {
+        final int ix = x & 15, iy = y & 15, iz = z & 15;
+        if(z < 16) {
+            // lower half, "low blue"
+            if(y < 16) {
+                // "left" half, "low green"
+                if(x < 16) {
+                    // "back" half, "low red"
+                    // section 0
+                    return hilbert3Distances[iz | iy << 4 | ix << 8];
+                } else {
+                    // "front" half, "high red"
+                    // section 1
+                    return hilbert3Distances[ix | iz << 4 | iy << 8] + 0x1000;
+                }
+            } else {
+                // "right" half, "high green"
+                if(x < 16) {
+                    // "back" half, "low red"
+                    // section 3
+                    return hilbert3Distances[15 - iz | iy << 4 | 15 - ix << 8] + 0x3000;
+                } else {
+                    // "front" half, "high red"
+                    // section 2
+                    return hilbert3Distances[ix | iy << 4 | iz << 8] + 0x2000;
+                }
+            }
+        } else {
+            // upper half, "high blue"
+            if(y < 16) {
+                // "left" half, "low green"
+                if(x < 16) {
+                    // "back" half, "low red"
+                    // section 5
+                    return hilbert3Distances[15 - iz | 15 - iy << 4 | ix << 8] + 0x5000;
+                } else {
+                    // "front" half, "high red"
+                    // section 6
+                    return hilbert3Distances[15 - iz | 15 - iy << 4 | ix << 8] + 0x6000;
+                }
+            } else {
+                // "right" half, "high green"
+                if(x < 16) {
+                    // "back" half, "low red"
+                    // section 4
+                    return hilbert3Distances[ix | iy << 4 | iz << 8] + 0x4000;
+                } else {
+                    // "front" half, "high red"
+                    // section 7
+                    return hilbert3Distances[15 - ix | 15 - iz << 4 | iy << 8] + 0x7000;
+                }
+            }
+
+        }
+    }
+
 //    public static void main(String[] args) {
 //        init3D();
-//        int prevX = 0, nextX = 0, prevY = 0, nextY = 0, prevZ = 0, nextZ = 0;
-//        for (int i = 0; i < 0x4000; i++) {
+//        int prevX = 0, nextX = 0, prevY = 0, nextY = 0, prevZ = 0, nextZ = 0, dist = 0;
+//        for (int i = 0; i < 0x8000; i++) {
 //            if(Math.abs((prevX) - (nextX = getPealbertX(i))) > 1)
 //                System.out.println("X PROBLEM AT " + prevX + " into " + nextX + " with distance " + i);
-//            prevX = nextX;
 //            if(Math.abs((prevY) - (nextY = getPealbertY(i))) > 1)
 //                System.out.println("Y PROBLEM AT " + prevY + " into " + nextY + " with distance " + i);
-//            prevY = nextY;
 //            if(Math.abs((prevZ) - (nextZ = getPealbertZ(i))) > 1)
 //                System.out.println("Z PROBLEM AT " + prevZ + " into " + nextZ + " with distance " + i);
+//            if(i != (dist = getPealbertDistance(nextX, nextY, nextZ)))
+//                System.out.println("DISTANCE IS WRONG! Should be " + i + ", but is " + dist);
+//            prevX = nextX;
+//            prevY = nextY;
 //            prevZ = nextZ;
 //        }
 //    }
