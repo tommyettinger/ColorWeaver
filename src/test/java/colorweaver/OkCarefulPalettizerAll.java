@@ -249,18 +249,22 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceFloydSteinberg(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
-////////ok
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueNoise(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
-////// ???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueCrab(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueCrab" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////ok
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBlueNoise(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
+//////// ???
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBlueCrab(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueCrab" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// ???
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBlueNit(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNit" + suffix + ".png"), pm, PALETTE, false, 0);
+////// ???
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBlueOct(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueOct" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////great
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBluish(pm);
