@@ -257,6 +257,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBlueCrab(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_BlueCrab" + suffix + ".png"), pm, PALETTE, false, 0);
+////// ???
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBlueNit(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNit" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////great
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBluish(pm);
@@ -353,10 +357,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 ////        pm.drawPixmap(sam, 0, 0);
 ////        pm = reducer.reduceBurkes2(pm);
 ////        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes2" + suffix + ".png"), pm, PALETTE, false, 0);
-///////great!
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceOceanic(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
+/////////great!
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceOceanic(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
 /////// basically the same as Oceanic, but without the Burkes constants
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSeaside(pm);
