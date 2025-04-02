@@ -4713,7 +4713,7 @@ public class A8PaletteReducer {
                     float eb = 0;
 
                     int tempc, usedc;
-                    float affecting = 4f;
+                    float affecting = (thresholdMatrix16[((px & 3) | (py & 3) << 2)] + 0.5f) * 0.5f;
                     if(px < lineLen - 1)
                     {
                         tempc = pixmap.getPixel(px+1, py);
