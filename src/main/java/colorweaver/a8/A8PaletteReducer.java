@@ -709,6 +709,52 @@ public class A8PaletteReducer {
      */
     public static final float[] TRI_BLUE_NOISE_MULTIPLIERS_C = ConstantData.TRI_BLUE_NOISE_MULTIPLIERS_C;
 
+    private static final int TBM_BITS = 7;
+    private static final int TBM_MASK = (1 << TBM_BITS) - 1;
+
+    /**
+     * Takes two 8-bit unsigned integers index1 and index2, and returns a Morton code, with interleaved index1 and
+     * index2 bits and index1 in the least significant bit. With this method, index1 and index2 can have up to 8 bits.
+     * This returns a 32-bit Morton code but only uses 16 bits, and will not encode information in the sign bit.
+     * Source: <a href="http://and-what-happened.blogspot.com/2011/08/fast-2d-and-3d-hilbert-curves-and.html">and-what-happened blog post</a>.
+     *
+     * @param x byte to interleave into the least-significant bit
+     * @param y byte to interleave into the second-least-significant bit
+     * @return an int that interleaves x and y into the low-order 16 bits
+     */
+    public static  int interleaveBytes(int x, int y) {
+        x |= x << 4;
+        y |= y << 4;
+        x &= 0x00000f0f;
+        y &= 0x00000f0f;
+        x |= x << 2;
+        y |= y << 2;
+        x &= 0x00003333;
+        y &= 0x00003333;
+        x |= x << 1;
+        y |= y << 1;
+        x &= 0x00005555;
+        y &= 0x00005555;
+        return x | y << 1;
+    }
+
+    /**
+     * From <a href="https://graphics.stanford.edu/~seander/bithacks.html#ReverseParallel">Bit Twiddling Hacks</a>.
+     * @param v 16-bit or smaller int to reverse bits
+     * @return v with its low 16 bits reversed in order
+     */
+    public static int reverseShortBits(int v) {
+        v = ((v >>> 1) & 0x5555) | ((v & 0x5555) << 1);
+        v = ((v >>> 2) & 0x3333) | ((v & 0x3333) << 2);
+        v = ((v >>> 4) & 0x0F0F) | ((v & 0x0F0F) << 4);
+        v = ((v >>> 8) & 0x00FF) | ((v & 0x00FF) << 8);
+        return v;
+    }
+
+    public static int bayer(int x, int y) {return reverseShortBits(interleaveBytes(x ^ y, y)) >>> 16 - TBM_BITS - TBM_BITS;}
+
+    public static final byte[] TRI_BAYER_MATRIX = new byte[1 << TBM_BITS + TBM_BITS];
+
     static {
         float rf, gf, bf, lf, mf, sf;
         int idx = 0;
@@ -766,6 +812,21 @@ public class A8PaletteReducer {
 //                }
 //            }
 //        }
+
+        byte[] levelArray = new byte[1 << TBM_BITS + TBM_BITS];
+        int span = 1, lastIndex = levelArray.length - 1;
+        for(int i = 0, inner = 0; i < 128; i++) {
+            for (int j = 0; j < span; j++) {
+                levelArray[inner] = (byte)(i+128);
+                levelArray[lastIndex - inner] = (byte)(127 - i);
+                inner++;
+            }
+            span += (-63 + i | 63 - i) >>> 31;
+        }
+        for (int i = 0; i < TRI_BAYER_MATRIX.length; i++) {
+            TRI_BAYER_MATRIX[i] = levelArray[bayer(i & TBM_MASK, i >>> TBM_BITS)];
+        }
+
     }
 
     public static int oklabToRGB(float L, float A, float B, float alpha)
@@ -4653,6 +4714,36 @@ public class A8PaletteReducer {
                     int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + vec.x)] & 255;
                     int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + vec.y)] & 255;
                     int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + vec.z)] & 255;
+
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reduceBayerOct(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+
+        float strength = Math.min(Math.max(0.5f * ditherStrength / (populationBias * populationBias * populationBias), -0.95f), 0.95f);
+        
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                int color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+//                    float adj = (px+y<<7&128)-63.5f;
+
+                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + TRI_BAYER_MATRIX[(px + 62 & TBM_MASK) << TBM_BITS | (y + 66  & TBM_MASK)] * strength)] & 255;
+                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + TRI_BAYER_MATRIX[(px + 31 & TBM_MASK) << TBM_BITS | (y + 113 & TBM_MASK)] * strength)] & 255;
+                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + TRI_BAYER_MATRIX[(px + 71 & TBM_MASK) << TBM_BITS | (y + 41  & TBM_MASK)] * strength)] & 255;
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)

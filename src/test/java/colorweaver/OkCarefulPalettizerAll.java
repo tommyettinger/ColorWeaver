@@ -265,6 +265,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBlueOct(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueOct" + suffix + ".png"), pm, PALETTE, false, 0);
+////////???
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBayerOct(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOct" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////great
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBluish(pm);
@@ -381,10 +385,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSkitter(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Skitter" + suffix + ".png"), pm, PALETTE, false, 0);
-////// ???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBerry(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Berry" + suffix + ".png"), pm, PALETTE, false, 0);
+//////error infusion, ordered... not very good, but interesting?
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBerry(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Berry" + suffix + ".png"), pm, PALETTE, false, 0);
 
     }
     private void drawPartFullColor(Pixmap pm, Pixmap sam, A8PaletteReducer reducer, A8PNG a8png8, String subname, String suffix) throws IOException {
