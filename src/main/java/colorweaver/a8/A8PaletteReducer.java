@@ -4693,6 +4693,119 @@ public class A8PaletteReducer {
         return pixmap;
     }
 
+    public Pixmap reduceBerry (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        final float s = (0.11f * ditherStrength / (populationBias * populationBias * populationBias)),
+                strength = s * 0.58f / (0.3f + s);
+
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        for (int py = 0; py < h; py++) {
+            int ny = py + 1;
+            for (int px = 0; px < lineLen; px++) {
+                int color = pixmap.getPixel(px, py);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, py, 0);
+                else {
+                    float er = 0;
+                    float eg = 0;
+                    float eb = 0;
+
+                    int tempc, usedc, affecting = 0;
+                    if(px < lineLen - 1)
+                    {
+                        tempc = pixmap.getPixel(px+1, py);
+                        if((tempc & 0x80) != 0) {
+                            usedc = paletteArray[paletteMapping[shrink(tempc)] & 255];
+                            er += ((tempc >>> 24) -       (usedc >>> 24))       * 4;
+                            eg += ((tempc >>> 16 & 255) - (usedc >>> 16 & 255)) * 4;
+                            eb += ((tempc >>> 8 & 255) -  (usedc >>> 8 & 255))  * 4;
+                            affecting += 4;
+                        }
+                        if(px < lineLen - 2)
+                        {
+                            tempc = pixmap.getPixel(px+2, py);
+                            if((tempc & 0x80) != 0) {
+                                usedc = paletteArray[paletteMapping[shrink(tempc)] & 255];
+                                er += ((tempc >>> 24) -       (usedc >>> 24))       * 2;
+                                eg += ((tempc >>> 16 & 255) - (usedc >>> 16 & 255)) * 2;
+                                eb += ((tempc >>> 8 & 255) -  (usedc >>> 8 & 255))  * 2;
+                                affecting += 2;
+                            }
+                        }
+                    }
+                    if(ny < h)
+                    {
+                        if(px > 0)
+                        {
+                            tempc = pixmap.getPixel(px-1, ny);
+                            if((tempc & 0x80) != 0) {
+                                usedc = paletteArray[paletteMapping[shrink(tempc)] & 255];
+                                er += ((tempc >>> 24) -       (usedc >>> 24))       * 2;
+                                eg += ((tempc >>> 16 & 255) - (usedc >>> 16 & 255)) * 2;
+                                eb += ((tempc >>> 8 & 255) -  (usedc >>> 8 & 255))  * 2;
+                                affecting += 2;
+                            }
+                            if(px > 1)
+                            {
+                                tempc = pixmap.getPixel(px-2, ny);
+                                if((tempc & 0x80) != 0) {
+                                    usedc = paletteArray[paletteMapping[shrink(tempc)] & 255];
+                                    er += ((tempc >>> 24) -       (usedc >>> 24))      ;
+                                    eg += ((tempc >>> 16 & 255) - (usedc >>> 16 & 255));
+                                    eb += ((tempc >>> 8 & 255) -  (usedc >>> 8 & 255)) ;
+                                    affecting += 1;
+                                }
+                            }
+                        }
+                        tempc = pixmap.getPixel(px, ny);
+                        if((tempc & 0x80) != 0) {
+                            usedc = paletteArray[paletteMapping[shrink(tempc)] & 255];
+                            er += ((tempc >>> 24) -       (usedc >>> 24))       * 4;
+                            eg += ((tempc >>> 16 & 255) - (usedc >>> 16 & 255)) * 4;
+                            eb += ((tempc >>> 8 & 255) -  (usedc >>> 8 & 255))  * 4;
+                            affecting += 4;
+                        }
+                        if(px < lineLen - 1)
+                        {
+                            tempc = pixmap.getPixel(px+1, ny);
+                            if((tempc & 0x80) != 0) {
+                                usedc = paletteArray[paletteMapping[shrink(tempc)] & 255];
+                                er += ((tempc >>> 24) -       (usedc >>> 24))       * 2;
+                                eg += ((tempc >>> 16 & 255) - (usedc >>> 16 & 255)) * 2;
+                                eb += ((tempc >>> 8 & 255) -  (usedc >>> 8 & 255))  * 2;
+                                affecting += 2;
+                            }
+                            if(px < lineLen - 2)
+                            {
+                                tempc = pixmap.getPixel(px+2, ny);
+                                if((tempc & 0x80) != 0) {
+                                    usedc = paletteArray[paletteMapping[shrink(tempc)] & 255];
+                                    er += ((tempc >>> 24) -       (usedc >>> 24))      ;
+                                    eg += ((tempc >>> 16 & 255) - (usedc >>> 16 & 255));
+                                    eb += ((tempc >>> 8 & 255) -  (usedc >>> 8 & 255)) ;
+                                    affecting += 1;
+                                }
+                            }
+                        }
+                    }
+                    float ia = affecting == 0 ? 0f : strength / affecting;
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + er * ia, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + eg * ia, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + eb * ia, 0), 1023)] & 255;
+                    byte paletteIndex = paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))];
+                    int used = paletteArray[paletteIndex & 0xFF];
+                    pixmap.drawPixel(px, py, used);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
     /**
      * A white-noise-based dither; uses the colors encountered so far during dithering as a sort of state for basic
      * pseudo-random number generation, while also using some blue noise from a tiling texture to offset clumping.

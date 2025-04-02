@@ -257,10 +257,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBlueCrab(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueCrab" + suffix + ".png"), pm, PALETTE, false, 0);
-////// ???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueNit(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNit" + suffix + ".png"), pm, PALETTE, false, 0);
+//////// ???
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBlueNit(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNit" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// ???
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBlueOct(pm);
@@ -381,6 +381,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSkitter(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Skitter" + suffix + ".png"), pm, PALETTE, false, 0);
+////// ???
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBerry(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Berry" + suffix + ".png"), pm, PALETTE, false, 0);
 
     }
     private void drawPartFullColor(Pixmap pm, Pixmap sam, A8PaletteReducer reducer, A8PNG a8png8, String subname, String suffix) throws IOException {
