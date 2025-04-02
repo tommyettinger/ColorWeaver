@@ -4696,8 +4696,8 @@ public class A8PaletteReducer {
     public Pixmap reduceBerry (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
-        final float s = (0.3f * ditherStrength / (populationBias * populationBias * populationBias)),
-                strength = s * 0.6f / (0.2f + s);
+        final float s = (0.25f * ditherStrength / (populationBias * populationBias * populationBias)),
+                strength = s * 0.7f / (0.25f + s);
 
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
@@ -4791,7 +4791,7 @@ public class A8PaletteReducer {
                             }
                         }
                     }
-                    float ia = (strength + (float)Math.sqrt(ditherStrength * 0.4f) * (thresholdMatrix16[((px & 3) | (py & 3) << 2)] - 7.5f)) / affecting;
+                    float ia = (strength + (ditherStrength * 0.4f) * (thresholdMatrix16[((px & 3) | (py & 3) << 2)] - 7.5f)) / affecting;
                     int used = paletteArray[paletteMapping[shrink(color)] & 255];
                     er += ((color >>> 24) -       (used >>> 24))       * 4f;
                     eg += ((color >>> 16 & 255) - (used >>> 16 & 255)) * 4f;
