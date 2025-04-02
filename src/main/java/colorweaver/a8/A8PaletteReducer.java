@@ -4591,7 +4591,7 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
 
-        float strength = Math.min(Math.max(16f * ditherStrength / (populationBias * populationBias * populationBias), -100), 100);
+        float strength = Math.min(Math.max(32f * ditherStrength / (populationBias * populationBias * populationBias), -120), 120);
         Vector3 vec = new Vector3();
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
