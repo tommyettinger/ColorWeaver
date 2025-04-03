@@ -48,14 +48,16 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
     }
 
     public void create() {
-        final String targetDir = "samples/reducedOkCareful/"; //
+        final String targetDir = "samples/reducedOkCubist/"; //
+//        final String targetDir = "samples/reducedOkCareful/"; //
 
 //        FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
-//        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
-//                , Gdx.files.local("samples/Painting_by_Henri_Biva.jpg")
-//                , Gdx.files.local("samples/Among_the_Sierra_Nevada_by_Albert_Bierstadt.jpg")
-//                , Gdx.files.local("samples/Girl_with_a_Pearl_Earring.jpg")
-//        };
+        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
+                , Gdx.files.local("samples/Color_Guard.png")
+                , Gdx.files.local("samples/David.png")
+                , Gdx.files.local("samples/Portal_Companion_Cube.jpg")
+                , Gdx.files.local("samples/Girl_with_a_Pearl_Earring.jpg")
+        };
 
 //        FileHandle[] samples = {
 //                Gdx.files.local("samples/Rome-Buildings.jpg"),
@@ -77,7 +79,7 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        };
 
         //// USE THIS TO RENDER ALL SAMPLES
-        FileHandle[] samples = Gdx.files.local("samples/").list(pathname -> !pathname.isDirectory());
+//        FileHandle[] samples = Gdx.files.local("samples/").list(pathname -> !pathname.isDirectory());
 
         A8PNG8 a8png8 = new A8PNG8();
         a8png8.setCompression(2);
@@ -270,13 +272,13 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm = reducer.reduceBayerOct(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOct" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBayerOctAligned(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctAligned" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBayerOctAligned(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctAligned" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBayerOctShifty(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctShifty" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceBayerOctShifty(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctShifty" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////great
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBluish(pm);
@@ -398,6 +400,23 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm = reducer.reduceBerry(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Berry" + suffix + ".png"), pm, PALETTE, false, 0);
 
+        for (int rx = 0; rx <= 2; rx++) {
+            for (int ry = 0; ry <= 2; ry++) {
+                for (int gx = 0; gx <= 2; gx++) {
+                    for (int gy = 0; gy <= 2; gy++) {
+                        for (int bx = 0; bx <= 2; bx++) {
+                            for (int by = 0; by <= 2; by++) {
+                                pm.drawPixmap(sam, 0, 0);
+                                pm = reducer.reduceBayerCubist(pm, rx, ry, gx, gy, bx, by);
+                                a8png8.writePrecisely(Gdx.files.local(subname +
+                                        "_BayerCubist(" + rx + "," + ry + ","  + gx + "," + gy + ","  + bx + "," + by + "," + ")" +  suffix + ".png"), pm, PALETTE, false, 0);
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     private void drawPartFullColor(Pixmap pm, Pixmap sam, A8PaletteReducer reducer, A8PNG a8png8, String subname, String suffix) throws IOException {
 
