@@ -709,7 +709,15 @@ public class A8PaletteReducer {
      */
     public static final float[] TRI_BLUE_NOISE_MULTIPLIERS_C = ConstantData.TRI_BLUE_NOISE_MULTIPLIERS_C;
 
+    /**
+     * Triangular Bayer Matrix bits per side. The side length is a power of two, and this is that power, so
+     * the actual length of a side is 128 pixels.
+     */
     private static final int TBM_BITS = 7;
+    /**
+     * Triangular Bayer Matrix bitmask. Used to quickly limit negative or large positions into the range 0 (inclusive)
+     * to (2 to the {@link #TBM_BITS}) (exclusive).
+     */
     private static final int TBM_MASK = (1 << TBM_BITS) - 1;
 
     /**
@@ -739,6 +747,7 @@ public class A8PaletteReducer {
     }
 
     /**
+     * Reverses the low 16 bits of a given int, and sets the upper 16 bits to 0.
      * From <a href="https://graphics.stanford.edu/~seander/bithacks.html#ReverseParallel">Bit Twiddling Hacks</a>.
      * @param v 16-bit or smaller int to reverse bits
      * @return v with its low 16 bits reversed in order
@@ -751,8 +760,24 @@ public class A8PaletteReducer {
         return v;
     }
 
-    public static int bayer(int x, int y) {return reverseShortBits(interleaveBytes(x ^ y, y)) >>> 16 - TBM_BITS - TBM_BITS;}
+    /**
+     * Computes the value of a point in a Bayer Matrix with the given side length in bits (it is always a power of two).
+     * The given x and y should each be between 0 (inclusive) and (2 to the {@code bits}) (exclusive).
+     * This produces a uniformly-distributed Bayer Matrix; every number from 0 to (4 to the {@code bits}) minus 1 will
+     * be present once in the matrix.
+     * @param x between 0 (inclusive) and (2 to the {@code bits}) (exclusive)
+     * @param y between 0 (inclusive) and (2 to the {@code bits}) (exclusive)
+     * @param bits the side length in bits of the square matrix
+     * @return a unique value from the Bayer Matrix with the given side length
+     */
+    public static int bayer(int x, int y, int bits) {return reverseShortBits(interleaveBytes(x ^ y, y)) >>> 16 - bits - bits;}
 
+    /**
+     * A large Bayer Matrix that holds approximately-triangular-mapped values instead of the usual uniform mapping.
+     * This means the lowest value, which is the byte -128, and the highest value, which is 127, each appear once, and
+     * the middle values -1 and 0 each appear 127 times. The side length of this square matrix is (2 to the
+     * {@link #TBM_BITS}), or 128.
+     */
     public static final byte[] TRI_BAYER_MATRIX = new byte[1 << TBM_BITS + TBM_BITS];
 
     static {
@@ -824,7 +849,7 @@ public class A8PaletteReducer {
             span += (-63 + i | 63 - i) >>> 31;
         }
         for (int i = 0; i < TRI_BAYER_MATRIX.length; i++) {
-            TRI_BAYER_MATRIX[i] = levelArray[bayer(i & TBM_MASK, i >>> TBM_BITS)];
+            TRI_BAYER_MATRIX[i] = levelArray[bayer(i & TBM_MASK, i >>> TBM_BITS, TBM_BITS)];
         }
 
     }
@@ -4692,30 +4717,22 @@ public class A8PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
 
         float strength = Math.min(Math.max(0.35f * ditherStrength / (populationBias * populationBias * populationBias), -0.6f), 0.6f);
-        Vector3 vec = new Vector3();
         for (int y = 0; y < h; y++) {
-            for (int px = 0; px < lineLen; px++) {
-                int color = pixmap.getPixel(px, y);
+            for (int x = 0; x < lineLen; x++) {
+                int color = pixmap.getPixel(x, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
-                    pixmap.drawPixel(px, y, 0);
+                    pixmap.drawPixel(x, y, 0);
                 else {
-                    float adj = (px+y<<7&128)-63.5f;
+                    float adj = (x+y<<7&128)-63.5f;
 //                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + adj)] & 255;
 //                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + adj)] & 255;
 //                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + adj)] & 255;
-                    vec.set(
-                            BlueNoise.getSeededTriangular(px + 62, y + 66 , 0x265BC) + adj,
-                            BlueNoise.getSeededTriangular(px + 31, y + 113, 0x157D6) + adj,
-                            BlueNoise.getSeededTriangular(px + 71, y + 41 , 0x03EA9) + adj
-                    );
-                    vec.scl(strength);
 
+                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + (BlueNoise.getSeededTriangular(x + 62, y + 66 , 0x265BC) + adj) * strength)] & 255;
+                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + (BlueNoise.getSeededTriangular(x + 31, y + 113, 0x157D6) + adj) * strength)] & 255;
+                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + (BlueNoise.getSeededTriangular(x + 71, y + 41 , 0x03EA9) + adj) * strength)] & 255;
 
-                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + vec.x)] & 255;
-                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + vec.y)] & 255;
-                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + vec.z)] & 255;
-
-                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                    pixmap.drawPixel(x, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF]);
                 }
