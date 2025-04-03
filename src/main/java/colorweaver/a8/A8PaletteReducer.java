@@ -851,7 +851,6 @@ public class A8PaletteReducer {
         for (int i = 0; i < TRI_BAYER_MATRIX.length; i++) {
             TRI_BAYER_MATRIX[i] = levelArray[bayer(i & TBM_MASK, i >>> TBM_BITS, TBM_BITS)];
         }
-
     }
 
     public static int oklabToRGB(float L, float A, float B, float alpha)
@@ -4756,11 +4755,38 @@ public class A8PaletteReducer {
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
-//                    float adj = (px+y<<7&128)-63.5f;
-
                     int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + TRI_BAYER_MATRIX[(px + 62 & TBM_MASK) << TBM_BITS | (y + 66  & TBM_MASK)] * strength)] & 255;
                     int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + TRI_BAYER_MATRIX[(px + 31 & TBM_MASK) << TBM_BITS | (y + 113 & TBM_MASK)] * strength)] & 255;
                     int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + TRI_BAYER_MATRIX[(px + 71 & TBM_MASK) << TBM_BITS | (y + 41  & TBM_MASK)] * strength)] & 255;
+
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reduceBayerOctAligned(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+
+        float strength = Math.min(Math.max(0.5f * ditherStrength / (populationBias * populationBias * populationBias), -0.95f), 0.95f);
+
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                int color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    float adj = TRI_BAYER_MATRIX[(px & TBM_MASK) << TBM_BITS | (y & TBM_MASK)] * strength;
+                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + adj)] & 255;
+                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + adj)] & 255;
+                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + adj)] & 255;
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
