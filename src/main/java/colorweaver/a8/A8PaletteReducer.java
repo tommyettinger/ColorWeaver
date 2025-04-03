@@ -4812,9 +4812,9 @@ public class A8PaletteReducer {
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + TRI_BAYER_MATRIX[(px - 1 & TBM_MASK) << TBM_BITS | (y - 1 & TBM_MASK)] * strength)] & 255;
-                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + TRI_BAYER_MATRIX[(px     & TBM_MASK) << TBM_BITS | (y + 2 & TBM_MASK)] * strength)] & 255;
-                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + TRI_BAYER_MATRIX[(px + 2 & TBM_MASK) << TBM_BITS | (y     & TBM_MASK)] * strength)] & 255;
+                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + TRI_BAYER_MATRIX[(px + 2 & TBM_MASK) << TBM_BITS | (y     & TBM_MASK)] * strength)] & 255;
+                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + TRI_BAYER_MATRIX[(px     & TBM_MASK) << TBM_BITS | (y + 4 & TBM_MASK)] * strength)] & 255;
+                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + TRI_BAYER_MATRIX[(px + 4 & TBM_MASK) << TBM_BITS | (y + 2 & TBM_MASK)] * strength)] & 255;
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
