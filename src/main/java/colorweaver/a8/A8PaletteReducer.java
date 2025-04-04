@@ -4776,7 +4776,7 @@ public class A8PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
 
 //        float strength = Math.min(Math.max(0.5f * ditherStrength / (populationBias * populationBias * populationBias), -0.95f), 0.95f);
-        float strength = Math.min(Math.max(0.25f * ditherStrength * (float) Math.pow(populationBias, -8f), -0.95f), 0.95f);
+        float strength = Math.min(Math.max(0.17f * ditherStrength * (float) Math.pow(populationBias, -10f), -0.95f), 0.95f);
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < lineLen; x++) {
                 int color = pixmap.getPixel(x, y);

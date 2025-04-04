@@ -274,7 +274,7 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 ////////???
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBayerOctAligned(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctAligned025Pow8" + suffix + ".png"), pm, PALETTE, false, 0);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctAligned017Pow10" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////???
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceBayerOctShifty(pm);
