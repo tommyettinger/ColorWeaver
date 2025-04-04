@@ -4775,20 +4775,20 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
 
-        float strength = Math.min(Math.max(0.5f * ditherStrength / (populationBias * populationBias * populationBias), -0.95f), 0.95f);
-
+//        float strength = Math.min(Math.max(0.5f * ditherStrength / (populationBias * populationBias * populationBias), -0.95f), 0.95f);
+        float strength = Math.min(Math.max(0.25f * ditherStrength * (float) Math.pow(populationBias, -8f), -0.95f), 0.95f);
         for (int y = 0; y < h; y++) {
-            for (int px = 0; px < lineLen; px++) {
-                int color = pixmap.getPixel(px, y);
+            for (int x = 0; x < lineLen; x++) {
+                int color = pixmap.getPixel(x, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
-                    pixmap.drawPixel(px, y, 0);
+                    pixmap.drawPixel(x, y, 0);
                 else {
-                    float adj = TRI_BAYER_MATRIX[(px & TBM_MASK) << TBM_BITS | (y & TBM_MASK)] * strength;
+                    float adj = TRI_BAYER_MATRIX[(x & TBM_MASK) << TBM_BITS | (y & TBM_MASK)] * strength;
                     int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + adj)] & 255;
                     int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + adj)] & 255;
                     int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + adj)] & 255;
 
-                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                    pixmap.drawPixel(x, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF]);
                 }
