@@ -548,6 +548,13 @@ public class A8PaletteReducer {
         return (color << 17 & 0xF8000000) | (color << 12 & 0x07000000) | (color << 14 & 0xF80000) | (color << 9 & 0x070000) | (color << 11 & 0xF800) | (color << 6 & 0x0700) | 0xFF;
     }
 
+    public static final int[] COLOR_LIMIT_GRID = {
+            0x0000FF00, 0xFFFFFF00, 0x00FF0000, 0xFF000000,
+            0x00FF0000, 0xFF000000, 0x0000FF00, 0xFFFFFF00,
+            0xFFFFFF00, 0x0000FF00, 0xFF000000, 0x00FF0000,
+            0xFF000000, 0x00FF0000, 0xFFFFFF00, 0x0000FF00,
+    };
+
     /**
      * Changes the curve of a requested L value so that it matches the internally-used curve. This takes a curve with a
      * very-dark area similar to sRGB (a very small one), and makes it significantly larger. This is typically used on
@@ -4845,6 +4852,35 @@ public class A8PaletteReducer {
                     int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + TRI_BAYER_MATRIX[(px + bx & TBM_MASK) << TBM_BITS | (y + by & TBM_MASK)] * strength)] & 255;
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+
+    public Pixmap reduceChant(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+
+//        float strength = Math.min(Math.max(0.5f * ditherStrength / (populationBias * populationBias * populationBias), -0.95f), 0.95f);
+        float strength = Math.min(Math.max(0.07f * ditherStrength * (float) Math.pow(populationBias, -10f), -0.95f), 0.95f);
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < lineLen; x++) {
+                int color = pixmap.getPixel(x, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(x, y, 0);
+                else {
+                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + ((BlueNoise.getSeededTriangular(x + 62, y + 66 , 0x265BC) & COLOR_LIMIT_GRID[(x & 3) | (y & 3) << 2] >>> 24 & 255) - 127.5f) * strength)] & 255;
+                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + ((BlueNoise.getSeededTriangular(x + 31, y + 113, 0x157D6) & COLOR_LIMIT_GRID[(x & 3) | (y & 3) << 2] >>> 16 & 255) - 127.5f) * strength)] & 255;
+                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + ((BlueNoise.getSeededTriangular(x + 71, y + 41 , 0x03EA9) & COLOR_LIMIT_GRID[(x & 3) | (y & 3) << 2] >>>  8 & 255) - 127.5f) * strength)] & 255;
+
+                    pixmap.drawPixel(x, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF]);
                 }
