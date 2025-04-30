@@ -284,9 +284,9 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm = reducer.reduceBayerOctShifty(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctShifty" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// ???
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceChant(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Chant" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reduceChant(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Chant" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////great
 ////        pm.drawPixmap(sam, 0, 0);
 ////        pm = reducer.reduceBluish(pm);
@@ -396,9 +396,13 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //////        pm = reducer.reduceCoastal(pm);
 //////        a8png8.writePrecisely(Gdx.files.local(subname + "_Coastal" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// nice and griddy, for things that can use that
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reducePatternish(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reducePatternish(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm, PALETTE, false, 0);
+//////
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceMicroPatternish(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_MicroPatternish" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// Absolutely terrible!
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSkitter(pm);
