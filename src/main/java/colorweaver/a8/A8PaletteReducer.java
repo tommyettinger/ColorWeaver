@@ -6296,18 +6296,18 @@ public class A8PaletteReducer {
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
                     int loc = thresholdMatrix16[((px & 3) | (y & 3) << 2)];
-                    for (int i = 0; i <= loc; i++) {
+//                    for (int i = 0; i <= loc; i++) {
 
-                        int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + (i - 7.5f) * errorMul, 0), 1023)] & 255;
-                        int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + (i - 7.5f) * errorMul, 0), 1023)] & 255;
-                        int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + (i - 7.5f) * errorMul, 0), 1023)] & 255;
+                        int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + (loc - 7.5f) * errorMul, 0), 1023)] & 255;
+                        int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + (loc - 7.5f) * errorMul, 0), 1023)] & 255;
+                        int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + (loc - 7.5f) * errorMul, 0), 1023)] & 255;
 
-                        candidates[i] = paletteMapping[
+                        int used = paletteMapping[
                                 ((rr << 7) & 0x7C00)
                                         | ((gg << 2) & 0x3E0)
                                         | ((bb >>> 3))] & 0xFF;
-                    }
-                    pixmap.drawPixel(px, y, paletteArray[candidates[loc]]);
+//                    }
+                    pixmap.drawPixel(px, y, paletteArray[used]);
                 }
             }
         }
@@ -6333,18 +6333,18 @@ public class A8PaletteReducer {
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
                     int loc = ((px & 1) | (y & 1) << 1);
-                    for (int i = 0; i <= loc; i++) {
+//                    for (int i = 0; i <= loc; i++) {
 
-                        int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + (i - 1.5f) * errorMul, 0), 1023)] & 255;
-                        int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + (i - 1.5f) * errorMul, 0), 1023)] & 255;
-                        int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + (i - 1.5f) * errorMul, 0), 1023)] & 255;
+                        int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + (loc - 1.5f) * errorMul, 0), 1023)] & 255;
+                        int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + (loc - 1.5f) * errorMul, 0), 1023)] & 255;
+                        int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + (loc - 1.5f) * errorMul, 0), 1023)] & 255;
 
-                        candidates[i] = paletteMapping[
+                        int used = paletteMapping[
                                 ((rr << 7) & 0x7C00)
                                         | ((gg << 2) & 0x3E0)
                                         | ((bb >>> 3))] & 0xFF;
-                    }
-                    pixmap.drawPixel(px, y, paletteArray[candidates[loc]]);
+//                    }
+                    pixmap.drawPixel(px, y, paletteArray[used]);
                 }
             }
         }
@@ -6369,17 +6369,17 @@ public class A8PaletteReducer {
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
                     int loc = (BlueNoise.getSeededTriangular(px, y, 0x12345) >>> 4 & 15);
-                    for (int i = 0; i <= loc; i++) {
-                        int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + (i - 7.5f) * errorMul, 0), 1023)] & 255;
-                        int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + (i - 7.5f) * errorMul, 0), 1023)] & 255;
-                        int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + (i - 7.5f) * errorMul, 0), 1023)] & 255;
+//                    for (int i = 0; i <= loc; i++) {
+                        int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + (loc - 7.5f) * errorMul, 0), 1023)] & 255;
+                        int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + (loc - 7.5f) * errorMul, 0), 1023)] & 255;
+                        int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + (loc - 7.5f) * errorMul, 0), 1023)] & 255;
 
-                        candidates[i] = paletteMapping[
+                        int used = paletteMapping[
                                 ((rr << 7) & 0x7C00)
                                         | ((gg << 2) & 0x3E0)
                                         | ((bb >>> 3))] & 0xFF;
-                    }
-                    pixmap.drawPixel(px, y, paletteArray[candidates[loc]]);
+//                    }
+                    pixmap.drawPixel(px, y, paletteArray[used]);
                 }
             }
         }
