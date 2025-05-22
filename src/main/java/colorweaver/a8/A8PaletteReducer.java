@@ -6321,7 +6321,7 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, cr, cg, cb;
-        final float errorMul = (float) (ditherStrength * 4.0 / (populationBias * populationBias * populationBias));
+        final float errorMul = (float) (Math.sqrt(ditherStrength) * 6.0 / (populationBias * populationBias * populationBias));
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -6329,7 +6329,7 @@ public class A8PaletteReducer {
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int loc = thresholdMatrix16[((px & 3) | (y & 3) << 2)], used;
-                    for (int i = 0; i < 2; i++) {
+                    //                    for (int i = 0; i < 2; i++) {
                         cr = (color >>> 24);
                         cg = (color >>> 16 & 0xFF);
                         cb = (color >>> 8 & 0xFF);
@@ -6343,7 +6343,7 @@ public class A8PaletteReducer {
                                         | ((gg << 2) & 0x3E0)
                                         | ((bb >>> 3))] & 0xFF;
                         color = paletteArray[used];
-                    }
+//                    }
                     pixmap.drawPixel(px, y, color);
                 }
             }
