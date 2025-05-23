@@ -6358,7 +6358,6 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, cr, cg, cb;
-//        final float errorMul = Math.min((float) (Math.sqrt(ditherStrength) * 8.0 / (populationBias * populationBias * populationBias)), 20f);
         final float r2Mul = Math.min(100f * ((float) Math.sqrt(ditherStrength) * (1f / (populationBias * populationBias * populationBias) - 0.82f)), 120f);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
@@ -6370,9 +6369,45 @@ public class A8PaletteReducer {
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
                     float r2 = (((px * 0xC13FA9A9 + y * 0x91E10DA5) >>> 9) * 0x1p-22f - 1f) * r2Mul;
-                    int rr = fromLinearLUT[(int) Math.min(Math.max(toLinearLUT[cr] + /* (thresholdMatrix16[((px - 2 & 3) | (y - 1 & 3) << 2)] - 7.5f) * errorMul + */ r2, 0), 1023)] & 255;
-                    int gg = fromLinearLUT[(int) Math.min(Math.max(toLinearLUT[cg] + /* (thresholdMatrix16[((px + 3 & 3) | (y     & 3) << 2)] - 7.5f) * errorMul + */ r2, 0), 1023)] & 255;
-                    int bb = fromLinearLUT[(int) Math.min(Math.max(toLinearLUT[cb] + /* (thresholdMatrix16[((px + 1 & 3) | (y + 2 & 3) << 2)] - 7.5f) * errorMul + */ r2, 0), 1023)] & 255;
+                    int rr = fromLinearLUT[(int) Math.min(Math.max(toLinearLUT[cr] + r2, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int) Math.min(Math.max(toLinearLUT[cg] + r2, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int) Math.min(Math.max(toLinearLUT[cb] + r2, 0), 1023)] & 255;
+
+                    int used = paletteMapping[
+                            ((rr << 7) & 0x7C00)
+                                    | ((gg << 2) & 0x3E0)
+                                    | ((bb >>> 3))] & 0xFF;
+                    color = paletteArray[used];
+                    pixmap.drawPixel(px, y, color);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reducePatfour (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, cr, cg, cb;
+//        final float errorMul = Math.min((float) (Math.sqrt(ditherStrength) * 8.0 / (populationBias * populationBias * populationBias)), 20f);
+        final float errorMul = Math.min(15f * ((float) Math.sqrt(ditherStrength) * (1f / (populationBias * populationBias * populationBias * populationBias) - 0.85f)), 16f);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    float e = (thresholdMatrix16[((px & 3) | (y & 3) << 2)] - 7.5f) * errorMul;
+                    cr = (color >>> 24);
+                    cg = (color >>> 16 & 0xFF);
+                    cb = (color >>> 8 & 0xFF);
+
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + e, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + e, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + e, 0), 1023)] & 255;
 
                     int used = paletteMapping[
                             ((rr << 7) & 0x7C00)
