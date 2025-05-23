@@ -6431,16 +6431,15 @@ public class A8PaletteReducer {
         int color;
         final float str = Math.min(120f * ((float) Math.sqrt(ditherStrength) * (1f / (populationBias * populationBias * populationBias) - 0.8f)), 127f);
         for (int y = 0; y < h; y++) {
-            for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y);
+            for (int x = 0; x < lineLen; x++) {
+                color = pixmap.getPixel(x, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
-                    pixmap.drawPixel(px, y, 0);
+                    pixmap.drawPixel(x, y, 0);
                 else {
-                    final float theta = ((px * 0xC13FA9A9 + y * 0x91E10DA5 >>> 9) * 0x1p-23f);
-                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + OtherMath.triangleWave(theta         ) * str)] & 255;
-                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + OtherMath.triangleWave(theta + 0.382f) * str)] & 255;
-                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + OtherMath.triangleWave(theta + 0.618f) * str)] & 255;
-                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + OtherMath.triangleWave((x * 0xE60E2B73 + y * 0xA6F5777F >>> 9) * 0x1p-23f) * str)] & 255;
+                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + OtherMath.triangleWave((x * 0xCEBD76D9 + y * 0x9609C71D >>> 9) * 0x1p-23f) * str)] & 255;
+                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + OtherMath.triangleWave((x * 0xB9C9AA3B + y * 0x86D516E5 >>> 9) * 0x1p-23f) * str)] & 255;
+                    pixmap.drawPixel(x, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
                             | ((bb >>> 3))] & 0xFF]);
                 }
