@@ -411,14 +411,18 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reducePattwo(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Pattwo" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reducePatthree(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Patthree" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////
+//        pm.drawPixmap(sam, 0, 0);
+//        pm = reducer.reducePatfour(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Patfour" + suffix + ".png"), pm, PALETTE, false, 0);
 ////////
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reducePatthree(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Patthree" + suffix + ".png"), pm, PALETTE, false, 0);
-////////
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reducePatfour(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Patfour" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceMarten(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Marten" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// Absolutely terrible!
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSkitter(pm);

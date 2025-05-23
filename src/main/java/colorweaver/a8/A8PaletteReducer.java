@@ -3923,6 +3923,35 @@ public class A8PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+
+    public Pixmap reduceMarten (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        final float str = Math.min(100f * ((float) Math.sqrt(ditherStrength) * (1f / (populationBias * populationBias * populationBias * populationBias) - 0.7f)), 127f);
+//        final float str = Math.min(48 * ditherStrength / (populationBias * populationBias * populationBias * populationBias), 127);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    final float theta = ((px * 0xC13FA9A9 + y * 0x91E10DA5 >>> 9) * 0x1p-23f);
+                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + OtherMath.triangleWave(theta         ) * str)] & 255;
+                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + OtherMath.triangleWave(theta + 0.382f) * str)] & 255;
+                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + OtherMath.triangleWave(theta + 0.618f) * str)] & 255;
+
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
     /**
      * An intentionally low-fidelity dither, meant for pixel art.
      * @param pixmap
