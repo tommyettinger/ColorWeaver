@@ -285,8 +285,8 @@ public class HexGenerator extends ApplicationAdapter {
 //    }
 
 
-    public static int[] PALETTE = oktone63;
-    public static String NAME = "oktone-63";
+    public static int[] PALETTE = okgrid255;
+    public static String NAME = "okgrid-255";
     public static String SPACE = "OklabCareful";
     public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabCarefulMetric;
 //    public static String SPACE = "OkSmooth";
@@ -301,7 +301,7 @@ public class HexGenerator extends ApplicationAdapter {
         config.setResizable(false);
         new Lwjgl3Application(new HexGenerator(), config);
         PaletteCubeGenerator.main(arg);
-        PalettizerAllDither.main(arg);
+        OkCarefulPalettizerAll.main(arg);
     }
 
     @Override

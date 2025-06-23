@@ -100,36 +100,37 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        for(FileHandle hex : hexes) {
 
         // just do the one in HexGenerator
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+
 //        FileHandle hex = Gdx.files.local("palettes/hex/IsometricTRPG.hex");{
 
-        // the default
-        for(FileHandle hex : new FileHandle[]{
-                Gdx.files.local("palettes/hex/bw-2.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
-                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
-                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
-                Gdx.files.local("palettes/hex/gb-4.hex"),
-                Gdx.files.local("palettes/hex/prospecal-8.hex"),
-                Gdx.files.local("palettes/hex/septembit23-6.hex"),
-                Gdx.files.local("palettes/hex/gb-16.hex"),
-                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
-                Gdx.files.local("palettes/hex/azurestar-32.hex"),
-                Gdx.files.local("palettes/hex/americana-4.hex"),
-                Gdx.files.local("palettes/hex/ayy-4.hex"),
-                Gdx.files.local("palettes/hex/gray-15.hex"),
-                Gdx.files.local("palettes/hex/vinik-24.hex"),
-                Gdx.files.local("palettes/hex/hyper-8.hex"),
-                Gdx.files.local("palettes/hex/snuggly-15.hex"),
-                Gdx.files.local("palettes/hex/snuggly-31.hex"),
-                Gdx.files.local("palettes/hex/snuggly-63.hex"),
-                Gdx.files.local("palettes/hex/snuggly-255.hex"),
-                Gdx.files.local("palettes/hex/huggly-15.hex"),
-                Gdx.files.local("palettes/hex/huggly-31.hex"),
-                Gdx.files.local("palettes/hex/huggly-63.hex"),
-                Gdx.files.local("palettes/hex/huggly-255.hex"),
-        }) {
+//        // the default
+//        for(FileHandle hex : new FileHandle[]{
+//                Gdx.files.local("palettes/hex/bw-2.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-8.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
+//                Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
+//                Gdx.files.local("palettes/hex/db-aurora-255.hex"),
+//                Gdx.files.local("palettes/hex/gb-4.hex"),
+//                Gdx.files.local("palettes/hex/prospecal-8.hex"),
+//                Gdx.files.local("palettes/hex/septembit23-6.hex"),
+//                Gdx.files.local("palettes/hex/gb-16.hex"),
+//                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+//                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+//                Gdx.files.local("palettes/hex/americana-4.hex"),
+//                Gdx.files.local("palettes/hex/ayy-4.hex"),
+//                Gdx.files.local("palettes/hex/gray-15.hex"),
+//                Gdx.files.local("palettes/hex/vinik-24.hex"),
+//                Gdx.files.local("palettes/hex/hyper-8.hex"),
+//                Gdx.files.local("palettes/hex/snuggly-15.hex"),
+//                Gdx.files.local("palettes/hex/snuggly-31.hex"),
+//                Gdx.files.local("palettes/hex/snuggly-63.hex"),
+//                Gdx.files.local("palettes/hex/snuggly-255.hex"),
+//                Gdx.files.local("palettes/hex/huggly-15.hex"),
+//                Gdx.files.local("palettes/hex/huggly-31.hex"),
+//                Gdx.files.local("palettes/hex/huggly-63.hex"),
+//                Gdx.files.local("palettes/hex/huggly-255.hex"),
+//        }) {
 
 
         // auto-generated Huggly palettes
@@ -243,162 +244,120 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 
         // main block
 
-////////////very good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceJimenez(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_GradientNoise" + suffix + ".png"), pm, PALETTE, false, 0);
-////////////good enough
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceSierraLite(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
-////////////rather good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceFloydSteinberg(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
-////////improved from before! looks pretty good, ordered.
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueNoise(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
-////////definitely good, close to BlueNoise; ordered.
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueCrab(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueCrab" + suffix + ".png"), pm, PALETTE, false, 0);
-////////very close to crab now...
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueNit(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNit" + suffix + ".png"), pm, PALETTE, false, 0);
-////////quite nice!
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueOct(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueOct" + suffix + ".png"), pm, PALETTE, false, 0);
-////////great for pixel art!
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBayerOct(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOct" + suffix + ".png"), pm, PALETTE, false, 0);
-////////// Used in anim8-gdx 0.5.2 , great lightness support
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBayerOctAligned(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctAligned" + suffix + ".png"), pm, PALETTE, false, 0);
-//////// better color synthesis, but worse lightness support
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBayerOctShifty(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctShifty" + suffix + ".png"), pm, PALETTE, false, 0);
-////// ???
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceChant(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Chant" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////great
-////        pm.drawPixmap(sam, 0, 0);
-////        pm = reducer.reduceBluish(pm);
-////        a8png8.writePrecisely(Gdx.files.local(subname + "_Neuter" + suffix + ".png"), pm, PALETTE, false, 0);
 //////////very good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceScatter(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////YAY YIPPEE WOO NO BANDING
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceNeue(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////////incredible
-//        //Took 106929 ms
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceKnoll(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Pattern" + suffix + ".png"), pm, PALETTE, false, 0);
-////////////////
-//////        //Took 98748 ms
-//////        pm.drawPixmap(sam, 0, 0);
-//////        pm = reducer.reduceKnoll2(pm);
-//////        a8png8.writePrecisely(Gdx.files.local(subname + "_Knoll2" + suffix + ".png"), pm, PALETTE, false, 0);
-////////////??? error diffusion with IGN
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceIgneous(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Igneous" + suffix + ".png"), pm, PALETTE, false, 0);
-////////////very good, error-diffusion, per-channel color
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceWoven(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Woven" + suffix + ".png"), pm, PALETTE, false, 0);
-////////////fairly good, low banding, some other artifacts, per-channel color
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceRoberts(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Roberts" + suffix + ".png"), pm, PALETTE, false, 0);
-////////very good!
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceDodgy(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Dodgy" + suffix + ".png"), pm, PALETTE, false, 0);
-////////retro, doesn't have to be classically good
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceLoaf(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////retro, doesn't have to be classically good
-//////        pm.drawPixmap(sam, 0, 0);
-//////        pm = reducer.reduceLoaf2(pm);
-//////        a8png8.writePrecisely(Gdx.files.local(subname + "_Loaf2" + suffix + ".png"), pm, PALETTE, false, 0);
-////////////retro, doesn't have to be classically good
-//////        pm.drawPixmap(sam, 0, 0);
-//////        pm = reducer.reduceLoaf3(pm);
-//////        a8png8.writePrecisely(Gdx.files.local(subname + "_Loaf3" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////retro, doesn't have to be classically good, but this sucks
-//////        pm.drawPixmap(sam, 0, 0);
-//////        pm = reducer.reduceLeaf(pm);
-//////        a8png8.writePrecisely(Gdx.files.local(subname + "_Leaf" + suffix + ".png"), pm, PALETTE, false, 0);
-////////retro, doesn't have to be classically good
-////        // 27994 ms for just this
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceGourd(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Gourd" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////experimenting with LUTs to allow proper gamma correction
-//////        // 26523 ms for just this
-//////        pm.drawPixmap(sam, 0, 0);
-//////        pm = reducer.reduceGourdLUT(pm);
-//////        a8png8.writePrecisely(Gdx.files.local(subname + "_GourdLUT" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////experimenting to see what this looks like without gamma correction
-//////        pm.drawPixmap(sam, 0, 0);
-//////        pm = reducer.reduceGourdNoGamma(pm);
-//////        a8png8.writePrecisely(Gdx.files.local(subname + "_GourdNoGamma" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////stylistic, not a traditional dither
-//////        pm.drawPixmap(sam, 0, 0);
-//////        pm = reducer.reduceSchmidt(pm);
-//////        a8png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////yay!
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceOverboard(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Overboard" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////I'm in love
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceWren(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Wren" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////////more love!
-//////        pm.drawPixmap(sam, 0, 0);
-//////        pm = reducer.reduceBlubber(pm);
-//////        a8png8.writePrecisely(Gdx.files.local(subname + "_Blubber" + suffix + ".png"), pm, PALETTE, false, 0);
-/////////////has some issues, maybe?
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBurkes(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
-///////////////great, especially for error diffusion
-//////        pm.drawPixmap(sam, 0, 0);
-//////        pm = reducer.reduceBurkes0(pm);
-//////        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes0" + suffix + ".png"), pm, PALETTE, false, 0);
-//////////////even better!
-//////        pm.drawPixmap(sam, 0, 0);
-//////        pm = reducer.reduceBurkes2(pm);
-//////        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes2" + suffix + ".png"), pm, PALETTE, false, 0);
-///////////great!
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceOceanic(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceJimenez(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_GradientNoise" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////good enough
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSierraLite(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_SierraLite" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////rather good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceFloydSteinberg(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_FloydSteinberg" + suffix + ".png"), pm, PALETTE, false, 0);
+//////improved from before! looks pretty good, ordered.
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBlueNoise(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
+//////definitely good, close to BlueNoise; ordered.
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBlueCrab(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueCrab" + suffix + ".png"), pm, PALETTE, false, 0);
+//////very close to crab now...
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBlueNit(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNit" + suffix + ".png"), pm, PALETTE, false, 0);
+//////quite nice!
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBlueOct(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueOct" + suffix + ".png"), pm, PALETTE, false, 0);
+//////great for pixel art!
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBayerOct(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOct" + suffix + ".png"), pm, PALETTE, false, 0);
+//////// Used in anim8-gdx 0.5.2 , great lightness support
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBayerOctAligned(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctAligned" + suffix + ".png"), pm, PALETTE, false, 0);
+////// better color synthesis, but worse lightness support
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBayerOctShifty(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctShifty" + suffix + ".png"), pm, PALETTE, false, 0);
+//// ???
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceChant(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Chant" + suffix + ".png"), pm, PALETTE, false, 0);
+////////very good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceScatter(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Scatter" + suffix + ".png"), pm, PALETTE, false, 0);
+////////YAY YIPPEE WOO NO BANDING
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceNeue(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Neue" + suffix + ".png"), pm, PALETTE, false, 0);
+////////////incredible
+        //Took 106929 ms
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceKnoll(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Pattern" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////??? error diffusion with IGN
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceIgneous(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Igneous" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////very good, error-diffusion, per-channel color
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceWoven(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Woven" + suffix + ".png"), pm, PALETTE, false, 0);
+//////////fairly good, low banding, some other artifacts, per-channel color
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceRoberts(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Roberts" + suffix + ".png"), pm, PALETTE, false, 0);
+//////very good!
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceDodgy(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Dodgy" + suffix + ".png"), pm, PALETTE, false, 0);
+//////retro, doesn't have to be classically good
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceLoaf(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Loaf" + suffix + ".png"), pm, PALETTE, false, 0);
+//////retro, doesn't have to be classically good
+//        // 27994 ms for just this
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceGourd(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Gourd" + suffix + ".png"), pm, PALETTE, false, 0);
+////////stylistic, not a traditional dither
+////        pm.drawPixmap(sam, 0, 0);
+////        pm = reducer.reduceSchmidt(pm);
+////        a8png8.writePrecisely(Gdx.files.local(subname + "_Kufic" + suffix + ".png"), pm, PALETTE, false, 0);
+////////yay!
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceOverboard(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Overboard" + suffix + ".png"), pm, PALETTE, false, 0);
+////////I'm in love
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceWren(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Wren" + suffix + ".png"), pm, PALETTE, false, 0);
+///////////has some issues, maybe?
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBurkes(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Burkes" + suffix + ".png"), pm, PALETTE, false, 0);
+/////////great!
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceOceanic(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Oceanic" + suffix + ".png"), pm, PALETTE, false, 0);
 ///////// basically the same as Oceanic, but without the Burkes constants
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceSeaside(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
-////////// oceanic meets pattern dither
-//////        pm.drawPixmap(sam, 0, 0);
-//////        pm = reducer.reduceCoastal(pm);
-//////        a8png8.writePrecisely(Gdx.files.local(subname + "_Coastal" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceSeaside(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
 //////// nice and griddy, for things that can use that
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reducePatternish(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reducePatternish(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm, PALETTE, false, 0);
+//////// quite good!
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceMarten(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Marten" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// has some weird horizontal artifacts
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceMicroPatternish(pm);
@@ -419,10 +378,6 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reducePatfour(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Patfour" + suffix + ".png"), pm, PALETTE, false, 0);
-////////
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceMarten(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Marten" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// Absolutely terrible!
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceSkitter(pm);
