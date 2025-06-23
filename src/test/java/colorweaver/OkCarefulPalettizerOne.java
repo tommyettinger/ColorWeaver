@@ -17,7 +17,7 @@ import java.io.IOException;
 /**
  * Created by Tommy Ettinger on 2/8/2025.
  */
-public class OkCarefulPalettizerBN extends ApplicationAdapter {
+public class OkCarefulPalettizerOne extends ApplicationAdapter {
 
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -25,7 +25,7 @@ public class OkCarefulPalettizerBN extends ApplicationAdapter {
         config.setWindowedMode(640, 320);
         config.setIdleFPS(10);
         config.setResizable(true);
-        new Lwjgl3Application(new OkCarefulPalettizerBN(), config);
+        new Lwjgl3Application(new OkCarefulPalettizerOne(), config);
     }
     
     private int[] PALETTE;
@@ -48,7 +48,7 @@ public class OkCarefulPalettizerBN extends ApplicationAdapter {
     }
 
     public void create() {
-        final String targetDir = "samples/reducedOkBN/";
+        final String targetDir = "samples/reducedOkOne/";
 
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
 //        FileHandle[] samples = {Gdx.files.local("samples/Mona_Lisa.jpg")
@@ -125,10 +125,12 @@ public class OkCarefulPalettizerBN extends ApplicationAdapter {
                 Gdx.files.local("palettes/hex/headpat-31.hex"),
                 Gdx.files.local("palettes/hex/headpat-63.hex"),
                 Gdx.files.local("palettes/hex/headpat-255.hex"),
-                Gdx.files.local("palettes/hex/hug-15.hex"),
-                Gdx.files.local("palettes/hex/hug-31.hex"),
-                Gdx.files.local("palettes/hex/hug-63.hex"),
-                Gdx.files.local("palettes/hex/hug-255.hex"),
+                Gdx.files.local("palettes/hex/oklloyd-63.hex"),
+                Gdx.files.local("palettes/hex/oklloyd-255.hex"),
+//                Gdx.files.local("palettes/hex/hug-15.hex"),
+//                Gdx.files.local("palettes/hex/hug-31.hex"),
+//                Gdx.files.local("palettes/hex/hug-63.hex"),
+//                Gdx.files.local("palettes/hex/hug-255.hex"),
         }) {
 
 //        for(FileHandle hex : new FileHandle[]{
@@ -186,50 +188,8 @@ public class OkCarefulPalettizerBN extends ApplicationAdapter {
     }
 
     private void drawPart(Pixmap pm, Pixmap sam, A8PaletteReducer reducer, A8PNG8 a8png8, String subname, String suffix) throws IOException {
-
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueNoise(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoise" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueNoiseOmni64(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseOmni64" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueNoiseOmni128(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseOmni128" + suffix + ".png"), pm, PALETTE, false, 0);
-
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueNoiseDuel128(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseDuel128" + suffix + ".png"), pm, PALETTE, false, 0);
-
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueNoiseBrawl128(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseBrawl128" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueNoisePawn128(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoisePawn128" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueNoiseBishop128(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseBishop128" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueNoiseKnight128(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseKnight128" + suffix + ".png"), pm, PALETTE, false, 0);
-//
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reduceBlueNoiseRook128(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseRook128" + suffix + ".png"), pm, PALETTE, false, 0);
-
-        pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueCrab(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseCrab128" + suffix + ".png"), pm, PALETTE, false, 0);
-
-//        pm.drawPixmap(sam, 0, 0);
-//        pm = reducer.reducePatternish(pm);
-//        a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish" + suffix + ".png"), pm, PALETTE, false, 0);
-
+        pm = reducer.reduceMarten(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Marten2" + suffix + ".png"), pm, PALETTE, false, 0);
     }
 }
