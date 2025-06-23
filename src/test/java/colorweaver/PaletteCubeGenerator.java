@@ -1,5 +1,8 @@
 package colorweaver;
 
+import colorweaver.a8.A8PNG;
+import colorweaver.a8.A8PNG8;
+import colorweaver.a8.A8PaletteReducer;
 import colorweaver.tools.StringKit;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -47,12 +50,12 @@ public class PaletteCubeGenerator extends ApplicationAdapter {
         FileHandle[] hexes = Gdx.files.local("palettes/hex/").list(".hex");
         Gdx.files.local("palettes/gen/txt/").mkdirs();
 //        Gdx.files.local("palettes/genOkOnce/").mkdirs();
-        Gdx.files.local("palettes/gen"+HexGenerator.SPACE+"/").mkdirs();
+        Gdx.files.local("palettes/genOkCareful/").mkdirs();
 //        Gdx.files.local("palettes/genRgbTricky/").mkdirs();
 //        Gdx.files.local("palettes/genRgbStupider/").mkdirs();
 //        Gdx.files.local("palettes/genRgbSlippery/").mkdirs();
 //        for(FileHandle hex : hexes) {
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("lospec2000-182.hex"),
@@ -64,12 +67,12 @@ public class PaletteCubeGenerator extends ApplicationAdapter {
 //        for (int i = 8, idx = 0; i < 15; i++) {
 //            snugglies[idx++] = Gdx.files.local("snuggly-"+i+".hex");
 //        }
-        FileHandle[] hugglies = new FileHandle[6];
-        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
-            hugglies[idx++] = Gdx.files.local("huggly-"+(i-1)+".hex");
-        }
+//        FileHandle[] hugglies = new FileHandle[6];
+//        for (int i = 8, idx = 0; i <= 256; i <<= 1) {
+//            hugglies[idx++] = Gdx.files.local("huggly-"+(i-1)+".hex");
+//        }
 
-        for(FileHandle hex : hugglies) {
+//        for(FileHandle hex : hugglies) {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/blknx-64.hex");{
             String name = hex.nameWithoutExtension().toLowerCase();
@@ -84,23 +87,20 @@ public class PaletteCubeGenerator extends ApplicationAdapter {
             Gdx.files.local("palettes/gen/txt/" + name + ".txt").writeString(sb.toString(), false);
             sb.setLength(0);
 
-            PNG8 png8 = new PNG8();
+            A8PNG8 png8 = new A8PNG8();
             png8.setCompression(7);
-            png8.palette = new PaletteReducer(PALETTE, HexGenerator.METRIC);
+            png8.palette = new A8PaletteReducer(PALETTE);
             Pixmap pix = new Pixmap(256, 1, Pixmap.Format.RGBA8888);
             for (int i = 1; i < PALETTE.length; i++) {
                 pix.drawPixel(i - 1, 0, PALETTE[i]);
             }
             pix.drawPixel(255, 0, 0);
-            try {
+
 //                png8.writePrecisely(Gdx.files.local("palettes/genOkOnce/" + name + ".png"), pix, false);
-                png8.writePrecisely(Gdx.files.local("palettes/gen"+HexGenerator.SPACE+"/" + name + ".png"), pix, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genOkCareful/" + name + ".png"), pix, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genRgbTricky/" + name + ".png"), pix, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupider/" + name + ".png"), pix, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genRgbSlippery/" + name + ".png"), pix, false);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
             Pixmap p2 = new Pixmap(1024, 32, Pixmap.Format.RGBA8888);
             for (int r = 0; r < 32; r++) {
@@ -110,15 +110,13 @@ public class PaletteCubeGenerator extends ApplicationAdapter {
                     }
                 }
             }
-            try {
+
 //                png8.writePrecisely(Gdx.files.local("palettes/genOkOnce/" + name + "_GLSL.png"), p2, false);
-                png8.writePrecisely(Gdx.files.local("palettes/gen"+HexGenerator.SPACE+"/" + name + "_GLSL.png"), p2, false);
+                png8.writePrecisely(Gdx.files.local("palettes/genOkCareful/" + name + "_GLSL.png"), p2, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genRgbTricky/" + name + "_GLSL.png"), p2, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genRgbStupider/" + name + "_GLSL.png"), p2, false);
 //                png8.writePrecisely(Gdx.files.local("palettes/genRgbSlippery/" + name + "_GLSL.png"), p2, false);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
         }
         Gdx.app.exit();
     }
