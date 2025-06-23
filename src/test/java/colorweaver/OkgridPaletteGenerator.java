@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.badlogic.gdx.utils.NumberUtils;
 import com.github.tommyettinger.digital.Base;
 import com.github.tommyettinger.digital.MathTools;
+import com.github.tommyettinger.digital.TrigTools;
 import com.github.tommyettinger.ds.IntList;
 import com.github.tommyettinger.ds.support.sort.IntComparator;
 
@@ -171,8 +172,8 @@ import java.util.Arrays;
  */
 public class OkgridPaletteGenerator {
 //    public static int LIMIT = 256;
-    public static float STEP_L = 1f / 15f;
-    public static float STEP_AB = 1f / 16f;
+    public static float STEP_L = 1f / 8.001f;
+    public static float STEP_AB = 1f / 10f;
     private static final boolean SORT = true;
     private static final IntList rgba = new IntList(256);
 
@@ -216,6 +217,11 @@ public class OkgridPaletteGenerator {
         double L = reverseLight(LL);
         double A = AA - 0.5;
         double B = BB - 0.5;
+        double theta = TrigTools.atan2Turns(A, B);
+        double mag = Math.hypot(A, B);
+        theta = MathTools.barronSpline(MathTools.fract(theta + 0.875), 2.0, 0.7);
+        A = TrigTools.sinSmootherTurns(theta) * mag;
+        B = TrigTools.cosSmootherTurns(theta) * mag;
 
         double l = (L + +0.3963377774 * A + +0.2158037573 * B);
         l *= l * l;
@@ -279,7 +285,8 @@ public class OkgridPaletteGenerator {
 
         GdxNativesLoader.load();
         Gdx.files = new Lwjgl3Files();
-        FileHandle fh = Gdx.files.local("palettes/hex/okgrid-"+ (size-1) +".hex");
+//        FileHandle fh = Gdx.files.local("palettes/hex/okgrid-"+ (size-1) +".hex");
+        FileHandle fh = Gdx.files.local("palettes/hex/okgrid-2_0-0_7-"+ (size-1) +".hex");
         fh.writeString(sb.toString(), false);
         System.out.println("Wrote to " + fh.name());
 //        System.out.println("new int[] {");

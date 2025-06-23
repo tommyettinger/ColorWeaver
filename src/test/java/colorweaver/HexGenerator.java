@@ -154,6 +154,17 @@ public class HexGenerator extends ApplicationAdapter {
             0x8F52FFFF, 0x4C8DFFFF, 0x8B98BFFF, 0xA5A5A5FF, 0xFFFFFFFF,
     };
 
+    private static int[] okgrid63 = {
+            0x00000000, 0x1B1B97FF, 0x3143C6FF, 0x4661EBFF, 0x6627C3FF, 0x8146E8FF, 0xAC0BE4FF, 0x29C7FFFF,
+            0x243064FF, 0x40518DFF, 0x596CADFF, 0x7085CAFF, 0x859CE3FF, 0x99B1FBFF, 0x4C1862FF, 0x71398AFF,
+            0x8F54AAFF, 0xAA6BC7FF, 0xC281E0FF, 0xD995F8FF, 0xBA2BA7FF, 0xD845C4FF, 0xF45CDDFF, 0x178372FF,
+            0x369D8AFF, 0x4CB5A1FF, 0x61CBB6FF, 0x74E0CAFF, 0x86F4DDFF, 0x000000FF, 0x353535FF, 0x555555FF,
+            0x707070FF, 0x888888FF, 0x9E9E9EFF, 0xB4B4B3FF, 0xC7C7C7FF, 0xDBDBDAFF, 0xEDEDEDFF, 0x591D33FF,
+            0x803C52FF, 0xA1566DFF, 0xBD6D85FF, 0xD7839CFF, 0xEF97B1FF, 0xCA2C6BFF, 0xEA4683FF, 0x4A8227FF,
+            0x619C3EFF, 0x76B353FF, 0x89C966FF, 0x9CDE78FF, 0xAEF289FF, 0x876D26FF, 0xA1853DFF, 0xB99C51FF,
+            0xCFB164FF, 0xE4C576FF, 0xF8D887FF, 0xB45124FF, 0xD2683BFF, 0xED7E4FFF, 0xDB1B22FF, 0xFD3B39FF,
+    };
+
     private static int[] okgrid255 = {
             0x00000000, 0x000000FF, 0x282828FF, 0x404040FF, 0x555555FF, 0x676767FF, 0x787878FF, 0x888888FF,
             0x979797FF, 0xA6A6A6FF, 0xB4B4B3FF, 0xC1C1C1FF, 0xCECECEFF, 0xDBDBDAFF, 0xE7E7E7FF, 0xF3F3F3FF,
@@ -190,46 +201,92 @@ public class HexGenerator extends ApplicationAdapter {
             0xFF0000FF, 0x00FF00FF, 0x0000FFFF, 0xFFFF00FF, 0xE84200FF,
     };
 
-    private static int[] sixeightfive255 = new int[256];
-    static {
-        int idx = 1;
-        for (int i = 0; i < 17; i++) {
-            sixeightfive255[idx++] = (i * 15) * 0x01010100 | 0xFF;
-        }
-        for (int r : new int[]{0x00, 0x33, 0x66, 0x99, 0xCC, 0xFF}) {
-            for (int g : new int[]{0x00, 0x24, 0x49, 0x6D, 0x92, 0xB6, 0xDB, 0xFF}) {
-                for (int b : new int[]{0x00, 0x40, 0x80, 0xBF, 0xFF}) {
-                    int color = r << 24 | g << 16 | b << 8 | 0xFF;
-                    if(color != 255 && color != -1)
-                        sixeightfive255[idx++] = color;
-                }
-            }
-        }
-    }
-    private static int[] sixeightfiveroot255 = new int[256];
-    static {
-        int idx = 1;
-        for (int i = 0; i < 17; i++) {
-            int level = (int) (Math.pow(i / 16.0, 2.0/3.0) * 255.0 + 0.5);
-            sixeightfiveroot255[idx++] = level * 0x01010100 | 0xFF;
-        }
-        for (int ri = 0; ri < 6; ri++) {
-            int r = (int) (Math.pow(ri / 5.0, 2.0/3.0) * 255.0 + 0.5);
-            for (int gi = 0; gi < 8; gi++) {
-                int g = (int) (Math.pow(gi / 7.0, 2.0/3.0) * 255.0 + 0.5);
-                for (int bi = 0; bi < 5; bi++) {
-                    int b = (int) (Math.pow(bi / 4.0, 2.0/3.0) * 255.0 + 0.5);
-                    int color = r << 24 | g << 16 | b << 8 | 0xFF;
-                    if(color != 255 && color != -1)
-                        sixeightfiveroot255[idx++] = color;
-                }
-            }
-        }
-    }
+    private static int[] oktone63 = {
+            0x00000000, 0x000000FF, 0x3D3D3DFF, 0x636363FF, 0x808080FF, 0x9E9E9EFF, 0xB9B9B9FF, 0xD1D1D1FF,
+            0xE8E8E8FF, 0xFFFFFFFF, 0xA64029FF, 0xF07A5FFF, 0xCE5F45FF, 0xEAAB70FF, 0xAE753FFF, 0xCD9158FF,
+            0x8A5622FF, 0xFACC54FF, 0xE0B43CFF, 0xC4991EFF, 0xC5E41BFF, 0xDBFC3CFF, 0x5D6A26FF, 0x7C8B43FF,
+            0x98A85DFF, 0xB2C374FF, 0xCADC8AFF, 0xE1F49FFF, 0x60F961FF, 0x47DF4AFF, 0x28C230FF, 0x5EF2BCFF,
+            0x44D8A4FF, 0x23BC8BFF, 0x07406DFF, 0x31679AFF, 0x4E88BFFF, 0x68A5DFFF, 0x80C0FDFF, 0x6140E0FF,
+            0x4006AAFF, 0x9D68C5FF, 0x7B49A0FF, 0xBC83E6FF, 0x522471FF, 0xA61C9DFF, 0xCE41C2FF, 0xF15DE3FF,
+            0xB71C63FF, 0xE14182FF, 0x63263DFF, 0x904A63FF, 0xB56882FF, 0xF39CB9FF, 0xD6839EFF, 0xF53245FF,
+            0xFF0000FF, 0x00FF00FF, 0x0000FFFF, 0xF800FFFF, 0xFFFF00FF, 0x00FFFFFF, 0x202020FF, 0xFFFF80FF,
+    };
+    private static int[] oktone255 = {
+            0x00000000, 0x000000FF, 0x282828FF, 0x404040FF, 0x555555FF, 0x676767FF, 0x787878FF, 0x888888FF,
+            0x979797FF, 0xA6A6A6FF, 0xB3B3B3FF, 0xC1C1C1FF, 0xCECECEFF, 0xDBDBDBFF, 0xE7E7E7FF, 0xF3F3F3FF,
+            0xFFFFFFFF, 0xE87070FF, 0xF97E7EFF, 0xFE3A38FF, 0x47160CFF, 0xE65738FF, 0xD14729FF, 0xF96646FF,
+            0xBB3617FF, 0x7E4234FF, 0x945445FF, 0xFAAB98FF, 0x652F22FF, 0xBA7463FF, 0xEC9E8BFF, 0xCC8371FF,
+            0xDC917EFF, 0xA86554FF, 0xF38751FF, 0xE27944FF, 0xD06A36FF, 0xBC5B27FF, 0xA74A15FF, 0xFCD2ACFF,
+            0x816042FF, 0xB5906EFF, 0xC49E7BFF, 0xD3AC88FF, 0xE1B994FF, 0xEFC6A0FF, 0xFFAE62FF, 0x937151FF,
+            0xA48160FF, 0xF0A156FF, 0xE09349FF, 0x563A1FFF, 0x6C4E31FF, 0xD0853CFF, 0xBF762DFF, 0xAC671CFF,
+            0x3A2207FF, 0xF5B648FF, 0xE6A83BFF, 0xD79A2CFF, 0xC78C1AFF, 0xDABF7AFF, 0xAE9555FF, 0xE7CC86FF,
+            0xCCB26EFF, 0x9E8647FF, 0xBDA462FF, 0x8D7639FF, 0xF4D991FF, 0x7B6529FF, 0x675217FF, 0xE6D056FF,
+            0xF3DD61FF, 0xBCA72EFF, 0xCAB53CFF, 0xD8C349FF, 0xAD981CFF, 0xFEEE0FFF, 0x61700DFF, 0xB5D21EFF,
+            0xC2E030FF, 0xCEED3FFF, 0x718223FF, 0x252B0AFF, 0xDAFA4CFF, 0x90A242FF, 0x819334FF, 0x9EB14FFF,
+            0xB9CD68FF, 0x3D4421FF, 0xDEF48AFF, 0xD2E87FFF, 0xABC05CFF, 0xC5DB73FF, 0x939D70FF, 0x636C44FF,
+            0x848E62FF, 0xAFBA8AFF, 0x515A33FF, 0xE2EEBAFF, 0xEEFAC6FF, 0xD6E2AFFF, 0x747E54FF, 0xA1AC7EFF,
+            0xC9D5A3FF, 0xBCC897FF, 0x5CB21AFF, 0x69C22DFF, 0x76D13CFF, 0x83DF49FF, 0x8FED55FF, 0x9AFA61FF,
+            0x78CD75FF, 0x84DB81FF, 0x90E98DFF, 0x9CF699FF, 0x6BBE69FF, 0x408D3FFF, 0x4F9E4EFF, 0x5DAF5CFF,
+            0x2F7B30FF, 0x1C671EFF, 0x1EFE31FF, 0x19FB7AFF, 0xA7FDD9FF, 0x9CF0CDFF, 0x84D6B4FF, 0x90E3C1FF,
+            0x77C8A7FF, 0x5DAA8BFF, 0x6AB99AFF, 0x4E9A7DFF, 0x3F896DFF, 0x2E775DFF, 0x1A644BFF, 0x0EF6B4FF,
+            0x14DFE6FF, 0x2EECF4FF, 0x065896FF, 0x0F2A41FF, 0x226CADFF, 0x337EC2FF, 0x26435EFF, 0x428ED5FF,
+            0x395875FF, 0x4A6B8AFF, 0x779CBFFF, 0x85ABCFFF, 0x519EE7FF, 0x92B9DEFF, 0x5EADF8FF, 0x5A7C9DFF,
+            0x9FC6ECFF, 0xABD3FAFF, 0x698CAFFF, 0x5A66F4FF, 0x2734E8FF, 0x4C54DDFF, 0x3D40C3FF, 0x2D28A6FF,
+            0x1E10C9FF, 0x9188F1FF, 0x8279DFFF, 0x7369CBFF, 0x6358B6FF, 0x51459FFF, 0x3E3084FF, 0x281562FF,
+            0x884FF5FF, 0x773CDEFF, 0x6526C4FF, 0xA988C4FF, 0x9979B3FF, 0xB896D3FF, 0x634779FF, 0xE2BDFFFF,
+            0xC7A3E3FF, 0x77598EFF, 0xD5B0F1FF, 0x8969A1FF, 0xBB73EFFF, 0x9954CAFF, 0x331B44FF, 0xAB64DDFF,
+            0x4E3361FF, 0x8743B5FF, 0x72319DFF, 0xAA31F3FF, 0x5B1982FF, 0x9618DCFF, 0xCA4BDBFF, 0xDC5BEDFF,
+            0xA227B2FF, 0xB73BC7FF, 0xED69FEFF, 0x8B089BFF, 0xE624D9FF, 0x652060FF, 0xF939EBFF, 0x94468CFF,
+            0x7F3477FF, 0xA8569FFF, 0xCC74C2FF, 0xBB66B1FF, 0xEC8FE1FF, 0xDC82D1FF, 0xFB9CEFFF, 0x951476FF,
+            0xAE2C8BFF, 0xC33E9EFF, 0xD74EB0FF, 0xDC089DFF, 0xEA5DC0FF, 0xFB6BD0FF, 0xF129AFFF, 0x9F1255FF,
+            0xFD2588FF, 0xB82B67FF, 0xCE3D78FF, 0x6F2040FF, 0xE34D88FF, 0x893455FF, 0xF65C97FF, 0xA04667FF,
+            0x3D1C28FF, 0xB55678FF, 0xC86588FF, 0xDA7497FF, 0xEB82A6FF, 0xFB8FB4FF, 0x593340FF, 0x714755FF,
+            0x865867FF, 0xCA95A6FF, 0xAA7888FF, 0x986978FF, 0xF6BCCEFF, 0xBB8797FF, 0xE8B0C1FF, 0xD9A3B3FF,
+            0xC32244FF, 0xDA3654FF, 0xEF4762FF, 0x791922FF, 0x942F34FF, 0xAC4145FF, 0xC15254FF, 0xE82629FF,
+            0xD56162FF,
+            0xFF0000FF, 0x00FF00FF, 0x0000FFFF, 0xFF00FFFF, 0xFFFF00FF, 0x00FFFFFF, 0x808080FF
+    };
+//    private static int[] sixeightfive255 = new int[256];
+//
+//    static {
+//        int idx = 1;
+//        for (int i = 0; i < 17; i++) {
+//            sixeightfive255[idx++] = (i * 15) * 0x01010100 | 0xFF;
+//        }
+//        for (int r : new int[]{0x00, 0x33, 0x66, 0x99, 0xCC, 0xFF}) {
+//            for (int g : new int[]{0x00, 0x24, 0x49, 0x6D, 0x92, 0xB6, 0xDB, 0xFF}) {
+//                for (int b : new int[]{0x00, 0x40, 0x80, 0xBF, 0xFF}) {
+//                    int color = r << 24 | g << 16 | b << 8 | 0xFF;
+//                    if(color != 255 && color != -1)
+//                        sixeightfive255[idx++] = color;
+//                }
+//            }
+//        }
+//    }
+//    private static int[] sixeightfiveroot255 = new int[256];
+//    static {
+//        int idx = 1;
+//        for (int i = 0; i < 17; i++) {
+//            int level = (int) (Math.pow(i / 16.0, 2.0/3.0) * 255.0 + 0.5);
+//            sixeightfiveroot255[idx++] = level * 0x01010100 | 0xFF;
+//        }
+//        for (int ri = 0; ri < 6; ri++) {
+//            int r = (int) (Math.pow(ri / 5.0, 2.0/3.0) * 255.0 + 0.5);
+//            for (int gi = 0; gi < 8; gi++) {
+//                int g = (int) (Math.pow(gi / 7.0, 2.0/3.0) * 255.0 + 0.5);
+//                for (int bi = 0; bi < 5; bi++) {
+//                    int b = (int) (Math.pow(bi / 4.0, 2.0/3.0) * 255.0 + 0.5);
+//                    int color = r << 24 | g << 16 | b << 8 | 0xFF;
+//                    if(color != 255 && color != -1)
+//                        sixeightfiveroot255[idx++] = color;
+//                }
+//            }
+//        }
+//    }
 
 
-    public static int[] PALETTE = okgrid255;
-    public static String NAME = "okgrid-255";
+    public static int[] PALETTE = oktone63;
+    public static String NAME = "oktone-63";
     public static String SPACE = "OklabCareful";
     public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabCarefulMetric;
 //    public static String SPACE = "OkSmooth";
