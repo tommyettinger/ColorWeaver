@@ -6016,6 +6016,147 @@ public class A8PaletteReducer {
     }
 
     /**
+     * A variant on {@link #reduceOceanic(Pixmap)} (and thus on {@link #reduceBurkes(Pixmap)}) that uses
+     * different blue noise effects per-channel, which can improve color quality at a minor speed cost.
+     * This also makes an unorthodox change to the Burkes error diffusion pattern by diffusing a small amount of error
+     * 3 pixels to the right. This is meant to break up some fine horizontal band artifacts.
+     *
+     * @param pixmap a Pixmap that will be modified in place
+     * @return the given Pixmap, for chaining
+     */
+    public Pixmap reduceMaritime (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int w = pixmap.getWidth(), h = pixmap.getHeight();
+        final float[] noiseA = TRI_BLUE_NOISE_MULTIPLIERS_A;
+        final float[] noiseB = TRI_BLUE_NOISE_MULTIPLIERS_B;
+        final float[] noiseC = TRI_BLUE_NOISE_MULTIPLIERS_C;
+        final float s = Math.min(0.4f * (ditherStrength / (float) Math.sqrt(colorCount) * (1f / (populationBias * populationBias * populationBias) - 0.7f)), 0.5f),
+                strength = s * 0.6f / (0.35f + s);
+        float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
+        if (curErrorRedFloats == null) {
+            curErrorRed = (curErrorRedFloats = new FloatArray(w)).items;
+            nextErrorRed = (nextErrorRedFloats = new FloatArray(w)).items;
+            curErrorGreen = (curErrorGreenFloats = new FloatArray(w)).items;
+            nextErrorGreen = (nextErrorGreenFloats = new FloatArray(w)).items;
+            curErrorBlue = (curErrorBlueFloats = new FloatArray(w)).items;
+            nextErrorBlue = (nextErrorBlueFloats = new FloatArray(w)).items;
+        } else {
+            curErrorRed = curErrorRedFloats.ensureCapacity(w);
+            nextErrorRed = nextErrorRedFloats.ensureCapacity(w);
+            curErrorGreen = curErrorGreenFloats.ensureCapacity(w);
+            nextErrorGreen = nextErrorGreenFloats.ensureCapacity(w);
+            curErrorBlue = curErrorBlueFloats.ensureCapacity(w);
+            nextErrorBlue = nextErrorBlueFloats.ensureCapacity(w);
+
+            Arrays.fill(nextErrorRed, 0, w, 0);
+            Arrays.fill(nextErrorGreen, 0, w, 0);
+            Arrays.fill(nextErrorBlue, 0, w, 0);
+        }
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used, rdiff, gdiff, bdiff;
+        float er, eg, eb;
+        byte paletteIndex;
+        for (int py = 0; py < h; py++) {
+            int ny = py + 1;
+
+            System.arraycopy(nextErrorRed, 0, curErrorRed, 0, w);
+            System.arraycopy(nextErrorGreen, 0, curErrorGreen, 0, w);
+            System.arraycopy(nextErrorBlue, 0, curErrorBlue, 0, w);
+
+            Arrays.fill(nextErrorRed, 0, w, 0);
+            Arrays.fill(nextErrorGreen, 0, w, 0);
+            Arrays.fill(nextErrorBlue, 0, w, 0);
+
+            for (int px = 0; px < w; px++) {
+                color = pixmap.getPixel(px, py);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, py, 0);
+                else {
+                    er = curErrorRed[px];
+                    eg = curErrorGreen[px];
+                    eb = curErrorBlue[px];
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + er, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + eg, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + eb, 0), 1023)] & 255;
+
+                    paletteIndex =
+                            paletteMapping[((rr << 7) & 0x7C00)
+                                    | ((gg << 2) & 0x3E0)
+                                    | ((bb >>> 3))];
+                    used = paletteArray[paletteIndex & 0xFF];
+                    pixmap.drawPixel(px, py, used);
+                    rdiff = (color>>>24)-    (used>>>24);
+                    gdiff = (color>>>16&255)-(used>>>16&255);
+                    bdiff = (color>>>8&255)- (used>>>8&255);
+                    int modifier = ((px & 127) | (py << 6 & 0xFC0));
+                    final float r1 = rdiff * strength * noiseA[modifier];
+                    final float g1 = gdiff * strength * noiseB[modifier];
+                    final float b1 = bdiff * strength * noiseC[modifier];
+                    final float r2 = r1 + r1;
+                    final float g2 = g1 + g1;
+                    final float b2 = b1 + b1;
+                    final float r4 = r2 + r2;
+                    final float g4 = g2 + g2;
+                    final float b4 = b2 + b2;
+
+                    if(px < w - 1)
+                    {
+                        modifier = ((px + 1 & 127) | (py << 6 & 0xFC0));
+                        curErrorRed[px+1]   += r4 * noiseA[modifier];
+                        curErrorGreen[px+1] += g4 * noiseB[modifier];
+                        curErrorBlue[px+1]  += b4 * noiseC[modifier];
+                        if(px < w - 2)
+                        {
+                            modifier = ((px + 2 & 127) | (py & 127) << 7);
+                            curErrorRed[px+2]   += r2 * noiseA[modifier];
+                            curErrorGreen[px+2] += g2 * noiseB[modifier];
+                            curErrorBlue[px+2]  += b2 * noiseC[modifier];
+                        }
+                    }
+                    if(ny < h)
+                    {
+                        if(px > 0)
+                        {
+                            modifier = (px - 1 & 127) | (ny & 127) << 7;
+                            nextErrorRed[px-1]   += r2 * noiseA[modifier];
+                            nextErrorGreen[px-1] += g2 * noiseB[modifier];
+                            nextErrorBlue[px-1]  += b2 * noiseC[modifier];
+                            if(px > 1)
+                            {
+                                modifier = (px - 2 & 127) | (ny & 127) << 7;
+                                nextErrorRed[px-2]   += r1 * noiseA[modifier];
+                                nextErrorGreen[px-2] += g1 * noiseB[modifier];
+                                nextErrorBlue[px-2]  += b1 * noiseC[modifier];
+                            }
+                        }
+                        modifier = (px & 127) | (ny & 127) << 7;
+                        nextErrorRed[px]   += r4 * noiseA[modifier];
+                        nextErrorGreen[px] += g4 * noiseB[modifier];
+                        nextErrorBlue[px]  += b4 * noiseC[modifier];
+                        if(px < w - 1)
+                        {
+                            modifier = (px + 1 & 127) | (ny & 127) << 7;
+                            nextErrorRed[px+1]   += r2 * noiseA[modifier];
+                            nextErrorGreen[px+1] += g2 * noiseB[modifier];
+                            nextErrorBlue[px+1]  += b2 * noiseC[modifier];
+                            if(px < w - 2)
+                            {
+                                modifier = (px + 2 & 127) | (ny & 127) << 7;
+                                nextErrorRed[px+2]   += r1 * noiseA[modifier];
+                                nextErrorGreen[px+2] += g1 * noiseB[modifier];
+                                nextErrorBlue[px+2]  += b1 * noiseC[modifier];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    /**
      * Compares items in ints by their luma, looking up items by the indices a and b, and swaps the two given indices if
      * the item at a has higher luma than the item at b. This requires items to be present as two ints per item: the
      * earlier int, at an index less than 16, is what gets sorted, while the later int, at an index 16 higher than the
