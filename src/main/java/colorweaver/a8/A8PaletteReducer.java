@@ -5941,7 +5941,7 @@ public class A8PaletteReducer {
                     rdiff = (color>>>24)-    (used>>>24);
                     gdiff = (color>>>16&255)-(used>>>16&255);
                     bdiff = (color>>>8&255)- (used>>>8&255);
-                    int modifier = ((px & 127) | (py << 6 & 0xFC0));
+                    int modifier = ((px & 127) | (py & 127) << 7);
                     final float r1 = rdiff * strength * noiseA[modifier];
                     final float g1 = gdiff * strength * noiseB[modifier];
                     final float b1 = bdiff * strength * noiseC[modifier];
@@ -5954,7 +5954,7 @@ public class A8PaletteReducer {
 
                     if(px < w - 1)
                     {
-                        modifier = ((px + 1 & 127) | (py << 6 & 0xFC0));
+                        modifier = ((px + 1 & 127) | (py & 127) << 7);
                         curErrorRed[px+1]   += r4 * noiseA[modifier];
                         curErrorGreen[px+1] += g4 * noiseB[modifier];
                         curErrorBlue[px+1]  += b4 * noiseC[modifier];
@@ -6089,7 +6089,7 @@ public class A8PaletteReducer {
                     rdiff = (color>>>24)-    (used>>>24);
                     gdiff = (color>>>16&255)-(used>>>16&255);
                     bdiff = (color>>>8&255)- (used>>>8&255);
-                    int modifier = ((px & 127) | (py << 6 & 0xFC0));
+                    int modifier = ((px & 127) | (py & 127) << 7);
                     final float r1 = rdiff * strength * noiseA[modifier];
                     final float g1 = gdiff * strength * noiseB[modifier];
                     final float b1 = bdiff * strength * noiseC[modifier];
@@ -6102,7 +6102,7 @@ public class A8PaletteReducer {
 
                     if(px < w - 1)
                     {
-                        modifier = ((px + 1 & 127) | (py << 6 & 0xFC0));
+                        modifier = ((px + 1 & 127) | (py & 127) << 7);
                         curErrorRed[px+1]   += r4 * noiseA[modifier];
                         curErrorGreen[px+1] += g4 * noiseB[modifier];
                         curErrorBlue[px+1]  += b4 * noiseC[modifier];
