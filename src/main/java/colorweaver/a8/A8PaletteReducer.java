@@ -6030,7 +6030,7 @@ public class A8PaletteReducer {
         final float[] noiseA = TRI_BLUE_NOISE_MULTIPLIERS_A;
         final float[] noiseB = TRI_BLUE_NOISE_MULTIPLIERS_B;
         final float[] noiseC = TRI_BLUE_NOISE_MULTIPLIERS_C;
-        final float s = Math.min(0.4f * (ditherStrength * (1f / (populationBias * populationBias * populationBias) - 0.7f)), 1.125f),
+        final float s = 0.15f * populationBias * ditherStrength,
                 strength = s * 0.6f / (0.35f + s);
         float[] curErrorRed, nextErrorRed, curErrorGreen, nextErrorGreen, curErrorBlue, nextErrorBlue;
         if (curErrorRedFloats == null) {
