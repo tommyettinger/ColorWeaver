@@ -350,6 +350,10 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceSeaside(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_Seaside" + suffix + ".png"), pm, PALETTE, false, 0);
+///////// basically the same as Oceanic, but with per-channel blue noise and different strength
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceMaritime(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Maritime" + suffix + ".png"), pm, PALETTE, false, 0);
 //////// nice and griddy, for things that can use that
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reducePatternish(pm);
