@@ -3752,6 +3752,40 @@ public class A8PaletteReducer {
         return pixmap;
     }
 
+    /**
+     * This is "a dither" by Øyvind Kolås, a relative and precursor to {@link #reduceJimenez(Pixmap)}.
+     * <a href="http://pippin.gimp.org/a_dither/">From this page</a>.
+     *
+     * @param pixmap will be modified in-place and returned
+     * @return pixmap, after modifications
+     */
+    public Pixmap reduceADither(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        final float strength = Math.min(0.35f * ditherStrength / (float) Math.pow(populationBias, 6f), 1f);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + ((119 * px + 180 * y + 54 & 255) - 127.5f) * strength)] & 255;
+                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + ((119 * px + 180 * y + 81 & 255) - 127.5f) * strength)] & 255;
+                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + ((119 * px + 180 * y      & 255) - 127.5f) * strength)] & 255;
+
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
     public Pixmap reduceIgneous(Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
