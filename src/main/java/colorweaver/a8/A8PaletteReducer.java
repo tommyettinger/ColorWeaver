@@ -3754,7 +3754,9 @@ public class A8PaletteReducer {
 
     /**
      * This is "a dither" by Øyvind Kolås, a relative and precursor to {@link #reduceJimenez(Pixmap)}.
-     * <a href="http://pippin.gimp.org/a_dither/">From this page</a>.
+     * <a href="http://pippin.gimp.org/a_dither/">From this page</a>. This is a slight adjustment on that page's method
+     * 4, adjusting how it handles the RGB channels differently, and also making its adjustments in linear color space,
+     * but is otherwise similar.
      *
      * @param pixmap will be modified in-place and returned
      * @return pixmap, after modifications
@@ -3765,7 +3767,9 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        final float strength = Math.min(0.35f * ditherStrength / (float) Math.pow(populationBias, 6f), 1f);
+//        final float strength = Math.min(0.35f * ditherStrength / (float) Math.pow(populationBias, 6f), 1f);
+        final float s = 0.45f * ditherStrength / populationBias,
+                strength = s / (0.35f + s);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);

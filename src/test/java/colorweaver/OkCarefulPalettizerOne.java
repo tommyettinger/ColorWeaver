@@ -190,6 +190,6 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
     private void drawPart(Pixmap pm, Pixmap sam, A8PaletteReducer reducer, A8PNG8 a8png8, String subname, String suffix) throws IOException {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceADither(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_A" + suffix + ".png"), pm, PALETTE, false, 0);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_A2" + suffix + ".png"), pm, PALETTE, false, 0);
     }
 }
