@@ -6434,11 +6434,12 @@ public class A8PaletteReducer {
 	 */
 	private static int fastMin(int[] items) {
 		int lowestIdx = 0;
-        float lightLowest = OKLAB[0][shrink(items[lowestIdx])];
+        float[] L = OKLAB[0];
+        float lightLowest = L[shrink(items[lowestIdx])];
 		for (int i = 1; i < 16; i++) {
-			if (OKLAB[0][shrink(items[i])] < lightLowest) {
+			if (L[shrink(items[i])] < lightLowest) {
 				lowestIdx = i;
-                lightLowest = OKLAB[0][shrink(items[i])];
+                lightLowest = L[shrink(items[i])];
 			}
 		}
 		return lowestIdx;
@@ -6449,29 +6450,30 @@ public class A8PaletteReducer {
 	 */
 	private static int fastMax(int[] items) {
 		int highestIdx = 0;
-        float lightHighest = OKLAB[0][shrink(items[highestIdx])];
+        float[] L = OKLAB[0];
+        float lightHighest = L[shrink(items[highestIdx])];
 		for (int i = 1; i < 16; i++) {
-            if (OKLAB[0][shrink(items[i])] > lightHighest) {
+            if (L[shrink(items[i])] > lightHighest) {
 				highestIdx = i;
-                lightHighest = OKLAB[0][shrink(items[i])];
+                lightHighest = L[shrink(items[i])];
 			}
 		}
 		return highestIdx;
 	}
 
 	protected static int quickSelect(int[] items, int n) {
-		return recursiveSelect(items, 0, 15, n + 1);
+		return recursiveSelect(items, 0, 15, n + 1, OKLAB[0]);
 	}
 
-	private static int partition(int[] items, int left, int right, int pivot) {
+	private static int partition(int[] items, int left, int right, int pivot, float[] L) {
 		int pivotValue = items[pivot];
         items[pivot] = items[right];
         items[right] = pivotValue;
 		int storage = left;
-        float pivotLight = OKLAB[0][shrink(pivotValue)];
+        float pivotLight = L[shrink(pivotValue)];
 		for (int i = left; i < right; i++) {
             int item = items[i];
-            if (OKLAB[0][shrink(item)] < pivotLight) {
+            if (L[shrink(item)] < pivotLight) {
 				items[i] = items[storage];
                 items[storage] = item;
 				storage++;
@@ -6483,19 +6485,19 @@ public class A8PaletteReducer {
 		return storage;
 	}
 
-	private static int recursiveSelect(int[] items, int left, int right, int k) {
+	private static int recursiveSelect(int[] items, int left, int right, int k, float[] L) {
 		if (left == right)
 			return left;
-		int pivotIndex = medianOfThreePivot(items, left, right);
-		int pivotNewIndex = partition(items, left, right, pivotIndex);
+		int pivotIndex = medianOfThreePivot(items, left, right, L);
+		int pivotNewIndex = partition(items, left, right, pivotIndex, L);
 		int pivotDist = (pivotNewIndex - left) + 1;
 		int result;
 		if (pivotDist == k) {
 			result = pivotNewIndex;
 		} else if (k < pivotDist) {
-			result = recursiveSelect(items, left, pivotNewIndex - 1, k);
+			result = recursiveSelect(items, left, pivotNewIndex - 1, k, L);
 		} else {
-			result = recursiveSelect(items, pivotNewIndex + 1, right, k - pivotDist);
+			result = recursiveSelect(items, pivotNewIndex + 1, right, k - pivotDist, L);
 		}
 		return result;
 	}
@@ -6503,15 +6505,15 @@ public class A8PaletteReducer {
 	/**
 	 * Median of Three has the potential to outperform a random pivot, especially for partially sorted arrays
 	 */
-	private static int medianOfThreePivot(int[] items, int leftIdx, int rightIdx) {
+	private static int medianOfThreePivot(int[] items, int leftIdx, int rightIdx, float[] L) {
 		int left = items[leftIdx];
 		int midIdx = (leftIdx + rightIdx) >>> 1;
 		int mid = items[midIdx];
 		int right = items[rightIdx];
 
-        float lightL = OKLAB[0][shrink(left)];
-        float lightM = OKLAB[0][shrink(right)];
-        float lightR = OKLAB[0][shrink(mid)];
+        float lightL = L[shrink(left)];
+        float lightM = L[shrink(right)];
+        float lightR = L[shrink(mid)];
 
 		// spaghetti median of three algorithm
 		// does at most 3 comparisons

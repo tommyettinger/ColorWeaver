@@ -193,6 +193,8 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
 //        pm = reducer.reduceKnoll(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Pattern" + suffix + ".png"), pm, PALETTE, false, 0);
         //Took 231568 ms
+        // With OKLAB[0] looked up once:
+        //Took 224837 ms
         pm = reducer.reduceKnollSelect(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_PatternSelect" + suffix + ".png"), pm, PALETTE, false, 0);
     }
