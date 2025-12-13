@@ -6366,6 +6366,44 @@ public class A8PaletteReducer {
     }
 
 
+    public Pixmap reduceKnollSelect (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used, cr, cg, cb, usedIndex;
+        final float errorMul = (ditherStrength * 0.5f / populationBias);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int er = 0, eg = 0, eb = 0;
+                    cr = (color >>> 24);
+                    cg = (color >>> 16 & 0xFF);
+                    cb = (color >>> 8 & 0xFF);
+                    for (int i = 0; i < 16; i++) {
+                        int rr = Math.min(Math.max((int) (cr + er * errorMul), 0), 255);
+                        int gg = Math.min(Math.max((int) (cg + eg * errorMul), 0), 255);
+                        int bb = Math.min(Math.max((int) (cb + eb * errorMul), 0), 255);
+                        usedIndex = paletteMapping[((rr << 7) & 0x7C00)
+                                | ((gg << 2) & 0x3E0)
+                                | ((bb >>> 3))] & 0xFF;
+                        candidates[i] = used = paletteArray[usedIndex];
+                        er += cr - (used >>> 24);
+                        eg += cg - (used >>> 16 & 0xFF);
+                        eb += cb - (used >>> 8 & 0xFF);
+                    }
+                    pixmap.drawPixel(px, y, candidates[selectIndex(candidates, thresholdMatrix16[((px & 3) | (y & 3) << 2)])]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+
     /**
      * See <a href="http://en.wikipedia.org/wiki/Quickselect">Wikipedia's Quickselect article</a> for more.
      * kthLowest is 0-indexed here, size is fixed at 16, and the comparator is also fixed to compare on the Oklab
