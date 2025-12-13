@@ -3756,12 +3756,12 @@ public class A8PaletteReducer {
      * This is "a dither" by Øyvind Kolås, a relative and precursor to {@link #reduceJimenez(Pixmap)}.
      * <a href="http://pippin.gimp.org/a_dither/">From this page</a>. This is a slight adjustment on that page's method
      * 4, adjusting how it handles the RGB channels differently, and also making its adjustments in linear color space,
-     * but is otherwise similar.
+     * but is otherwise similar. This lowers its dither strength considerably when the palette is large.
      *
      * @param pixmap will be modified in-place and returned
      * @return pixmap, after modifications
      */
-    public Pixmap reduceADither(Pixmap pixmap) {
+    public Pixmap reduceAdditive(Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
@@ -6364,6 +6364,146 @@ public class A8PaletteReducer {
         pixmap.setBlending(blending);
         return pixmap;
     }
+
+
+    /**
+     * See <a href="http://en.wikipedia.org/wiki/Quickselect">Wikipedia's Quickselect article</a> for more.
+     * kthLowest is 0-indexed here, size is fixed at 16, and the comparator is also fixed to compare on the Oklab
+     * lightness of the given ints.
+     * <br>
+     * Uses Tony Hoare's QuickSelect algorithm. By Jon Renner for libGDX, adjusted heavily by Tommy Ettinger.
+     * @param items a 16-element int array (can be larger, but only the first 16 items will be used)
+     * @param kthLowest index in the partially-sorted order to retrieve; 0-indexed
+     * @return the index in items of the kthLowest-lightness item
+     */
+	protected static int selectIndex(int[] items, int kthLowest) {
+		int idx;
+		// naive partial selection sort almost certain to outperform quickselect where n is min or max
+		if (kthLowest == 0) {
+			// find min
+			idx = fastMin(items);
+		} else if (kthLowest == 15) {
+			// find max
+			idx = fastMax(items);
+		} else {
+			idx = quickSelect(items, kthLowest);
+		}
+		return idx;
+	}
+
+	/**
+	 * Faster than quickselect for n = min
+	 */
+	private static int fastMin(int[] items) {
+		int lowestIdx = 0;
+        float lightLowest = OKLAB[0][shrink(items[lowestIdx])];
+		for (int i = 1; i < 16; i++) {
+			if (OKLAB[0][shrink(items[i])] < lightLowest) {
+				lowestIdx = i;
+                lightLowest = OKLAB[0][shrink(items[i])];
+			}
+		}
+		return lowestIdx;
+	}
+
+	/**
+	 * Faster than quickselect for n = max
+	 */
+	private static int fastMax(int[] items) {
+		int highestIdx = 0;
+        float lightHighest = OKLAB[0][shrink(items[highestIdx])];
+		for (int i = 1; i < 16; i++) {
+            if (OKLAB[0][shrink(items[i])] > lightHighest) {
+				highestIdx = i;
+                lightHighest = OKLAB[0][shrink(items[i])];
+			}
+		}
+		return highestIdx;
+	}
+
+	protected static int quickSelect(int[] items, int n) {
+		return recursiveSelect(items, 0, 15, n + 1);
+	}
+
+	private static int partition(int[] items, int left, int right, int pivot) {
+		int pivotValue = items[pivot];
+        items[pivot] = items[right];
+        items[right] = pivotValue;
+		int storage = left;
+        float pivotLight = OKLAB[0][shrink(pivotValue)];
+		for (int i = left; i < right; i++) {
+            int item = items[i];
+            if (OKLAB[0][shrink(item)] < pivotLight) {
+				items[i] = items[storage];
+                items[storage] = item;
+				storage++;
+			}
+		}
+        pivotValue = items[right];
+        items[right] = items[storage];
+        items[storage] = pivotValue;
+		return storage;
+	}
+
+	private static int recursiveSelect(int[] items, int left, int right, int k) {
+		if (left == right)
+			return left;
+		int pivotIndex = medianOfThreePivot(items, left, right);
+		int pivotNewIndex = partition(items, left, right, pivotIndex);
+		int pivotDist = (pivotNewIndex - left) + 1;
+		int result;
+		if (pivotDist == k) {
+			result = pivotNewIndex;
+		} else if (k < pivotDist) {
+			result = recursiveSelect(items, left, pivotNewIndex - 1, k);
+		} else {
+			result = recursiveSelect(items, pivotNewIndex + 1, right, k - pivotDist);
+		}
+		return result;
+	}
+
+	/**
+	 * Median of Three has the potential to outperform a random pivot, especially for partially sorted arrays
+	 */
+	private static int medianOfThreePivot(int[] items, int leftIdx, int rightIdx) {
+		int left = items[leftIdx];
+		int midIdx = (leftIdx + rightIdx) >>> 1;
+		int mid = items[midIdx];
+		int right = items[rightIdx];
+
+        float lightL = OKLAB[0][shrink(left)];
+        float lightM = OKLAB[0][shrink(right)];
+        float lightR = OKLAB[0][shrink(mid)];
+
+		// spaghetti median of three algorithm
+		// does at most 3 comparisons
+		if (lightL > lightM) {
+			if (lightM > lightR) {
+				return midIdx;
+			} else if (lightL > lightR) {
+				return rightIdx;
+			} else {
+				return leftIdx;
+			}
+		} else {
+			if (lightL > lightR) {
+				return leftIdx;
+			} else if (lightM > lightR) {
+				return rightIdx;
+			} else {
+				return midIdx;
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
 
     public Pixmap reduceKnollFull (Pixmap pixmap) {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
