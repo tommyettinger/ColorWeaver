@@ -6365,6 +6365,154 @@ public class A8PaletteReducer {
         return pixmap;
     }
 
+    /**
+     * Compares items in ints by their luma, looking up items by the indices a and b, and swaps the two given indices if
+     * the item at a has higher luma than the item at b. This requires items to be present as two ints per item: the
+     * earlier int, at an index less than 16, is what gets sorted, while the later int, at an index 16 higher than the
+     * earlier one, is an RGB555 int.
+     * <br>
+     * This is protected rather than private because it's more likely
+     * that this would be desirable to override than a method that uses it, like {@link #reduceKnoll(Pixmap)}. Uses
+     * {@link #OKLAB} to look up accurate luma for the given RGB555 colors in the later half of {@code ints}.
+     * @param ints an int array than must be able to take a, b, a+16, and b+16 as indices; may be modified in place
+     * @param a an index into ints
+     * @param b an index into ints
+     */
+    protected static void compareSwap(final float[] L, final int[] ints, final int a, final int b) {
+        final int aa = a | 16, bb = b | 16;
+        if(L[ints[aa]] > L[ints[bb]]) {
+            final int t = ints[a], st = ints[aa];
+            ints[a] = ints[b];
+            ints[aa] = ints[bb];
+            ints[b] = t;
+            ints[bb] = st;
+        }
+    }
+
+    /**
+     * Sorting network, found by http://pages.ripco.net/~jgamble/nw.html , considered the best known for length 16.
+     * @param i16 a 16-element array that will be sorted in-place by {@link #compareSwap(int[], int, int)}
+     */
+    static void sort16(final int[] i16, final float[] L)
+    {
+        compareSwap(L, i16, 0, 1);
+        compareSwap(L, i16, 2, 3);
+        compareSwap(L, i16, 4, 5);
+        compareSwap(L, i16, 6, 7);
+        compareSwap(L, i16, 8, 9);
+        compareSwap(L, i16, 10, 11);
+        compareSwap(L, i16, 12, 13);
+        compareSwap(L, i16, 14, 15);
+        compareSwap(L, i16, 0, 2);
+        compareSwap(L, i16, 4, 6);
+        compareSwap(L, i16, 8, 10);
+        compareSwap(L, i16, 12, 14);
+        compareSwap(L, i16, 1, 3);
+        compareSwap(L, i16, 5, 7);
+        compareSwap(L, i16, 9, 11);
+        compareSwap(L, i16, 13, 15);
+        compareSwap(L, i16, 0, 4);
+        compareSwap(L, i16, 8, 12);
+        compareSwap(L, i16, 1, 5);
+        compareSwap(L, i16, 9, 13);
+        compareSwap(L, i16, 2, 6);
+        compareSwap(L, i16, 10, 14);
+        compareSwap(L, i16, 3, 7);
+        compareSwap(L, i16, 11, 15);
+        compareSwap(L, i16, 0, 8);
+        compareSwap(L, i16, 1, 9);
+        compareSwap(L, i16, 2, 10);
+        compareSwap(L, i16, 3, 11);
+        compareSwap(L, i16, 4, 12);
+        compareSwap(L, i16, 5, 13);
+        compareSwap(L, i16, 6, 14);
+        compareSwap(L, i16, 7, 15);
+        compareSwap(L, i16, 5, 10);
+        compareSwap(L, i16, 6, 9);
+        compareSwap(L, i16, 3, 12);
+        compareSwap(L, i16, 13, 14);
+        compareSwap(L, i16, 7, 11);
+        compareSwap(L, i16, 1, 2);
+        compareSwap(L, i16, 4, 8);
+        compareSwap(L, i16, 1, 4);
+        compareSwap(L, i16, 7, 13);
+        compareSwap(L, i16, 2, 8);
+        compareSwap(L, i16, 11, 14);
+        compareSwap(L, i16, 2, 4);
+        compareSwap(L, i16, 5, 6);
+        compareSwap(L, i16, 9, 10);
+        compareSwap(L, i16, 11, 13);
+        compareSwap(L, i16, 3, 8);
+        compareSwap(L, i16, 7, 12);
+        compareSwap(L, i16, 6, 8);
+        compareSwap(L, i16, 10, 12);
+        compareSwap(L, i16, 3, 5);
+        compareSwap(L, i16, 7, 9);
+        compareSwap(L, i16, 3, 4);
+        compareSwap(L, i16, 5, 6);
+        compareSwap(L, i16, 7, 8);
+        compareSwap(L, i16, 9, 10);
+        compareSwap(L, i16, 11, 12);
+        compareSwap(L, i16, 6, 7);
+        compareSwap(L, i16, 8, 9);
+    }
+
+    /**
+     * Reduces a Pixmap to the palette this knows by using Thomas Knoll's pattern dither, which is out-of-patent since
+     * late 2019. The output this produces is very dependent on the palette and this PaletteReducer's dither strength,
+     * which can be set with {@link #setDitherStrength(float)}. At close-up zooms, a strong grid pattern will be visible
+     * on most dithered output (like needlepoint). The algorithm was described in detail by Joel Yliluoma in
+     * <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">this dithering article</a>. Yliluoma used an 8x8
+     * threshold matrix because at the time 4x4 was still covered by the patent, but using 4x4 allows a much faster
+     * sorting step (this uses a sorting network, which works well for small input sizes like 16 items). This is still
+     * very significantly slower than the other dithers here (although {@link #reduceKnollRoberts(Pixmap)} isn't at all
+     * fast, it still takes less than half the time this method does).
+     * <br>
+     * Using pattern dither tends to produce some of the best results for lightness-based gradients, but when viewed
+     * close-up the "needlepoint" pattern can be jarring for images that should look natural.
+     *
+     * @param pixmap a Pixmap that will be modified
+     * @return {@code pixmap}, after modifications
+     */
+    public Pixmap reduceKnollStored (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used, cr, cg, cb, usedIndex;
+        final float errorMul = (ditherStrength * 0.5f / populationBias);
+        final float[] L = OKLAB[0];
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int er = 0, eg = 0, eb = 0;
+                    cr = (color >>> 24);
+                    cg = (color >>> 16 & 0xFF);
+                    cb = (color >>> 8 & 0xFF);
+                    for (int i = 0; i < 16; i++) {
+                        int rr = Math.min(Math.max((int) (cr + er * errorMul), 0), 255);
+                        int gg = Math.min(Math.max((int) (cg + eg * errorMul), 0), 255);
+                        int bb = Math.min(Math.max((int) (cb + eb * errorMul), 0), 255);
+                        usedIndex = paletteMapping[((rr << 7) & 0x7C00)
+                                | ((gg << 2) & 0x3E0)
+                                | ((bb >>> 3))] & 0xFF;
+                        candidates[i | 16] = shrink(candidates[i] = used = paletteArray[usedIndex]);
+                        er += cr - (used >>> 24);
+                        eg += cg - (used >>> 16 & 0xFF);
+                        eb += cb - (used >>> 8 & 0xFF);
+                    }
+                    sort16(candidates, L);
+                    pixmap.drawPixel(px, y, candidates[thresholdMatrix16[((px & 3) | (y & 3) << 2)]]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
 
     public Pixmap reduceKnollSelect (Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);

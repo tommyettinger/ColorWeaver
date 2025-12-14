@@ -190,12 +190,19 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
     private void drawPart(Pixmap pm, Pixmap sam, A8PaletteReducer reducer, A8PNG8 a8png8, String subname, String suffix) throws IOException {
         pm.drawPixmap(sam, 0, 0);
         //Took 199808 ms
+        // With files already present:
+        //Took 182968 ms
 //        pm = reducer.reduceKnoll(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Pattern" + suffix + ".png"), pm, PALETTE, false, 0);
+        //Took 193022 ms
+        // With files already present:
+        //Took 179494 ms
+        pm = reducer.reduceKnollStored(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternStored" + suffix + ".png"), pm, PALETTE, false, 0);
         //Took 231568 ms
         // With OKLAB[0] looked up once:
         //Took 224837 ms
-        pm = reducer.reduceKnollSelect(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternSelect" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm = reducer.reduceKnollSelect(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternSelect" + suffix + ".png"), pm, PALETTE, false, 0);
     }
 }
