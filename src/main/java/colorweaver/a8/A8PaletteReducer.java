@@ -6521,6 +6521,7 @@ public class A8PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
         final float errorMul = (ditherStrength * 0.5f / populationBias);
+        final float[] L = OKLAB[0];
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -6543,7 +6544,7 @@ public class A8PaletteReducer {
                         eg += cg - (used >>> 16 & 0xFF);
                         eb += cb - (used >>> 8 & 0xFF);
                     }
-                    pixmap.drawPixel(px, y, candidates[selectIndex(candidates, thresholdMatrix16[((px & 3) | (y & 3) << 2)])]);
+                    pixmap.drawPixel(px, y, candidates[selectIndex(candidates, thresholdMatrix16[((px & 3) | (y & 3) << 2)], L)]);
                 }
             }
         }
@@ -6562,17 +6563,17 @@ public class A8PaletteReducer {
      * @param kthLowest index in the partially-sorted order to retrieve; 0-indexed
      * @return the index in items of the kthLowest-lightness item
      */
-	protected static int selectIndex(int[] items, int kthLowest) {
+	protected static int selectIndex(int[] items, int kthLowest, final float[] L) {
 		int idx;
 		// naive partial selection sort almost certain to outperform quickselect where n is min or max
 		if (kthLowest == 0) {
 			// find min
-			idx = fastMin(items);
+			idx = fastMin(items, L);
 		} else if (kthLowest == 15) {
 			// find max
-			idx = fastMax(items);
+			idx = fastMax(items, L);
 		} else {
-			idx = quickSelect(items, kthLowest);
+			idx = quickSelect(items, kthLowest, L);
 		}
 		return idx;
 	}
@@ -6580,9 +6581,8 @@ public class A8PaletteReducer {
 	/**
 	 * Faster than quickselect for n = min
 	 */
-	private static int fastMin(int[] items) {
+	private static int fastMin(int[] items, final float[] L) {
 		int lowestIdx = 0;
-        float[] L = OKLAB[0];
         float lightLowest = L[shrink(items[lowestIdx])];
 		for (int i = 1; i < 16; i++) {
 			if (L[shrink(items[i])] < lightLowest) {
@@ -6596,9 +6596,8 @@ public class A8PaletteReducer {
 	/**
 	 * Faster than quickselect for n = max
 	 */
-	private static int fastMax(int[] items) {
+	private static int fastMax(int[] items, final float[] L) {
 		int highestIdx = 0;
-        float[] L = OKLAB[0];
         float lightHighest = L[shrink(items[highestIdx])];
 		for (int i = 1; i < 16; i++) {
             if (L[shrink(items[i])] > lightHighest) {
@@ -6609,8 +6608,8 @@ public class A8PaletteReducer {
 		return highestIdx;
 	}
 
-	protected static int quickSelect(int[] items, int n) {
-		return recursiveSelect(items, 0, 15, n + 1, OKLAB[0]);
+	protected static int quickSelect(int[] items, int n, final float[] L) {
+		return recursiveSelect(items, 0, 15, n + 1, L);
 	}
 
 	private static int partition(int[] items, int left, int right, int pivot, float[] L) {
