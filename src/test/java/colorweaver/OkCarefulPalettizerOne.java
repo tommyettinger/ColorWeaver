@@ -102,17 +102,17 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
                 Gdx.files.local("palettes/hex/dawnbringer-16.hex"),
                 Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
                 Gdx.files.local("palettes/hex/db-aurora-255.hex"),
-                Gdx.files.local("palettes/hex/gb-4.hex"),
-                Gdx.files.local("palettes/hex/prospecal-8.hex"),
-                Gdx.files.local("palettes/hex/septembit23-6.hex"),
-                Gdx.files.local("palettes/hex/gb-16.hex"),
-                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
-                Gdx.files.local("palettes/hex/azurestar-32.hex"),
-                Gdx.files.local("palettes/hex/americana-4.hex"),
-                Gdx.files.local("palettes/hex/ayy-4.hex"),
-                Gdx.files.local("palettes/hex/gray-15.hex"),
-                Gdx.files.local("palettes/hex/vinik-24.hex"),
-                Gdx.files.local("palettes/hex/hyper-8.hex"),
+//                Gdx.files.local("palettes/hex/gb-4.hex"),
+//                Gdx.files.local("palettes/hex/prospecal-8.hex"),
+//                Gdx.files.local("palettes/hex/septembit23-6.hex"),
+//                Gdx.files.local("palettes/hex/gb-16.hex"),
+//                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
+//                Gdx.files.local("palettes/hex/azurestar-32.hex"),
+//                Gdx.files.local("palettes/hex/americana-4.hex"),
+//                Gdx.files.local("palettes/hex/ayy-4.hex"),
+//                Gdx.files.local("palettes/hex/gray-15.hex"),
+//                Gdx.files.local("palettes/hex/vinik-24.hex"),
+//                Gdx.files.local("palettes/hex/hyper-8.hex"),
 //                Gdx.files.local("palettes/hex/snuggly-15.hex"),
 //                Gdx.files.local("palettes/hex/snuggly-31.hex"),
 //                Gdx.files.local("palettes/hex/snuggly-63.hex"),
@@ -126,7 +126,7 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
 //                Gdx.files.local("palettes/hex/headpat-63.hex"),
 //                Gdx.files.local("palettes/hex/headpat-255.hex"),
 //                Gdx.files.local("palettes/hex/oklloyd-63.hex"),
-                Gdx.files.local("palettes/hex/oklloyd-255.hex"),
+//                Gdx.files.local("palettes/hex/oklloyd-255.hex"),
 //                Gdx.files.local("palettes/hex/hug-15.hex"),
 //                Gdx.files.local("palettes/hex/hug-31.hex"),
 //                Gdx.files.local("palettes/hex/hug-63.hex"),
@@ -197,12 +197,34 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
         //Took 193022 ms
         // With files already present:
         //Took 179494 ms
-        pm = reducer.reduceKnollStored(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternStored" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm = reducer.reduceKnollStored(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternStored" + suffix + ".png"), pm, PALETTE, false, 0);
         //Took 231568 ms
         // With OKLAB[0] looked up once:
         //Took 224837 ms
 //        pm = reducer.reduceKnollSelect(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternSelect" + suffix + ".png"), pm, PALETTE, false, 0);
+        //
+//        pm = reducer.reduceKnollHastySelect(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternHastySelect" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        // Testing with just BW and DB palettes
+
+        //Took 51297 ms
+//        pm = reducer.reduceKnoll(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Pattern" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        //Took 50347 ms
+//        pm = reducer.reduceKnollStored(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternStored" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        //Took 62580 ms
+//        pm = reducer.reduceKnollSelect(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternSelect" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        //Took 60758 ms
+        pm = reducer.reduceKnollHastySelect(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternHastySelect" + suffix + ".png"), pm, PALETTE, false, 0);
+
     }
 }
