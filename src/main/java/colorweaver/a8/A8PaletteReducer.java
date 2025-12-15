@@ -6686,6 +6686,182 @@ public class A8PaletteReducer {
 
 
 
+    public Pixmap reduceKnollHastySelect(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, used, cr, cg, cb, usedIndex;
+        final float errorMul = (ditherStrength * 0.5f / populationBias);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int er = 0, eg = 0, eb = 0;
+                    cr = (color >>> 24);
+                    cg = (color >>> 16 & 0xFF);
+                    cb = (color >>> 8 & 0xFF);
+                    for (int i = 0; i < 16; i++) {
+                        int rr = Math.min(Math.max((int) (cr + er * errorMul), 0), 255);
+                        int gg = Math.min(Math.max((int) (cg + eg * errorMul), 0), 255);
+                        int bb = Math.min(Math.max((int) (cb + eb * errorMul), 0), 255);
+                        usedIndex = paletteMapping[((rr << 7) & 0x7C00)
+                                | ((gg << 2) & 0x3E0)
+                                | ((bb >>> 3))] & 0xFF;
+                        candidates[i] = used = paletteArray[usedIndex];
+                        er += cr - (used >>> 24);
+                        eg += cg - (used >>> 16 & 0xFF);
+                        eb += cb - (used >>> 8 & 0xFF);
+                    }
+                    pixmap.drawPixel(px, y, candidates[hastySelectIndex(candidates, thresholdMatrix16[((px & 3) | (y & 3) << 2)])]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    /**
+     * Very simple lightness approximation; values red-green-blue as 3-4-1 multipliers.
+     * @param rgba an RGBA8888 int
+     * @return an approximation of the lightness of the given rgba color, multiplied by 256
+     */
+    public static int hastyLight(int rgba) {
+        return (rgba >>> 24) * 768 + (rgba >>> 14 & 0x3FC00) + (rgba & 0xFF00);
+    }
+
+    /**
+     * See <a href="http://en.wikipedia.org/wiki/Quickselect">Wikipedia's Quickselect article</a> for more.
+     * kthLowest is 0-indexed here, size is fixed at 16, and the comparator is also fixed to compare on the Oklab
+     * lightness of the given ints.
+     * <br>
+     * Uses Tony Hoare's QuickSelect algorithm. By Jon Renner for libGDX, adjusted heavily by Tommy Ettinger.
+     * @param items a 16-element int array (can be larger, but only the first 16 items will be used)
+     * @param kthLowest index in the partially-sorted order to retrieve; 0-indexed
+     * @return the index in items of the kthLowest-lightness item
+     */
+    protected static int hastySelectIndex(int[] items, int kthLowest) {
+        int idx;
+        // naive partial selection sort almost certain to outperform quickselect where n is min or max
+        if (kthLowest == 0) {
+            // find min
+            idx = hastyMin(items);
+        } else if (kthLowest == 15) {
+            // find max
+            idx = hastyMax(items);
+        } else {
+            idx = hastySelect(items, kthLowest);
+        }
+        return idx;
+    }
+
+    /**
+     * Faster than quickselect for n = min
+     */
+    private static int hastyMin(int[] items) {
+        int lowestIdx = 0;
+        float lightLowest = hastyLight(items[lowestIdx]);
+        for (int i = 1; i < 16; i++) {
+            if (hastyLight(items[i]) < lightLowest) {
+                lowestIdx = i;
+                lightLowest = hastyLight(items[i]);
+            }
+        }
+        return lowestIdx;
+    }
+
+    /**
+     * Faster than quickselect for n = max
+     */
+    private static int hastyMax(int[] items) {
+        int highestIdx = 0;
+        float lightHighest = hastyLight(items[highestIdx]);
+        for (int i = 1; i < 16; i++) {
+            if (hastyLight(items[i]) > lightHighest) {
+                highestIdx = i;
+                lightHighest = hastyLight(items[i]);
+            }
+        }
+        return highestIdx;
+    }
+
+    protected static int hastySelect(int[] items, int n) {
+        return recursiveSelect(items, 0, 15, n + 1);
+    }
+
+    private static int partition(int[] items, int left, int right, int pivot) {
+        int pivotValue = items[pivot];
+        items[pivot] = items[right];
+        items[right] = pivotValue;
+        int storage = left;
+        float pivotLight = hastyLight(pivotValue);
+        for (int i = left; i < right; i++) {
+            int item = items[i];
+            if (hastyLight(item) < pivotLight) {
+                items[i] = items[storage];
+                items[storage] = item;
+                storage++;
+            }
+        }
+        pivotValue = items[right];
+        items[right] = items[storage];
+        items[storage] = pivotValue;
+        return storage;
+    }
+
+    private static int recursiveSelect(int[] items, int left, int right, int k) {
+        if (left == right)
+            return left;
+        int pivotIndex = medianOfThreePivot(items, left, right);
+        int pivotNewIndex = partition(items, left, right, pivotIndex);
+        int pivotDist = (pivotNewIndex - left) + 1;
+        int result;
+        if (pivotDist == k) {
+            result = pivotNewIndex;
+        } else if (k < pivotDist) {
+            result = recursiveSelect(items, left, pivotNewIndex - 1, k);
+        } else {
+            result = recursiveSelect(items, pivotNewIndex + 1, right, k - pivotDist);
+        }
+        return result;
+    }
+
+    /**
+     * Median of Three has the potential to outperform a random pivot, especially for partially sorted arrays
+     */
+    private static int medianOfThreePivot(int[] items, int leftIdx, int rightIdx) {
+        int left = items[leftIdx];
+        int midIdx = (leftIdx + rightIdx) >>> 1;
+        int mid = items[midIdx];
+        int right = items[rightIdx];
+
+        float lightL = hastyLight(left);
+        float lightM = hastyLight(right);
+        float lightR = hastyLight(mid);
+
+        // spaghetti median of three algorithm
+        // does at most 3 comparisons
+        if (lightL > lightM) {
+            if (lightM > lightR) {
+                return midIdx;
+            } else if (lightL > lightR) {
+                return rightIdx;
+            } else {
+                return leftIdx;
+            }
+        } else {
+            if (lightL > lightR) {
+                return leftIdx;
+            } else if (lightM > lightR) {
+                return rightIdx;
+            } else {
+                return midIdx;
+            }
+        }
+    }
+
 
 
 
