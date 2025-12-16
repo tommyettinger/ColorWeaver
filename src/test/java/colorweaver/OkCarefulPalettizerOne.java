@@ -229,9 +229,10 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
         //Took 25726 ms
         // Looks awful without sorting!
 
-        //Took 12787 ms
         // One pass, but uses the grid as a lightness modifier in linear space. This might have been done already?
-        // Don't use thresholdMatrix64, it looks terrible compared to thresholdMatrix16.
+        //Took 12787 ms
+        // Using blue noise and the 64x64 grid:
+        //Took 12857 ms
         pm = reducer.reduceKnollInfusion(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_PatternInfusion" + suffix + ".png"), pm, PALETTE, false, 0);
 
