@@ -6869,31 +6869,26 @@ public class A8PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color, used = 0, cr, cg, cb, usedIndex;
-        final float errorMul = (ditherStrength * 0.5f / populationBias);
+        int color, used, cr, cg, cb, usedIndex;
+        final float errorMul = (ditherStrength * 8f / populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    int er = 0, eg = 0, eb = 0;
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
                     final int limit = thresholdMatrix16[((px & 3) | (y & 3) << 2)];
-                    for (int i = 0; i <= limit; i++) {
-                        int rr = Math.min(Math.max((int) (cr + er * errorMul), 0), 255);
-                        int gg = Math.min(Math.max((int) (cg + eg * errorMul), 0), 255);
-                        int bb = Math.min(Math.max((int) (cb + eb * errorMul), 0), 255);
-                        usedIndex = paletteMapping[((rr << 7) & 0x7C00)
-                                | ((gg << 2) & 0x3E0)
-                                | ((bb >>> 3))] & 0xFF;
-                        used = paletteArray[usedIndex];
-                        er += cr - (used >>> 24);
-                        eg += cg - (used >>> 16 & 0xFF);
-                        eb += cb - (used >>> 8 & 0xFF);
-                    }
+                    float e = (limit - 7.5f) * errorMul;
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + e, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + e, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + e, 0), 1023)] & 255;
+                    usedIndex = paletteMapping[((rr << 7) & 0x7C00)
+                            | ((gg << 2) & 0x3E0)
+                            | ((bb >>> 3))] & 0xFF;
+                    used = paletteArray[usedIndex];
                     pixmap.drawPixel(px, y, used);
                 }
             }
