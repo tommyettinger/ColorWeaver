@@ -231,6 +231,7 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
 
         //Took 12787 ms
         // One pass, but uses the grid as a lightness modifier in linear space. This might have been done already?
+        // Don't use thresholdMatrix64, it looks terrible compared to thresholdMatrix16.
         pm = reducer.reduceKnollInfusion(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_PatternInfusion" + suffix + ".png"), pm, PALETTE, false, 0);
 

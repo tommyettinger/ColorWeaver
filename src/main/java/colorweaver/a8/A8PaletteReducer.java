@@ -6870,7 +6870,7 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, used, cr, cg, cb, usedIndex;
-        final float errorMul = (ditherStrength * 8f / populationBias);
+        final float errorMul = (ditherStrength * 2f / populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -6880,8 +6880,8 @@ public class A8PaletteReducer {
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
-                    final int limit = thresholdMatrix16[((px & 3) | (y & 3) << 2)];
-                    float e = (limit - 7.5f) * errorMul;
+                    final int limit = thresholdMatrix64[((px & 3) | (y & 3) << 2)];
+                    float e = (limit - 31.5f) * errorMul;
                     int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + e, 0), 1023)] & 255;
                     int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + e, 0), 1023)] & 255;
                     int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + e, 0), 1023)] & 255;
