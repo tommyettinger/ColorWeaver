@@ -215,8 +215,13 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_Pattern" + suffix + ".png"), pm, PALETTE, false, 0);
 
         //Took 50347 ms
+        //Took 51771 ms
 //        pm = reducer.reduceKnollStored(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternStored" + suffix + ".png"), pm, PALETTE, false, 0);
+
+        //Took 49554 ms
+        pm = reducer.reduceKnollStoredLight(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternStoredLight" + suffix + ".png"), pm, PALETTE, false, 0);
 
         //Took 62580 ms
 //        pm = reducer.reduceKnollSelect(pm);
@@ -233,8 +238,8 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
         //Took 12787 ms
         // Using blue noise and the 64x64 grid:
         //Took 12857 ms
-        pm = reducer.reduceKnollInfusion(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_PatternInfusion" + suffix + ".png"), pm, PALETTE, false, 0);
+//        pm = reducer.reduceInfusion(pm);
+//        a8png8.writePrecisely(Gdx.files.local(subname + "_Infusion" + suffix + ".png"), pm, PALETTE, false, 0);
 
     }
 }
