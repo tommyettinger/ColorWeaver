@@ -6230,16 +6230,42 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        final float strength = 0.0625f * ditherStrength;
+        final float strength = 0.1f * ditherStrength;
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int rr = Math.min(Math.max(((color >>> 24 + 3)       ) + (int)((BlueNoise.getSeededTriangular(px, y, 123) + 0.5f) * strength), 0), 31);
+                    int gg = Math.min(Math.max(((color >>> 16 + 3) & 0x1F) + (int)((BlueNoise.getSeededTriangular(px, y, 456) + 0.5f) * strength), 0), 31);
+                    int bb = Math.min(Math.max(((color >>> 8  + 3) & 0x1F) + (int)((BlueNoise.getSeededTriangular(px, y, 789) + 0.5f) * strength), 0), 31);
+
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[(rr << 10) | (gg << 5) | (bb)] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reduceReallyLinear (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        final float s = 0.25f * ditherStrength / (float) Math.pow(populationBias, 8f),
+                strength = s / (0.35f + s);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {                                                       
-                    int rr = Math.min(Math.max(((color >>> 24 + 3)       ) + (int)((BlueNoise.getSeededTriangular(px, y, 123) + 0.5f) * strength), 0), 31);
-                    int gg = Math.min(Math.max(((color >>> 16 + 3) & 0x1F) + (int)((BlueNoise.getSeededTriangular(px, y, 456) + 0.5f) * strength), 0), 31);
-                    int bb = Math.min(Math.max(((color >>> 8  + 3) & 0x1F) + (int)((BlueNoise.getSeededTriangular(px, y, 789) + 0.5f) * strength), 0), 31);
+                    int rr = ((fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px, y, 123) + 0.5f) * strength), -127), 127))] & 255) + 4) * 31 >>> 8;
+                    int gg = ((fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px, y, 456) + 0.5f) * strength), -127), 127))] & 255) + 4) * 31 >>> 8;
+                    int bb = ((fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px, y, 789) + 0.5f) * strength), -127), 127))] & 255) + 4) * 31 >>> 8;
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[(rr << 10) | (gg << 5) | (bb)] & 0xFF]);
                 }
