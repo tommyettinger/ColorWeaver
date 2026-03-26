@@ -336,8 +336,8 @@ public class HexGenerator extends ApplicationAdapter {
 //    }
 
 
-    public static int[] PALETTE = Coloring.YAM3;
-    public static String NAME = "yam3-255";
+    public static int[] PALETTE = Coloring.YAM4;
+    public static String NAME = "yam4-255";
     public static String SPACE = "OklabCareful";
     public static PaletteReducer.ColorMetric METRIC = PaletteReducer.oklabCarefulMetric;
 //    public static String SPACE = "OkSmooth";
