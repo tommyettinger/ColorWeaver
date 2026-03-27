@@ -13,25 +13,21 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.utils.UIUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.badlogic.gdx.utils.NumberUtils;
-import com.github.tommyettinger.digital.BitConversion;
-import com.github.tommyettinger.digital.Hasher;
-import com.github.tommyettinger.digital.MathTools;
-import com.github.tommyettinger.digital.TrigTools;
-import com.github.tommyettinger.ds.IntList;
-import com.github.tommyettinger.ds.IntSet;
-import com.github.tommyettinger.ds.support.sort.IntComparator;
+import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.IntSet;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
+import static colorweaver.PaletteReducer.oklabCarefulMetric;
 
 /**
  * Created by Tommy Ettinger on 1/30/2020.
  */
 public class ColorizerPreview extends ApplicationAdapter {
-	public static final boolean PRINT_EXTRA = false;
 	public static final int[][] CUBE = {
 		{4,4,4,4,4,4,4,0,0,4,4,4,4,4,4,4,},
 		{4,4,4,4,4,0,0,3,3,0,0,4,4,4,4,4,},
@@ -70,25 +66,18 @@ public class ColorizerPreview extends ApplicationAdapter {
 	};
 	public static int[][] SHAPE = BALL;
 	private Pixmap cubePix;
-	private Texture pixel;
 	private Texture[] cubeTextures;
 	private Colorizer colorizer;
-	private IntList mixingPalette;
+	private ArrayList<Integer> mixingPalette;
 	private int[] palette;
 	private MutantBatch batch;
-	private long state = 0L;
-	private int index = 1;
-	private Pixmap monaOriginal;
-	private Pixmap monaWIP;
-	private Texture mona;
-	private PaletteReducer reducer;
-
-
+	private long state = 1234567898765431L;
 	private float nextCurvedFloat ()
 	{
-		final long bits = Hasher.randomize1(++state);
-		// this is just like nextExclusiveFloat(), but uses a smaller exponent to avoid multiplying by 0.5 .
-		return 0.25f * TrigTools.tanSmootherTurns(BitConversion.intBitsToFloat(125 - Long.numberOfLeadingZeros(bits) << 23 | (int)bits & 0x7FFFFF) - 0.25f);
+		return (((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 42)
+		+ ((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 42)
+		+ ((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 42)
+		+ ((state = (state << 29 | state >>> 35) * 0xAC564B05L) * 0x818102004182A025L >> 42)) * 0x1p-24f;
 	}
 
 
@@ -115,8 +104,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			else               return (1f + (2f / 3f) + gDelta - rDelta) - (int)(1f + (2f / 3f) + gDelta - rDelta);
 		}
 	}
-	public static final IntComparator hueComparator = (o1, o2) -> Float.compare(hue(o1), hue(o2));
-
+	
 	private static double roughBrightness(int color)
 	{
 		return PaletteReducer.OKLAB[0][PaletteReducer.shrink(color)];
@@ -125,38 +113,24 @@ public class ColorizerPreview extends ApplicationAdapter {
 //			(color >>> 14 & 0x3FC) +
 //			(color >>>  8 & 0xFF));
 	}
-	/**
-	 * Gets the {@code index}-th element from the base-{@code base} van der Corput sequence. The base should usually be
-	 * a prime number. The index must be greater than 0 and should be less than 16777216. The number this returns is a
-	 * float between 0 (inclusive) and 1 (exclusive).
-	 *
-	 * @param base  a prime number to use as the base/radix of the van der Corput sequence
-	 * @param index the position in the sequence of the requested base, as a positive int
-	 * @return a quasi-random float between 0.0 (inclusive) and 1.0 (exclusive).
-	 */
-	public static float vdc(final int base, final int index) {
-		if (base <= 2) {
-			return (Integer.reverse(index) >>> 8) * 0x1p-24f;
-		}
-		float denominator = base, res = 0.0f;
-		int n = (index & 0x00ffffff);
-		while (n > 0) {
-			res += (n % base) / denominator;
-			n /= base;
-			denominator *= base;
-		}
-		return res;
-	}
 
-	private static final IntComparator lightnessComparator = (o1, o2) -> {
-		if(o1 == 0) return -1;
-		if(o2 == 0) return 1;
+	public static final Comparator<Integer> hueComparator = new Comparator<Integer>() {
+		public int compare (Integer o1, Integer o2) {
+			return Float.compare(hue(o1), hue(o2));
+		}
+	};
+
+	private static final Comparator<Integer> lightnessComparator = new Comparator<Integer>() {
+		public int compare (Integer o1, Integer o2) {
+			if(o1 == 0) return -1;
+			if(o2 == 0) return 1;
 //			return (int)Math.signum(CIELABConverter.differenceLAB(o1, o2) - 50);
-		return Double.compare(roughBrightness(o1), roughBrightness(o2));
+			return Double.compare(roughBrightness(o1), roughBrightness(o2));
+		}
 	};
 
 	public int[] lloyd(int[] palette) {
-		PaletteReducer pr = new PaletteReducer(palette, HexGenerator.METRIC);
+		PaletteReducer pr = new PaletteReducer(palette, oklabCarefulMetric);
 		double[][] centroids = new double[4][palette.length];
 		byte[] pm = pr.paletteMapping;
 		int index, mix;
@@ -169,33 +143,24 @@ public class ColorizerPreview extends ApplicationAdapter {
 			centroids[3][index]++;
 		}
 		mixingPalette.clear();
-//		for (int i = 0; i < 16; i++) {
-//			mixingPalette.add(palette[i]);
-//		}
-		for (int i = 0; i < palette.length; i++) {
+		for (int i = 0; i < 16; i++) {
+			mixingPalette.add(palette[i]);
+		}
+		for (int i = 16; i < palette.length; i++) {
 			if (palette[i] == 0)
 			{
-				mixingPalette.insert(0, 0);
+				mixingPalette.add(0, 0);
 				continue;
 			}
 			count = centroids[3][i];
-			if(count == 0) {
-				System.out.printf("Omitting color with no volume: %08X\n", palette[i]);
-				continue;
-			}
-			if(MathTools.isEqual(palette[i] >>> 24, palette[i] >>> 16 & 255, 9) &&
-					MathTools.isEqual(palette[i] >>> 16 & 255, palette[i] >>> 8 & 255, 9)) {
-				mixingPalette.add(palette[i]);
-//				System.out.printf("Not changing grayscale color %08X\n", palette[i]);
-			}
-			else {
-				mix = MathUtils.clamp((int) (centroids[0][i] / count + 0.5f), 0, 31) << 10
-						| MathUtils.clamp((int) (centroids[1][i] / count + 0.5f), 0, 31) << 5
-						| MathUtils.clamp((int) (centroids[2][i] / count + 0.5f), 0, 31);
-				mixingPalette.add(PaletteReducer.stretch(mix));//CIELABConverter.puff(mix)
-			}
+			if(count == 0) System.out.printf("Omitting color with no volume: %08X\n", palette[i]);
+//			if(count == 0) continue;
+			mix =     MathUtils.clamp((int)(centroids[0][i] / count + 0.5f), 0, 31) << 10
+					| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5
+					| MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
+			mixingPalette.add(PaletteReducer.stretch(mix));//CIELABConverter.puff(mix)
 		}
-		mixPalette(0, false);
+		mixPalette(false, false);
 		/*
 		Collections.sort(mixingPalette, hueComparator);
 		palette = new int[mixingPalette.size()];
@@ -207,10 +172,10 @@ public class ColorizerPreview extends ApplicationAdapter {
 	}
 
 	public int[] lloydCentral(int[] palette) {
-		PaletteReducer pr = new PaletteReducer(palette, HexGenerator.METRIC);
+		PaletteReducer pr = new PaletteReducer(palette, oklabCarefulMetric);
 		double[][] centroids = new double[4][palette.length];
 		byte[] pm = pr.paletteMapping;
-		int index;
+		int index, mix;
 		double count;
 		double[][] oklabPalette = new double[palette.length][3];
 		for (int i = 1; i < palette.length; i++) {
@@ -230,47 +195,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 		state = Arrays.hashCode(palette);
 		mixingPalette.clear();
-		mixingPalette.addAll(palette, 0, 1);
-		for (int i = 1; i < palette.length; i++) {
-			count = centroids[3][i];
-
-
-			if(count == 0 || oklabPalette[i][1] * oklabPalette[i][1] + oklabPalette[i][2] * oklabPalette[i][2] < 0x1p-13)
-				mixingPalette.add(palette[i]);
-			else
-				mixingPalette.add(PaletteReducer.oklabToRGB(centroids[0][i] / count,
-					centroids[1][i] / count,
-					centroids[2][i] / count));
-		}
-		mixPalette(0, false);
-		return this.palette;
-	}
-
-	public int[] lloydCentralOklab(int[] palette) {
-		PaletteReducer pr = new PaletteReducer(palette, HexGenerator.METRIC);
-		double[][] centroids = new double[4][palette.length];
-		byte[] pm = pr.paletteMapping;
-		int index;
-		double count;
-		double[][] oklabPalette = new double[palette.length][3];
-		for (int i = 1; i < palette.length; i++) {
-			PaletteReducer.fillOklab(oklabPalette[i], (palette[i] >>> 24)/255.0, (palette[i] >>> 16 & 255)/255.0, (palette[i] >>> 8 & 255)/255.0);
-		}
-		double[] ok = new double[3];
-		for (int i = 0; i < 0x8000; i++) {
-			index = pm[i] & 0xFF;
-			PaletteReducer.fillOklab(ok,
-					(i >>> 10) / 31.0,
-					(i >>> 5 & 0x1F) / 31.0,
-					(i & 0x1F) / 31.0);
-			centroids[0][index] += ok[0];
-			centroids[1][index] += ok[1];
-			centroids[2][index] += ok[2];
-			centroids[3][index]++;
-		}
-		state = Arrays.hashCode(palette);
-		mixingPalette.clear();
-		mixingPalette.addAll(palette, 0, 1);
+		mixingPalette.add(palette[0]);
 		for (int i = 1; i < palette.length; i++) {
 //			if (palette[i] == 0)
 //			{
@@ -284,8 +209,8 @@ public class ColorizerPreview extends ApplicationAdapter {
 //					| MathUtils.clamp((int)(centroids[1][i] / count + 0.5f), 0, 31) << 5
 //					| MathUtils.clamp((int)(centroids[2][i] / count + 0.5f), 0, 31);
 //			mixingPalette.add(CIELABConverter.puff(mix));
-//			double l = PaletteReducer.lab15[0][mix],
-//					a = PaletteReducer.lab15[1][mix] * 0.8,
+//			double l = PaletteReducer.lab15[0][mix], 
+//					a = PaletteReducer.lab15[1][mix] * 0.8, 
 //					b = PaletteReducer.lab15[2][mix] * 0.8;
 
 
@@ -299,7 +224,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 					centroids[1][i] / count,
 					centroids[2][i] / count));
 		}
-		mixPalette(0, false);
+		mixPalette(false, false);
 		/*
 		Collections.sort(mixingPalette, hueComparator);
 		palette = new int[mixingPalette.size()];
@@ -309,63 +234,6 @@ public class ColorizerPreview extends ApplicationAdapter {
 		 */
 		return this.palette;
 	}
-
-
-	public int[] lloydCompletely(int[] basePalette) {
-		PaletteReducer pr = new PaletteReducer();
-		double[] centroids = new double[basePalette.length << 2];
-		if(this.palette.length != basePalette.length)
-			this.palette = new int[basePalette.length];
-		for (int it = 1; it <= 1024; it++) {
-			pr.exact(basePalette, HexGenerator.METRIC);
-			byte[] pm = pr.paletteMapping;
-			int index;
-			double count;
-			for (int i = 0; i < 0x8000; i++) {
-				index = (pm[i] & 0xFF) << 2;
-				double r = (i >>> 10) / 31.0;
-				double g = (i >>> 5 & 0x1F) / 31.0;
-				double b = (i & 0x1F) / 31.0;
-
-				r *= r;
-				g *= g;
-				b *= b;
-
-				double l = Math.cbrt(0.4121656120 * r + 0.5362752080 * g + 0.0514575653 * b);
-				double m = Math.cbrt(0.2118591070 * r + 0.6807189584 * g + 0.1074065790 * b);
-				double s = Math.cbrt(0.0883097947 * r + 0.2818474174 * g + 0.6302613616 * b);
-
-				centroids[0+index] += PaletteReducer.forwardLight(0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s);
-				centroids[1+index] += 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s;
-				centroids[2+index] += 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
-				centroids[3+index]++;
-			}
-			mixingPalette.clear();
-			mixingPalette.addAll(palette, 0, 1);
-			for (int i = 1; i < palette.length; i++) {
-				count = centroids[i<<2|3];
-
-
-				if(count == 0 || MathTools.isEqual(palette[i] >>> 24, palette[i] >>> 16 & 255, 3) &&
-						MathTools.isEqual(palette[i] >>> 16 & 255, palette[i] >>> 8 & 255, 3))
-					mixingPalette.add(palette[i]);
-				else
-					mixingPalette.add(PaletteReducer.oklabToRGB(centroids[i<<2] / count,
-							centroids[i<<2|1] / count,
-							centroids[i<<2|2] / count));
-			}
-			mixPalette(0, false);
-			if(Arrays.equals(this.palette, basePalette))
-			{
-				System.out.println("Palette completely Lloyd-ed in " + it + " iterations");
-				return this.palette;
-			}
-			System.arraycopy(this.palette, 0, basePalette, 0, basePalette.length);
-		}
-		System.out.println("Palette not completely Lloyd-ed...");
-		return this.palette;
-	}
-
 
 	private int[] emphasize (int[] palette) {
 		int rd = 1, gd = 1, bd = 1;
@@ -394,7 +262,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 		for (int i = 0; i < palette.length; i++) {
 			if (palette[i] == 0)
 			{
-				mixingPalette.insert(0, 0);
+				mixingPalette.add(0, 0);
 				continue;
 			}
 			float c = FloatColorTools.floatGet(palette[i]);
@@ -403,7 +271,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			//System.out.printf("0x%08X -> 0x%08X\n", palette[i], ic);
 			mixingPalette.add(ic);
 		}
-		mixPalette(0);
+		mixPalette(true);
 //		Collections.sort(mixingPalette, hueComparator);
 //		for (int i = 0; i < palette.length; i++) {
 //			palette[i] = mixingPalette.get(i);
@@ -415,14 +283,15 @@ public class ColorizerPreview extends ApplicationAdapter {
 		mixingPalette.clear();
 		int count = palette.length - 1;
 		for (int i = 0; i < palette.length; i++) {
-			if (palette[i] == 0) {
-				mixingPalette.insert(0, 0);
+			if (palette[i] == 0)
+			{
+				mixingPalette.add(0, 0);
 				count--;
-			} else {
-				mixingPalette.add(palette[i]);
+				continue;
 			}
+			mixingPalette.add(palette[i]);
 		}
-		mixingPalette.sort(lightnessComparator);
+		Collections.sort(mixingPalette, lightnessComparator);
 		float lightness = 0f, inc = 1f / count;
 		int rgba;
 		Color color = new Color();
@@ -438,7 +307,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 			lightness += inc;
 			mixingPalette.set(i, Color.rgba8888(color));
 		}
-		mixingPalette.sort(hueComparator);
+		Collections.sort(mixingPalette, hueComparator);
 		for (int i = 0; i < palette.length; i++) {
 			palette[i] = mixingPalette.get(i);
 		}
@@ -461,243 +330,145 @@ public class ColorizerPreview extends ApplicationAdapter {
 		}
 	}
 	
-	public void mixPalette (int doRemove){
+	public void mixPalette (boolean doRemove){
 		mixPalette(doRemove, true);
 	}
-	public void mixPalette (int doRemove, boolean doSort){
+	public void mixPalette (boolean doRemove, boolean doSort){
+//		ArrayList<double[]> labs = new ArrayList<>(mixingPalette.size());
 		IntSet removalSet = new IntSet(16);
+//		for (int i = 0; i < mixingPalette.size(); i++) {
+//			double[] d = new double[4];
+//			System.arraycopy(PaletteReducer.OKLAB[PaletteReducer.shrink(mixingPalette.get(i))], 0, d, 0, 3);
+//			d[3] = mixingPalette.get(i) & 255;
+//			labs.add(d);
+//		}
 		int size = mixingPalette.size();
-		double closest = Double.MAX_VALUE;
 		for (int i = 0; i < size; i++) {
 			for (int j = i + 1; j < size; j++) {
-				double diff = HexGenerator.METRIC.difference(mixingPalette.get(i), mixingPalette.get(j));
-				if(((mixingPalette.get(i) & 255) > 0 && (mixingPalette.get(j) & 255) > 0) && diff <= 100) {
-					if (doRemove < 0) {
-						removalSet.add(mixingPalette.get(i));
-						removalSet.add(mixingPalette.get(j));
+				if(((mixingPalette.get(i) & 255) > 0 && (mixingPalette.get(j) & 255) > 0) && PaletteReducer.oklabCarefulMetric.difference(mixingPalette.get(i), mixingPalette.get(j)) <= 100) {
+					if (doRemove) {
+						removalSet.add(i);
+						removalSet.add(j);
 						System.out.printf("Combined 0x%08X and 0x%08X\n", mixingPalette.get(i), mixingPalette.get(j));
 						mixingPalette.add(Coloring.mixEvenly(mixingPalette.get(i), mixingPalette.get(j)));
 					}
 					else {
-						System.out.printf("0x%08X and 0x%08X are very close in size %d!\n", mixingPalette.get(i), mixingPalette.get(j), size);
-					}
-				}
-				if(doRemove > 0) {
-					if(closest > (closest = Math.min(closest, diff))) {
-						removalSet.clear();
-						removalSet.add(mixingPalette.get(i));
-						removalSet.add(mixingPalette.get(j));
+						System.out.printf("0x%08X and 0x%08X are very close!\n", mixingPalette.get(i), mixingPalette.get(j));
 					}
 				}
 			}
 		}
-		if(doRemove > 0 && removalSet.size() >= 2) {
-			IntSet.IntSetIterator it = removalSet.iterator();
-			mixingPalette.add(Coloring.mixEvenly(it.nextInt(), it.nextInt()));
-		}
-		if(doRemove != 0) {
-			mixingPalette.removeAll(removalSet);
+		if(doRemove) {
+			IntArray removalIndices = removalSet.iterator().toArray();
+			removalIndices.sort();
+			for (int i = removalIndices.size - 1; i >= 0; i--) {
+				mixingPalette.remove(removalIndices.get(i));
+			}
 		}
 
 		if(doSort) {
 			mixingPalette.sort(hueComparator);
 		}
-		palette = mixingPalette.toArray();
+		palette = new int[mixingPalette.size()];
+		for (int i = 0; i < palette.length; i++) {
+			palette[i] = mixingPalette.get(i);
+		}
 		mixingPalette.clear();
 		StringBuilder sb = new StringBuilder(palette.length * 12);
 		StringKit.appendHex(sb.append("0x"), palette[0]);
 		for (int i = 1; i < palette.length; i++) {
-			if((i & 7) == 0)
+			if((i & 15) == 0)
 				StringKit.appendHex(sb.append(",\n0x"), palette[i]);
 			else
 				StringKit.appendHex(sb.append(", 0x"), palette[i]);
 		}
 		System.out.println(sb);
 		System.out.println(palette.length + " colors used.");
-		refreshTexture();
-		if(cubePix != null)
-			cubePix.dispose();
-		if(cubeTextures != null) {
-			for (int i = 0; i < cubeTextures.length; i++) {
-				if(cubeTextures[i] != null)
-					cubeTextures[i].dispose();
-			}
-		}
+		colorizer = Colorizer.arbitraryLABColorizer(palette);
 		cubePix = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
-		cubePix.setColor(-1);
-		cubePix.fillRectangle(0, 0, 16, 16);
-		pixel = new Texture(cubePix);
-		pixel.draw(cubePix, 0, 0);
 		cubeTextures = new Texture[palette.length];
 		for (int i = 0; i < palette.length; i++) {
 			cubeTextures[i] = new Texture(16, 16, Pixmap.Format.RGBA8888);
 		}
-		if(PRINT_EXTRA) {
-			int idx = 0;
-			if (palette[0] == 0) {
-				System.out.println("\n0x00, 0x00, 0x00, 0x00,");
-				idx++;
-			}
-			for (; idx < palette.length; idx++) {
-				System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte) idx, -2), colorizer.colorize((byte) idx, -1), idx, colorizer.colorize((byte) idx, 1));
+		int idx = 0;
+		if(palette[0] == 0)
+		{
+			System.out.println("\n0x00, 0x00, 0x00, 0x00,");
+			idx++;
+		}
+		for (; idx < palette.length; idx++) {
+			System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte)idx, -2), colorizer.colorize((byte)idx, -1), idx, colorizer.colorize((byte)idx, 1));
+		}
+
+	}
+	public void mixPaletteCIELAB (boolean doRemove, boolean doSort){
+		ArrayList<CIELABConverter.Lab> labs = new ArrayList<>(mixingPalette.size());
+		IntSet removalSet = new IntSet(16);
+		for (int i = 0; i < mixingPalette.size(); i++) {
+			labs.add(new CIELABConverter.Lab(mixingPalette.get(i)));
+		}
+		for (int i = 0; i < labs.size(); i++) {
+			for (int j = i + 1; j < labs.size(); j++) {
+				if((labs.get(i).alpha > 0.0 && labs.get(j).alpha > 0.0) && CIELABConverter.delta(labs.get(i), labs.get(j), 1.0, 1.5, 1.5) <= 100) {
+					if (doRemove) {
+						removalSet.add(i);
+						removalSet.add(j);
+						System.out.printf("Combined 0x%08X and 0x%08X\n", mixingPalette.get(i), mixingPalette.get(j));
+						mixingPalette.add(Coloring.mixEvenly(mixingPalette.get(i), mixingPalette.get(j)));
+					}
+					else {
+						System.out.printf("0x%08X and 0x%08X are very close!\n", mixingPalette.get(i), mixingPalette.get(j));
+					}
+				}
 			}
 		}
-	}
-//	public void mixPaletteCIELAB (boolean doRemove, boolean doSort) {
-//		ArrayList<CIELABConverter.Lab> labs = new ArrayList<>(mixingPalette.size());
-//		IntSet removalSet = new IntSet(16);
-//		for (int i = 0; i < mixingPalette.size(); i++) {
-//			labs.add(new CIELABConverter.Lab(mixingPalette.get(i)));
-//		}
-//		for (int i = 0; i < labs.size(); i++) {
-//			for (int j = i + 1; j < labs.size(); j++) {
-//				if ((labs.get(i).alpha > 0.0 && labs.get(j).alpha > 0.0) && CIELABConverter.delta(labs.get(i), labs.get(j), 1.0, 1.5, 1.5) <= 100) {
-//					if (doRemove) {
-//						removalSet.add(mixingPalette.get(i));
-//						removalSet.add(mixingPalette.get(j));
-//						System.out.printf("Combined 0x%08X and 0x%08X\n", mixingPalette.get(i), mixingPalette.get(j));
-//						mixingPalette.add(Coloring.mixEvenly(mixingPalette.get(i), mixingPalette.get(j)));
-//					} else {
-//						System.out.printf("0x%08X and 0x%08X are very close!\n", mixingPalette.get(i), mixingPalette.get(j));
-//					}
-//				}
-//			}
-//		}
-//		if (doRemove) {
-//			mixingPalette.removeAll(removalSet);
-//		}
-//
-//		if (doSort) {
-//			mixingPalette.sort(hueComparator);
-//		}
-//		palette = mixingPalette.toArray();
-//		mixingPalette.clear();
-//		StringBuilder sb = new StringBuilder(palette.length * 12);
-//		StringKit.appendHex(sb.append("0x"), palette[0]);
-//		for (int i = 1; i < palette.length; i++) {
-//			if ((i & 15) == 0)
-//				StringKit.appendHex(sb.append(",\n0x"), palette[i]);
-//			else
-//				StringKit.appendHex(sb.append(", 0x"), palette[i]);
-//		}
-//		System.out.println(sb);
-//		System.out.println(palette.length + " colors used.");
-//		refreshTexture();
-//		if(cubePix != null)
-//			cubePix.dispose();
-//		if(cubeTextures != null) {
-//			for (int i = 0; i < palette.length; i++) {
-//				if(cubeTextures[i] != null)
-//					cubeTextures[i].dispose();
-//			}
-//		}
-//		cubePix = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
-//		cubePix.setColor(-1);
-//		cubePix.fillRectangle(0, 0, 16, 16);
-//		pixel = new Texture(cubePix);
-//		pixel.draw(cubePix, 0, 0);
-//		cubeTextures = new Texture[palette.length];
-//		for (int i = 0; i < palette.length; i++) {
-//			cubeTextures[i] = new Texture(16, 16, Pixmap.Format.RGBA8888);
-//		}
-//		if(PRINT_EXTRA) {
-//			int idx = 0;
-//			if (palette[0] == 0) {
-//				System.out.println("\n0x00, 0x00, 0x00, 0x00,");
-//				idx++;
-//			}
-//			for (; idx < palette.length; idx++) {
-//				System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte) idx, -2), colorizer.colorize((byte) idx, -1), idx, colorizer.colorize((byte) idx, 1));
-//			}
-//		}
-//	}
+		if(doRemove) {
+			IntArray removalIndices = removalSet.iterator().toArray();
+			removalIndices.sort();
+			for (int i = removalIndices.size - 1; i >= 0; i--) {
+				mixingPalette.remove(removalIndices.get(i));
+			}
+		}
 
-	public void refreshTexture() {
+		if(doSort) {
+			mixingPalette.sort(hueComparator);
+		}
+		palette = new int[mixingPalette.size()];
+		for (int i = 0; i < palette.length; i++) {
+			palette[i] = mixingPalette.get(i);
+		}
+		mixingPalette.clear();
+		StringBuilder sb = new StringBuilder(palette.length * 12);
+		StringKit.appendHex(sb.append("0x"), palette[0]);
+		for (int i = 1; i < palette.length; i++) {
+			if((i & 15) == 0)
+				StringKit.appendHex(sb.append(",\n0x"), palette[i]);
+			else
+				StringKit.appendHex(sb.append(", 0x"), palette[i]);
+		}
+		System.out.println(sb);
+		System.out.println(palette.length + " colors used.");
 		colorizer = Colorizer.arbitraryLABColorizer(palette);
-		reducer.exact(palette, HexGenerator.METRIC);
-		monaWIP.drawPixmap(monaOriginal, 0, 0);
-		reducer.reduceBurkes(monaWIP);
-		mona.draw(monaWIP, 0, 0);
+		cubePix = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+		cubeTextures = new Texture[palette.length];
+		for (int i = 0; i < palette.length; i++) {
+			cubeTextures[i] = new Texture(16, 16, Pixmap.Format.RGBA8888);
+		}
+		int idx = 0;
+		if(palette[0] == 0)
+		{
+			System.out.println("\n0x00, 0x00, 0x00, 0x00,");
+			idx++;
+		}
+		for (; idx < palette.length; idx++) {
+			System.out.printf("0x%02X, 0x%02X, 0x%02X, 0x%02X,\n", colorizer.colorize((byte)idx, -2), colorizer.colorize((byte)idx, -1), idx, colorizer.colorize((byte)idx, 1));
+		}
+
 	}
+
 	public void create () {
 		palette =
-//				Coloring.AURORA;
-				// cuddly-15
-//				new int[]{
-//						0x00000000, 0x000000FF, 0xFFFFFFFF, 0x555555FF, 0xAAAAAAFF, 0xFE31AEFF, 0xD3E358FF, 0xA6917AFF,
-//						0x723D77FF, 0x51D1CFFF, 0x4477CBFF, 0xF7B362FF, 0xBD6078FF, 0x4D9D3BFF, 0xFB44FDFF, 0xB5F9BFFF,
-//				};
-		// snuggly-15
-		//0x00000000, 0x000000FF, 0x555555FF, 0xAAAAAAFF, 0xFFFFFFFF, 0xD59C48FF, 0xCCEA67FF, 0x549A4AFF,
-		//0x5BDE52FF, 0x7DDED1FF, 0x5483C9FF, 0x312FB5FF, 0x9135C1FF, 0xDD4FC7FF, 0x702440FF, 0xCF4648FF
-//				// cuddly-31
-//				new int[]{
-//						0x00000000, 0x000000FF, 0xFFFFFFFF, 0x333333FF, 0x666666FF, 0x999999FF, 0xCCCCCCFF, 0xFE31AEFF,
-//						0xD3E358FF, 0xA6917AFF, 0x723D77FF, 0x51D1CFFF, 0x4477CBFF, 0xF7B362FF, 0xBD6078FF, 0x4D9D3BFF,
-//						0xFB44FDFF, 0xB5F9BFFF, 0x2C4B47FF, 0x94A3CBFF, 0x6D46C0FF, 0xC71573FF, 0x797240FF, 0xE4C9C0FF,
-//						0x42233EFF, 0xB471C5FF, 0xC8940AFF, 0x8B4540FF, 0xC630BDFF, 0x86D981FF, 0x66858FFF, 0x402C7EFF,
-//				};
-		// snuggly-31
-		//0x00000000, 0x000000FF, 0x333333FF, 0x666666FF, 0x999999FF, 0xCCCCCCFF, 0xFFFFFFFF, 0xDA3A35FF,
-		//0xE6804FFF, 0xA27F38FF, 0xCFBA50FF, 0xD5EE60FF, 0x395E2FFF, 0x418F36FF, 0x54BE47FF, 0x5EEC4EFF,
-		//0x6DF2CCFF, 0x59CCC0FF, 0x3F9894FF, 0x55A5E3FF, 0x3F6DCDFF, 0x23257FFF, 0x3330D8FF, 0x9F72CBFF,
-		//0x9031DCFF, 0x6C2A8EFF, 0xDF39DBFF, 0xDE91D3FF, 0xB02E86FF, 0x541934FF, 0xE84389FF, 0x952E2FFF
-//				// cuddly-63
-				new int[]{
-						0x00000000, 0x000000FF, 0xFFFFFFFF, 0x242424FF, 0x484848FF, 0x6D6D6DFF, 0x919191FF, 0xB6B6B6FF,
-						0xDADADAFF, 0xFE31AEFF, 0xD3E358FF, 0xA6917AFF, 0x723D77FF, 0x51D1CFFF, 0x4477CBFF, 0xF7B362FF,
-						0xBD6078FF, 0x4D9D3BFF, 0xFB44FDFF, 0xB5F9BFFF, 0x2C4B47FF, 0x94A3CBFF, 0x6D46C0FF, 0xC71573FF,
-						0x797240FF, 0xE4C9C0FF, 0x42233EFF, 0xB471C5FF, 0xC8940AFF, 0x8B4540FF, 0xC630BDFF, 0x86D981FF,
-						0x66858FFF, 0x402C7EFF, 0xDB6127FF, 0xE1FD5BFF, 0xB6AB84FF, 0x12060AFF, 0x855788FF, 0x57ECDBFF,
-						0xE30731FF, 0x4B93DDFF, 0x3E2AC6FF, 0xD17A84FF, 0x91187EFF, 0x57B741FF, 0x386555FF, 0xA0BDD9FF,
-						0x16103DFF, 0x7C62D3FF, 0xE03D80FF, 0x898C48FF, 0xF3E3CAFF, 0x563C4FFF, 0xC68CD4FF, 0x9221C7FF,
-						0xDAAD03FF, 0xA05E4BFF, 0xDC51CDFF, 0x90F389FF, 0x719F9CFF, 0x4F4892FF, 0xF17B2BFF, 0xAA2249FF,
-				};
-		// snuggly-63
-		//0x00000000, 0x000000FF, 0x242424FF, 0x484848FF, 0x6D6D6DFF, 0x919191FF, 0xB6B6B6FF, 0xDADADAFF,
-		//0xFFFFFFFF, 0xEC5D3AFF, 0xB25835FF, 0x7A4C25FF, 0xE79249FF, 0xBE7F3AFF, 0xE7B653FF, 0x7D762FFF,
-		//0xDED94BFF, 0xA7AE45FF, 0xD3F749FF, 0x82973DFF, 0xA2D040FF, 0xD7F4AFFF, 0xB3D5A0FF, 0x2A4B21FF,
-		//0x5EF53EFF, 0x43B839FF, 0x43D93EFF, 0x349536FF, 0x327035FF, 0x59F299FF, 0x4ECF96FF, 0x44AE92FF,
-		//0x67F5E1FF, 0x34878EFF, 0x59D7E2FF, 0x4FB5DFFF, 0x438FDAFF, 0x2D5691FF, 0x3766DEFF, 0x252CE3FF,
-		//0x1B1B5BFF, 0x2222A1FF, 0x9D92DFFF, 0x5B29CEFF, 0x795BAEFF, 0x9867E3FF, 0x882CE2FF, 0x531F71FF,
-		//0xB82AD5FF, 0x861F90FF, 0xE730E9FF, 0xE193DFFF, 0xE366D8FF, 0xE62EAAFF, 0xE4B6D5FF, 0x81416BFF,
-		//0xB9277EFF, 0xB36691FF, 0xEC3570FF, 0x451524FF, 0xE57D92FF, 0x791E2CFF, 0xAD242FFF, 0xE2282EFF
-//				// cuddly-255
-//				new int[]{
-//						0x00000000, 0x000000FF, 0xFFFFFFFF, 0x888888FF, 0x444444FF, 0xCCCCCCFF, 0x222222FF, 0xAAAAAAFF,
-//						0x666666FF, 0xEEEEEEFF, 0x111111FF, 0x999999FF, 0x555555FF, 0xDDDDDDFF, 0x333333FF, 0xBBBBBBFF,
-//						0x777777FF, 0xFE31AEFF, 0xD3E358FF, 0xA6917AFF, 0x723D77FF, 0x51D1CFFF, 0x4477CBFF, 0xF7B362FF,
-//						0xBD6078FF, 0x4D9D3BFF, 0xFB44FDFF, 0xB5F9BFFF, 0x2C4B47FF, 0x94A3CBFF, 0x6D46C0FF, 0xC71573FF,
-//						0x797240FF, 0xE4C9C0FF, 0x42233EFF, 0xB471C5FF, 0xC8940AFF, 0x8B4540FF, 0xC630BDFF, 0x86D981FF,
-//						0x66858FFF, 0x402C7EFF, 0xDB6127FF, 0xE1FD5BFF, 0xB6AB84FF, 0x12060AFF, 0x855788FF, 0x57ECDBFF,
-//						0xE30731FF, 0x4B93DDFF, 0x3E2AC6FF, 0xD17A84FF, 0x91187EFF, 0x57B741FF, 0x386555FF, 0xA0BDD9FF,
-//						0x16103DFF, 0x7C62D3FF, 0xE03D80FF, 0x898C48FF, 0xF3E3CAFF, 0x563C4FFF, 0xC68CD4FF, 0x9221C7FF,
-//						0xDAAD03FF, 0xA05E4BFF, 0xDC51CDFF, 0x90F389FF, 0x719F9CFF, 0x4F4892FF, 0xF17B2BFF, 0xAA2249FF,
-//						0xC5C58DFF, 0x281E1AFF, 0x967197FF, 0xFD3A37FF, 0x52AEEDFF, 0x464CDDFF, 0x704009FF, 0xE4948EFF,
-//						0xA83B90FF, 0x5FD146FF, 0x437F62FF, 0xACD8E5FF, 0x232B54FF, 0x8A7EE5FF, 0xF85A8DFF, 0x97A550FF,
-//						0x68555DFF, 0xD6A6E2FF, 0xA546DBFF, 0x193097FF, 0xB47754FF, 0x742255FF, 0xF06EDDFF, 0x075C2AFF,
-//						0x7DB9A8FF, 0x5C63A5FF, 0xC34154FF, 0xD3DF95FF, 0x0A27E3FF, 0x3B3628FF, 0xA78BA5FF, 0x742F99FF,
-//						0x58C9FCFF, 0x4E6AF2FF, 0x855811FF, 0xF7AE98FF, 0x400120FF, 0xBE579FFF, 0x67EC4AFF, 0x4D996DFF,
-//						0xB6F3F1FF, 0x2F4568FF, 0x9799F6FF, 0x732FE5FF, 0x8E241CFF, 0xA5BF56FF, 0x796E6BFF, 0xE6C1EFFF,
-//						0x44175AFF, 0xB764EEFF, 0x1A4EAEFF, 0xC7915CFF, 0x8B3E65FF, 0x147633FF, 0x87D4B3FF, 0x697DB6FF,
-//						0x46139EFF, 0xDA5C5EFF, 0xE0F99CFF, 0x4C4E34FF, 0xB6A5B2FF, 0x874CADFF, 0x987216FF, 0x59232FFF,
-//						0xD272AEFF, 0x56B377FF, 0x3B5F79FF, 0x8251FAFF, 0xA64023FF, 0xE12CA7FF, 0xB2D95BFF, 0x888777FF,
-//						0xF4DBFBFF, 0x58336EFF, 0xC880FFFF, 0x1C6AC3FF, 0xD9AA63FF, 0xA05873FF, 0x1D903CFF, 0xDE3CF6FF,
-//						0x90EEBDFF, 0x7498C6FF, 0x5439B5FF, 0xF07767FF, 0xAA106CFF, 0x5C683EFF, 0xC5BFBDFF, 0x291834FF,
-//						0x9867BEFF, 0xFD3168FF, 0xAA8B19FF, 0x703C3CFF, 0xE58CBBFF, 0xAA27B4FF, 0x5FCE80FF, 0x457989FF,
-//						0x2A1E71FF, 0xBD5A2AFF, 0xF84FB6FF, 0xBFF45FFF, 0x97A182FF, 0x6A4D80FF, 0xC50A30FF, 0x1D85D5FF,
-//						0xE9C46AFF, 0x2A10B9FF, 0xB47280FF, 0x760D75FF, 0x24AB43FF, 0x0C584FFF, 0x7FB2D4FF, 0x6256CAFF,
-//						0xC3387BFF, 0x6B8147FF, 0xD3D9C8FF, 0x3C3146FF, 0xA982CEFF, 0x780EBCFF, 0xBBA41BFF, 0x845547FF,
-//						0xF7A7C7FF, 0xBF49C6FF, 0x67E889FF, 0x4F9397FF, 0x353B88FF, 0xD3742FFF, 0x8D1D44FF, 0xA5BB8BFF,
-//						0x7A6791FF, 0xDF3738FF, 0x1DA1E6FF, 0xF9DE6FFF, 0x2C3CD2FF, 0x55360CFF, 0xC78B8BFF, 0x8C3388FF,
-//						0x2AC549FF, 0x16725DFF, 0x89CDE2FF, 0x081D48FF, 0x6E72DDFF, 0xDA5589FF, 0x789B50FF, 0xE0F4D2FF,
-//						0x4D4A57FF, 0xB89DDDFF, 0x8B3AD2FF, 0xCBBE1BFF, 0x976E52FF, 0x5A1A4DFF, 0xD366D7FF, 0x58AEA4FF,
-//						0x40569CFF, 0xE78E34FF, 0xA63B50FF, 0xB2D594FF, 0x222A22FF, 0x8A81A0FF, 0x5B238FFF, 0xF7553FFF,
-//						0x1CBCF6FF, 0x2E5BE8FF, 0x694F14FF, 0xD8A596FF, 0xA14F99FF, 0x2FE04EFF, 0x1E8D69FF, 0x93E8EEFF,
-//						0x0E385EFF, 0x798EEFFF, 0x5C1AD9FF, 0x711E1AFF, 0xF07095FF, 0x85B557FF, 0x5C6365FF, 0xC7B7EBFF,
-//						0x2C054DFF, 0x9C59E5FF, 0xFC2091FF, 0xDAD818FF, 0xA9885BFF, 0x70365EFF, 0xE682E6FF, 0x60C8B0FF,
-//				};
-
+				Coloring.YAM4;
 //				new int[]{
 //						0x00000000, 0x000000FF, 0x121212FF, 0x222222FF, 0x313131FF, 0x3F3F3FFF, 0x4E4E4EFF, 0x5D5D5DFF,
 //						0x6C6C6CFF, 0x7C7C7CFF, 0x8C8C8CFF, 0x9C9C9CFF, 0xADADACFF, 0xBEBEBDFF, 0xCFCFCFFF, 0xE1E1E1FF,
@@ -759,15 +530,60 @@ public class ColorizerPreview extends ApplicationAdapter {
 //				0x4E7337FE, 0x49943DFE, 0x53BD4DFE, 0x65EF5FFE, 0x5BAD79FE, 0x70E7A4FE, 0x497B64FE, 0x80C6A6FE, 0x78EFDCFE, 0x66B5A9FE, 0x558E94FE, 0x78D4E7FE, 0x74B9D6FE, 0x41697BFE, 0x80ADE7FE, 0x6689BDFE,
 //				0x4F619CFE, 0x767BDEFE, 0x2C2673FE, 0x503CBDFE, 0x6646E7FE, 0x563D94FE, 0xB557E7FE, 0x3D1E4AFE, 0xD7A1E7FE, 0x9841A5FE, 0xE757D4FE, 0x8C3466FE, 0xBD4584FE, 0xE7578FFE, 0xE7A9C1FE, 0x9C363DFE
 //		};
-		monaOriginal = new Pixmap(Gdx.files.local("samples/Mona_Lisa.jpg"));
-		monaWIP = new Pixmap(monaOriginal.getWidth(), monaOriginal.getHeight(), monaOriginal.getFormat());
-		mona = new Texture(monaWIP);
-		mixingPalette = new IntList(256);
-		mixingPalette.addAll(palette);
-		reducer = new PaletteReducer();
-		refreshTexture();
-		mixPalette(0, false);
-
+		mixingPalette = new ArrayList<>(256);
+		for (int i = 0; i < palette.length; i++) {
+			mixingPalette.add(palette[i]);
+		}
+		mixPalette(false, false);
+//		mixingPalette = IntArray.with(
+//			0x060608ff, 0x141013ff, 0x3b1725ff, 0x73172dff, 0xb4202aff, 0xdf3e23ff, 0xfa6a0aff, 0xf9a31bff,
+//			0xffd541ff, 0xfffc40ff, 0xd6f264ff, 0x9cdb43ff, 0x59c135ff, 0x14a02eff, 0x1a7a3eff, 0x24523bff,
+//			0x122020ff, 0x143464ff, 0x285cc4ff, 0x249fdeff, 0x20d6c7ff, 0xa6fcdbff, 0xffffffff, 0xfef3c0ff,
+//			0xfad6b8ff, 0xf5a097ff, 0xe86a73ff, 0xbc4a9bff, 0x793a80ff, 0x403353ff, 0x242234ff, 0x221c1aff,
+//			0x322b28ff, 0x71413bff, 0xbb7547ff, 0xdba463ff, 0xf4d29cff, 0xdae0eaff, 0xb3b9d1ff, 0x8b93afff,
+//			0x6d758dff, 0x4a5462ff, 0x333941ff, 0x422433ff, 0x5b3138ff, 0x8e5252ff, 0xba756aff, 0xe9b5a3ff,
+//			0xe3e6ffff, 0xb9bffbff, 0x849be4ff, 0x588dbeff, 0x477d85ff, 0x23674eff, 0x328464ff, 0x5daf8dff,
+//			0x92dcbaff, 0xcdf7e2ff, 0xe4d2aaff, 0xc7b08bff, 0xa08662ff, 0x796755ff, 0x5a4e44ff, 0x423934ff,
+//			0x141414ff, 0x383838ff, 0x67615fff, 0xa69f96ff, 0xf0eeecff, 0x611732ff, 0xae2633ff, 0xe86c18ff,
+//			0xf1bb3bff, 0xf26864ff, 0x4a2426ff, 0x844239ff, 0xc47540ff, 0xefb681ff, 0xd4705cff, 0x206348ff,
+//			0x42ad37ff, 0xb4e357ff, 0x1a363fff, 0x20646cff, 0x2bad96ff, 0xa1e4a0ff, 0x222664ff, 0x264fa4ff,
+//			0x1f95e1ff, 0x6de0e5ff, 0x431c58ff, 0x8d2f7cff, 0xe4669bff, 0xf0b4adff, 0x32384aff, 0x4f6872ff,
+//			0x88a7a0ff);
+		
+//		palette = new int[] {
+//			0x000000ff, 0x111111ff, 0x222222ff, 0x333333ff, 0x444444ff, 0x555555ff, 0x666666ff, 0x777777ff,
+//			0x888888ff, 0x999999ff, 0xaaaaaaff, 0xbbbbbbff, 0xccccccff, 0xddddddff, 0xeeeeeeff, 0xffffffff,
+//			0x007f7fff, 0x3fbfbfff, 0x00ffffff, 0xbfffffff, 0x8181ffff, 0x0000ffff, 0x3f3fbfff, 0x00007fff,
+//			0x0f0f50ff, 0x7f007fff, 0xbf3fbfff, 0xf500f5ff, 0xfd81ffff, 0xffc0cbff, 0xff8181ff, 0xff0000ff,
+//			0xbf3f3fff, 0x7f0000ff, 0x551414ff, 0x7f3f00ff, 0xbf7f3fff, 0xff7f00ff, 0xffbf81ff, 0xffffbfff,
+//			0xffff00ff, 0xbfbf3fff, 0x7f7f00ff, 0x007f00ff, 0x3fbf3fff, 0x00ff00ff, 0xafffafff, 0x00bfffff,
+//			0x007fffff, 0x4b7dc8ff, 0xbcafc0ff, 0xcbaa89ff, 0xa6a090ff, 0x7e9494ff, 0x6e8287ff, 0x7e6e60ff,
+//			0xa0695fff, 0xc07872ff, 0xd08a74ff, 0xe19b7dff, 0xebaa8cff, 0xf5b99bff, 0xf6c8afff, 0xf5e1d2ff,
+//			0x7f00ffff, 0x573b3bff, 0x73413cff, 0x8e5555ff, 0xab7373ff, 0xc78f8fff, 0xe3ababff, 0xf8d2daff,
+//			0xe3c7abff, 0xc49e73ff, 0x8f7357ff, 0x73573bff, 0x3b2d1fff, 0x414123ff, 0x73733bff, 0x8f8f57ff,
+//			0xa2a255ff, 0xb5b572ff, 0xc7c78fff, 0xdadaabff, 0xededc7ff, 0xc7e3abff, 0xabc78fff, 0x8ebe55ff,
+//			0x738f57ff, 0x587d3eff, 0x465032ff, 0x191e0fff, 0x235037ff, 0x3b573bff, 0x506450ff, 0x3b7349ff,
+//			0x578f57ff, 0x73ab73ff, 0x64c082ff, 0x8fc78fff, 0xa2d8a2ff, 0xe1f8faff, 0xb4eecaff, 0xabe3c5ff,
+//			0x87b48eff, 0x507d5fff, 0x0f6946ff, 0x1e2d23ff, 0x234146ff, 0x3b7373ff, 0x64ababff, 0x8fc7c7ff,
+//			0xabe3e3ff, 0xc7f1f1ff, 0xbed2f0ff, 0xabc7e3ff, 0xa8b9dcff, 0x8fabc7ff, 0x578fc7ff, 0x57738fff,
+//			0x3b5773ff, 0x0f192dff, 0x1f1f3bff, 0x3b3b57ff, 0x494973ff, 0x57578fff, 0x736eaaff, 0x7676caff,
+//			0x8f8fc7ff, 0xababe3ff, 0xd0daf8ff, 0xe3e3ffff, 0xab8fc7ff, 0x8f57c7ff, 0x73578fff, 0x573b73ff,
+//			0x3c233cff, 0x463246ff, 0x724072ff, 0x8f578fff, 0xab57abff, 0xab73abff, 0xebace1ff, 0xffdcf5ff,
+//			0xe3c7e3ff, 0xe1b9d2ff, 0xd7a0beff, 0xc78fb9ff, 0xc87da0ff, 0xc35a91ff, 0x4b2837ff, 0x321623ff,
+//			0x280a1eff, 0x401811ff, 0x621800ff, 0xa5140aff, 0xda2010ff, 0xd5524aff, 0xff3c0aff, 0xf55a32ff,
+//			0xff6262ff, 0xf6bd31ff, 0xffa53cff, 0xd79b0fff, 0xda6e0aff, 0xb45a00ff, 0xa04b05ff, 0x5f3214ff,
+//			0x53500aff, 0x626200ff, 0x8c805aff, 0xac9400ff, 0xb1b10aff, 0xe6d55aff, 0xffd510ff, 0xffea4aff,
+//			0xc8ff41ff, 0x9bf046ff, 0x96dc19ff, 0x73c805ff, 0x6aa805ff, 0x3c6e14ff, 0x283405ff, 0x204608ff,
+//			0x0c5c0cff, 0x149605ff, 0x0ad70aff, 0x14e60aff, 0x7dff73ff, 0x4bf05aff, 0x00c514ff, 0x05b450ff,
+//			0x1c8c4eff, 0x123832ff, 0x129880ff, 0x06c491ff, 0x00de6aff, 0x2deba8ff, 0x3cfea5ff, 0x6affcdff,
+//			0x91ebffff, 0x55e6ffff, 0x7dd7f0ff, 0x08ded5ff, 0x109cdeff, 0x055a5cff, 0x162c52ff, 0x0f377dff,
+//			0x004a9cff, 0x326496ff, 0x0052f6ff, 0x186abdff, 0x2378dcff, 0x699dc3ff, 0x4aa4ffff, 0x90b0ffff,
+//			0x5ac5ffff, 0xbeb9faff, 0x786ef0ff, 0x4a5affff, 0x6241f6ff, 0x3c3cf5ff, 0x101cdaff, 0x0010bdff,
+//			0x231094ff, 0x0c2148ff, 0x5010b0ff, 0x6010d0ff, 0x8732d2ff, 0x9c41ffff, 0xbd62ffff, 0xb991ffff,
+//			0xd7a5ffff, 0xd7c3faff, 0xf8c6fcff, 0xe673ffff, 0xff52ffff, 0xda20e0ff, 0xbd29ffff, 0xbd10c5ff,
+//			0x8c14beff, 0x5a187bff, 0x641464ff, 0x410062ff, 0x320a46ff, 0x551937ff, 0xa01982ff, 0xc80078ff,
+//			0xff50bfff, 0xff6ac5ff, 0xfaa0b9ff, 0xfc3a8cff, 0xe61e78ff, 0xbd1039ff, 0x98344dff, 0x911437ff,
+//		};
 		batch = new MutantBatch();
 		Gdx.input.setInputProcessor(new InputAdapter() {
 			public boolean keyUp(int keycode) {
@@ -784,66 +600,45 @@ public class ColorizerPreview extends ApplicationAdapter {
 					case Input.Keys.ESCAPE:
 						Gdx.app.exit();
 						break;
-					case Input.Keys.B: // ball
+					case Input.Keys.S:
 						SHAPE = (SHAPE == CUBE) ? BALL : CUBE;
 						break;
 					case Input.Keys.LEFT:
 						modify(palette, -0.1f, 0f, 0f);
-						refreshTexture();
+						colorizer = Colorizer.arbitraryLABColorizer(palette);
 						break;
 					case Input.Keys.RIGHT:
 						modify(palette, 0.1f, 0f, 0f);
-						refreshTexture();
+						colorizer = Colorizer.arbitraryLABColorizer(palette);
 						break;
 					case Input.Keys.UP:
 						modify(palette, 0f, 0.1f, 0f);
-						refreshTexture();
+						colorizer = Colorizer.arbitraryLABColorizer(palette);
 						break;
 					case Input.Keys.DOWN:
 						modify(palette, 0f, -0.1f, 0f);
-						refreshTexture();
+						colorizer = Colorizer.arbitraryLABColorizer(palette);
 						break;
 					case Input.Keys.J:
 						modify(palette, 0f, 0f, 0.1f);
-						refreshTexture();
+						colorizer = Colorizer.arbitraryLABColorizer(palette);
 						break;
 					case Input.Keys.D:
 						palette = distribute(palette);
-						refreshTexture();
+						colorizer = Colorizer.arbitraryLABColorizer(palette);
 						break;
 					case Input.Keys.L:
 						palette = lloyd(palette);
-						refreshTexture();
+						colorizer = Colorizer.arbitraryLABColorizer(palette);
 						break;
 					case Input.Keys.C:
-						if(UIUtils.shift())
-							palette = lloydCompletely(palette);
-						else
-							palette = lloydCentral(palette);
-						refreshTexture();
+						palette = lloydCentral(palette);
+						colorizer = Colorizer.arbitraryLABColorizer(palette);
 						break;
 					case Input.Keys.E:
 						emphasize(palette);
-						refreshTexture();
+						colorizer = Colorizer.arbitraryLABColorizer(palette);
 						break;
-					case Input.Keys.F: // fuse; combines most similar and moves them to end
-						if(mixingPalette.isEmpty())
-							mixingPalette.addAll(palette);
-						mixPalette(1, false);
-						break;
-					case Input.Keys.S: // sort
-						if(mixingPalette.isEmpty())
-							mixingPalette.addAll(palette);
-						mixPalette(0, true);
-						break;
-					case Input.Keys.I: // insert
-						if(mixingPalette.isEmpty())
-							mixingPalette.addAll(palette);
-						mixingPalette.add(Color.rgba8888(vdc(2, index), vdc(3, index), vdc(5, index), 1f));
-						index++;
-						mixPalette(0, false);
-						break;
-					case Input.Keys.SPACE:
 					default:
 						StringBuilder sb = new StringBuilder(palette.length * 12);
 						StringKit.appendHex(sb.append("0x"), palette[0]);
@@ -854,7 +649,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 								StringKit.appendHex(sb.append(", 0x"), palette[i]);
 						}
 						System.out.println(sb);
-						System.out.println(palette.length + " colors used");
+						System.out.println(palette.length + " colors used.");
 				}
 				Gdx.graphics.requestRendering();
 				return true;
@@ -866,11 +661,9 @@ public class ColorizerPreview extends ApplicationAdapter {
 
 	public void render () {
 		if(cubePix == null) return;
-		if(colorizer == null) refreshTexture();
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
-		batch.setColor(Color.WHITE_FLOAT_BITS);
 		for (int i = 0; i < palette.length; i++) {
 			if(palette[i] == 0) continue;
 			for (int x = 0; x < 16; x++) {
@@ -879,15 +672,8 @@ public class ColorizerPreview extends ApplicationAdapter {
 				}
 			}
 			cubeTextures[i].draw(cubePix, 0, 0);
-			batch.draw(cubeTextures[i], (i - 1 & 15) << 4, 480 - (i - 1 << 1 & -32), 16, 16);
+			batch.draw(cubeTextures[i], (i - 1 & 15) << 4, 240 - (i - 1 & -16), 16, 16);
 		}
-		batch.draw(mona, 256, 0);
-		for (int i = 0; i < palette.length; i++) {
-			if(palette[i] == 0) continue;
-			batch.setColor(NumberUtils.intToFloatColor(Integer.reverseBytes(palette[i])));
-			batch.draw(pixel, (i - 1 & 15) << 4, 496 - (i - 1 << 1 & -32), 16, 16);
-		}
-
 		batch.end();
 	}
 
@@ -897,7 +683,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 	public static void main(String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setTitle("Palette Reducer");
-		config.setWindowedMode(16 * 16 + 404, 600);
+		config.setWindowedMode(16 * 16, 16 * 16);
 		config.setIdleFPS(10);
 		config.useVsync(true);
 		final ColorizerPreview app = new ColorizerPreview();
@@ -910,7 +696,7 @@ public class ColorizerPreview extends ApplicationAdapter {
 						if (files[i].endsWith(".hex"))
 							app.loadPalette(files[i]);
 					}
-					app.mixPalette(-1, false);
+					app.mixPalette(true, false);
 					Gdx.graphics.requestRendering();
 				}
 			}
