@@ -104,9 +104,10 @@ public class ShaderUtils {
                     "void main()\n" +
                     "{\n" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
-                    "   vec3 adj = (fract((xBumps + gl_FragCoord.x) * 0.75488 + (yBumps + gl_FragCoord.y) * 0.56984) - 0.5) * 3.0f;\n" + // * 3.0 makes this in the -1.5 to 1.5 range
-                    "   adj *= 0.55 / (1.875 + abs(adj));\n" + // sigmoid function; 0.55 affects adjustment range, 1.875 makes the change more gradual as it gets higher
-                    "   tgt.rgb = clamp(tgt.rgb + adj, 0.0, 1.0);\n" +
+                    "   vec3 adj = (fract((xBumps + gl_FragCoord.x) * 0.75488 + (yBumps + gl_FragCoord.y) * 0.56984) - 0.5);\n" +
+                    "   adj *= 0.25 / (1.875 + abs(adj));\n" + // sigmoid function; 0.25 affects adjustment range, 1.875 makes the change more gradual as it gets higher
+                    "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" + // sqrt before adding adj, square after imitates gamma correction decently
+                    "   tgt.rgb *= tgt.rgb;\n" +
                     "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
                     "   gl_FragColor.a = v_color.a * tgt.a;\n" +
                     "}";
