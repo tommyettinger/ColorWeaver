@@ -106,8 +106,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
         startTime = TimeUtils.millis();
         eq = new ColorEqualizer();
         cba = new ColorblindnessAdapter();
-        lospec = Gdx.files.local("palettes/genOk/").list("_GLSL.png");
-        palette = new Texture(Gdx.files.local("palettes/genOk/db-aurora-255_GLSL.png"), Pixmap.Format.RGBA8888, false);
+        lospec = Gdx.files.local("palettes/genOkCareful/").list("_GLSL.png");
+        palette = new Texture(Gdx.files.local("palettes/genOkCareful/db-aurora-255_GLSL.png"), Pixmap.Format.RGBA8888, false);
         palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         blueNoise = new Texture(Gdx.files.internal("blueTri.png"), Pixmap.Format.RGBA8888, false);
         blueNoise.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
@@ -205,110 +205,126 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     case Input.Keys.ESCAPE:
                         Gdx.app.exit();
                         break;
-                    case Input.Keys.NUM_1:
-                    case Input.Keys.NUMPAD_1:
-                        palette = (UIUtils.shift())
-                                ? new Texture(Gdx.files.local("palettes/DB16_GLSL.png"), Pixmap.Format.RGBA8888, false)
-//                                : new Texture(Gdx.files.local("DB22LAB_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                                : new Texture(Gdx.files.local("palettes/DB8_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Quorum64_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
-                    case Input.Keys.NUM_2:
-                    case Input.Keys.NUMPAD_2:
-                        palette = (UIUtils.shift())
-//                                ? new Texture(Gdx.files.local("palettes/Smash256_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                ? new Texture(Gdx.files.local("palettes/DB32_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/DB_Iso22_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Smash256_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Slab256_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Quorum128_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
-                    case Input.Keys.NUM_3:
-                    case Input.Keys.NUMPAD_3:
-                        palette = (UIUtils.shift())
-                                ? new Texture(Gdx.files.local("palettes/UnsevenLloyd_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/FlesurrectLloydC_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                                ? new Texture(Gdx.files.local("palettes/Smith256_GLSL_HS.png"), Pixmap.Format.RGBA8888, false)
-//                                : new Texture(Gdx.files.local("palettes/Smith256_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/SlabBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Quorum256_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
-                    case Input.Keys.NUM_4:
-                    case Input.Keys.NUMPAD_4:
-                        palette = (UIUtils.shift())
-                                ? new Texture(Gdx.files.local("palettes/AuroraRelaxed_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/DB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
-                    case Input.Keys.NUM_5:
-                    case Input.Keys.NUMPAD_5:
-                        palette = (UIUtils.shift())
-                                ? new Texture(Gdx.files.local("palettes/Ward_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
-                    case Input.Keys.NUM_6:
-                    case Input.Keys.NUMPAD_6:
-                        palette = (UIUtils.shift())
-                                ? new Texture(Gdx.files.local("palettes/WardBonus_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
-                    case Input.Keys.NUM_7:
-                    case Input.Keys.NUMPAD_7:
-                        palette = (UIUtils.shift())
-                                ? new Texture(Gdx.files.local("palettes/Sheltzy32_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/Vinik24_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL_HS.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/JudgeBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
-                    case Input.Keys.NUM_8:
-                    case Input.Keys.NUMPAD_8:
-                        palette = (UIUtils.shift())
-                                ? new Texture(Gdx.files.local("palettes/Lawn64_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/LawnBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                                : new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Uniform216_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Laser64_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/NonUniform256_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Mash256_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
-                    case Input.Keys.NUM_9:
-                    case Input.Keys.NUMPAD_9:
-                        palette = (UIUtils.shift())
-                                ? new Texture(Gdx.files.local("palettes/Lawn256_GLSL_HS.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/Lawn256_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Laser64Bonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/PureBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Uniform216_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
-                    case Input.Keys.NUM_0:
-                    case Input.Keys.NUMPAD_0:
-                        palette = (UIUtils.shift())
-                                ? new Texture(Gdx.files.local("palettes/Tincture256_GLSL_HS.png"), Pixmap.Format.RGBA8888, false)
-                                : new Texture(Gdx.files.local("palettes/Tincture256_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/CIELAB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
-//                        palette = new Texture(Gdx.files.local("palettes/Uniform216_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
-                    case Input.Keys.MINUS:
-                        palette = (UIUtils.shift())
-                            ? new Texture(Gdx.files.local("palettes/GBGreen16_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                            : new Texture(Gdx.files.local("palettes/GBGreen_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
-                    case Input.Keys.EQUALS:
-                        palette = (UIUtils.shift())
-                            ? new Texture(Gdx.files.local("palettes/Azurestar33_GLSL.png"), Pixmap.Format.RGBA8888, false)
-                            : new Texture(Gdx.files.local("palettes/Cyanstar37_GLSL.png"), Pixmap.Format.RGBA8888, false);
-                        break;
+//                    case Input.Keys.NUM_1:
+//                    case Input.Keys.NUMPAD_1:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+//                                ? new Texture(Gdx.files.local("palettes/genOkCareful/DB16_GLSL.png"), Pixmap.Format.RGBA8888, false)
+////                                : new Texture(Gdx.files.local("DB22LAB_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                                : new Texture(Gdx.files.local("palettes/genOkCareful/DB8_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Quorum64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
+//                    case Input.Keys.NUM_2:
+//                    case Input.Keys.NUMPAD_2:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+////                                ? new Texture(Gdx.files.local("palettes/Smash256_GLSL.png"), Pixmap.Format.RGBA8888, false)
+//                                ? new Texture(Gdx.files.local("palettes/genOkCareful/DB32_GLSL.png"), Pixmap.Format.RGBA8888, false)
+//                                : new Texture(Gdx.files.local("palettes/genOkCareful/DB_Iso22_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Smash256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Slab256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Quorum128_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
+//                    case Input.Keys.NUM_3:
+//                    case Input.Keys.NUMPAD_3:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+//                                ? new Texture(Gdx.files.local("palettes/genOkCareful/UnsevenLloyd_GLSL.png"), Pixmap.Format.RGBA8888, false)
+//                                : new Texture(Gdx.files.local("palettes/genOkCareful/FlesurrectLloydC_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                                ? new Texture(Gdx.files.local("palettes/Smith256_GLSL_HS.png"), Pixmap.Format.RGBA8888, false)
+////                                : new Texture(Gdx.files.local("palettes/Smith256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/SlabBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Quorum256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
+//                    case Input.Keys.NUM_4:
+//                    case Input.Keys.NUMPAD_4:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+//                                ? new Texture(Gdx.files.local("palettes/genOkCareful/AuroraRelaxed_GLSL.png"), Pixmap.Format.RGBA8888, false)
+//                                : new Texture(Gdx.files.local("palettes/genOkCareful/DB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
+//                    case Input.Keys.NUM_5:
+//                    case Input.Keys.NUMPAD_5:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+//                                ? new Texture(Gdx.files.local("palettes/genOkCareful/Ward_GLSL.png"), Pixmap.Format.RGBA8888, false)
+//                                : new Texture(Gdx.files.local("palettes/genOkCareful/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Flesurrect_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
+//                    case Input.Keys.NUM_6:
+//                    case Input.Keys.NUMPAD_6:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+//                                ? new Texture(Gdx.files.local("palettes/genOkCareful/WardBonus_GLSL.png"), Pixmap.Format.RGBA8888, false)
+//                                : new Texture(Gdx.files.local("palettes/genOkCareful/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/FlesurrectBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
+//                    case Input.Keys.NUM_7:
+//                    case Input.Keys.NUMPAD_7:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+//                                ? new Texture(Gdx.files.local("palettes/genOkCareful/Sheltzy32_GLSL.png"), Pixmap.Format.RGBA8888, false)
+//                                : new Texture(Gdx.files.local("palettes/genOkCareful/Vinik24_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL_HS.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/JudgeBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
+//                    case Input.Keys.NUM_8:
+//                    case Input.Keys.NUMPAD_8:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+//                                ? new Texture(Gdx.files.local("palettes/genOkCareful/Lawn64_GLSL.png"), Pixmap.Format.RGBA8888, false)
+//                                : new Texture(Gdx.files.local("palettes/genOkCareful/LawnBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                                : new Texture(Gdx.files.local("palettes/RoughLAB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Uniform216_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Laser64_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/NonUniform256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Mash256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
+//                    case Input.Keys.NUM_9:
+//                    case Input.Keys.NUMPAD_9:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+//                                ? new Texture(Gdx.files.local("palettes/genOkCareful/Lawn256_GLSL_HS.png"), Pixmap.Format.RGBA8888, false)
+//                                : new Texture(Gdx.files.local("palettes/genOkCareful/Lawn256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Laser64Bonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/PureBonus_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Uniform216_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
+//                    case Input.Keys.NUM_0:
+//                    case Input.Keys.NUMPAD_0:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+//                                ? new Texture(Gdx.files.local("palettes/genOkCareful/Tincture256_GLSL_HS.png"), Pixmap.Format.RGBA8888, false)
+//                                : new Texture(Gdx.files.local("palettes/genOkCareful/Tincture256_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/CIELAB_Aurora_GLSL.png"), Pixmap.Format.RGBA8888, false);
+////                        palette = new Texture(Gdx.files.local("palettes/Uniform216_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
+//                    case Input.Keys.MINUS:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+//                            ? new Texture(Gdx.files.local("palettes/genOkCareful/GBGreen16_GLSL.png"), Pixmap.Format.RGBA8888, false)
+//                            : new Texture(Gdx.files.local("palettes/genOkCareful/GBGreen_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
+//                    case Input.Keys.EQUALS:
+//                        if(palette != null) palette.dispose();
+//                        palette = (UIUtils.shift())
+//                            ? new Texture(Gdx.files.local("palettes/genOkCareful/Azurestar33_GLSL.png"), Pixmap.Format.RGBA8888, false)
+//                            : new Texture(Gdx.files.local("palettes/genOkCareful/Cyanstar37_GLSL.png"), Pixmap.Format.RGBA8888, false);
+//                        break;
                     case Input.Keys.BACKSPACE:
-                        palette = new Texture(Gdx.files.local("palettes/BW_GLSL.png"), Pixmap.Format.RGBA8888, false);
+                        if(palette != null) palette.dispose();
+                        palette = new Texture(Gdx.files.local("palettes/genOkCareful/bw-2_GLSL.png"), Pixmap.Format.RGBA8888, false);
                         break;
                 case Input.Keys.ENTER:
+                    if(palette != null) palette.dispose();
                     palette = new Texture(lospec[lospecIndex], Pixmap.Format.RGBA8888, false);
                     break;
                 case Input.Keys.LEFT_BRACKET:
+                    if(palette != null) palette.dispose();
                     palette = new Texture(lospec[lospecIndex = (lospecIndex - 1 + lospec.length) % lospec.length], Pixmap.Format.RGBA8888, false);
                     break;
                 case Input.Keys.RIGHT_BRACKET:
+                    if(palette != null) palette.dispose();
                     palette = new Texture(lospec[lospecIndex = (lospecIndex + 1) % lospec.length], Pixmap.Format.RGBA8888, false);
                     break;
                     case Input.Keys.M: // Mona Lisa
