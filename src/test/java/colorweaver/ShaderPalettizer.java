@@ -109,7 +109,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
         eq = new ColorEqualizer();
         cba = new ColorblindnessAdapter();
         lospec = Gdx.files.local("palettes/genOkCareful/").list("_GLSL.png");
-        palette = new Texture(Gdx.files.local("palettes/genOkCareful/db-aurora-255_GLSL.png"), Pixmap.Format.RGBA8888, false);
+        palette = new Texture(lospec[lospecIndex], Pixmap.Format.RGBA8888, false);
         palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         blueNoise = new Texture(Gdx.files.internal("blueTri.png"), Pixmap.Format.RGBA8888, false);
         blueNoise.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
@@ -162,6 +162,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
                 sh.setUniformi("u_palette", 1);
                 if(sh == shaderBlueNoise)
                     sh.setUniformi("u_blue", 2);
+                if(sh == shaderBayer)
+                    sh.setUniformf("u_colors", (float)Math.sqrt(Integer.parseInt(lospec[lospecIndex].name().replaceFirst(".+-(\\d+)_GLSL.png", "$1"))));
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 //                if(!batch.getShader().equals(shaderStandard))
 //                {

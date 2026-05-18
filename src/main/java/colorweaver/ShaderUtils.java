@@ -137,22 +137,22 @@ public class ShaderUtils {
                     "varying vec4 v_color;\n" +
                     "uniform sampler2D u_texture;\n" +
                     "uniform sampler2D u_palette;\n" +
-                    "uniform sampler2D u_blue;\n" +
+                    "uniform float u_colors;\n" +
                     "const float b_adj = 31.0 / 32.0;\n" +
                     "const float rb_adj = 32.0 / 1023.0;\n" +
-                    "const mat4 bayer =(mat4(sqrt(vec4(0.,  8.,  2.,  10.)), " +
-                    "                        sqrt(vec4(12., 4.,  14., 6.)),  " +
-                    "                        sqrt(vec4(3.,  11., 1.,  9.)),  " +
-                    "                        sqrt(vec4(15., 7.,  13., 5.))) - 2.0) * (1./32.);\n" +
+                    "const mat4 bayer =(mat4(0.,  8.,  2.,  10., " +
+                    "                        12., 4.,  14., 6.,  " +
+                    "                        3.,  11., 1.,  9.,  " +
+                    "                        15., 7.,  13., 5.) - 7.5) * 0.0625;\n" +
                     "void main()\n" +
                     "{\n" +
                     "   int x = int(mod(gl_FragCoord.x, 4));\n" +
                     "   int y = int(mod(gl_FragCoord.y, 4));\n" +
-                    "   float adj = bayer[y][x];\n" +
+                    "   float adj = bayer[y][x] / u_colors;\n" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
-//                    "   tgt.rgb = clamp(tgt.rgb + adj, 0.0, 1.0);\n" +
-                    "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" + // sqrt before adding adj, square after imitates gamma correction decently
-                    "   tgt.rgb *= tgt.rgb;\n" +
+                    "   tgt.rgb = clamp(tgt.rgb + adj, 0.0, 1.0);\n" +
+//                    "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" +
+//                    "   tgt.rgb *= tgt.rgb;\n" +
                     "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
                     "   gl_FragColor.rgb = v_color.rgb * used.rgb;\n" +
                     "   gl_FragColor.a = v_color.a * tgt.a;\n" +
