@@ -76,6 +76,9 @@ public class PaletteCubeGenerator extends ApplicationAdapter {
 //        FileHandle hex = Gdx.files.local("palettes/hex/bw-2.hex");{
 //        FileHandle hex = Gdx.files.local("palettes/hex/blknx-64.hex");{
             String name = hex.nameWithoutExtension().toLowerCase();
+
+            if(!name.startsWith("gray")) continue;
+
             loadPalette(name);
             StringBuilder sb = new StringBuilder((1 + 12 * 8) * (PALETTE.length + 7 >>> 3));
             for (int i = 0; i < (PALETTE.length + 7 >>> 3); i++) {
