@@ -140,10 +140,10 @@ public class ShaderUtils {
                     "uniform sampler2D u_blue;\n" +
                     "const float b_adj = 31.0 / 32.0;\n" +
                     "const float rb_adj = 32.0 / 1023.0;\n" +
-                    "const mat4 bayer =(mat4(0.,  8.,  2.,  10., " +
-                    "                        12., 4.,  14., 6.,  " +
-                    "                        3.,  11., 1.,  9.,  " +
-                    "                        15., 7.,  13., 5.) - 7.5) * (1./128.);\n" +
+                    "const mat4 bayer =(mat4(sqrt(vec4(0.,  8.,  2.,  10.)), " +
+                    "                        sqrt(vec4(12., 4.,  14., 6.)),  " +
+                    "                        sqrt(vec4(3.,  11., 1.,  9.)),  " +
+                    "                        sqrt(vec4(15., 7.,  13., 5.))) - 2.0) * (1./32.);\n" +
                     "void main()\n" +
                     "{\n" +
                     "   int x = int(mod(gl_FragCoord.x, 4));\n" +
