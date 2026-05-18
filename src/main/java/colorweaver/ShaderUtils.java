@@ -93,6 +93,7 @@ public class ShaderUtils {
                     "varying vec4 v_color;\n" +
                     "uniform sampler2D u_texture;\n" +
                     "uniform sampler2D u_palette;\n" +
+                    "uniform float u_colors;\n" +
                     "const float b_adj = 31.0 / 32.0;\n" +
                     "const float rb_adj = 32.0 / 1023.0;\n" +
 //                    "const vec3 xBumps = vec3(0.0);\n" +
@@ -105,7 +106,7 @@ public class ShaderUtils {
                     "{\n" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
                     "   vec3 adj = (fract((xBumps + gl_FragCoord.x) * 0.75488 + (yBumps + gl_FragCoord.y) * 0.56984) - 0.5);\n" +
-                    "   adj *= 0.25 / (1.875 + abs(adj));\n" + // sigmoid function; 0.25 affects adjustment range, 1.875 makes the change more gradual as it gets higher
+                    "   adj *= u_colors;// / (1.875 + abs(adj));\n" + // sigmoid function; 0.25 affects adjustment range, 1.875 makes the change more gradual as it gets higher
                     "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" + // sqrt before adding adj, square after imitates gamma correction decently
                     "   tgt.rgb *= tgt.rgb;\n" +
                     "   gl_FragColor.rgb = v_color.rgb * texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g)).rgb;\n" +
@@ -118,11 +119,12 @@ public class ShaderUtils {
                     "uniform sampler2D u_texture;\n" +
                     "uniform sampler2D u_palette;\n" +
                     "uniform sampler2D u_blue;\n" +
+                    "uniform float u_colors;\n" +
                     "const float b_adj = 31.0 / 32.0;\n" +
                     "const float rb_adj = 32.0 / 1023.0;\n" +
                     "void main()\n" +
                     "{\n" +
-                    "   float adj = (texture2D(u_blue, gl_FragCoord.xy * (1.0 / 64.0)).r - 0.5) * 0.08;" +
+                    "   float adj = (texture2D(u_blue, gl_FragCoord.xy * (1.0 / 64.0)).r - 0.5) * 1.5 * u_colors;" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
 //                    "   tgt.rgb = clamp(tgt.rgb + adj, 0.0, 1.0);\n" +
                     "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" + // sqrt before adding adj, square after imitates gamma correction decently
@@ -148,11 +150,11 @@ public class ShaderUtils {
                     "{\n" +
                     "   int x = int(mod(gl_FragCoord.x, 4));\n" +
                     "   int y = int(mod(gl_FragCoord.y, 4));\n" +
-                    "   float adj = bayer[y][x] / u_colors;\n" +
+                    "   float adj = bayer[y][x] * u_colors;\n" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
-                    "   tgt.rgb = clamp(tgt.rgb + adj, 0.0, 1.0);\n" +
-//                    "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" +
-//                    "   tgt.rgb *= tgt.rgb;\n" +
+//                    "   tgt.rgb = clamp(tgt.rgb + adj, 0.0, 1.0);\n" +
+                    "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" +
+                    "   tgt.rgb *= tgt.rgb;\n" +
                     "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
                     "   gl_FragColor.rgb = v_color.rgb * used.rgb;\n" +
                     "   gl_FragColor.a = v_color.a * tgt.a;\n" +
