@@ -3439,6 +3439,8 @@ public class A8PaletteReducer {
                 return reduceGourd(pixmap);
             case SIERRA_LITE:
                 return reduceSierraLite(pixmap);
+            case BAYER:
+                return reduceBayer(pixmap);
             case OVERBOARD:
             default:
                 return reduceOverboard(pixmap);
@@ -7458,6 +7460,32 @@ public class A8PaletteReducer {
                                         | ((bb >>> 3))] & 0xFF;
 //                    }
                     pixmap.drawPixel(px, y, paletteArray[used]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reduceBayer(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        final float strength = 63.5f * ditherStrength / (float)Math.sqrt(colorCount);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    float adj = (thresholdMatrix16[((px & 3) | (y & 3) << 2)] - 7.5f) * strength;
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + adj, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + adj, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + adj, 0), 1023)] & 255;
+                    int rgb555 = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[rgb555] & 0xFF]);
                 }
             }
         }

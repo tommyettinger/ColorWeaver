@@ -291,7 +291,10 @@ public interface Dithered {
          */
         GOURD("Gourd"),
 
-        SIERRA_LITE("SierraLite");
+        SIERRA_LITE("SierraLite"),
+
+        BAYER("Bayer"),
+        ;
 
         /**
          * Used by {@link #toString()} to store a more human-readable name that isn't ALWAYS_YELLING.

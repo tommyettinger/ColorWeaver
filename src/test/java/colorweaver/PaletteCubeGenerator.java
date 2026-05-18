@@ -77,7 +77,8 @@ public class PaletteCubeGenerator extends ApplicationAdapter {
 //        FileHandle hex = Gdx.files.local("palettes/hex/blknx-64.hex");{
             String name = hex.nameWithoutExtension().toLowerCase();
 
-            if(!name.startsWith("gray")) continue;
+            // Sometimes we may need to run this to only generate grayscale palettes, because oxipng breaks them.
+//            if(!name.startsWith("gray")) continue;
 
             loadPalette(name);
             StringBuilder sb = new StringBuilder((1 + 12 * 8) * (PALETTE.length + 7 >>> 3));
