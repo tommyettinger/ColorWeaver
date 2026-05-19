@@ -7520,11 +7520,11 @@ public class A8PaletteReducer {
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
-                    float loc = (BlueNoise.getSeededTriangular(px, py, 0x12345) + 0.5f) * errorMul + (thresholdMatrix64[((px & 7) | (py & 7) << 3)] - 31.5f) * strength;
+                    float loc = (thresholdMatrix64[((px & 7) | (py & 7) << 3)] - 31.5f) * strength;
 //                    for (int i = 0; i <= loc; i++) {
-                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + loc, 0), 1023)] & 255;
-                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + loc, 0), 1023)] & 255;
-                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + loc, 0), 1023)] & 255;
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + loc + (BlueNoise.getSeededTriangular(px, py, 0x12345) + 0.5f) * errorMul, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + loc + (BlueNoise.getSeededTriangular(px, py, 0x6789A) + 0.5f) * errorMul, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + loc + (BlueNoise.getSeededTriangular(px, py, 0xBCDEF) + 0.5f) * errorMul, 0), 1023)] & 255;
 
                     int used = paletteMapping[
                             ((rr << 7) & 0x7C00)
