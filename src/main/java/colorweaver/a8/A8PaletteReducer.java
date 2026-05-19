@@ -7503,6 +7503,42 @@ public class A8PaletteReducer {
         return pixmap;
     }
 
+    public Pixmap reduceBluyer (Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color, cr, cg, cb;
+        final float errorMul = 1.5f * ditherStrength / (float)Math.pow(colorCount, 0.4);
+        final float strength = 5f * ditherStrength / (float)Math.pow(colorCount, 0.4);
+        for (int py = 0; py < h; py++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, py);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, py, 0);
+                else {
+                    cr = (color >>> 24);
+                    cg = (color >>> 16 & 0xFF);
+                    cb = (color >>> 8 & 0xFF);
+                    float loc = (BlueNoise.getSeededTriangular(px, py, 0x12345) - 0.5f) * errorMul + (thresholdMatrix64[((px & 7) | (py & 7) << 3)] - 31.5f) * strength;
+//                    for (int i = 0; i <= loc; i++) {
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + loc, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + loc, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + loc, 0), 1023)] & 255;
+
+                    int used = paletteMapping[
+                            ((rr << 7) & 0x7C00)
+                                    | ((gg << 2) & 0x3E0)
+                                    | ((bb >>> 3))] & 0xFF;
+//                    }
+                    pixmap.drawPixel(px, py, paletteArray[used]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
     /**
      * Simple ordered dither using an 8x8 Bayer matrix (or threshold matrix). Adjusts strength using colorCount mainly,
      * which can make it much better-adapted than earlier techniques to large and sometimes small palettes.
