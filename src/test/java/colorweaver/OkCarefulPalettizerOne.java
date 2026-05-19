@@ -249,8 +249,8 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
 //        pm = reducer.reduceReallySimple(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_ReallySimple" + suffix + ".png"), pm, PALETTE, false, 0);
 
-        pm = reducer.reduceBayorge(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Bayorge" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reducePatternish2(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish2" + suffix + ".png"), pm, PALETTE, false, 0);
 
     }
 }
