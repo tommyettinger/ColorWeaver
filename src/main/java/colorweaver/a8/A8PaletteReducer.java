@@ -7484,7 +7484,7 @@ public class A8PaletteReducer {
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
-                    float loc = (BlueNoise.getSeededTriangular(px, py, 0x12345) - 0.5f) * errorMul;
+                    float loc = (BlueNoise.getSeededTriangular(px, py, 0x12345) + 0.5f) * errorMul;
 //                    for (int i = 0; i <= loc; i++) {
                     int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + loc, 0), 1023)] & 255;
                     int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + loc, 0), 1023)] & 255;
@@ -7509,8 +7509,8 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, cr, cg, cb;
-        final float errorMul = 1.5f * ditherStrength / (float)Math.pow(colorCount, 0.4);
-        final float strength = 5f * ditherStrength / (float)Math.pow(colorCount, 0.4);
+        final float errorMul = 2.5f * ditherStrength / (float)Math.pow(colorCount, 0.4);
+        final float strength = errorMul * 1.25f;
         for (int py = 0; py < h; py++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, py);
@@ -7520,7 +7520,7 @@ public class A8PaletteReducer {
                     cr = (color >>> 24);
                     cg = (color >>> 16 & 0xFF);
                     cb = (color >>> 8 & 0xFF);
-                    float loc = (BlueNoise.getSeededTriangular(px, py, 0x12345) - 0.5f) * errorMul + (thresholdMatrix64[((px & 7) | (py & 7) << 3)] - 31.5f) * strength;
+                    float loc = (BlueNoise.getSeededTriangular(px, py, 0x12345) + 0.5f) * errorMul + (thresholdMatrix64[((px & 7) | (py & 7) << 3)] - 31.5f) * strength;
 //                    for (int i = 0; i <= loc; i++) {
                     int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + loc, 0), 1023)] & 255;
                     int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + loc, 0), 1023)] & 255;
