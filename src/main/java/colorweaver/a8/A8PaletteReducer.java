@@ -4429,7 +4429,8 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        float adj, strength = 0.21875f * ditherStrength / (populationBias * populationBias);
+//        float adj, strength = 0.21875f * ditherStrength / (populationBias * populationBias);
+        float adj, strength = 1.25f * ditherStrength * (float)Math.pow(colorCount, -0.4f);//0.21875f * ditherStrength / (populationBias * populationBias);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -7266,7 +7267,7 @@ public class A8PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color, cr, cg, cb;
 //        final float errorMul = (float) (ditherStrength * 4.0 / populationBias);
-        final float errorMul = 40f * ditherStrength / (float)Math.pow(colorCount, 0.4);
+        final float errorMul = 40f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
@@ -7510,7 +7511,7 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, cr, cg, cb;
-        final float errorMul = 3f * ditherStrength / (float)Math.pow(colorCount, 0.4);
+        final float errorMul = 3f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
 
         for (int py = 0; py < h; py++) {
             for (int px = 0; px < lineLen; px++) {
@@ -7546,7 +7547,7 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color, cr, cg, cb;
-        final float errorMul = 2.5f * ditherStrength / (float)Math.pow(colorCount, 0.4);
+        final float errorMul = 2.5f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
         final float strength = errorMul * 1.25f;
         for (int py = 0; py < h; py++) {
             for (int px = 0; px < lineLen; px++) {
@@ -7581,23 +7582,18 @@ public class A8PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color, cr, cg, cb;
-        final float errorMul = 2f * ditherStrength / (float)Math.pow(colorCount, 0.4);
-        final float strength = errorMul * 0.15f;
+        final float ignStrength = 2f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
+        final float bayerStrength = ignStrength * 0.15f;
         for (int py = 0; py < h; py++) {
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, py);
+                int color = pixmap.getPixel(px, py);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
-                    cr = (color >>> 24);
-                    cg = (color >>> 16 & 0xFF);
-                    cb = (color >>> 8 & 0xFF);
-                    float loc = (thresholdMatrix64[((px & 7) | (py & 7) << 3)] - 31.5f) * strength;
-//                    for (int i = 0; i <= loc; i++) {
-                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cr] + loc + ((142 * (px + 0x5F) + 79 * (py - 0x96) & 255) - 127.5f) * errorMul, 0), 1023)] & 255;
-                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cg] + loc + ((142 * (px + 0xFA) + 79 * (py - 0xA3) & 255) - 127.5f) * errorMul, 0), 1023)] & 255;
-                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[cb] + loc + ((142 * (px + 0xA5) + 79 * (py - 0xC9) & 255) - 127.5f) * errorMul, 0), 1023)] & 255;
+                    float ord = (thresholdMatrix64[((px & 7) | (py & 7) << 3)] - 31.5f) * bayerStrength;
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + ord + ((142 * (px + 0x5F) + 79 * (py - 0x96) & 255) - 127.5f) * ignStrength, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16 & 0xFF)] + ord + ((142 * (px + 0xFA) + 79 * (py - 0xA3) & 255) - 127.5f) * ignStrength, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8 & 0xFF) ] + ord + ((142 * (px + 0xA5) + 79 * (py - 0xC9) & 255) - 127.5f) * ignStrength, 0), 1023)] & 255;
 
                     int used = paletteMapping[
                             ((rr << 7) & 0x7C00)
@@ -7624,7 +7620,7 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        final float strength = 10f * ditherStrength / (float)Math.pow(colorCount, 0.4);
+        final float strength = 10f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);

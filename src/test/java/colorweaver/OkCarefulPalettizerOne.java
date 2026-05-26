@@ -103,7 +103,7 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
                 Gdx.files.local("palettes/hex/dawnbringer-32.hex"),
                 Gdx.files.local("palettes/hex/db-aurora-255.hex"),
                 Gdx.files.local("palettes/hex/gb-4.hex"),
-//                Gdx.files.local("palettes/hex/prospecal-8.hex"),
+                Gdx.files.local("palettes/hex/prospecal-8.hex"),
 //                Gdx.files.local("palettes/hex/septembit23-6.hex"),
 //                Gdx.files.local("palettes/hex/gb-16.hex"),
 //                Gdx.files.local("palettes/hex/japanese-woodblock-12.hex"),
@@ -249,8 +249,8 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
 //        pm = reducer.reduceReallySimple(pm);
 //        a8png8.writePrecisely(Gdx.files.local(subname + "_ReallySimple" + suffix + ".png"), pm, PALETTE, false, 0);
 
-        pm = reducer.reducePatternish2(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_Patternish2" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceBlueNoise(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNoiseNew" + suffix + ".png"), pm, PALETTE, false, 0);
 
     }
 }
