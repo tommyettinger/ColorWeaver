@@ -4045,9 +4045,7 @@ public class A8PaletteReducer {
 
 
         // this is the same strength as Bayer uses.
-        final float strength = ditherStrength * (colorCount <= 5
-                ? 20f / (colorCount-1)
-                : colorCount <= 128
+        final float strength = ditherStrength * (colorCount <= 128
                   ? MathUtils.map(6, 180f, 3.15f, 1f, colorCount)
                   : MathUtils.map(128f, 256f, 1.6425288f, 1f, colorCount));
 
