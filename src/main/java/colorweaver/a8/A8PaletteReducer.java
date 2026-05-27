@@ -28,6 +28,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.*;
+import com.github.tommyettinger.digital.MathTools;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -4044,7 +4045,11 @@ public class A8PaletteReducer {
 
 
         // this is the same strength as Bayer uses.
-        final float strength = 18f * ditherStrength * (float)Math.pow(colorCount, -0.6f);
+        final float strength = ditherStrength * (colorCount <= 5
+                ? 20f / (colorCount-1)
+                : colorCount <= 128
+                  ? MathUtils.map(6, 180f, 3.15f, 1f, colorCount)
+                  : MathUtils.map(128f, 256f, 1.6425288f, 1f, colorCount));
 
 
 //        final float strength = Math.min(1.5f * ditherStrength / (populationBias * populationBias * populationBias), 4f);
