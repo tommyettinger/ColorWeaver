@@ -4044,7 +4044,7 @@ public class A8PaletteReducer {
 
 
         // this is the same strength as Bayer uses.
-        final float strength = 7f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
+        final float strength = 18f * ditherStrength * (float)Math.pow(colorCount, -0.6f);
 
 
 //        final float strength = Math.min(1.5f * ditherStrength / (populationBias * populationBias * populationBias), 4f);
