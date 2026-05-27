@@ -4039,13 +4039,14 @@ public class A8PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color;
-//        final float strength = (ditherStrength * 6.75f * (float) Math.pow(OtherMath.cbrtPositive(OtherMath.logRough(colorCount)) * 0.5649f, -8f)); // probitF
-//        final float strength = (ditherStrength * 6.75f * (float) Math.pow(populationBias, -4f)); // probitF
-//        final float strength = (ditherStrength * 4f * populationBias); // none
-//        final float strength = Math.min(ditherStrength * (8.75f - populationBias * 8f), 4f); // none
         // is the lowest possible populationBias^4, 0.8188650241570136f is the difference between the highest populationBias^4 and the lowest.
-        final float strength = Math.min(ditherStrength * (4f - (populationBias * populationBias * populationBias * populationBias - 0.1598797460796939f) * (3.5f / 0.8188650241570136f)), 4f);
+//        final float strength = Math.min(ditherStrength * (4f - (populationBias * populationBias * populationBias * populationBias - 0.1598797460796939f) * (3.5f / 0.8188650241570136f)), 4f);
+
+
+        // this is the same strength as Bayer uses.
+        final float strength = 10f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
+
+
 //        final float strength = Math.min(1.5f * ditherStrength / (populationBias * populationBias * populationBias), 4f);
 //        final float strength = (float)(Math.min(Math.max(ditherStrength * 85 * Math.pow(populationBias, -8.0), -255), 255)); // triangularRemap
 //        System.out.println("strength is " + strength + " when ditherStrength is "+ ditherStrength + " and colorCount is " + colorCount);
@@ -4057,7 +4058,7 @@ public class A8PaletteReducer {
         }
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y);
+                int color = pixmap.getPixel(px, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
@@ -4430,7 +4431,7 @@ public class A8PaletteReducer {
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
 //        float adj, strength = 0.21875f * ditherStrength / (populationBias * populationBias);
-        float adj, strength = 1.25f * ditherStrength * (float)Math.pow(colorCount, -0.4f);//0.21875f * ditherStrength / (populationBias * populationBias);
+        float adj, strength = 1.25f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
