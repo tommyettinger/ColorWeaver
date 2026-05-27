@@ -4044,7 +4044,11 @@ public class A8PaletteReducer {
 //        final float strength = Math.min(ditherStrength * (4f - (populationBias * populationBias * populationBias * populationBias - 0.1598797460796939f) * (3.5f / 0.8188650241570136f)), 4f);
 
 
-        // this is the same strength as Bayer uses.
+        // This uses a Bayer matrix, but per-channel with different offsets, which typically weakens the effect a lot.
+        // We use a piecewise function with two simple lines, one for smaller counts that multiplies by about 2 to 3
+        // usually, and one for larger counts that approaches multiplying by 1.
+        // strength is at most ditherStrength * 3.1870692 when colorCount is 3.
+        // strength is at its lowest ditherStrength * 1 when colorCount is 256.
         final float strength = ditherStrength * (colorCount <= 128
                   ? MathUtils.map(6, 180f, 3.15f, 1f, colorCount)
                   : MathUtils.map(128f, 256f, 1.6425288f, 1f, colorCount));
@@ -7413,7 +7417,8 @@ public class A8PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        final float str = Math.min(1100f * (ditherStrength / (float) Math.sqrt(colorCount) * (1f / (populationBias * populationBias * populationBias) - 0.7f)), 127f);
+        final float str = Math.min(315 * ditherStrength * (float)Math.pow(colorCount, -0.4f), 127f);
+//        final float str = Math.min(1100f * (ditherStrength / (float) Math.sqrt(colorCount) * (1f / (populationBias * populationBias * populationBias) - 0.7f)), 127f);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 int color = pixmap.getPixel(px, y);
