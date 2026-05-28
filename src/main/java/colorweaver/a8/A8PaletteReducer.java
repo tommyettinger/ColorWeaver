@@ -3997,7 +3997,7 @@ public class A8PaletteReducer {
                     int alt = paletteArray[paletteMapping[rgb555] & 0xFF];
                     double oDiff = differenceMatch(color, ooo);
                     double aDiff = differenceMatch(color, alt);
-                    pixmap.drawPixel(px, y, oDiff * 2f <= aDiff ? ooo : alt);
+                    pixmap.drawPixel(px, y, oDiff * 4f <= aDiff ? ooo : alt);
                 }
             }
         }
