@@ -43,7 +43,7 @@ public class ConstantData {
      * While, for some reason, you could change the contents to some other distribution of bytes, I don't know why this
      * would be needed.
      */
-    public static final byte[] TRI_BLUE_NOISE_A = BlueNoise.TRIANGULAR_BLUE_NOISE[0];
+    public static final byte[] TRI_BLUE_NOISE_A = BlueNoise.TILE_TRI_NOISE[0];
     /**
      * Like {@link #TRI_BLUE_NOISE_A}, this is a 16384-element byte array as a 64x64 grid of bytes. When arranged into a
      * grid, the bytes will follow a blue noise frequency (in this case, they will have a triangular distribution for
@@ -53,7 +53,7 @@ public class ConstantData {
      * While, for some reason, you could change the contents to some other distribution of bytes, I don't know why this
      * would be needed.
      */
-    public static final byte[] TRI_BLUE_NOISE_B = BlueNoise.TRIANGULAR_BLUE_NOISE[1];
+    public static final byte[] TRI_BLUE_NOISE_B = BlueNoise.TILE_TRI_NOISE[1];
     /**
      * Like {@link #TRI_BLUE_NOISE_A}, this is a 16384-element byte array as a 64x64 grid of bytes. When arranged into a
      * grid, the bytes will follow a blue noise frequency (in this case, they will have a triangular distribution for
@@ -63,7 +63,7 @@ public class ConstantData {
      * While, for some reason, you could change the contents to some other distribution of bytes, I don't know why this
      * would be needed.
      */
-    public static final byte[] TRI_BLUE_NOISE_C = BlueNoise.TRIANGULAR_BLUE_NOISE[2];
+    public static final byte[] TRI_BLUE_NOISE_C = BlueNoise.TILE_TRI_NOISE[2];
 
     static {
         try {

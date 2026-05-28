@@ -28,7 +28,6 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.*;
-import com.github.tommyettinger.digital.MathTools;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -1021,66 +1020,10 @@ public class A8PaletteReducer {
             2,  14,   1,  13,
             10,  6,   9,   5,
     };
-    /**
-     * Adapted from a matrix by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
-     */
-    protected static final float[] matrixR16 = new float[16];
-    /**
-     * Adapted from a matrix by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
-     */
-    protected static final float[] matrixG16 = new float[16];
-    /**
-     * Adapted from a matrix by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
-     */
-    protected static final float[] matrixB16 = new float[16];
+    protected static final float[] matrixR = new float[256];
+    protected static final float[] matrixG = new float[256];
+    protected static final float[] matrixB = new float[256];
 
-    static {
-        for (int i = 0; i < 16; i++) {
-            float power = i < 8 ? 5 : 10;
-            switch (thresholdMatrix16[i] & 7){
-                case 0:
-                    matrixR16[i] = -power;
-                    matrixG16[i] = -power;
-                    matrixB16[i] = -power;
-                    break;
-                case 1:
-                    matrixR16[i] = -power;
-                    matrixG16[i] = -power;
-                    matrixB16[i] = power;
-                    break;
-                case 2:
-                    matrixR16[i] = power;
-                    matrixG16[i] = -power;
-                    matrixB16[i] = -power;
-                    break;
-                case 3:
-                    matrixR16[i] = power;
-                    matrixG16[i] = -power;
-                    matrixB16[i] = power;
-                    break;
-                case 4:
-                    matrixR16[i] = -power;
-                    matrixG16[i] = power;
-                    matrixB16[i] = -power;
-                    break;
-                case 5:
-                    matrixR16[i] = -power;
-                    matrixG16[i] = power;
-                    matrixB16[i] = power;
-                    break;
-                case 6:
-                    matrixR16[i] = power;
-                    matrixG16[i] = power;
-                    matrixB16[i] = -power;
-                    break;
-                default:
-                    matrixR16[i] = power;
-                    matrixG16[i] = power;
-                    matrixB16[i] = power;
-                    break;
-            }
-        }
-    }
     /**
      * Given by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
      * Must not be modified.
@@ -1095,6 +1038,54 @@ public class A8PaletteReducer {
             10,  58,   6,  54,   9,  57,   5,  53,
             42,  26,  38,  22,  41,  25,  37,  21
     };
+
+    static {
+        for (int i = 0; i < 256; i++) {
+            float power = (i >>> 3);
+            switch (i & 7){
+                case 0:
+                    matrixR[i] = -power;
+                    matrixG[i] = -power;
+                    matrixB[i] = -power;
+                    break;
+                case 1:
+                    matrixR[i] = -power;
+                    matrixG[i] = -power;
+                    matrixB[i] = power;
+                    break;
+                case 2:
+                    matrixR[i] = power;
+                    matrixG[i] = -power;
+                    matrixB[i] = -power;
+                    break;
+                case 3:
+                    matrixR[i] = power;
+                    matrixG[i] = -power;
+                    matrixB[i] = power;
+                    break;
+                case 4:
+                    matrixR[i] = -power;
+                    matrixG[i] = power;
+                    matrixB[i] = -power;
+                    break;
+                case 5:
+                    matrixR[i] = -power;
+                    matrixG[i] = power;
+                    matrixB[i] = power;
+                    break;
+                case 6:
+                    matrixR[i] = power;
+                    matrixG[i] = power;
+                    matrixB[i] = -power;
+                    break;
+                default:
+                    matrixR[i] = power;
+                    matrixG[i] = power;
+                    matrixB[i] = power;
+                    break;
+            }
+        }
+    }
 
     /**
      * A temporary 32-element array typically used to store colors or palette indices along with their RGB555
@@ -7734,17 +7725,17 @@ public class A8PaletteReducer {
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        final float strength = 10f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
+        final float strength = 5f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    int index = ((px & 3) | (y & 3) << 2);
-                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + matrixR16[index] * strength, 0), 1023)] & 255;
-                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + matrixG16[index] * strength, 0), 1023)] & 255;
-                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + matrixB16[index] * strength, 0), 1023)] & 255;
+                    int index = BlueNoise.getSeeded(px, y, 0x12345) + 128;
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + matrixR[index] * strength, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + matrixG[index] * strength, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + matrixB[index] * strength, 0), 1023)] & 255;
                     int rgb555 = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[rgb555] & 0xFF]);
                 }

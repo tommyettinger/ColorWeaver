@@ -4410,12 +4410,12 @@ public class PaletteReducer {
                     pixmap.drawPixel(px, y, 0);
                 else {
                     int ti = (px & 127) | (y & 127) << 7;
-                    float variation = (strength + 0x1p-5f * (BlueNoise.TRIANGULAR_BLUE_NOISE[0][ti] + 0.5f)) * 0.007f;
-                    adj = ((BlueNoise.TRIANGULAR_BLUE_NOISE[1][ti] + 0.5f) * variation);
+                    float variation = (strength + 0x1p-5f * (BlueNoise.TILE_TRI_NOISE[0][ti] + 0.5f)) * 0.007f;
+                    adj = ((BlueNoise.TILE_TRI_NOISE[1][ti] + 0.5f) * variation);
                     int rr = MathUtils.clamp((int) (adj + ((color >>> 24)       )), 0, 255);
-                    adj = ((BlueNoise.TRIANGULAR_BLUE_NOISE[2][ti] + 0.5f) * variation);
+                    adj = ((BlueNoise.TILE_TRI_NOISE[2][ti] + 0.5f) * variation);
                     int gg = MathUtils.clamp((int) (adj + ((color >>> 16) & 0xFF)), 0, 255);
-                    adj = ((BlueNoise.TRIANGULAR_BLUE_NOISE[3][ti] + 0.5f) * variation);
+                    adj = ((BlueNoise.TILE_TRI_NOISE[3][ti] + 0.5f) * variation);
                     int bb = MathUtils.clamp((int) (adj + ((color >>> 8)  & 0xFF)), 0, 255);
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
@@ -4453,13 +4453,13 @@ public class PaletteReducer {
                 else {
 //                    float pos = (PaletteReducer.thresholdMatrix64[(px & 7) | (y & 7) << 3] - 31.5f) * 0.2f + 0.5f;
                     int ti = (px & 127) | (y & 127) << 7;
-                    adj = ((BlueNoise.TRIANGULAR_BLUE_NOISE[1][ti] + 0.5f));
+                    adj = ((BlueNoise.TILE_TRI_NOISE[1][ti] + 0.5f));
                     adj = adj * strength / (12f + Math.abs(adj));
                     int rr = Math.min(Math.max((int) (adj + ((color >>> 24)       ) + 0.5f), 0), 255);
-                    adj = ((BlueNoise.TRIANGULAR_BLUE_NOISE[2][ti] + 0.5f));
+                    adj = ((BlueNoise.TILE_TRI_NOISE[2][ti] + 0.5f));
                     adj = adj * strength / (12f + Math.abs(adj));
                     int gg = Math.min(Math.max((int) (adj + ((color >>> 16) & 0xFF) + 0.5f), 0), 255);
-                    adj = ((BlueNoise.TRIANGULAR_BLUE_NOISE[3][ti] + 0.5f));
+                    adj = ((BlueNoise.TILE_TRI_NOISE[3][ti] + 0.5f));
                     adj = adj * strength / (12f + Math.abs(adj));
                     int bb = Math.min(Math.max((int) (adj + ((color >>> 8)  & 0xFF) + 0.5f), 0), 255);
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
@@ -4493,9 +4493,9 @@ public class PaletteReducer {
 //                    pos -= (int) pos;
 //                    pos = (pos - 0.5f) * 96f + 0.5f;
                     int ti = (px & 127) | (y & 127) << 7;
-                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + Math.min(Math.max(OtherMath.cbrtApprox(BlueNoise.TRIANGULAR_BLUE_NOISE[1][ti] + 0.5f) * str, -limit), limit) + 0.5f), 0), 255);
-                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + Math.min(Math.max(OtherMath.cbrtApprox(BlueNoise.TRIANGULAR_BLUE_NOISE[2][ti] + 0.5f) * str, -limit), limit) + 0.5f), 0), 255);
-                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + Math.min(Math.max(OtherMath.cbrtApprox(BlueNoise.TRIANGULAR_BLUE_NOISE[0][ti] + 0.5f) * str, -limit), limit) + 0.5f), 0), 255);
+                    int rr = Math.min(Math.max((int)(((color >>> 24)       ) + Math.min(Math.max(OtherMath.cbrtApprox(BlueNoise.TILE_TRI_NOISE[1][ti] + 0.5f) * str, -limit), limit) + 0.5f), 0), 255);
+                    int gg = Math.min(Math.max((int)(((color >>> 16) & 0xFF) + Math.min(Math.max(OtherMath.cbrtApprox(BlueNoise.TILE_TRI_NOISE[2][ti] + 0.5f) * str, -limit), limit) + 0.5f), 0), 255);
+                    int bb = Math.min(Math.max((int)(((color >>> 8)  & 0xFF) + Math.min(Math.max(OtherMath.cbrtApprox(BlueNoise.TILE_TRI_NOISE[0][ti] + 0.5f) * str, -limit), limit) + 0.5f), 0), 255);
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
