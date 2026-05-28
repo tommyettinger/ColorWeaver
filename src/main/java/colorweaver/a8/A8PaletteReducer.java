@@ -7719,20 +7719,21 @@ public class A8PaletteReducer {
         return pixmap;
     }
 
-    public Pixmap reduceHyperion(Pixmap pixmap) {
+    public Pixmap reduceBluyerMono(Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         int color;
-        final float strength = 5f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
+        final float bnStrength = 2f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
+        final float bayerStrength = bnStrength * 2f;
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 color = pixmap.getPixel(px, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    float adj = (BlueNoise.getSeededTriangular(px, y, 0x12345) + 0.5f) * strength;
+                    float adj = (BlueNoise.getSeededTriangular(px, y, 0x12345) + 0.5f) * bnStrength + (thresholdMatrix64[((px & 7) | (y & 7) << 3)] - 31.5f) * bayerStrength;
                     int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + adj, 0), 1023)] & 255;
                     int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + adj, 0), 1023)] & 255;
                     int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + adj, 0), 1023)] & 255;
