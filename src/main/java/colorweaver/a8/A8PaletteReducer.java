@@ -1021,7 +1021,66 @@ public class A8PaletteReducer {
             2,  14,   1,  13,
             10,  6,   9,   5,
     };
+    /**
+     * Adapted from a matrix by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
+     */
+    protected static final float[] matrixR16 = new float[16];
+    /**
+     * Adapted from a matrix by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
+     */
+    protected static final float[] matrixG16 = new float[16];
+    /**
+     * Adapted from a matrix by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
+     */
+    protected static final float[] matrixB16 = new float[16];
 
+    static {
+        for (int i = 0; i < 16; i++) {
+            float power = i < 8 ? 5 : 10;
+            switch (thresholdMatrix16[i] & 7){
+                case 0:
+                    matrixR16[i] = -power;
+                    matrixG16[i] = -power;
+                    matrixB16[i] = -power;
+                    break;
+                case 1:
+                    matrixR16[i] = -power;
+                    matrixG16[i] = -power;
+                    matrixB16[i] = power;
+                    break;
+                case 2:
+                    matrixR16[i] = power;
+                    matrixG16[i] = -power;
+                    matrixB16[i] = -power;
+                    break;
+                case 3:
+                    matrixR16[i] = power;
+                    matrixG16[i] = -power;
+                    matrixB16[i] = power;
+                    break;
+                case 4:
+                    matrixR16[i] = -power;
+                    matrixG16[i] = power;
+                    matrixB16[i] = -power;
+                    break;
+                case 5:
+                    matrixR16[i] = -power;
+                    matrixG16[i] = power;
+                    matrixB16[i] = power;
+                    break;
+                case 6:
+                    matrixR16[i] = power;
+                    matrixG16[i] = power;
+                    matrixB16[i] = -power;
+                    break;
+                default:
+                    matrixR16[i] = power;
+                    matrixG16[i] = power;
+                    matrixB16[i] = power;
+                    break;
+            }
+        }
+    }
     /**
      * Given by Joel Yliluoma in <a href="https://bisqwit.iki.fi/story/howto/dither/jy/">a dithering article</a>.
      * Must not be modified.
@@ -7660,6 +7719,32 @@ public class A8PaletteReducer {
                     int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + adj, 0), 1023)] & 255;
                     int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + adj, 0), 1023)] & 255;
                     int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + adj, 0), 1023)] & 255;
+                    int rgb555 = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
+                    pixmap.drawPixel(px, y, paletteArray[paletteMapping[rgb555] & 0xFF]);
+                }
+            }
+        }
+        pixmap.setBlending(blending);
+        return pixmap;
+    }
+
+    public Pixmap reduceHyperion(Pixmap pixmap) {
+        boolean hasTransparent = (paletteArray[0] == 0);
+        final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
+        Pixmap.Blending blending = pixmap.getBlending();
+        pixmap.setBlending(Pixmap.Blending.None);
+        int color;
+        final float strength = 10f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
+        for (int y = 0; y < h; y++) {
+            for (int px = 0; px < lineLen; px++) {
+                color = pixmap.getPixel(px, y);
+                if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
+                    pixmap.drawPixel(px, y, 0);
+                else {
+                    int index = ((px & 3) | (y & 3) << 2);
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + matrixR16[index] * strength, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + matrixG16[index] * strength, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + matrixB16[index] * strength, 0), 1023)] & 255;
                     int rgb555 = ((rr << 7) & 0x7C00) | ((gg << 2) & 0x3E0) | ((bb >>> 3));
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[rgb555] & 0xFF]);
                 }
