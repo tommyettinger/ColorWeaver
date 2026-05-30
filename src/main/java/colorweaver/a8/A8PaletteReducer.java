@@ -3753,7 +3753,6 @@ public class A8PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color;
 //        final float strength = 50f * ditherStrength * (float) Math.pow(populationBias, -2f);
 //        final float strength = Math.min(0.63f * ditherStrength / (populationBias * populationBias), 1f);
 //        final float strength = Math.min(ditherStrength * populationBias, 1f);
@@ -3766,7 +3765,7 @@ public class A8PaletteReducer {
 
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y);
+                int color = pixmap.getPixel(px, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
@@ -3800,6 +3799,7 @@ public class A8PaletteReducer {
 //                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + ((142 * (px + 0x5F) + 79 * (y - 0x96) & 255) - 127.5f) * strength)] & 255;
 //                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + ((142 * (px + 0xFA) + 79 * (y - 0xA3) & 255) - 127.5f) * strength)] & 255;
 //                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + ((142 * (px + 0xA5) + 79 * (y - 0xC9) & 255) - 127.5f) * strength)] & 255;
+
                     int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + ((142 * (px + 0x5F) + 79 * (y - 0x96) & 255) - 127.5f) * strength, 0), 1023)] & 255;
                     int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16 & 0xFF)] + ((142 * (px + 0xFA) + 79 * (y - 0xA3) & 255) - 127.5f) * strength, 0), 1023)] & 255;
                     int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8 & 0xFF) ] + ((142 * (px + 0xA5) + 79 * (y - 0xC9) & 255) - 127.5f) * strength, 0), 1023)] & 255;
@@ -4018,9 +4018,6 @@ public class A8PaletteReducer {
 //                    bb = Math.min(Math.max((int)(bb + MathUtils.cos(theta + 2.09f) * str + 0.5f), 0), 255);
 
                     final float theta = ((px * 0xC13FA9A9 + y * 0x91E10DA5 >>> 9) * 0x1p-23f);
-//                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + OtherMath.triangleWave(theta         ) * str)] & 255;
-//                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + OtherMath.triangleWave(theta + 0.209f) * str)] & 255;
-//                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + OtherMath.triangleWave(theta + 0.518f) * str)] & 255;
                     int rr = fromLinearLUT[(int) Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + OtherMath.triangleWave(theta         ) * str, 0), 1023)] & 255;
                     int gg = fromLinearLUT[(int) Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + OtherMath.triangleWave(theta + 0.209f) * str, 0), 1023)] & 255;
                     int bb = fromLinearLUT[(int) Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + OtherMath.triangleWave(theta + 0.518f) * str, 0), 1023)] & 255;
@@ -4505,34 +4502,17 @@ public class A8PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color;
-//        float adj, strength = 0.21875f * ditherStrength / (populationBias * populationBias);
-        float adj, strength = 1.25f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
+        final float strength = 1.25f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y);
+                int color = pixmap.getPixel(px, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {
-                    adj = Math.min(Math.max(((BlueNoise.getSeededTriangular(px, y, 0x37F01) + ((px + y & 1) << 8) - 127.5f) * strength), -100.5f), 101.5f);
+                    float adj = Math.min(Math.max(((BlueNoise.getSeededTriangular(px, y, 0x37F01) + ((px + y & 1) << 8) - 127.5f) * strength), -100.5f), 101.5f);
                     int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + adj)] & 255;
                     int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + adj)] & 255;
                     int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + adj)] & 255;
-
-//                    adj = ((px + y & 1) << 8) - 127.5f; // incorporates the `+ 0.5f` blue noise lookups usually have
-//                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px, y, 0x123) + adj) * strength), -100), 100))] & 255;
-//                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px, y, 0x456) + adj) * strength), -100), 100))] & 255;
-//                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + Math.min(Math.max(((BlueNoise.getSeededTriangular(px, y, 0x789) + adj) * strength), -100), 100))] & 255;
-
-//                    adj = ((PaletteReducer.TRI_BLUE_NOISE_B[(px & 63) | (y & 63) << 6] + 0.5f));
-//                    adj = adj * strength / (12f + Math.abs(adj)) + 0.5f;
-//                    int rr = Math.min(Math.max((int) (adj + ((color >>> 24)       )), 0), 255);
-//                    adj = ((PaletteReducer.TRI_BLUE_NOISE_C[(px & 63) | (y & 63) << 6] + 0.5f));
-//                    adj = adj * strength / (12f + Math.abs(adj)) + 0.5f;
-//                    int gg = Math.min(Math.max((int) (adj + ((color >>> 16) & 0xFF)), 0), 255);
-//                    adj = ((PaletteReducer.TRI_BLUE_NOISE  [(px & 63) | (y & 63) << 6] + 0.5f));
-//                    adj = adj * strength / (12f + Math.abs(adj)) + 0.5f;
-//                    int bb = Math.min(Math.max((int) (adj + ((color >>> 8)  & 0xFF)), 0), 255);
 
                     pixmap.drawPixel(px, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
@@ -4896,24 +4876,31 @@ public class A8PaletteReducer {
         return pixmap;
     }
 
-    public Pixmap reduceBayerOctAligned(Pixmap pixmap) {
+    public Pixmap reduceBanter(Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
 
 //        float strength = Math.min(Math.max(0.5f * ditherStrength / (populationBias * populationBias * populationBias), -0.95f), 0.95f);
-        float strength = Math.min(Math.max(0.17f * ditherStrength * (float) Math.pow(populationBias, -10f), -0.95f), 0.95f);
+//        float strength = Math.min(Math.max(0.17f * ditherStrength * (float) Math.pow(populationBias, -10f), -0.95f), 0.95f);
+        final float strength = 3.5f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
+
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < lineLen; x++) {
                 int color = pixmap.getPixel(x, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(x, y, 0);
                 else {
-                    float adj = TRI_BAYER_MATRIX[(x & TBM_MASK) << TBM_BITS | (y & TBM_MASK)] * strength;
-                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + adj)] & 255;
-                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + adj)] & 255;
-                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + adj)] & 255;
+//                    float adj = TRI_BAYER_MATRIX[(x & TBM_MASK) << TBM_BITS | (y & TBM_MASK)] * strength;
+//                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + adj)] & 255;
+//                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + adj)] & 255;
+//                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + adj)] & 255;
+//
+                    float adj = (TRI_BAYER_MATRIX[(x & TBM_MASK) << TBM_BITS | (y & TBM_MASK)] + 0.5f) * strength;
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + adj, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + adj, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + adj, 0), 1023)] & 255;
 
                     pixmap.drawPixel(x, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)
@@ -7489,8 +7476,6 @@ public class A8PaletteReducer {
         final float str = 45f * ditherStrength * (colorCount <= 128
                 ? MathUtils.map(6, 180f, 3.15f, 1f, colorCount)
                 : MathUtils.map(128f, 256f, 1.6425288f, 1f, colorCount));
-//        final float str = Math.min(315 * ditherStrength * (float)Math.pow(colorCount, -0.4f), 127f);
-//        final float str = Math.min(1100f * (ditherStrength / (float) Math.sqrt(colorCount) * (1f / (populationBias * populationBias * populationBias) - 0.7f)), 127f);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 int color = pixmap.getPixel(px, y);
@@ -7698,11 +7683,10 @@ public class A8PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        int color;
         final float strength = 10f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
-                color = pixmap.getPixel(px, y);
+                int color = pixmap.getPixel(px, y);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, y, 0);
                 else {

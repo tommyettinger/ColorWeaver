@@ -278,13 +278,13 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
         a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOct" + suffix + ".png"), pm, PALETTE, false, 0);
 //////// Used in anim8-gdx 0.5.2 , great lightness support
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBayerOctAligned(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctAligned" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceBanter(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Banter" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// better color synthesis, but worse lightness support
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBayerOctShifty(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_BayerOctShifty" + suffix + ".png"), pm, PALETTE, false, 0);
-//// ???
+//// awful!
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceChant(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_Chant" + suffix + ".png"), pm, PALETTE, false, 0);
