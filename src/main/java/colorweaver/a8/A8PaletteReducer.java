@@ -4816,13 +4816,14 @@ public class A8PaletteReducer {
         return pixmap;
     }
 
-    public Pixmap reduceBlueOct(Pixmap pixmap) {
+    public Pixmap reduceBlunt(Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
 
-        float strength = Math.min(Math.max(0.35f * ditherStrength / (populationBias * populationBias * populationBias), -0.6f), 0.6f);
+//        final float strength = Math.min(Math.max(0.35f * ditherStrength / (populationBias * populationBias * populationBias), -0.6f), 0.6f);
+        final float strength = 1.5f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < lineLen; x++) {
                 int color = pixmap.getPixel(x, y);
@@ -4834,9 +4835,13 @@ public class A8PaletteReducer {
 //                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + adj)] & 255;
 //                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + adj)] & 255;
 
-                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + (BlueNoise.getSeededTriangular(x + 62, y + 66 , 0x265BC) + adj) * strength)] & 255;
-                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + (BlueNoise.getSeededTriangular(x + 31, y + 113, 0x157D6) + adj) * strength)] & 255;
-                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + (BlueNoise.getSeededTriangular(x + 71, y + 41 , 0x03EA9) + adj) * strength)] & 255;
+//                    int rr = fromLinearLUT[(int)(toLinearLUT[(color >>> 24)       ] + (BlueNoise.getSeededTriangular(x + 62, y + 66 , 0x265BC) + adj) * strength)] & 255;
+//                    int gg = fromLinearLUT[(int)(toLinearLUT[(color >>> 16) & 0xFF] + (BlueNoise.getSeededTriangular(x + 31, y + 113, 0x157D6) + adj) * strength)] & 255;
+//                    int bb = fromLinearLUT[(int)(toLinearLUT[(color >>> 8)  & 0xFF] + (BlueNoise.getSeededTriangular(x + 71, y + 41 , 0x03EA9) + adj) * strength)] & 255;
+
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + (BlueNoise.getSeededTriangular(x + 62, y + 66 , 0x265BC) + adj) * strength, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16) & 0xFF] + (BlueNoise.getSeededTriangular(x + 31, y + 113, 0x157D6) + adj) * strength, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8)  & 0xFF] + (BlueNoise.getSeededTriangular(x + 71, y + 41 , 0x03EA9) + adj) * strength, 0), 1023)] & 255;
 
                     pixmap.drawPixel(x, y, paletteArray[paletteMapping[((rr << 7) & 0x7C00)
                             | ((gg << 2) & 0x3E0)

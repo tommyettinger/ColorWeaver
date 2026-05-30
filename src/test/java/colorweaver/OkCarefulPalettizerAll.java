@@ -270,8 +270,8 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
         a8png8.writePrecisely(Gdx.files.local(subname + "_BlueNit" + suffix + ".png"), pm, PALETTE, false, 0);
 //////quite nice!
         pm.drawPixmap(sam, 0, 0);
-        pm = reducer.reduceBlueOct(pm);
-        a8png8.writePrecisely(Gdx.files.local(subname + "_BlueOct" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm = reducer.reduceBlunt(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Blunt" + suffix + ".png"), pm, PALETTE, false, 0);
 //////great for pixel art!
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceBayerOct(pm);
