@@ -37,7 +37,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
     private ShaderProgram defaultShader;
     private ShaderProgram shaderFlat, shaderStandard, shaderBlueNoise, shaderBayer;
     private ShaderProgram[] shaders = new ShaderProgram[4];
-    private int shaderIndex = 1;
+    private int shaderIndex = 3;
     private Texture palette, blueNoise;
     private FileHandle[] lospec;
     private int lospecIndex = 0;
@@ -325,11 +325,11 @@ public class ShaderPalettizer extends ApplicationAdapter {
                     break;
                 case Input.Keys.LEFT_BRACKET:
                     if(palette != null) palette.dispose();
-                    palette = new Texture(lospec[lospecIndex = (lospecIndex - 1 + lospec.length) % lospec.length], Pixmap.Format.RGBA8888, false);
+                    palette = new Texture(lospec[lospecIndex = (lospecIndex - (UIUtils.shift() ? 10 : 1) + lospec.length) % lospec.length], Pixmap.Format.RGBA8888, false);
                     break;
                 case Input.Keys.RIGHT_BRACKET:
                     if(palette != null) palette.dispose();
-                    palette = new Texture(lospec[lospecIndex = (lospecIndex + 1) % lospec.length], Pixmap.Format.RGBA8888, false);
+                    palette = new Texture(lospec[lospecIndex = (lospecIndex + (UIUtils.shift() ? 10 : 1)) % lospec.length], Pixmap.Format.RGBA8888, false);
                     break;
                     case Input.Keys.M: // Mona Lisa
                         load("samples/Mona_Lisa.jpg", UIUtils.shift());
