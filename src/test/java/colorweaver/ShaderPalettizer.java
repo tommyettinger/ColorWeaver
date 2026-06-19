@@ -35,9 +35,9 @@ public class ShaderPalettizer extends ApplicationAdapter {
 
     private long startTime = 0L, lastProcessedTime = 0L;
     private ShaderProgram defaultShader;
-    private ShaderProgram shaderFlat, shaderStandard, shaderBlueNoise, shaderBayer;
-    private ShaderProgram[] shaders = new ShaderProgram[4];
-    private int shaderIndex = 3;
+    private ShaderProgram shaderFlat, shaderStandard, shaderBlueNoise, shaderBayer, shaderBayer16;
+    private ShaderProgram[] shaders = new ShaderProgram[5];
+    private int shaderIndex = 4;
     private Texture palette, blueNoise;
     private FileHandle[] lospec;
     private int lospecIndex = 0;
@@ -127,6 +127,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if (!shaderBlueNoise.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderBlueNoise.getLog());
         shaders[3] = shaderBayer = new ShaderProgram(vertexShader, fragmentShaderBayer);
         if (!shaderBayer.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderBayer.getLog());
+        shaders[4] = shaderBayer16 = new ShaderProgram(vertexShader, fragmentShaderBayer16);
+        if (!shaderBayer16.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderBayer16.getLog());
         batch = new SpriteBatch(1000, shaders[shaderIndex]);
         screenView = new ScreenViewport();
         screenView.getCamera().position.set(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0);
@@ -372,8 +374,11 @@ public class ShaderPalettizer extends ApplicationAdapter {
                 Gdx.graphics.setTitle(((batch.getShader().equals(defaultShader)) ? "Full Color" : "Palette "
                         + lospec[lospecIndex].nameWithoutExtension())
                    + " with Equalize: " + (equalize ? (equalizeCB ? "COLORBLIND" : "STANDARD") : "OFF")
-                   + (batch.getShader() == shaderFlat ? " on no-dither mode" : batch.getShader() == shaderBlueNoise
-                        ? " on blue noise mode" : batch.getShader() == shaderBayer ? " on Bayer Matrix mode" : " on standard mode"));
+                   + (batch.getShader() == shaderFlat ? " on no-dither mode"
+                        : batch.getShader() == shaderBlueNoise ? " on blue noise mode"
+                          : batch.getShader() == shaderBayer ? " on 4x4 Bayer Matrix mode"
+                            : batch.getShader() == shaderBayer16 ? " on 16x16 Bayer Matrix mode"
+                              : " on standard mode"));
                 return true;
             }
         };
