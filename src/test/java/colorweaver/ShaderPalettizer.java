@@ -163,7 +163,10 @@ public class ShaderPalettizer extends ApplicationAdapter {
                 if(sh == shaderBlueNoise)
                     sh.setUniformi("u_blue", 2);
                 if(sh != shaderFlat)
-                    sh.setUniformf("u_colors", 1f/(float)Math.sqrt(Integer.parseInt(lospec[lospecIndex].name().replaceFirst(".+-(\\d+)\\D+", "$1"))));
+                    sh.setUniformf("u_colors", (float)Math.pow(
+                                    Integer.parseInt(lospec[lospecIndex].name().replaceFirst(".+-(\\d+)\\D+", "$1")),
+                                    -0.4f
+                            ));
                 Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 //                if(!batch.getShader().equals(shaderStandard))
 //                {
