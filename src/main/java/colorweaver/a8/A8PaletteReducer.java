@@ -7651,18 +7651,18 @@ public class A8PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        final float ignStrength = 2f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
-        final float bayerStrength = ignStrength * 2.5f;
+        final float ignStrength = 1.5f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
+        final float bayerStrength = ignStrength * 0.3f;
         for (int py = 0; py < h; py++) {
             for (int px = 0; px < lineLen; px++) {
                 int color = pixmap.getPixel(px, py);
                 if (hasTransparent && (color & 0x80) == 0) /* if this pixel is less than 50% opaque, draw a pure transparent pixel. */
                     pixmap.drawPixel(px, py, 0);
                 else {
-                    float ord = (thresholdMatrix64[((px & 7) | (py & 7) << 3)] - 31.5f) * bayerStrength;
-                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + ord + ((142 * (px + 0x5F) + 79 * (py - 0x96) & 255) - 127.5f) * ignStrength, 0), 1023)] & 255;
-                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16 & 0xFF)] + ord + ((142 * (px + 0xFA) + 79 * (py - 0xA3) & 255) - 127.5f) * ignStrength, 0), 1023)] & 255;
-                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8 & 0xFF) ] + ord + ((142 * (px + 0xA5) + 79 * (py - 0xC9) & 255) - 127.5f) * ignStrength, 0), 1023)] & 255;
+                    float ord = (thresholdMatrix64[((px & 7) | (py & 7) << 3)] - 31.5f) * bayerStrength + ((142 * px + 79 * py & 255) - 127.5f) * ignStrength;
+                    int rr = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 24)       ] + ord, 0), 1023)] & 255;
+                    int gg = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 16 & 0xFF)] + ord, 0), 1023)] & 255;
+                    int bb = fromLinearLUT[(int)Math.min(Math.max(toLinearLUT[(color >>> 8 & 0xFF) ] + ord, 0), 1023)] & 255;
 
                     int used = paletteMapping[
                             ((rr << 7) & 0x7C00)
