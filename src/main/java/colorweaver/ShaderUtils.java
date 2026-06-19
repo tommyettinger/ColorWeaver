@@ -124,7 +124,7 @@ public class ShaderUtils {
                     "const float rb_adj = 32.0 / 1023.0;\n" +
                     "void main()\n" +
                     "{\n" +
-                    "   float adj = (texture2D(u_blue, gl_FragCoord.xy * (1.0 / 64.0)).r - 0.5) * 1.5 * u_colors;" +
+                    "   float adj = (texture2D(u_blue, gl_FragCoord.xy * (1.0 / 64.0)).r - 0.5) * u_colors;" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
 //                    "   tgt.rgb = clamp(tgt.rgb + adj, 0.0, 1.0);\n" +
                     "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" + // sqrt before adding adj, square after imitates gamma correction decently
