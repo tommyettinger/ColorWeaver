@@ -111,8 +111,10 @@ public class ShaderPalettizer extends ApplicationAdapter {
         lospec = Gdx.files.local("palettes/genOkCareful/").list("_GLSL.png");
         palette = new Texture(lospec[lospecIndex], Pixmap.Format.RGBA8888, false);
         palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-//        blueNoise = new Texture(Gdx.files.internal("blueTri.png"), Pixmap.Format.RGBA8888, false);
-        blueNoise = new Texture(Gdx.files.internal("blue.png"), Pixmap.Format.RGBA8888, false);
+        // triangular-mapped blue noise; looks more subdued
+        blueNoise = new Texture(Gdx.files.internal("blueTri.png"), Pixmap.Format.RGBA8888, false);
+        // uniform-distributed blue noise; looks more chaotic
+//        blueNoise = new Texture(Gdx.files.internal("blue.png"), Pixmap.Format.RGBA8888, false);
         blueNoise.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         font = new BitmapFont();
         add = new Vector3(0, 0, 0);

@@ -7646,13 +7646,13 @@ public class A8PaletteReducer {
         return pixmap;
     }
 
-    public Pixmap reduceBayorge (Pixmap pixmap) {
+    public Pixmap reduceBaydient(Pixmap pixmap) {
         boolean hasTransparent = (paletteArray[0] == 0);
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
         final float ignStrength = 2f * ditherStrength * (float)Math.pow(colorCount, -0.4f);
-        final float bayerStrength = ignStrength * 0.15f;
+        final float bayerStrength = ignStrength * 2.5f;
         for (int py = 0; py < h; py++) {
             for (int px = 0; px < lineLen; px++) {
                 int color = pixmap.getPixel(px, py);
