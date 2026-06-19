@@ -35,9 +35,9 @@ public class ShaderPalettizer extends ApplicationAdapter {
 
     private long startTime = 0L, lastProcessedTime = 0L;
     private ShaderProgram defaultShader;
-    private ShaderProgram shaderFlat, shaderStandard, shaderBlueNoise, shaderBayer, shaderBayer16;
-    private ShaderProgram[] shaders = new ShaderProgram[5];
-    private int shaderIndex = 4;
+    private ShaderProgram shaderFlat, shaderStandard, shaderBlueNoise, shaderBayer, shaderBayer16, shaderBaydient;
+    private ShaderProgram[] shaders = new ShaderProgram[6];
+    private int shaderIndex = 5;
     private Texture palette, blueNoise;
     private FileHandle[] lospec;
     private int lospecIndex = 0;
@@ -132,6 +132,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if (!shaderBayer.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderBayer.getLog());
         shaders[4] = shaderBayer16 = new ShaderProgram(vertexShader, fragmentShaderBayer16);
         if (!shaderBayer16.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderBayer16.getLog());
+        shaders[5] = shaderBaydient = new ShaderProgram(vertexShader, fragmentShaderBaydient);
+        if (!shaderBaydient.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderBaydient.getLog());
         batch = new SpriteBatch(1000, shaders[shaderIndex]);
         screenView = new ScreenViewport();
         screenView.getCamera().position.set(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0);
