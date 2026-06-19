@@ -198,12 +198,12 @@ public class ShaderUtils {
                     "const mat4 bayer =(mat4(0.,  8.,  2.,  10., " +
                     "                        12., 4.,  14., 6.,  " +
                     "                        3.,  11., 1.,  9.,  " +
-                    "                        15., 7.,  13., 5.) - 7.5) * (0.0625 * 0.45);\n" +
+                    "                        15., 7.,  13., 5.) - 7.5) * (0.0625 * 0.15);\n" +
                     "void main()\n" +
                     "{\n" +
                     "   int x = int(mod(gl_FragCoord.x, 4.));\n" +
                     "   int y = int(mod(gl_FragCoord.y, 4.));\n" +
-                    "   float adj = (bayer[y][x] + ((fract(gl_FragCoord.x * 0.75488 + gl_FragCoord.y * 0.56984) - 0.5)) * 1.5) * u_colors;\n" +
+                    "   float adj = (bayer[y][x] + ((fract(gl_FragCoord.x * 0.75488 + gl_FragCoord.y * 0.56984) - 0.5)) * 0.5) * u_colors;\n" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
                     "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" +
                     "   tgt.rgb *= tgt.rgb;\n" +

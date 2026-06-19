@@ -383,7 +383,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
                         : batch.getShader() == shaderBlueNoise ? " on blue noise mode"
                           : batch.getShader() == shaderBayer ? " on 4x4 Bayer Matrix mode"
                             : batch.getShader() == shaderBayer16 ? " on 16x16 Bayer Matrix mode"
-                              : " on standard mode"));
+                              : batch.getShader() == shaderBaydient ? " on Baydient mode"
+                              : " on gradient mode"));
                 return true;
             }
         };
