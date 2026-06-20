@@ -195,6 +195,8 @@ public class ShaderUtils {
                     "uniform float u_colors;\n" +
                     "const float b_adj = 31.0 / 32.0;\n" +
                     "const float rb_adj = 32.0 / 1023.0;\n" +
+                    "const vec3 xBumps = vec3(-1., 0., 3.);\n" +
+                    "const vec3 yBumps = vec3(-3., 1., 0.);\n" +
                     "const mat4 bayer =(mat4(0.,  8.,  2.,  10., " +
                     "                        12., 4.,  14., 6.,  " +
                     "                        3.,  11., 1.,  9.,  " +
@@ -203,7 +205,7 @@ public class ShaderUtils {
                     "{\n" +
                     "   int x = int(mod(gl_FragCoord.x, 4.));\n" +
                     "   int y = int(mod(gl_FragCoord.y, 4.));\n" +
-                    "   float adj = (bayer[y][x] + ((fract(gl_FragCoord.x * 0.75488 + gl_FragCoord.y * 0.56984) - 0.5)) * 0.5) * u_colors;\n" +
+                    "   vec3 adj = (bayer[y][x] + (fract((xBumps + gl_FragCoord.x) * 0.75488 + (yBumps + gl_FragCoord.y) * 0.56984) - 0.5)) * u_colors;\n" +
                     "   vec4 tgt = texture2D( u_texture, v_texCoords );\n" +
                     "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" +
                     "   tgt.rgb *= tgt.rgb;\n" +
