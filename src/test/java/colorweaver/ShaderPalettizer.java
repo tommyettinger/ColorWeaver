@@ -35,9 +35,9 @@ public class ShaderPalettizer extends ApplicationAdapter {
 
     private long startTime = 0L, lastProcessedTime = 0L;
     private ShaderProgram defaultShader;
-    private ShaderProgram shaderFlat, shaderStandard, shaderBlueNoise, shaderBayer, shaderBayer16, shaderBaydient;
-    private ShaderProgram[] shaders = new ShaderProgram[6];
-    private int shaderIndex = 5;
+    private ShaderProgram shaderFlat, shaderStandard, shaderBlueNoise, shaderBayer, shaderBayer16, shaderBaydient, shaderMarten;
+    private ShaderProgram[] shaders = new ShaderProgram[7];
+    private int shaderIndex = 6;
     private Texture palette, blueNoise;
     private FileHandle[] lospec;
     private int lospecIndex = 0;
@@ -134,6 +134,8 @@ public class ShaderPalettizer extends ApplicationAdapter {
         if (!shaderBayer16.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderBayer16.getLog());
         shaders[5] = shaderBaydient = new ShaderProgram(vertexShader, fragmentShaderBaydient);
         if (!shaderBaydient.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderBaydient.getLog());
+        shaders[6] = shaderMarten = new ShaderProgram(vertexShader, fragmentShaderMarten);
+        if (!shaderMarten.isCompiled()) throw new GdxRuntimeException("Couldn't compile shader: " + shaderMarten.getLog());
         batch = new SpriteBatch(1000, shaders[shaderIndex]);
         screenView = new ScreenViewport();
         screenView.getCamera().position.set(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, 0);
@@ -384,6 +386,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
                           : batch.getShader() == shaderBayer ? " on 4x4 Bayer Matrix mode"
                             : batch.getShader() == shaderBayer16 ? " on 16x16 Bayer Matrix mode"
                               : batch.getShader() == shaderBaydient ? " on Baydient mode"
+                              : batch.getShader() == shaderMarten ? " on Marten mode"
                               : " on gradient mode"));
                 return true;
             }
