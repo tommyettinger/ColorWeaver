@@ -362,6 +362,14 @@ public class OkCarefulPalettizerAll extends ApplicationAdapter {
         pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceMarten(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_Marten" + suffix + ".png"), pm, PALETTE, false, 0);
+////////
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBayer(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Bayer" + suffix + ".png"), pm, PALETTE, false, 0);
+////////
+        pm.drawPixmap(sam, 0, 0);
+        pm = reducer.reduceBaydient(pm);
+        a8png8.writePrecisely(Gdx.files.local(subname + "_Baydient" + suffix + ".png"), pm, PALETTE, false, 0);
 ////// has some weird horizontal artifacts
 //        pm.drawPixmap(sam, 0, 0);
 //        pm = reducer.reduceMicroPatternish(pm);

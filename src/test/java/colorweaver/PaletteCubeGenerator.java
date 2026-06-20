@@ -1,6 +1,5 @@
 package colorweaver;
 
-import colorweaver.a8.A8PNG;
 import colorweaver.a8.A8PNG8;
 import colorweaver.a8.A8PaletteReducer;
 import colorweaver.tools.StringKit;
@@ -11,8 +10,6 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-
-import java.io.IOException;
 
 /**
  * Created by Tommy Ettinger on 1/21/2018.
@@ -54,8 +51,8 @@ public class PaletteCubeGenerator extends ApplicationAdapter {
 //        Gdx.files.local("palettes/genRgbTricky/").mkdirs();
 //        Gdx.files.local("palettes/genRgbStupider/").mkdirs();
 //        Gdx.files.local("palettes/genRgbSlippery/").mkdirs();
-        for(FileHandle hex : hexes) {
-//        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
+//        for(FileHandle hex : hexes) {
+        FileHandle hex = Gdx.files.local("palettes/hex/"+HexGenerator.NAME+".hex");{
 
 //        for(FileHandle hex : new FileHandle[]{
 //                Gdx.files.local("lospec2000-182.hex"),
