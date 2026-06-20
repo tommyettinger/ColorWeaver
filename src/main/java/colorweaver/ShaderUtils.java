@@ -232,7 +232,7 @@ public class ShaderUtils {
                     "void main()\n" +
                     "{\n" +
                     "   float cc = pow(u_colors, -2.5);\n" +
-                    "   float str = (1./17.) * lerp(map(6, 180f, 3.15f, 1f, cc), map(128f, 256f, 1.642f, 1f, cc), step(128.0, cc));\n" +
+                    "   float str = (1./17.) * mix(map(6., 180., 3.15, 1., cc), map(128., 256., 1.642, 1., cc), step(128.0, cc));\n" +
                     "   vec3 adj = triangleWave(fract(gl_FragCoord.x * 0.75488 + gl_FragCoord.y * 0.56984) + bumps) * str;\n" +
                     "   vec4 tgt = texture2D(u_texture, v_texCoords);\n" +
                     "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" +
