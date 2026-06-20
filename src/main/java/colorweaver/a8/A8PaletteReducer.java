@@ -7478,9 +7478,10 @@ public class A8PaletteReducer {
         final int lineLen = pixmap.getWidth(), h = pixmap.getHeight();
         Pixmap.Blending blending = pixmap.getBlending();
         pixmap.setBlending(Pixmap.Blending.None);
-        final float str = 45f * ditherStrength * (colorCount <= 128
-                ? MathUtils.map(6, 180f, 3.15f, 1f, colorCount)
-                : MathUtils.map(128f, 256f, 1.6425288f, 1f, colorCount));
+        final float str = 360f * ditherStrength * (float) Math.pow(colorCount, -0.4f);
+//        final float str = 45f * ditherStrength * (colorCount <= 128
+//                ? MathUtils.map(6, 180f, 3.15f, 1f, colorCount)
+//                : MathUtils.map(128f, 256f, 1.6425288f, 1f, colorCount));
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
                 int color = pixmap.getPixel(px, y);
