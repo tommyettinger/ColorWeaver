@@ -109,6 +109,11 @@ public class ShaderPalettizer extends ApplicationAdapter {
         eq = new ColorEqualizer();
         cba = new ColorblindnessAdapter();
         lospec = Gdx.files.local("palettes/genOkCareful/").list("_GLSL.png");
+        for (int i = 0; i < lospec.length; i++) {
+            if(lospec[i].name().startsWith("nes-54"))
+                break;
+            lospecIndex++;
+        }
         palette = new Texture(lospec[lospecIndex], Pixmap.Format.RGBA8888, false);
         palette.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         // triangular-mapped blue noise; looks more subdued
