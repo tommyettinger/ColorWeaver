@@ -213,6 +213,34 @@ public class ShaderUtils {
                     "   gl_FragColor.rgb = v_color.rgb * used.rgb;\n" +
                     "   gl_FragColor.a = v_color.a * tgt.a;\n" +
                     "}";
+
+    public static final String fragmentShaderMarten =
+            "varying vec2 v_texCoords;\n" +
+                    "varying vec4 v_color;\n" +
+                    "uniform sampler2D u_texture;\n" +
+                    "uniform sampler2D u_palette;\n" +
+                    "uniform float u_colors;\n" +
+                    "const float b_adj = 31.0 / 32.0;\n" +
+                    "const float rb_adj = 32.0 / 1023.0;\n" +
+                    "const vec3 bumps = vec3(0.0, 0.382, 0.618);\n" +
+                    "vec3 triangleWave(vec3 theta){\n" +
+                    "  return abs(theta - floor(theta + 0.5)) * 4. - 1.;\n" +
+                    "}\n" +
+                    "float map (float inRangeStart, float inRangeEnd, float outRangeStart, float outRangeEnd, float value) {\n" +
+		            "  return outRangeStart + (value - inRangeStart) * (outRangeEnd - outRangeStart) / (inRangeEnd - inRangeStart);\n" +
+                    "}\n" +
+                    "void main()\n" +
+                    "{\n" +
+                    "   float cc = pow(u_colors, -2.5);\n" +
+                    "   float str = (1./17.) * lerp(map(6, 180f, 3.15f, 1f, cc), map(128f, 256f, 1.642f, 1f, cc), step(128.0, cc));\n" +
+                    "   vec3 adj = triangleWave(fract(gl_FragCoord.x * 0.75488 + gl_FragCoord.y * 0.56984) + bumps) * str;\n" +
+                    "   vec4 tgt = texture2D(u_texture, v_texCoords);\n" +
+                    "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" +
+                    "   tgt.rgb *= tgt.rgb;\n" +
+                    "   vec4 used = texture2D(u_palette, vec2((tgt.b * b_adj + floor(tgt.r * 31.999)) * rb_adj, 1.0 - tgt.g));\n" +
+                    "   gl_FragColor.rgb = v_color.rgb * used.rgb;\n" +
+                    "   gl_FragColor.a = v_color.a * tgt.a;\n" +
+                    "}";
     /**
      * This fragment shader substitutes colors with ones from a palette, acting like {@link #fragmentShader} but also
      * allowing color space adjustments to be done after the palette swap (this won't change the color count). The
