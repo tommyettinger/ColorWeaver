@@ -222,18 +222,13 @@ public class ShaderUtils {
                     "uniform float u_colors;\n" +
                     "const float b_adj = 31.0 / 32.0;\n" +
                     "const float rb_adj = 32.0 / 1023.0;\n" +
-                    "const vec3 bumps = vec3(0.0, 0.382, 0.618);\n" +
+                    "const vec3 bumps = vec3(-0.236, -0.382, 0.618);\n" +
                     "vec3 triangleWave(vec3 theta){\n" +
                     "  return abs(theta - floor(theta + 0.5)) * 4. - 1.;\n" +
                     "}\n" +
-//                    "float map (float inRangeStart, float inRangeEnd, float outRangeStart, float outRangeEnd, float value) {\n" +
-//		            "  return outRangeStart + (value - inRangeStart) * (outRangeEnd - outRangeStart) / (inRangeEnd - inRangeStart);\n" +
-//                    "}\n" +
                     "void main()\n" +
                     "{\n" +
-//                    "   float cc = pow(u_colors, -2.5);\n" +
-//                    "   float str = 0.1 * mix(map(6., 180., 3.15, 1., cc), map(128., 256., 1.642, 1., cc), step(128.0, cc));\n" +
-                    "   vec3 adj = triangleWave(fract(gl_FragCoord.x * 0.75488 + gl_FragCoord.y * 0.56984) + bumps) * u_colors * 0.75;\n" +
+                    "   vec3 adj = triangleWave((gl_FragCoord.x * 0.75488 + gl_FragCoord.y * 0.56984) + bumps) * u_colors;\n" +
                     "   vec4 tgt = texture2D(u_texture, v_texCoords);\n" +
                     "   tgt.rgb = clamp(sqrt(tgt.rgb) + adj, 0.0, 1.0);\n" +
                     "   tgt.rgb *= tgt.rgb;\n" +

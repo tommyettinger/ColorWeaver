@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
  * Created by Tommy Ettinger on 1/30/2020.
  */
 public class AuroraNamedPreview extends ApplicationAdapter {
-	public static final int[][] SHAPE = ColorizerPreview.BALL;
+	public static final int[][] SHAPE = ColorizerPreview.CUBE;
 	private Pixmap cubePix;
 	private Texture[] cubeTextures;
 	private Colorizer colorizer;

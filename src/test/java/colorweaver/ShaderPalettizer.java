@@ -110,7 +110,7 @@ public class ShaderPalettizer extends ApplicationAdapter {
         cba = new ColorblindnessAdapter();
         lospec = Gdx.files.local("palettes/genOkCareful/").list("_GLSL.png");
         for (int i = 0; i < lospec.length; i++) {
-            if(lospec[i].name().startsWith("nes-54"))
+            if(lospec[i].name().startsWith("hyper-8"))
                 break;
             lospecIndex++;
         }
