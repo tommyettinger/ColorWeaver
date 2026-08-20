@@ -3983,7 +3983,7 @@ public class A8PaletteReducer {
 //        final float str = 45f * ditherStrength * (colorCount <= 128
 //                ? MathUtils.map(6, 180f, 3.15f, 1f, colorCount)
 //                : MathUtils.map(128f, 256f, 1.6425288f, 1f, colorCount));
-        final float str = 360f * ditherStrength * (float) Math.pow(colorCount, -0.4f);
+        final float str = 200f * ditherStrength * (float) Math.pow(colorCount, -0.4f);
 
         for (int y = 0; y < h; y++) {
             for (int px = 0; px < lineLen; px++) {
@@ -4121,7 +4121,7 @@ public class A8PaletteReducer {
 //        final float strength = ditherStrength * (colorCount <= 128
 //                  ? MathUtils.map(6, 180f, 3.15f, 1f, colorCount)
 //                  : MathUtils.map(128f, 256f, 1.6425288f, 1f, colorCount));
-        final float strength = 7.5f * ditherStrength * (float) Math.pow(colorCount, -0.4f);
+        final float strength = 7f * ditherStrength * (float) Math.pow(colorCount, -0.4f);
 
 
 

@@ -254,10 +254,13 @@ public class OkCarefulPalettizerOne extends ApplicationAdapter {
 
         pm = reducer.reduceAdditive(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_AdditivePow" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceGourd(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_GourdPow" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceJimenez(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_JimenezPow" + suffix + ".png"), pm, PALETTE, false, 0);
+        pm.drawPixmap(sam, 0, 0);
         pm = reducer.reduceRoberts(pm);
         a8png8.writePrecisely(Gdx.files.local(subname + "_RobertsPow" + suffix + ".png"), pm, PALETTE, false, 0);
 
